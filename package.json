@@ -1,0 +1,42 @@
+{
+  "name": "monogate",
+  "version": "0.1.0",
+  "description": "A single binary operator eml(x,y) = exp(x) − ln(y) that generates all elementary functions. Implementation of arXiv:2603.21852 (Odrzywołek, 2026).",
+  "type": "module",
+  "main": "./src/index.js",
+  "exports": {
+    ".": {
+      "import": "./src/index.js"
+    }
+  },
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "keywords": [
+    "mathematics",
+    "eml",
+    "elementary-functions",
+    "algebra",
+    "monogate",
+    "exp-minus-log"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/monogate.git"
+  },
+  "homepage": "https://monogate.dev",
+  "bugs": {
+    "url": "https://github.com/your-username/monogate/issues"
+  },
+  "engines": {
+    "node": ">=16"
+  },
+  "devDependencies": {
+    "vitest": "^1.0.0"
+  },
+  "scripts": {
+    "test": "vitest run"
+  }
+}
