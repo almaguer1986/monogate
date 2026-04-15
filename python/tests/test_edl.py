@@ -9,6 +9,7 @@ from monogate.core import (
     EDL, EML, EMN, EXL, EAL, EDL_NEG_ONE, EDL_ONE, Operator,
     div_edl, exp_edl, ln_edl, make_exp, make_ln, mul_edl, neg_edl, pow_edl, recip_edl,
     ln_eml, pow_eml, pow_exl,
+    HybridOperator, BEST,
 )
 from monogate.torch_ops import edl_op, edl_op_safe, EDL_SAFE_CONSTANT, exl_op, eal_op
 from monogate.network import EMLNetwork, HybridNetwork
@@ -929,3 +930,108 @@ def test_hybrid_vs_eml_stability():
         f"HybridNetwork should be >= EMLNetwork stability "
         f"(hybrid {hybrid_ok}/20, eml {eml_ok}/20)"
     )
+
+
+# ── HybridOperator ────────────────────────────────────────────────────────────
+
+def test_hybrid_operator_pow_uses_exl():
+    # BEST.pow must use pow_exl (EXL-routed)
+    result = BEST.pow(2.0 + 0j, 10.0 + 0j)
+    assert abs(result.real - 1024.0) < 1e-6
+
+def test_hybrid_operator_div_uses_edl():
+    result = BEST.div(6.0 + 0j, 2.0 + 0j)
+    assert abs(result.real - 3.0) < 1e-9
+
+def test_hybrid_operator_mul_uses_edl():
+    result = BEST.mul(3.0 + 0j, 4.0 + 0j)
+    assert abs(result.real - 12.0) < 1e-9
+
+def test_hybrid_operator_add_uses_eml():
+    result = BEST.add(3.0, 4.0)
+    assert abs(result - 7.0) < 1e-9
+
+def test_hybrid_operator_sub_uses_eml():
+    result = BEST.sub(5.0, 2.0)
+    assert abs(result - 3.0) < 1e-9
+
+def test_hybrid_operator_ln_uses_exl_no_dead_zone():
+    # EXL.ln has no dead zone near x=1 (unlike EDL)
+    for x in [1.001, 0.999, 1.0001]:
+        result = BEST.ln(x + 0j)
+        assert abs(result.real - math.log(x)) < 1e-10
+
+def test_hybrid_operator_exp():
+    assert abs(BEST.exp(1 + 0j).real - math.e) < 1e-12
+
+def test_hybrid_operator_recip():
+    result = BEST.recip(2.0 + 0j)
+    assert abs(result.real - 0.5) < 1e-9
+
+def test_hybrid_operator_neg():
+    result = BEST.neg(3.0 + 0j)
+    assert abs(result.real - (-3.0)) < 1e-9
+
+def test_hybrid_operator_ops_list():
+    ops = BEST.ops()
+    for name in ['exp', 'ln', 'pow', 'mul', 'div', 'recip', 'neg', 'sub', 'add']:
+        assert name in ops
+
+def test_hybrid_operator_unknown_raises():
+    with pytest.raises(AttributeError, match="no routing for"):
+        BEST.sqrt
+
+def test_hybrid_operator_custom_routing():
+    custom = HybridOperator({'pow': EXL, 'add': EML}, name="custom")
+    assert abs(custom.pow(2.0 + 0j, 3.0 + 0j).real - 8.0) < 1e-9
+    assert abs(custom.add(1.0, 2.0) - 3.0) < 1e-9
+
+def test_hybrid_operator_custom_routing_unknown_raises():
+    custom = HybridOperator({'pow': EXL}, name="pow-only")
+    with pytest.raises(AttributeError):
+        custom.div
+
+def test_hybrid_operator_repr():
+    r = repr(BEST)
+    assert "BEST" in r
+    assert "EXL" in r
+    assert "EML" in r
+
+def test_hybrid_operator_info_prints(capsys):
+    BEST.info()
+    out = capsys.readouterr().out
+    assert "BEST" in out
+    assert "EXL" in out
+    assert "EDL" in out
+    assert "EML" in out
+    assert "saves" in out  # node savings should be reported
+
+def test_best_importable_from_top():
+    from monogate import BEST, HybridOperator
+    assert isinstance(BEST, HybridOperator)
+    assert "pow" in BEST.ops()
+
+def test_best_node_costs_all_less_than_eml():
+    # Every BEST routing should use at most as many nodes as EML for that op
+    from monogate.core import _NODE_COSTS
+    for op_name, routing_op in BEST._routing.items():
+        costs = _NODE_COSTS.get(op_name, {})
+        eml_cost  = costs.get('EML')
+        this_cost = costs.get(routing_op.name)
+        if eml_cost is not None and this_cost is not None:
+            assert this_cost <= eml_cost, (
+                f"BEST.{op_name} routes to {routing_op.name} ({this_cost}n) "
+                f"but EML is cheaper ({eml_cost}n)"
+            )
+
+def test_best_pow_cheaper_than_eml_pow():
+    from monogate.core import _NODE_COSTS
+    exl_cost = _NODE_COSTS['pow']['EXL']
+    eml_cost = _NODE_COSTS['pow']['EML']
+    assert exl_cost < eml_cost  # 3 < 15
+
+def test_best_ln_cheaper_than_eml_ln():
+    from monogate.core import _NODE_COSTS
+    exl_cost = _NODE_COSTS['ln']['EXL']
+    eml_cost = _NODE_COSTS['ln']['EML']
+    assert exl_cost < eml_cost  # 1 < 3

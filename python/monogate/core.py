@@ -46,6 +46,8 @@ __all__ = [
     "EDL_NEG_ONE",
     "pow_exl",
     "compare_op",
+    "HybridOperator",
+    "BEST",
 ]
 
 
@@ -381,6 +383,65 @@ class Operator:
             f"Operator {self.name!r} has no registered operation {name!r}. "
             f"Available: {sorted(_ops)}"
         )
+
+    # ── Introspection ──────────────────────────────────────────────────────────
+
+    def benchmark(self) -> dict:
+        """Return accuracy metrics for exp and ln over a standard test set.
+
+        Returns a dict with keys:
+            exp_max_err: float | None   (None if exp not available)
+            ln_max_err:  float | None   (None if ln not available)
+            complete:    bool
+            ops:         list[str]
+        """
+        test_exp = [0.0, 0.5, 1.0, -1.0, 2.0]
+        test_ln  = [0.5, 1.5, 2.0, 3.0, math.e]
+        result: dict = {'complete': False, 'ops': self.ops()}
+
+        try:
+            exp_fn = make_exp(self)
+            exp_errs = [
+                abs(exp_fn(x + 0j).real - math.exp(x)) / max(abs(math.exp(x)), 1e-30)
+                for x in test_exp
+            ]
+            result['exp_max_err'] = max(exp_errs)
+        except NotImplementedError:
+            result['exp_max_err'] = None
+
+        try:
+            ln_fn = make_ln(self)
+            ln_errs = [
+                abs(ln_fn(x + 0j).real - math.log(x)) / max(abs(math.log(x)), 1e-30)
+                for x in test_ln
+            ]
+            result['ln_max_err'] = max(ln_errs)
+        except NotImplementedError:
+            result['ln_max_err'] = None
+
+        meta = object.__getattribute__(self, '__dict__').get('_meta', {})
+        result['complete'] = meta.get('complete', False)
+        return result
+
+    def info(self) -> None:
+        """Print a human-readable summary of this operator."""
+        meta = self.__dict__.get('_meta', {})
+        gate  = meta.get('gate', 'unknown')
+        notes = meta.get('notes', '')
+        bm    = self.benchmark()
+
+        def _fmt(v):
+            return f"{v:.1e}" if v is not None else "N/A"
+
+        print(f"{self!r}")
+        print(f"  Gate:      {gate}")
+        print(f"  exp err:   {_fmt(bm['exp_max_err'])}   "
+              f"ln err: {_fmt(bm['ln_max_err'])}")
+        print(f"  Complete:  {'YES' if bm['complete'] else 'NO'}")
+        if bm['ops']:
+            print(f"  Ops:       {', '.join(bm['ops'])}")
+        if notes:
+            print(f"  Notes:     {notes}")
 
 
 def _eml_func(x: complex, y: complex) -> complex:
@@ -747,3 +808,172 @@ EXL.register('pow', pow_exl)
 
 # EAL: exp-plus-ln gate.  1-node exp, no finite ln.
 # No arithmetic operations can be built purely from EAL over the reals.
+
+# ── Per-operator metadata (used by Operator.info / Operator.benchmark) ────────
+
+EML._meta = {
+    'complete':  True,
+    'gate':      'exp(x) - ln(y)',
+    'constant_name': '1',
+    'ln_nodes':  3,
+    'notes':     'subtraction in lifted space; handles all signs; best general-purpose',
+}
+EDL._meta = {
+    'complete':  True,
+    'gate':      'exp(x) / ln(y)',
+    'constant_name': 'e',
+    'ln_nodes':  3,
+    'notes':     'division in lifted space; fastest mul/div/recip; dead zone x in (0.9986, 1.0014)',
+}
+EXL._meta = {
+    'complete':  False,
+    'gate':      'exp(x) * ln(y)',
+    'constant_name': 'e',
+    'ln_nodes':  1,
+    'notes':     '1-node exp AND ln; 3-node pow (best known); no add/mul; power-group only',
+}
+EAL._meta = {
+    'complete':  False,
+    'gate':      'exp(x) + ln(y)',
+    'constant_name': '1',
+    'ln_nodes':  None,
+    'notes':     '1-node exp only; additive offset blocks bare ln derivation',
+}
+EMN._meta = {
+    'complete':  False,
+    'gate':      'ln(y) - exp(x)',
+    'constant_name': '1',
+    'ln_nodes':  None,
+    'notes':     'negated-EML gate; natural output = -exp(x); exp/ln unreachable over reals',
+}
+
+
+# ── HybridOperator: per-operation routing across multiple Operators ────────────
+
+# Known node costs for each (op_name, base_operator_name) pair.
+_NODE_COSTS: dict[str, dict[str, int]] = {
+    'exp':   {'EML': 1,  'EDL': 1,  'EXL': 1,  'EAL': 1},
+    'ln':    {'EML': 3,  'EDL': 3,  'EXL': 1},
+    'pow':   {'EML': 15, 'EDL': 11, 'EXL': 3},
+    'mul':   {'EML': 13, 'EDL': 7},
+    'div':   {'EML': 15, 'EDL': 1},
+    'recip': {'EML': 5,  'EDL': 2},
+    'neg':   {'EML': 9,  'EDL': 6},
+    'sub':   {'EML': 5},
+    'add':   {'EML': 11},
+}
+
+
+class HybridOperator:
+    """
+    Per-operation routing across multiple base Operators.
+
+    Instead of one gate for everything, HybridOperator picks the best
+    Operator instance for each named operation from a provided routing table.
+    This formalises the 'best-per-operation' strategy discovered experimentally:
+
+      EXL gives the cheapest ln (1 node) and pow (3 nodes).
+      EDL gives the cheapest div (1 node), mul (7n), recip (2n), neg (6n).
+      EML is the only complete operator that supports add (11n) and sub (5n).
+
+    A pre-built BEST instance captures this optimal routing.
+
+    Usage::
+
+        from monogate.core import BEST
+
+        BEST.pow(2.0, 10.0)     # -> 1024.0   (uses pow_exl, 3 nodes)
+        BEST.div(6.0, 2.0)      # -> 3.0      (uses div_edl, 1 node)
+        BEST.add(3.0, 4.0)      # -> 7.0      (uses add_eml, 11 nodes)
+        BEST.ln(math.e)         # -> 1.0      (uses EXL.ln, 1 node, no dead zone)
+        BEST.info()             # prints routing table with node counts
+
+    Custom routing::
+
+        from monogate.core import HybridOperator, EXL, EDL, EML
+        my_op = HybridOperator({'pow': EXL, 'div': EDL, 'add': EML})
+    """
+
+    def __init__(
+        self,
+        routing: dict[str, 'Operator'],
+        name: str = "Hybrid",
+    ) -> None:
+        self.name = name
+        self._routing: dict[str, 'Operator'] = dict(routing)
+
+    def __repr__(self) -> str:
+        summary = ", ".join(
+            f"{k}->{v.name}" for k, v in sorted(self._routing.items())
+        )
+        return f"HybridOperator({self.name!r}: {summary})"
+
+    def __getattr__(self, name: str):
+        # Called only when normal lookup fails (i.e. 'name' not a real attribute).
+        routing = object.__getattribute__(self, '_routing')
+        if name in routing:
+            # Delegate to the routed Operator's attribute of the same name.
+            # E.g. BEST.pow -> getattr(EXL, 'pow') -> pow_exl via EXL.__getattr__
+            return getattr(routing[name], name)
+        raise AttributeError(
+            f"HybridOperator {self.name!r}: no routing for {name!r}. "
+            f"Available: {sorted(routing)}"
+        )
+
+    def ops(self) -> list[str]:
+        """Return sorted list of routed operation names."""
+        return sorted(self._routing.keys())
+
+    def info(self) -> None:
+        """Print routing table with operator names and node counts."""
+        print(repr(self))
+        print(f"  {'Operation':<10}  {'Operator':<8}  {'Nodes':<6}  {'vs EML-only'}")
+        print(f"  {'-'*10}  {'-'*8}  {'-'*6}  {'-'*14}")
+        for op_name in sorted(self._routing.keys()):
+            base = self._routing[op_name]
+            costs = _NODE_COSTS.get(op_name, {})
+            this_cost  = costs.get(base.name, '?')
+            eml_cost   = costs.get('EML', '?')
+            if isinstance(this_cost, int) and isinstance(eml_cost, int):
+                saving = eml_cost - this_cost
+                vs_str = f"saves {saving}n" if saving > 0 else ("same" if saving == 0 else "worse")
+            else:
+                vs_str = "?"
+            print(f"  {op_name:<10}  {base.name:<8}  {str(this_cost)+'n':<6}  {vs_str}")
+
+
+# ── BEST: pre-built optimal routing ───────────────────────────────────────────
+#
+# Routing rationale (node counts from paper + derivations):
+#   exp   -> EML (tied at 1 node; EML is reference)
+#   ln    -> EXL (1 node via exl(0,x)=ln(x); EML/EDL need 3 nodes)
+#   pow   -> EXL (3 nodes via 3-step formula; EML=15, EDL=11)
+#   mul   -> EDL (7 nodes; EML=13)
+#   div   -> EDL (1 node via edl(0,x)=exp(0)/ln(x)=1/ln(x)... actually
+#                 div_edl is 1 node; EML=15)
+#   recip -> EDL (2 nodes; EML=5)
+#   neg   -> EDL (6 nodes; EML=9)
+#   sub   -> EML (5 nodes; ONLY EML supports subtraction of arbitrary reals)
+#   add   -> EML (11 nodes; ONLY EML supports addition of arbitrary reals)
+
+BEST: HybridOperator  # forward declaration; defined after all operators are set up
+
+
+def _make_best() -> HybridOperator:
+    return HybridOperator(
+        name="BEST",
+        routing={
+            'exp':   EML,
+            'ln':    EXL,
+            'pow':   EXL,
+            'mul':   EDL,
+            'div':   EDL,
+            'recip': EDL,
+            'neg':   EDL,
+            'sub':   EML,
+            'add':   EML,
+        },
+    )
+
+
+BEST = _make_best()
