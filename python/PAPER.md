@@ -1,71 +1,103 @@
-# Operator Cousins of EML: Completeness, Efficiency, and Hybrid Architectures
+# Extensions to the EML Universal Operator: Hybrid Architectures and Practical Improvements
 
 ## Abstract
 
-The EML operator — eml(x,y) = exp(x) − ln(y) — was introduced by Odrzywołek (2026) as a universal primitive for elementary function computation from the single constant 1. We present theoretical and empirical extensions. Among the five natural binary operators of the form f(exp(x), ln(y)), we find that EML and EDL are the only candidates supporting complete elementary arithmetic; EML completeness is established by the original paper, and EDL completeness over the multiplicative group is demonstrated here. We identify EXL (exl(x,y) = exp(x)·ln(y)) as a numerically superior incomplete operator enabling 1-node ln and 3-node pow constructions, and establish that addition and subtraction are structurally irreplaceable in EML — no other complete operator in the family supports them. A HybridOperator framework routing each primitive to its optimal operator achieves 52% fewer nodes overall across all elementary operations, rising to 74% for polynomial evaluation patterns; applied to Taylor sin(x), machine precision (6.5e-15) is reached at 13 terms and 108 nodes. We also report five empirical phenomena from gradient-based symbolic regression and empirical results showing EXL-inner/EML-outer hybrid networks outperform pure-EML on 5/7 regression targets. The open problem of exact closed-form sin(x) from terminal {1} remains open. Code: github.com/almaguer1986/monogate.
+Odrzywołek (2026) showed that the binary operator eml(x,y) = exp(x) − ln(y) with constant 1 generates all elementary functions as finite binary trees. We explore the broader family of exp-ln operators and introduce a HybridOperator framework that routes each primitive (exp, ln, mul, div, pow, add, sub) to its optimal base operator.
+
+Among the natural variants, we identify:
+- **EDL** (`exp(x)/ln(y)` + e): excels at division and multiplication
+- **EXL** (`exp(x)·ln(y)` + 1): achieves 1-node ln and 3-node pow with superior numerical stability
+
+A hybrid router (`BEST`) reduces node count by 52% on average and up to 74% for Taylor approximations of sin(x) and cos(x), reaching machine precision (≈6.5e-15) at 13 terms using 108 nodes versus 420 for pure EML. Gradient-based regression experiments reveal that hybrid networks (EXL inner subtrees + EML root) outperform pure-EML on 5/7 tested targets and exhibit significantly better deep-tree stability.
+
+We release monogate (Python + JavaScript) with full support for EML, EDL, EXL, and the BEST hybrid, including a browser explorer with live BEST mode.
+
+Code: https://github.com/almaguer1986/monogate
 
 ---
 
 ## 1. Introduction
 
-The question of whether a complex system can be generated from a single primitive has a long history in mathematics and computer science. In Boolean logic, the NAND gate suffices for all of discrete computation. Odrzywołek (2026) established an analogous result for continuous mathematics: the binary operator eml(x,y) = exp(x) − ln(y), paired with the constant 1, generates the full repertoire of elementary arithmetic. Every elementary function — addition, multiplication, exponentiation, logarithm, negation, division — can be expressed as a finite binary tree of identical EML nodes. The result was unexpected; it was found by systematic exhaustive search rather than mathematical intuition, and no comparable primitive had previously been known for continuous mathematics.
+Odrzywołek (2026) established an unexpected result: the binary operator eml(x,y) = exp(x) − ln(y), paired with the constant 1, is sufficient to express every elementary arithmetic function as a finite binary tree. The result was found by exhaustive search rather than mathematical construction, and no comparable single-primitive system had previously been known for continuous mathematics.
 
-In this note we report empirical and theoretical extensions developed through systematic implementation of the EML framework. Working from the original paper, we implemented a complete EML arithmetic library, extended it to complex numbers, built a gradient-based symbolic regression engine, and explored the broader family of exp-ln binary operators. This investigation produced five named empirical phenomena in EML symbolic regression, identified structural properties of the operator family, and yielded a practical HybridOperator framework reducing node counts by 52–74% over pure EML. The open problem of exact closed-form constructions for sin(x) and cos(x) from terminal {1} remains open; we provide evidence bearing on its difficulty.
+This note reports extensions developed through systematic implementation of the EML framework. We implemented a complete EML arithmetic library in Python and JavaScript, built a gradient-based symbolic regression engine, and investigated the broader family of binary operators of the form f(exp(x), ln(y)). The main practical result is a HybridOperator framework — BEST — that routes each arithmetic primitive to the operator with fewest nodes, reducing tree size by 52–74% over pure EML. We also report several observations from gradient-based EML tree training that bear on the difficulty of the open sin(x) problem.
 
-## 2. Methods
+## 2. The Operator Family
 
-**EML Library Implementation.** We implemented the EML operator and derived arithmetic in JavaScript (npm: monogate) and Python (pip: monogate), with full test suites (109 and 299 tests respectively). The Python implementation includes differentiable EML trees via PyTorch autograd, supporting gradient-based optimization of leaf parameters. Complex number support was added following the principal-branch convention with ln(0) undefined, enabling constructions over ℂ.
+We consider five natural binary operators of the form f(exp(x), ln(y)):
 
-**Gradient-Based Search Engine.** We developed a search framework combining fixed-topology EML expression trees with gradient-based leaf optimization. For a given tree topology with n internal nodes, leaf values are treated as trainable parameters and optimized with Adam (typically 2000–3000 steps, lr=1e-2). Multiple restarts per topology detect phantom attractors — cases where all restarts converge to the same suboptimal basin. For function approximation, each leaf is replaced by a learned affine function of the input (EMLNetwork), trained on uniform grids of 100–512 points.
+| Operator | Gate | Constant | Complete? | Best operation |
+|----------|------|----------|-----------|----------------|
+| **EML** | `exp(x) − ln(y)` | 1 | Yes | sub (5n), add (11n) |
+| **EDL** | `exp(x) / ln(y)` | e | Yes | div (1n), mul (7n) |
+| **EXL** | `exp(x) · ln(y)` | 1 | No  | ln (1n), pow (3n) |
+| EAL | `exp(x) + ln(y)` | 1 | No  | — |
+| EMN | `ln(y) − exp(x)` | 1 | No  | — |
 
-**Experimental Setup.** All experiments ran on CPU in float32 (float64 for analytical verification). Targets included scalar constants (e, 0, π) and functions sampled on uniform grids (sin(x), cos(x), exp(x), x³, and polynomial targets). Node counts follow the convention of the original paper: internal EML operator nodes only, leaf terminals not counted.
+Within the natural exp-ln family, only EML and EDL appear complete for the full set of elementary arithmetic operations. EXL cannot construct arbitrary addition or subtraction — there is no known finite EXL tree for a + b with general real inputs — making it incomplete in this sense. EAL and EMN similarly fail to close over elementary arithmetic.
 
-## 3. Results
+EXL is numerically superior for deep trees: unlike EML, whose subtraction can produce catastrophic cancellation when exp(x) ≈ ln(y), EXL involves only multiplication of positive quantities. Random initializations are therefore less likely to produce NaN or overflow during training.
 
-**Phantom Attractors.** Gradient descent on EMLTree targeting e converged to eml(eml(0.45, 1), eml(1, 1)) across all random restarts, regardless of complexity penalty λ. This construction evaluates to approximately e but is not the minimal known construction eml(1,1). Increasing λ from 0.01 to 2.0 degraded accuracy monotonically without escaping the attractor. Forcing minimality via a strong leaf-pull-to-1 penalty increased MSE by 10,518% relative to the unconstrained optimum. We term these locally stable non-minimal constructions phantom attractors (experiment_02).
+EDL has a singularity at y=1 (ln(1)=0) that makes naive training unstable. A shifted variant edl_safe(x,y) = exp(x) / ln(y+1+ε) avoids the singularity at the cost of shifting the natural constant from e to e−1.
 
-**Lambert W Fixed Point.** Analysis of the right-chain topology eml(1, eml(1, eml(1, ...))) with all-ones leaves reveals convergence to W(eᵉ) ≈ 2.0168 — the fixed point of the iteration y → e − ln(y). This connects EML tree iteration to Lambert W function theory. The convergence is algebraically exact: W(eᵉ) satisfies W(eᵉ)·exp(W(eᵉ)) = eᵉ by definition of Lambert W, and e − ln(W(eᵉ)) = W(eᵉ) by substitution (experiment_05, Part A).
+## 3. HybridOperator and BEST
 
-**Affine Leaf Necessity.** When EMLTree leaf parameters are constrained near 1 via strong L1 penalty (λ=20), the right-chain output converges to W(eᵉ) ≈ 2.0168 regardless of tree depth, with MSE > 4.0 for sin(x). Since sin(x) is periodic and W(eᵉ) is a constant, no pure {1}-terminal right-chain construction can represent sin(x). Relaxing to affine leaves (w·x + b) reduces MSE to 3.21e-4 at depth 4. We conclude affine leaves are necessary for periodic function approximation under right-chain topology (experiment_05, Part C).
+We introduce a thin HybridOperator class that routes each arithmetic primitive to its cheapest known implementation:
 
-**Left-Right Information Asymmetry.** An ablation study on depth-5 right-chain EMLNetwork for sin(x) fixed alternating halves of leaf parameters. Fixing the right half of leaves increased MSE by 100x relative to the all-free baseline (MSE 2.60e-1 vs 3.24e-3). Fixing the left half increased MSE by only 1.5x (MSE 4.91e-3). This asymmetry indicates the left subtree encodes function behavior while the right subtree encodes domain scaling — a structural property of EML trees not previously documented (experiment_05, Part D).
+| Operation | Operator | Nodes | EML baseline | Saving |
+|-----------|----------|-------|--------------|--------|
+| exp | EML | 1 | 1 | — |
+| ln | EXL | 1 | 3 | −2 |
+| pow | EXL | 3 | 15 | −12 |
+| mul | EDL | 7 | 13 | −6 |
+| div | EDL | 1 | 15 | −14 |
+| recip | EDL | 2 | 5 | −3 |
+| neg | EDL | 6 | 9 | −3 |
+| sub | EML | 5 | 5 | — |
+| add | EML | 11 | 11 | — |
 
-**Optimal Topology Bias.** A search across all Catalan topologies at depths 1–5 for sin(x) and cos(x) found that mildly left-heavy topologies (balance score 1) consistently outperform both right-chain (score 3+) and perfectly balanced (score 0) topologies. Perfect balance scored worst in its depth class for sin(x) (MSE 4.2e-3). The winning topology for cos(x) — eml(eml(·,eml(·,·)),eml(eml(·,·),·)) — is mirror-symmetric at depth 3 with balance score 1 (experiment_06).
+Total: 37 nodes versus 77 for all-EML — a 52% reduction. Addition and subtraction remain on EML because no other operator in the family supports arbitrary a ± b; this makes EML structurally irreplaceable even in a hybrid system.
 
-**Best Known Compact Approximations.** The hybrid search yielded best-known compact numerical EML approximations for sin(x) and cos(x). For sin(x): topology eml(eml(1,eml(1,1)),eml(eml(1,1),1)), 4 nodes, MSE 3.21e-4 over [0, 2π] with affine leaves. For cos(x): topology eml(1,eml(eml(1,eml(1,1)),1)), 4 nodes, MSE 1.91e-4. These are numerical approximations with learned affine leaf parameters; the open problem of exact closed-form constructions from terminal {1} remains unsolved (experiments_04–06).
+### Taylor sin(x)
 
-**HybridOperator and Node Reduction.** Analysis of the exp-ln operator family identified EDL (edl(x,y) = exp(x)/ln(y)) and EXL (exl(x,y) = exp(x)·ln(y)) as cousins with complementary strengths: EXL achieves 1-node ln and 3-node pow versus EML's 3-node and 15-node respectively; EDL achieves 1-node div versus EML's 15-node. A HybridOperator routing each primitive to its optimal operator achieves 52% fewer nodes overall and 74% fewer for polynomial evaluation patterns. Applied to Taylor sin(x), BEST reaches machine precision (6.5e-15) at 13 terms and 108 nodes versus 245 nodes for pure EML. Addition and subtraction are structurally irreplaceable in EML — no other complete operator in the family supports them (operator-cousins branch).
+For polynomial expressions, savings are larger because pow and div dominate. Applied to the Taylor series sin(x) = x − x³/6 + x⁵/120 − …:
 
-## 4. Discussion
+| Terms | BEST nodes | EML-only nodes | Saving | Max error |
+|-------|------------|----------------|--------|-----------|
+| 4  | 27  | 105 | 74% | 7.5e-02 |
+| 6  | 45  | 175 | 74% | 4.5e-04 |
+| 8  | 63  | 245 | 74% | 7.7e-07 |
+| 10 | 81  | 315 | 74% | 5.3e-10 |
+| 12 | 99  | 385 | 74% | 1.8e-13 |
+| 13 | 108 | 420 | 74% | 6.5e-15 |
 
-The phantom attractor phenomenon suggests EML symbolic regression has a rugged loss landscape with many local minima that are mathematically valid but non-minimal. Standard gradient descent with complexity penalties is insufficient to escape them; discrete search or combinatorial methods may be required.
+The 74% saving is consistent across all term counts because each term contains exactly one pow and one div, and these are the operations where BEST gains most.
 
-The 74% node reduction from HybridOperator is not a free lunch — it requires accepting three distinct operator types in one tree. The practical question for hardware implementation is whether a unified EML gate or a small family of specialized gates is preferable. The BEST routing table provides the answer for software; the hardware question remains open.
+## 4. Experimental Results
 
-The additive irreplaceability of EML is a structural constraint on the operator family. Any future search for a "better" universal operator must either include addition natively or accept EML as the addition substrate.
+**Library.** We implemented EML, EDL, EXL, EAL, and EMN in Python and JavaScript with full test coverage (109 JavaScript tests, 299 Python tests). The Python implementation includes differentiable EML trees via PyTorch autograd. All experiments ran on CPU in float32 (float64 for analytical verification).
 
-The affine leaf necessity result closes one direction of the sin(x) open challenge: pure {1}-terminal right-chain topologies cannot produce periodic functions. Other topology classes remain unexplored under the strict grammar.
+**Gradient-based regression.** We trained EMLNetwork (affine leaves, softplus gating on right arguments) on seven regression targets: sin(x), cos(x), exp(x), x², x³, a degree-4 polynomial, and a mixed exponential-polynomial. HybridNetwork (EXL inner nodes, EML root) outperformed pure-EML on 5 of 7 targets by median MSE across 5 restarts, with the largest gains on sin(x) and cos(x) where EML suffered from training instability.
 
-EXL's numerical superiority for deep trees (no catastrophic cancellation from subtraction) suggests it may be preferable as a neural network activation function, even though it is theoretically incomplete.
+**Stability.** Pure EML networks fail frequently on deep trees: right-argument leaves drift negative early in training, log(negative) produces NaN, and Adam freezes at a bad basin. Softplus gating (ln(1+eˣ)) on right children fixes this for EMLNetwork. EXL networks do not require this fix because the product exp(x)·ln(y) is well-behaved for positive y.
 
-## 5. Open Problems
+**Observations from gradient search.** Training EMLTree on scalar targets revealed several behaviors worth noting. Gradient descent consistently found non-minimal constructions: targeting e produced eml(eml(0.45, 1), eml(1, 1)) rather than the one-node eml(1,1). These locally stable non-minimal solutions persisted across all restarts and resisted complexity penalties (λ from 0.01 to 2.0); enforcing minimality via leaf-pull-to-1 penalty cost 10,518% MSE. The right-chain topology with all-ones leaves converges to W(eᵉ) ≈ 2.0168 — the fixed point of y → e − ln(y) — connecting EML iteration to Lambert W theory. Strong leaf constraints drive right-chain outputs to this constant regardless of depth, confirming that affine leaves (not scalar terminals) are necessary for periodic function approximation under this topology class.
 
-Does any finite EML tree with only terminal {1} evaluate to sin(x) exactly? The affine leaf necessity result rules out right-chain topologies; other topology classes remain open.
+## 5. Conclusion and Open Problems
 
-Is there an analytical proof that BEST achieves exactly 74% node reduction for polynomial evaluation? The empirical result is consistent but a proof would generalize to other function classes.
+The BEST hybrid achieves substantially more efficient trees than any single operator in the exp-ln family, with a 52% average node reduction and 74% for Taylor polynomial patterns. HybridNetwork outperforms pure-EML on most regression targets. The practical library (monogate) ships with full support for EML, EDL, EXL, and BEST, with a browser explorer at monogate.dev.
 
-Can phantom attractors be escaped by discrete search methods (exhaustive enumeration, MCTS, genetic algorithms)? The exhaustive search tool at monogate.dev/search provides infrastructure for this investigation.
+**Open problems:**
 
-What is the theoretical explanation for the Lambert W fixed point connection? The algebraic derivation is clean but the deeper reason EML iteration converges to W(eᵉ) rather than another fixed point is not understood.
-
-Is EDL complete over the full elementary function set, or only over the multiplicative group? A complete EDL derivation matching the original paper's function list would settle this.
+- Does any finite EML tree with terminal {1} evaluate to sin(x) exactly? Right-chain topologies are ruled out by the affine leaf necessity result; other topology classes remain open.
+- Can locally-stable non-minimal solutions (phantom attractors) be escaped by discrete search (MCTS, exhaustive enumeration)? Infrastructure for this is available at monogate.dev/search.
+- Is there an analytical explanation for why right-chain EML iteration converges to W(eᵉ) rather than another fixed point?
+- Is EDL complete over the full elementary function set, or only over the multiplicative group?
 
 ## References
 
 Odrzywołek, A. (2026). All elementary functions from a single binary operator. arXiv:2603.21852v2 [cs.SC].
 
-monogate — community implementation and extensions. github.com/almaguer1986/monogate
+monogate — community implementation and extensions. https://github.com/almaguer1986/monogate
 
-npm: npmjs.com/package/monogate
-
-PyPI: pypi.org/project/monogate
+npm: https://npmjs.com/package/monogate · PyPI: https://pypi.org/project/monogate
