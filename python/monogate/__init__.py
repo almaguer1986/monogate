@@ -36,6 +36,7 @@ from .core import (
     Operator,
     EML,
     EDL,
+    EMN,
     make_exp,
     make_ln,
     exp_edl,
@@ -47,6 +48,7 @@ from .core import (
     pow_edl,
     EDL_ONE,
     EDL_NEG_ONE,
+    compare_op,
 )
 
 __version__ = "0.2.0"
@@ -69,6 +71,7 @@ __all__ = [
     "Operator",
     "EML",
     "EDL",
+    "EMN",
     "make_exp",
     "make_ln",
     "exp_edl",
@@ -80,6 +83,7 @@ __all__ = [
     "pow_edl",
     "EDL_ONE",
     "EDL_NEG_ONE",
+    "compare_op",
     "__version__",
 ]
 

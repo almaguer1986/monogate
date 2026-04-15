@@ -6,7 +6,7 @@ import pytest
 import torch
 
 from monogate.core import (
-    EDL, EML, EDL_NEG_ONE, EDL_ONE, Operator,
+    EDL, EML, EMN, EDL_NEG_ONE, EDL_ONE, Operator,
     div_edl, exp_edl, ln_edl, make_exp, make_ln, mul_edl, neg_edl, pow_edl, recip_edl,
     ln_eml, pow_eml,
 )
@@ -382,3 +382,100 @@ def test_mul_edl_chain_rel_error():
         ref    = x ** 50
         rel    = abs(result - ref) / ref
         assert rel < 1e-12, f"chain_edl({x},50) relative error {rel:.2e} exceeds 1e-12"
+
+
+# ── Operator.exp / Operator.ln methods ───────────────────────────────────────
+
+def test_operator_exp_eml():
+    assert abs(EML.exp(1 + 0j).real - math.e) < 1e-14
+
+def test_operator_ln_eml():
+    assert abs(EML.ln(math.e + 0j).real - 1.0) < 1e-10
+
+def test_operator_exp_edl():
+    assert abs(EDL.exp(1 + 0j).real - math.e) < 1e-14
+
+def test_operator_ln_edl():
+    assert abs(EDL.ln(math.e + 0j).real - 1.0) < 1e-10
+
+def test_operator_exp_emn_raises():
+    with pytest.raises(NotImplementedError):
+        EMN.exp(1 + 0j)
+
+def test_operator_ln_emn_raises():
+    with pytest.raises(NotImplementedError):
+        EMN.ln(math.e + 0j)
+
+
+# ── Operator attribute dispatch (__getattr__ / register) ─────────────────────
+
+def test_eml_mul_via_attr():
+    assert abs(EML.mul(2.0, 3.0) - 6.0) < 1e-10
+
+def test_eml_div_via_attr():
+    assert abs(EML.div(6.0, 3.0) - 2.0) < 1e-10
+
+def test_eml_pow_via_attr():
+    assert abs(EML.pow(2.0, 10.0) - 1024.0) < 1e-6
+
+def test_eml_ops_list():
+    ops = EML.ops()
+    assert 'mul' in ops
+    assert 'div' in ops
+    assert 'add' in ops
+    assert 'neg' in ops
+    assert 'pow' in ops
+    assert 'recip' in ops
+    assert 'sub' in ops
+
+def test_edl_mul_via_attr():
+    assert abs(EDL.mul(2 + 0j, 3 + 0j).real - 6.0) < 1e-10
+
+def test_edl_div_via_attr():
+    assert abs(EDL.div(6 + 0j, 2 + 0j).real - 3.0) < 1e-10
+
+def test_edl_ops_list():
+    ops = EDL.ops()
+    assert 'mul' in ops
+    assert 'div' in ops
+    assert 'recip' in ops
+
+def test_unknown_op_raises_attribute_error():
+    with pytest.raises(AttributeError, match="no registered operation"):
+        EML.nonexistent_op
+
+def test_register_custom_op():
+    EML.register('_test_identity', lambda x: x)
+    assert EML._test_identity(42.0) == 42.0
+    del EML._ops['_test_identity']  # clean up
+
+
+# ── EMN operator ─────────────────────────────────────────────────────────────
+
+def test_emn_gate_is_negated_eml():
+    # emn(x, y) = ln(y) - exp(x) = -eml(x, y)
+    from monogate.core import _emn_func, _eml_func
+    x, y = 1.5 + 0j, 2.0 + 0j
+    assert abs(_emn_func(x, y) + _eml_func(x, y)) < 1e-14
+
+def test_emn_natural_output_is_neg_exp():
+    # emn(x, 1) = ln(1) - exp(x) = -exp(x)
+    for x in [0.0, 1.0, -1.0]:
+        result = EMN.func(x + 0j, 1.0 + 0j).real
+        assert abs(result + math.exp(x)) < 1e-14
+
+def test_emn_neg_exp_registered():
+    assert abs(EMN.neg_exp(0 + 0j).real - (-1.0)) < 1e-14
+    assert abs(EMN.neg_exp(1 + 0j).real - (-math.e)) < 1e-14
+
+def test_emn_ln_shift_registered():
+    # ln_shift(y) = ln(y) - 1
+    assert abs(EMN.ln_shift(math.e + 0j).real - 0.0) < 1e-14
+    assert abs(EMN.ln_shift(1.0 + 0j).real - (-1.0)) < 1e-14
+
+def test_emn_repr():
+    assert "EMN" in repr(EMN)
+
+def test_emn_ops_list():
+    assert 'neg_exp' in EMN.ops()
+    assert 'ln_shift' in EMN.ops()

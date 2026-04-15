@@ -30,6 +30,7 @@ __all__ = [
     "Operator",
     "EML",
     "EDL",
+    "EMN",
     "make_exp",
     "make_ln",
     "exp_edl",
@@ -321,15 +322,62 @@ from typing import Callable
 
 
 class Operator:
-    """Container for a universal operator and its natural constant."""
+    """Container for a universal operator, its natural constant, and derived ops.
+
+    Usage::
+
+        EML.exp(1.0)          # exp(1) via 1-node EML tree
+        EML.mul(2.0, 3.0)     # 6.0  — after registration below
+        EDL.div(6.0, 2.0)     # 3.0
+        EML.ops()             # ['add', 'div', 'mul', 'neg', 'pow', 'recip', 'sub']
+    """
 
     def __init__(self, name: str, func: Callable, constant: complex) -> None:
         self.name = name
         self.func = func
         self.constant = constant
+        object.__setattr__(self, '_ops', {})
 
     def __repr__(self) -> str:
         return f"Operator({self.name!r}, constant={self.constant})"
+
+    # ── Built-in derived functions ─────────────────────────────────────────────
+
+    def exp(self, x: complex) -> complex:
+        """exp(x) as a 1-node tree under this operator."""
+        return make_exp(self)(x)
+
+    def ln(self, x: complex) -> complex:
+        """ln(x) as a 3-node tree under this operator."""
+        return make_ln(self)(x)
+
+    # ── Operation registry ─────────────────────────────────────────────────────
+
+    def register(self, op_name: str, func: Callable) -> None:
+        """Register a named arithmetic operation for this operator.
+
+        After registration, the function is accessible as an attribute::
+
+            EML.register('mul', mul_eml)
+            EML.mul(2, 3)   # → 6.0
+        """
+        object.__getattribute__(self, '_ops')[op_name] = func
+
+    def ops(self) -> list[str]:
+        """Return sorted list of registered operation names."""
+        return sorted(object.__getattribute__(self, '_ops'))
+
+    def __getattr__(self, name: str) -> Callable:
+        try:
+            _ops = object.__getattribute__(self, '_ops')
+        except AttributeError:
+            raise AttributeError(name)
+        if name in _ops:
+            return _ops[name]
+        raise AttributeError(
+            f"Operator {self.name!r} has no registered operation {name!r}. "
+            f"Available: {sorted(_ops)}"
+        )
 
 
 def _eml_func(x: complex, y: complex) -> complex:
@@ -346,6 +394,21 @@ def _edl_func(x: complex, y: complex) -> complex:
 
 
 EDL = Operator("EDL", _edl_func, cmath.e)
+
+
+def _emn_func(x: complex, y: complex) -> complex:
+    """emn(x, y) = ln(y) − exp(x)  =  −eml(x, y).
+
+    The "negated EML" gate.  Domain: y ≠ 0 (principal-branch ln).
+    Natural 1-node output: emn(x, 1) = −exp(x).
+    Unlike EML and EDL, EMN cannot build exp(x) > 0 as a finite real tree
+    (every node output has the form ln(·) − exp(·), which can be negative
+    or positive but can never telescope back to a bare exp).
+    """
+    return cmath.log(y) - cmath.exp(x)
+
+
+EMN = Operator("EMN", _emn_func, 1.0 + 0j)  # emn(x, 1) = −exp(x)
 
 
 # ── Derived helpers (operator-agnostic) ───────────────────────────────────────
@@ -375,7 +438,16 @@ EDL = Operator("EDL", _edl_func, cmath.e)
 #        step 3: edl(0, t)       = 1/ln(exp(1/ln(x))) = 1/(1/ln(x)) = ln(x)  ✓
 
 def make_exp(operator: Operator) -> Callable[[complex], complex]:
-    """Return a function computing exp(x) as a 1-node operator tree."""
+    """Return a function computing exp(x) as a 1-node operator tree.
+
+    Raises NotImplementedError for EMN: emn(x, 1) = −exp(x), not +exp(x).
+    No finite real EMN tree recovers the positive exponential.
+    """
+    if operator is EMN:
+        raise NotImplementedError(
+            "make_exp: EMN has no real 1-node tree for exp(x). "
+            "emn(x, 1) = −exp(x). EMN's natural primitive is negative-exp."
+        )
     c = operator.constant
     return lambda x: operator.func(x, c)
 
@@ -400,6 +472,12 @@ def make_ln(operator: Operator) -> Callable[[complex], complex]:
         # EML's ln_eml has no such overflow — it only fails at x ≤ 0.
         zero = 0j
         return lambda x: f(zero, f(f(zero, x), c))
+    if operator is EMN:
+        raise NotImplementedError(
+            "make_ln: no finite real EMN derivation for ln(x). "
+            "EMN = −EML so every emn node outputs ln(·)−exp(·); the sign structure "
+            "prevents telescoping back to a bare ln. Use EML.ln(x) or EDL.ln(x)."
+        )
     raise NotImplementedError(
         f"make_ln: no ln derivation registered for operator {operator.name!r}"
     )
@@ -561,3 +639,31 @@ def compare_op(
             print(f"  {v!s:>10} -> {result:15.8f}  (err {err:.2e})")
         except Exception as exc:
             print(f"  {v!s:>10} -> ERROR: {exc}")
+
+
+# ── Register arithmetic operations on operator instances ──────────────────────
+#
+# After registration, operations are accessible as attributes:
+#   EML.mul(2, 3)   → 6.0
+#   EDL.div(6, 2)   → 3.0
+#   EML.ops()       → ['add', 'div', 'mul', 'neg', 'pow', 'recip', 'sub']
+
+EML.register('sub',   sub_eml)
+EML.register('neg',   neg_eml)
+EML.register('add',   add_eml)
+EML.register('mul',   mul_eml)
+EML.register('div',   div_eml)
+EML.register('pow',   pow_eml)
+EML.register('recip', recip_eml)
+
+EDL.register('div',   div_edl)
+EDL.register('recip', recip_edl)
+EDL.register('neg',   neg_edl)
+EDL.register('mul',   mul_edl)
+EDL.register('pow',   pow_edl)
+EDL.register('add',   add_edl)   # raises NotImplementedError — documented
+
+# EMN: negated-EML gate.  Registers the two operations that arise naturally
+# from its 1-node and 2-node trees.
+EMN.register('neg_exp',  lambda x: _emn_func(x, 1.0 + 0j))    # −exp(x)
+EMN.register('ln_shift', lambda x: _emn_func(0j, x))           # ln(x) − 1
