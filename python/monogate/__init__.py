@@ -96,6 +96,10 @@ __all__ = [
     "__version__",
 ]
 
+from .optimize import best_optimize, optimize, OptimizeResult, OpMatch  # noqa: F401
+
+__all__ += ["best_optimize", "optimize", "OptimizeResult", "OpMatch"]
+
 from .torch_ops import edl_op_safe, EDL_SAFE_CONSTANT  # noqa: F401
 
 __all__ += ["edl_op_safe", "EDL_SAFE_CONSTANT"]
