@@ -10,7 +10,7 @@ from monogate.core import (
     div_edl, exp_edl, ln_edl, make_exp, make_ln, mul_edl, neg_edl, pow_edl, recip_edl,
     ln_eml, pow_eml, pow_exl,
 )
-from monogate.torch_ops import edl_op
+from monogate.torch_ops import edl_op, exl_op, eal_op
 
 
 # ── Operator class ────────────────────────────────────────────────────────────
@@ -715,3 +715,76 @@ def test_operators_importable_from_top():
     from monogate import ALL_OPERATORS, COMPLETE_OPERATORS, get_operator, compare_all, markdown_table
     assert len(ALL_OPERATORS) == 5
     assert len(COMPLETE_OPERATORS) == 2
+
+
+# ── exl_op / eal_op tensor operations ────────────────────────────────────────
+
+def test_exl_op_exp_identity():
+    # exl(x, e) = exp(x)*ln(e) = exp(x)
+    x = torch.tensor(1.5)
+    e = torch.tensor(math.e)
+    result = exl_op(x, e)
+    assert abs(result.item() - math.exp(1.5)) < 1e-6
+
+def test_exl_op_ln_identity():
+    # exl(0, y) = exp(0)*ln(y) = ln(y)
+    y = torch.tensor(math.e)
+    result = exl_op(torch.tensor(0.0), y)
+    assert abs(result.item() - 1.0) < 1e-6
+
+def test_exl_op_pow():
+    # exl(exl(exl(0,n), x), e) = x^n
+    x = torch.tensor(2.0)
+    n = torch.tensor(3.0)
+    e = torch.tensor(math.e)
+    step1 = exl_op(torch.tensor(0.0), n)         # ln(n)
+    step2 = exl_op(step1, x)                      # n*ln(x)
+    step3 = exl_op(step2, e)                      # exp(n*ln(x)) = x^n
+    assert abs(step3.item() - 8.0) < 1e-5
+
+def test_exl_op_gradient_flows():
+    x = torch.tensor(1.5, requires_grad=True)
+    y = torch.tensor(math.e, requires_grad=True)
+    result = exl_op(x, y)
+    result.backward()
+    # d/dx [exp(x)*ln(y)] = exp(x)*ln(y) = result
+    assert abs(x.grad.item() - result.item()) < 1e-5
+    # d/dy [exp(x)*ln(y)] = exp(x)/y
+    expected_dy = math.exp(1.5) / math.e
+    assert abs(y.grad.item() - expected_dy) < 1e-5
+
+def test_eal_op_exp_identity():
+    # eal(x, 1) = exp(x) + ln(1) = exp(x)
+    x = torch.tensor(1.5)
+    result = eal_op(x, torch.tensor(1.0))
+    assert abs(result.item() - math.exp(1.5)) < 1e-6
+
+def test_eal_op_shifted_ln():
+    # eal(0, y) = 1 + ln(y)
+    y = torch.tensor(math.e)
+    result = eal_op(torch.tensor(0.0), y)
+    assert abs(result.item() - 2.0) < 1e-6  # 1 + ln(e) = 2
+
+def test_eal_op_gradient_flows():
+    x = torch.tensor(1.0, requires_grad=True)
+    y = torch.tensor(math.e, requires_grad=True)
+    result = eal_op(x, y)
+    result.backward()
+    # d/dx = exp(x)
+    assert abs(x.grad.item() - math.e) < 1e-5
+    # d/dy = 1/y
+    assert abs(y.grad.item() - 1.0 / math.e) < 1e-5
+
+def test_exl_op_batch():
+    x = torch.tensor([0.0, 1.0, 2.0])
+    y = torch.tensor([math.e, math.e, math.e])
+    result = exl_op(x, y)
+    expected = torch.tensor([1.0, math.e, math.e**2])
+    assert torch.allclose(result, expected, atol=1e-5)
+
+def test_eal_op_batch():
+    x = torch.zeros(3)
+    y = torch.tensor([1.0, math.e, math.e**2])
+    result = eal_op(x, y)
+    expected = torch.tensor([1.0, 2.0, 3.0])
+    assert torch.allclose(result, expected, atol=1e-5)
