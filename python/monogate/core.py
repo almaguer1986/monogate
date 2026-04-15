@@ -37,6 +37,8 @@ __all__ = [
     "recip_edl",
     "neg_edl",
     "div_edl",
+    "mul_edl",
+    "pow_edl",
     "EDL_ONE",
     "EDL_NEG_ONE",
 ]
@@ -471,11 +473,60 @@ EDL_ONE:     complex = EDL.func(0j, EDL.constant)
 EDL_NEG_ONE: complex = EDL.func(0j, EDL.func(0j, EDL.func(EDL.constant, EDL.constant)))
 
 
-def pow_edl(x: complex, n: complex) -> complex:
-    """xⁿ via pure EDL — open problem.
+def mul_edl(x: complex, y: complex) -> complex:
+    """x * y expressed as a 7-node EDL tree: div_edl(x, recip_edl(y)).
 
-    EML uses: eml(mul_eml(n, ln_eml(x)), 1) = exp(n·ln(x)) = xⁿ.
-    EDL would need n·ln(x) as the left argument, but mul_edl requires
-    addition which has no known finite pure-EDL derivation.
+    Route: x * y = x / (1/y) = div_edl(x, recip_edl(y))
+
+    Proof:
+        recip_edl(y) = 1/y  (2-node EDL)
+        div_edl(x, 1/y) = edl(ln(x), exp(1/y)) = exp(ln(x)) / ln(exp(1/y))
+                        = x / (1/y) = x·y  ∎
+
+    Domain: x > 0, x ≠ 1  (ln_edl domain);  y ≠ 0  (recip_edl domain)
+    Nodes: 7  (vs EML's mul_eml: 13 nodes)
     """
-    raise NotImplementedError("pow_edl: requires mul_edl which has no known finite pure-EDL form")
+    return div_edl(x, recip_edl(y))
+
+
+def add_edl(x: complex, y: complex) -> complex:
+    """x + y via pure EDL — NOT POSSIBLE in finite trees over the reals.
+
+    EDL's primitive is division in the lifted space.  From that:
+        mul_edl  reachable:  x * y = div_edl(x, recip_edl(y))
+        add_edl  unreachable: no finite composition of (exp, ln, /)
+                              can produce a general sum of two values.
+
+    The intuition: every EDL node output is exp(a)/ln(b).  Its sign is
+    determined entirely by b (sign of ln(b)), and its magnitude by a.
+    Two independent magnitudes cannot be summed through this structure.
+
+    EML can reach addition because its primitive is subtraction, and
+    sub(x, neg(y)) = x + y.  EDL has no negation that works on arbitrary
+    reals (ln_edl is undefined at x=1), so the chain breaks.
+
+    EDL is complete over the multiplicative group of positive reals
+    (div → recip → mul → pow), but addition is outside that group.
+    """
+    raise NotImplementedError(
+        "add_edl: no finite pure-EDL formula exists for general addition. "
+        "EDL is complete over the multiplicative group (div/mul/pow) but "
+        "addition requires stepping outside that structure."
+    )
+
+
+def pow_edl(x: complex, n: float) -> complex:
+    """xⁿ — reachable now that mul_edl exists.
+
+    Route: xⁿ = exp(n · ln(x)).  With EDL we need n · ln(x) as the LEFT
+    argument of edl(..., e).  We have mul_edl, so:
+
+        n · ln(x) = mul_edl(n, ln_edl(x))
+        xⁿ        = exp_edl(mul_edl(n, ln_edl(x)))
+                  = edl(mul_edl(n, ln_edl(x)), e)
+
+    Domain: x > 0, x ≠ 1  (ln_edl);  n ≠ 0, n ≠ 1  (mul_edl chain)
+    Note: n is a Python float here, not an EDL expression — see docstring
+    for the pure-EDL path once we have a way to represent n as a tree.
+    """
+    return exp_edl(mul_edl(complex(n), ln_edl(x)))

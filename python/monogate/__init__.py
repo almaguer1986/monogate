@@ -43,6 +43,8 @@ from .core import (
     recip_edl,
     neg_edl,
     div_edl,
+    mul_edl,
+    pow_edl,
     EDL_ONE,
     EDL_NEG_ONE,
 )
@@ -74,6 +76,8 @@ __all__ = [
     "recip_edl",
     "neg_edl",
     "div_edl",
+    "mul_edl",
+    "pow_edl",
     "EDL_ONE",
     "EDL_NEG_ONE",
     "__version__",

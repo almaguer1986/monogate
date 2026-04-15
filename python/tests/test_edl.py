@@ -7,7 +7,7 @@ import torch
 
 from monogate.core import (
     EDL, EML, EDL_NEG_ONE, EDL_ONE, Operator,
-    div_edl, exp_edl, ln_edl, make_exp, make_ln, neg_edl, recip_edl,
+    div_edl, exp_edl, ln_edl, make_exp, make_ln, mul_edl, neg_edl, pow_edl, recip_edl,
 )
 from monogate.torch_ops import edl_op
 
@@ -265,3 +265,59 @@ def test_edl_neg_one_via_neg_edl():
     import pytest
     with pytest.raises(ValueError, match="EDL domain error"):
         neg_edl(EDL_ONE)
+
+
+# ── mul_edl ───────────────────────────────────────────────────────────────────
+
+def test_mul_edl_integers():
+    assert abs(mul_edl(3 + 0j, 4 + 0j) - 12) < 1e-10
+    assert abs(mul_edl(2 + 0j, 5 + 0j) - 10) < 1e-10
+
+
+def test_mul_edl_fractions():
+    assert abs(mul_edl(6 + 0j, 0.5 + 0j) - 3.0) < 1e-10
+    assert abs(mul_edl(2.5 + 0j, 4.0 + 0j) - 10.0) < 1e-10
+
+
+def test_mul_edl_identity():
+    # x * 1 = x  (but x=1 is a domain hole for ln_edl, so test x=e)
+    assert abs(mul_edl(math.e + 0j, 1.0 + 0j) - math.e) < 1e-10
+
+
+def test_mul_edl_commutative():
+    for x, y in [(3, 4), (2.5, 1.5), (7, 0.2)]:
+        assert abs(mul_edl(complex(x), complex(y)) - mul_edl(complex(y), complex(x))) < 1e-10
+
+
+def test_mul_edl_consistent_with_div():
+    # x * y / y = x
+    for x, y in [(6, 3), (5, 2), (10, 4)]:
+        product = mul_edl(complex(x), complex(y))
+        back = div_edl(product, complex(y))
+        assert abs(back - x) < 1e-9, f"round-trip failed: x={x}, y={y}"
+
+
+# ── pow_edl ───────────────────────────────────────────────────────────────────
+
+def test_pow_edl_square():
+    assert abs(pow_edl(3 + 0j, 2) - 9) < 1e-9
+    assert abs(pow_edl(4 + 0j, 2) - 16) < 1e-9
+
+
+def test_pow_edl_half():
+    assert abs(pow_edl(9 + 0j, 0.5) - 3) < 1e-9
+    assert abs(pow_edl(4 + 0j, 0.5) - 2) < 1e-9
+
+
+def test_pow_edl_matches_math():
+    for x, n in [(2, 10), (3, 3), (5, 0.5), (math.e, 2)]:
+        result = pow_edl(complex(x), n)
+        assert abs(result - x**n) < 1e-8, f"pow_edl({x},{n})={result}, expected {x**n}"
+
+
+# ── add_edl not possible ──────────────────────────────────────────────────────
+
+def test_add_edl_raises():
+    from monogate.core import add_edl
+    with pytest.raises(NotImplementedError):
+        add_edl(3 + 0j, 4 + 0j)
