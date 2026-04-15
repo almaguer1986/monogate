@@ -35,6 +35,10 @@ from .core import E as _E, NEG_ONE as _NEG_ONE, ZERO as _ZERO  # noqa: F401
 
 __all__ = [
     "op",
+    "edl_op",
+    "edl_op_safe",
+    "exl_op",
+    "eal_op",
     "exp_eml",
     "ln_eml",
     "sub_eml",
@@ -54,6 +58,43 @@ _EPS = 1e-38  # clamp floor for log-domain inputs
 def op(x: Tensor, y: Tensor) -> Tensor:
     """eml(x, y) = exp(x) − ln(y).  Domain: y > 0 element-wise."""
     return torch.exp(x) - torch.log(y)
+
+
+def edl_op(x: Tensor, y: Tensor) -> Tensor:
+    """edl(x, y) = exp(x) / ln(y).  Domain: y > 0, y != 1 element-wise."""
+    return torch.exp(x) / torch.log(y)
+
+
+def edl_op_safe(x: Tensor, y: Tensor) -> Tensor:
+    """EDL gate safe for training from softplus output.
+
+    When y comes from softplus (range (0, inf)), adding 1 shifts it to
+    (1, inf), guaranteeing ln(y_safe) > 0 and bounded away from 0.
+    This eliminates the division-by-zero that kills plain edl_op when
+    softplus outputs land near 1 (the dead zone) early in training.
+
+    Natural constant: effective c = e - 1, since ln((e-1)+1) = ln(e) = 1
+    => edl_safe(x, e-1) = exp(x) / 1 = exp(x).
+
+    Note: use EDL_SAFE_CONSTANT (= e - 1) as the right-argument constant
+    anywhere you would use cmath.e with plain EDL.
+    """
+    y_safe = y + 1.0 + 1e-6
+    return torch.exp(x) / torch.log(y_safe)
+
+
+# Natural constant for edl_op_safe (replaces cmath.e)
+EDL_SAFE_CONSTANT: float = 2.718281828459045 - 1.0  # e - 1
+
+
+def exl_op(x: Tensor, y: Tensor) -> Tensor:
+    """exl(x, y) = exp(x) * ln(y).  Domain: y > 0 element-wise."""
+    return torch.exp(x) * torch.log(y)
+
+
+def eal_op(x: Tensor, y: Tensor) -> Tensor:
+    """eal(x, y) = exp(x) + ln(y).  Domain: y > 0 element-wise."""
+    return torch.exp(x) + torch.log(y)
 
 
 # ── Elementary functions ──────────────────────────────────────────────────────

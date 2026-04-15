@@ -79,12 +79,67 @@ The **depth** ranking of elementary functions by EML tree depth is new to mathem
 
 An array of `{ name, emlForm, nodes, depth, status }` records — useful for building explorers or documentation.
 
+## Operator family
+
+EML is not the only universal operator of this form. We have characterised a
+family of related gates and compared them systematically:
+
+| Operator | Gate | Constant | Complete? | Best operation |
+|----------|------|----------|-----------|----------------|
+| **EML** | `exp(x) − ln(y)` | 1 | Yes | sub (5n), add (11n) |
+| **EDL** | `exp(x) / ln(y)` | e | Yes | div (1n), mul (7n), recip (2n) |
+| **EXL** | `exp(x) × ln(y)` | e | No  | ln (1n), pow (3n) |
+| EAL | `exp(x) + ln(y)` | 1 | No  | exp (1n) |
+| EMN | `ln(y) − exp(x)` | 1 | No  | — |
+
+**EML and EDL are the only complete operators** — they can each build all
+elementary arithmetic. EXL is incomplete (cannot add arbitrary reals) but gives
+the cheapest ln and pow.
+
+### BEST: optimal per-operation routing
+
+`BEST` is a pre-built hybrid that picks the cheapest known operator for each
+operation:
+
+| Operation | Routed to | Nodes | EML baseline | Saving |
+|-----------|-----------|-------|--------------|--------|
+| exp | EML | 1 | 1 | same |
+| ln | EXL | 1 | 3 | −2 |
+| pow | EXL | 3 | 15 | −12 |
+| mul | EDL | 7 | 13 | −6 |
+| div | EDL | 1 | 15 | −14 |
+| recip | EDL | 2 | 5 | −3 |
+| neg | EDL | 6 | 9 | −3 |
+| sub | EML | 5 | 5 | same |
+| add | EML | 11 | 11 | same |
+
+Total routing overhead: **37 nodes** vs 77 nodes all-EML — **52% fewer nodes**.
+
+```python
+from monogate import BEST
+BEST.pow(2.0, 10.0)   # 1024.0  (uses pow_exl, 3 nodes)
+BEST.div(6.0, 2.0)    # 3.0     (uses div_edl, 1 node)
+BEST.add(3.0, 4.0)    # 7.0     (uses add_eml, 11 nodes)
+BEST.benchmark()      # prints node-count table + accuracy checks
+```
+
+### sin(x) via Taylor series
+
+Using BEST routing, sin(x) = x − x³/3! + x⁵/5! − … can be computed with
+**63 nodes** at 8 terms (max error 7.7 × 10⁻⁷) vs **245 nodes** all-EML — a
+74% saving. Machine precision (~6.5 × 10⁻¹⁵) is reached at 13 terms (108 nodes
+BEST vs 420 nodes EML-only).
+
+The additive steps (sub_eml / add_eml) are the irreducible EML-only cost — no
+cousin operator currently supports arbitrary a ± b. This makes EML structurally
+essential even when other operators are cheaper for individual operations.
+
 ## Open challenges
 
-These functions have no known EML construction:
+These functions have no known **closed-form EML construction** (exact formula, not Taylor series):
 
-- **sin x** — no construction found
-- **cos x** — no construction found
+- **sin x** — Taylor via BEST routing works numerically; exact closed-form unknown
+- **cos x** — same status as sin x
 - **π** — no construction as a closed EML expression
 - **i** (√−1) — open under strict principal-branch grammar. Under the extended-reals convention (`ln(0) = −∞`), i is constructible from `{1}` alone in K=75 nodes ([pveierland/eml-eval](https://github.com/pveierland/eml-eval)). These are different grammars, not contradictory results.
 

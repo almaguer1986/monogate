@@ -33,6 +33,26 @@ from .core import (
     pow_eml,
     recip_eml,
     IDENTITIES,
+    Operator,
+    HybridOperator,
+    BEST,
+    EML,
+    EDL,
+    EMN,
+    EXL,
+    EAL,
+    make_exp,
+    make_ln,
+    exp_edl,
+    ln_edl,
+    recip_edl,
+    neg_edl,
+    div_edl,
+    mul_edl,
+    pow_edl,
+    EDL_ONE,
+    EDL_NEG_ONE,
+    compare_op,
 )
 
 __version__ = "0.2.0"
@@ -52,12 +72,53 @@ __all__ = [
     "pow_eml",
     "recip_eml",
     "IDENTITIES",
+    "Operator",
+    "HybridOperator",
+    "BEST",
+    "EML",
+    "EDL",
+    "EMN",
+    "make_exp",
+    "make_ln",
+    "exp_edl",
+    "ln_edl",
+    "recip_edl",
+    "neg_edl",
+    "div_edl",
+    "mul_edl",
+    "pow_edl",
+    "EDL_ONE",
+    "EDL_NEG_ONE",
+    "EXL",
+    "EAL",
+    "pow_exl",
+    "compare_op",
     "__version__",
 ]
 
-try:
-    from .network import EMLTree, EMLNetwork, fit  # noqa: F401
+from .torch_ops import edl_op_safe, EDL_SAFE_CONSTANT  # noqa: F401
 
-    __all__ += ["EMLTree", "EMLNetwork", "fit"]
+__all__ += ["edl_op_safe", "EDL_SAFE_CONSTANT"]
+
+from .operators import (
+    ALL_OPERATORS,
+    COMPLETE_OPERATORS,
+    get_operator,
+    compare_all,
+    markdown_table,
+)
+
+__all__ += [
+    "ALL_OPERATORS",
+    "COMPLETE_OPERATORS",
+    "get_operator",
+    "compare_all",
+    "markdown_table",
+]
+
+try:
+    from .network import EMLTree, EMLNetwork, HybridNetwork, fit  # noqa: F401
+
+    __all__ += ["EMLTree", "EMLNetwork", "HybridNetwork", "fit"]
 except ImportError:
     pass  # torch not installed — network classes unavailable

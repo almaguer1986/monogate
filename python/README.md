@@ -65,6 +65,90 @@ for row in IDENTITIES:
 
 ---
 
+## Operator family (`monogate.core`)
+
+Beyond EML, the package ships four cousin operators and a hybrid routing system.
+
+### Named operators
+
+```python
+from monogate import EML, EDL, EXL, EAL, EMN
+
+# Each Operator wraps its gate function and natural constant
+EML.name        # "EML"
+EML.constant    # 1.0+0j  (ln(1) = 0 → eml(x,1) = exp(x))
+EDL.constant    # e       (ln(e) = 1 → edl(x,e) = exp(x))
+
+# Derived operations via __getattr__ dispatch
+EML.pow(2.0, 10.0)   # 1024.0  (15-node formula)
+EDL.div(10.0, 2.0)   # 5.0     (1-node formula)
+EXL.ln(math.e)       # 1.0     (1-node formula — no dead zone)
+EXL.pow(2.0, 8.0)    # 256.0   (3-node formula)
+
+# Summary table
+EML.info()   # prints gate, constant, all derived-function node counts
+```
+
+| Operator | Gate | Complete? | Cheapest operation |
+|----------|------|-----------|-------------------|
+| **EML** | `exp(x) − ln(y)` | Yes | sub (5n), add (11n) |
+| **EDL** | `exp(x) / ln(y)` | Yes | div (1n), mul (7n) |
+| **EXL** | `exp(x) × ln(y)` | No  | ln (1n), pow (3n)  |
+| EAL     | `exp(x) + ln(y)` | No  | — |
+| EMN     | `ln(y) − exp(x)` | No  | — |
+
+### Operator registry
+
+```python
+from monogate import ALL_OPERATORS, COMPLETE_OPERATORS, get_operator, compare_all, markdown_table
+
+ALL_OPERATORS       # [EML, EDL, EXL, EAL, EMN]
+COMPLETE_OPERATORS  # [EML, EDL]  — can build all elementary arithmetic
+
+op = get_operator("EXL")      # look up by name
+compare_all()                  # print side-by-side comparison table
+print(markdown_table())        # GFM table string for docs/wikis
+```
+
+### BEST: optimal per-operation routing
+
+`BEST` is a pre-built `HybridOperator` that routes each operation to whichever
+base operator costs fewest nodes:
+
+```python
+from monogate import BEST, HybridOperator
+
+BEST.pow(2.0, 10.0)   # 1024.0  (EXL, 3 nodes vs EML's 15)
+BEST.div(6.0, 2.0)    # 3.0     (EDL, 1 node  vs EML's 15)
+BEST.ln(math.e)       # 1.0     (EXL, 1 node  vs EML's 3)
+BEST.add(3.0, 4.0)    # 7.0     (EML, 11 nodes — EML only)
+
+# Routing summary + accuracy spot-checks
+BEST.info()
+
+# Full benchmark: node counts + accuracy + optional neural regression
+BEST.benchmark()
+BEST.benchmark(targets=["sin", "cos", "x**3", "poly4"], restarts=3, steps=800)
+```
+
+`BEST.benchmark()` prints three tables:
+
+1. **Node counts** — each routed operation vs EML-only baseline with savings
+2. **Numerical accuracy** — spot-checks for exp, ln, pow, mul, div, add, sub
+3. **Neural regression** — optional; median/min MSE + convergence rate per target
+
+Build a custom routing:
+
+```python
+from monogate import HybridOperator, EXL, EDL, EML
+
+fast_pow = HybridOperator({'pow': EXL, 'div': EDL, 'add': EML}, name="FastPow")
+fast_pow.pow(3.0, 4.0)   # 81.0  (3 nodes)
+fast_pow.info()
+```
+
+---
+
 ## PyTorch API (`monogate.torch_ops`)
 
 Requires `torch`. All functions accept and return `Tensor` objects and are
@@ -137,6 +221,34 @@ losses = fit(model, x=x, y=y, steps=3000, lr=1e-2)
 print(model.formula())   # eml(eml((w·x0+b), …), …)
 ```
 
+### `HybridNetwork` — EXL inner + EML outer
+
+Composes two different operators in one network: EXL sub-trees for the inner
+nodes (3-node pow, 1-node ln, numerically stable at deep random init) and an
+EML root node for the final additive step.  Wins 5/7 targets on the operator
+zoo leaderboard.
+
+```python
+from monogate.network import HybridNetwork, fit
+import torch
+
+x = torch.linspace(-3.14, 3.14, 256).unsqueeze(1)
+y = torch.sin(x.squeeze())
+
+model = HybridNetwork(in_features=1, depth=3)
+losses = fit(model, x=x, y=y, steps=2000, lr=3e-3)
+```
+
+Custom inner/outer operators:
+
+```python
+from monogate.torch_ops import eal_op
+from monogate.network import HybridNetwork, EMLNetwork
+
+# EAL inner nodes + default EML root
+model = HybridNetwork(in_features=1, depth=3, inner_op=eal_op)
+```
+
 ### `fit()` signature
 
 ```python
@@ -172,6 +284,47 @@ pytest tests/ -v
 
 ---
 
+## PyTorch operator functions
+
+```python
+from monogate.torch_ops import (
+    op,            # EML gate: exp(x) − ln(y)
+    edl_op,        # EDL gate: exp(x) / ln(y)   (raw — avoid y near 1)
+    edl_op_safe,   # EDL gate with y+1 shift     (safe for training)
+    exl_op,        # EXL gate: exp(x) * ln(y)
+    eal_op,        # EAL gate: exp(x) + ln(y)
+    EDL_SAFE_CONSTANT,  # e−1 ≈ 1.718   (natural constant for edl_op_safe)
+)
+```
+
+Pass any of these as `op_func` to `EMLNetwork`:
+
+```python
+from monogate.network import EMLNetwork
+from monogate.torch_ops import exl_op
+
+model = EMLNetwork(in_features=1, depth=3, op_func=exl_op)
+```
+
+## sin(x) via Taylor series
+
+Using BEST routing, sin(x) can be constructed symbolically with dramatically
+fewer nodes than all-EML:
+
+| Terms | Nodes (BEST) | Nodes (EML-only) | Saving | max error |
+|-------|-------------|-----------------|--------|-----------|
+| 4     | 27          | 105             | 74%    | 7.5e-02   |
+| 6     | 45          | 175             | 74%    | 4.5e-04   |
+| 8     | 63          | 245             | 74%    | 7.7e-07   |
+| 10    | 81          | 315             | 74%    | 5.3e-10   |
+| 12    | 99          | 385             | 74%    | 1.8e-13   |
+
+Key: `pow_exl` (3 nodes) replaces `pow_eml` (15 nodes); `div_edl` (1 node)
+replaces `div_eml` (15 nodes).  The additive steps `sub_eml`/`add_eml` (5/11n)
+are irreducible — no cousin operator supports arbitrary a ± b.
+
+See `python/notebooks/sin_best.py` for the full analysis.
+
 ## Package structure
 
 ```
@@ -180,10 +333,18 @@ python/
 ├── README.md
 └── monogate/
     ├── __init__.py      # public API, lazy torch import
-    ├── core.py          # pure Python, no dependencies
+    ├── core.py          # pure Python: op, EML/EDL/EXL/EAL/EMN, HybridOperator, BEST
+    ├── operators.py     # registry: ALL_OPERATORS, compare_all, markdown_table
     ├── torch_ops.py     # differentiable tensor ops (requires torch)
-    └── network.py       # EMLTree, EMLNetwork, fit (requires torch)
+    └── network.py       # EMLTree, EMLNetwork, HybridNetwork, fit (requires torch)
 tests/
 ├── test_core.py
-└── test_torch.py
+├── test_torch.py
+└── test_edl.py          # 154 tests for operator family + HybridOperator + BEST
+notebooks/
+├── operators_study_v2.py   # algebraic derivations for all 5 operators
+├── operator_zoo.py         # 5-operator × 7-target leaderboard
+├── sin_construction.py     # Taylor sin(x) — 4 sections
+├── sin_best.py             # Deeper sin(x) analysis — 20 terms, node Pareto
+└── regression_comparison.py
 ```
