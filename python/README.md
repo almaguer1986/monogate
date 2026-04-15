@@ -325,6 +325,70 @@ are irreducible — no cousin operator supports arbitrary a ± b.
 
 See `python/notebooks/sin_best.py` for the full analysis.
 
+---
+
+## Code optimizer (`monogate.optimize`)
+
+`best_optimize` rewrites Python expressions and functions to use BEST-mode
+routing, reports per-operation node savings, and annotates decorated functions
+with their rewritten source.
+
+### Expression strings
+
+```python
+from monogate import best_optimize
+
+r = best_optimize("sin(x)**2 + ln(x+1)")
+print(r)
+# ┌─────────────────────────────────────────────────────────────────┐
+# │  sin(x)**2 + ln(x+1)  →  BEST-mode optimisation report         │
+# ├──────────┬───────┬────────────┬──────────┬──────────────────────┤
+# │  op      │ count │ BEST nodes │ EML nodes│ best_op              │
+# ├──────────┼───────┼────────────┼──────────┼──────────────────────┤
+# │  sin     │   1   │       63   │      245 │ BEST (EXL+EDL)       │
+# │  pow     │   1   │        3   │       15 │ EXL                  │
+# │  ln      │   1   │        1   │        3 │ EXL                  │
+# │  add     │   1   │       11   │       11 │ EML                  │
+# ├──────────┼───────┼────────────┼──────────┼──────────────────────┤
+# │  TOTAL   │   4   │       78   │      274 │ −72%                 │
+# └──────────┴───────┴────────────┴──────────┴──────────────────────┘
+
+r.rewritten_code   # "BEST.pow(BEST.sin(x), 2) + BEST.ln(x + 1)"
+r.savings_pct      # 72
+r["message"]       # dict-style access also supported
+```
+
+### Decorator
+
+```python
+from monogate import best_optimize
+import math
+
+@best_optimize
+def my_func(x):
+    return math.sin(x) ** 2 + math.log(x + 1)
+
+my_func.best_info.savings_pct          # e.g. 72
+my_func._best_rewritten_source         # "BEST.pow(BEST.sin(x), 2) + ..."
+my_func._is_best_optimized             # True
+```
+
+`@best_optimize()` (with parentheses) also works.
+
+### `OptimizeResult` fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `ops` | `tuple[OpMatch, …]` | per-operation breakdown |
+| `total_best_nodes` | `int` | total nodes under BEST routing |
+| `total_eml_nodes` | `int` | total nodes under pure EML |
+| `savings_pct` | `int` | integer % reduction |
+| `rewritten_code` | `str` | AST-rewritten source using `BEST.*` |
+| `python_snippet` | `str` | runnable snippet with imports |
+| `message` | `str` | one-line summary |
+
+---
+
 ## Package structure
 
 ```
@@ -335,12 +399,14 @@ python/
     ├── __init__.py      # public API, lazy torch import
     ├── core.py          # pure Python: op, EML/EDL/EXL/EAL/EMN, HybridOperator, BEST
     ├── operators.py     # registry: ALL_OPERATORS, compare_all, markdown_table
+    ├── optimize.py      # best_optimize(), OptimizeResult, OpMatch, BestRewriter
     ├── torch_ops.py     # differentiable tensor ops (requires torch)
     └── network.py       # EMLTree, EMLNetwork, HybridNetwork, fit (requires torch)
 tests/
 ├── test_core.py
 ├── test_torch.py
-└── test_edl.py          # 154 tests for operator family + HybridOperator + BEST
+├── test_edl.py          # 154 tests for operator family + HybridOperator + BEST
+└── test_optimize.py     # 80 tests for best_optimize, OptimizeResult, BestRewriter
 notebooks/
 ├── operators_study_v2.py   # algebraic derivations for all 5 operators
 ├── operator_zoo.py         # 5-operator × 7-target leaderboard

@@ -10,7 +10,7 @@ We highlight two particularly useful variants:
 
 The `BEST` router reduces node count by 52% on average and up to 74% for Taylor approximations of `sin(x)` and `cos(x)`. It reaches machine precision (≈6.5×10⁻¹⁵) at 13 terms using 108 nodes, compared to 420 nodes for pure EML. Hybrid networks (EXL-heavy inner subtrees with an EML root) also outperform pure EML on 5 of 7 regression targets and exhibit significantly better training stability.
 
-We release **monogate** (Python + JavaScript) with full support for EML, EDL, EXL, and the `BEST` hybrid, including a browser explorer with live BEST mode.
+We release **monogate** (Python + JavaScript) with full support for EML, EDL, EXL, and the `BEST` hybrid, including a browser explorer with live BEST mode, an interactive code optimizer tab, and a `best_optimize()` Python API for annotating and rewriting functions.
 
 **Code:** https://github.com/almaguer1986/monogate
 
@@ -63,7 +63,7 @@ Overall: 37 nodes vs 77 for pure EML (52% reduction). For Taylor series of `sin(
 
 ## 4. Experimental Results
 
-The operator family was implemented in Python (`pip install monogate`) and JavaScript (`npm install monogate`), with 299 and 109 passing tests respectively. The Python version includes differentiable trees via PyTorch autograd.
+The operator family was implemented in Python (`pip install monogate`) and JavaScript (`npm install monogate`), with 314 and 109 passing tests respectively. The Python version includes differentiable trees via PyTorch autograd and a `best_optimize()` utility that rewrites arbitrary Python expressions and decorated functions to use BEST-mode routing, reporting per-operation node savings and generating AST-rewritten source snippets.
 
 Hybrid networks (EXL-heavy inner structure with EML root) outperformed pure EML on 5 of 7 regression targets (including `sin(x)` and `cos(x)`) and showed markedly better deep-tree stability. Pure EML networks frequently encounter NaN during training due to negative arguments to `ln`; EXL avoids this issue naturally.
 
