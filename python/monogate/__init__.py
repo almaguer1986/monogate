@@ -92,6 +92,22 @@ __all__ = [
     "__version__",
 ]
 
+from .operators import (
+    ALL_OPERATORS,
+    COMPLETE_OPERATORS,
+    get_operator,
+    compare_all,
+    markdown_table,
+)
+
+__all__ += [
+    "ALL_OPERATORS",
+    "COMPLETE_OPERATORS",
+    "get_operator",
+    "compare_all",
+    "markdown_table",
+]
+
 try:
     from .network import EMLTree, EMLNetwork, fit  # noqa: F401
 

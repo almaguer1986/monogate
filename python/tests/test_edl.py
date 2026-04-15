@@ -571,3 +571,147 @@ def test_eal_ops_list_empty():
 
 def test_eal_repr():
     assert "EAL" in repr(EAL)
+
+
+# ── Operator.benchmark() ─────────────────────────────────────────────────────
+
+def test_benchmark_eml_returns_dict():
+    bm = EML.benchmark()
+    assert isinstance(bm, dict)
+    assert 'exp_max_err' in bm
+    assert 'ln_max_err' in bm
+    assert 'complete' in bm
+
+def test_benchmark_eml_accuracy():
+    bm = EML.benchmark()
+    assert bm['exp_max_err'] < 1e-12
+    assert bm['ln_max_err'] < 1e-12
+    assert bm['complete'] is True
+
+def test_benchmark_edl_accuracy():
+    bm = EDL.benchmark()
+    assert bm['exp_max_err'] < 1e-12
+    assert bm['ln_max_err'] < 1e-12
+    assert bm['complete'] is True
+
+def test_benchmark_exl_exp_ok_ln_ok():
+    bm = EXL.benchmark()
+    assert bm['exp_max_err'] < 1e-12
+    assert bm['ln_max_err'] < 1e-12  # EXL has 1-node ln
+    assert bm['complete'] is False
+
+def test_benchmark_emn_exp_and_ln_none():
+    bm = EMN.benchmark()
+    assert bm['exp_max_err'] is None
+    assert bm['ln_max_err'] is None
+    assert bm['complete'] is False
+
+def test_benchmark_eal_ln_none():
+    bm = EAL.benchmark()
+    assert bm['exp_max_err'] < 1e-12  # EAL has 1-node exp
+    assert bm['ln_max_err'] is None
+    assert bm['complete'] is False
+
+def test_benchmark_ops_list():
+    bm = EML.benchmark()
+    assert 'mul' in bm['ops']
+    assert 'div' in bm['ops']
+
+
+# ── Operator.info() ──────────────────────────────────────────────────────────
+
+def test_info_eml_prints(capsys):
+    EML.info()
+    out = capsys.readouterr().out
+    assert "EML" in out
+    assert "exp(x) - ln(y)" in out
+    assert "YES" in out  # Complete
+
+def test_info_edl_prints(capsys):
+    EDL.info()
+    out = capsys.readouterr().out
+    assert "EDL" in out
+    assert "Complete" in out
+
+def test_info_exl_not_complete(capsys):
+    EXL.info()
+    out = capsys.readouterr().out
+    assert "NO" in out
+
+def test_info_emn_na(capsys):
+    EMN.info()
+    out = capsys.readouterr().out
+    assert "EMN" in out
+    assert "N/A" in out  # exp/ln both unavailable
+
+
+# ── operators.py module ──────────────────────────────────────────────────────
+
+def test_all_operators_list():
+    from monogate.operators import ALL_OPERATORS
+    names = [o.name for o in ALL_OPERATORS]
+    assert "EML" in names
+    assert "EDL" in names
+    assert "EXL" in names
+    assert "EAL" in names
+    assert "EMN" in names
+
+def test_complete_operators_list():
+    from monogate.operators import COMPLETE_OPERATORS
+    names = [o.name for o in COMPLETE_OPERATORS]
+    assert "EML" in names
+    assert "EDL" in names
+    assert "EXL" not in names
+    assert "EMN" not in names
+
+def test_get_operator_eml():
+    from monogate.operators import get_operator
+    op = get_operator("EML")
+    assert op.name == "EML"
+
+def test_get_operator_unknown_raises():
+    from monogate.operators import get_operator
+    with pytest.raises(KeyError, match="Unknown operator"):
+        get_operator("UNKNOWN")
+
+def test_compare_all_runs(capsys):
+    from monogate.operators import compare_all
+    compare_all()
+    out = capsys.readouterr().out
+    assert "EML" in out
+    assert "EDL" in out
+    assert "exp(x)" in out
+
+def test_compare_all_custom_operators(capsys):
+    from monogate.operators import compare_all
+    compare_all([EML, EDL])
+    out = capsys.readouterr().out
+    assert "EML" in out
+    assert "EDL" in out
+    assert "EXL" not in out
+
+def test_markdown_table_returns_string():
+    from monogate.operators import markdown_table
+    md = markdown_table()
+    assert isinstance(md, str)
+    assert "| Function |" in md
+    assert "EML" in md
+    assert "EDL" in md
+
+def test_markdown_table_has_complete_row():
+    from monogate.operators import markdown_table
+    md = markdown_table()
+    assert "Complete?" in md
+    assert "**YES**" in md
+
+def test_markdown_table_custom_operators():
+    from monogate.operators import markdown_table
+    md = markdown_table([EML, EDL])
+    assert "EML" in md
+    assert "EDL" in md
+    assert "EXL" not in md
+
+def test_operators_importable_from_top():
+    from monogate import ALL_OPERATORS, COMPLETE_OPERATORS, get_operator, compare_all, markdown_table
+    assert len(ALL_OPERATORS) == 5
+    assert len(COMPLETE_OPERATORS) == 2
