@@ -41,6 +41,7 @@ __all__ = [
     "pow_edl",
     "EDL_ONE",
     "EDL_NEG_ONE",
+    "compare_op",
 ]
 
 
@@ -392,6 +393,11 @@ def make_ln(operator: Operator) -> Callable[[complex], complex]:
         return lambda x: f(c, f(f(c, x), c))
     if operator is EDL:
         # left-neutral 0; right-neutral e (the constant)
+        # Formula: edl(0, edl(edl(0, x), e))
+        # Overflow dead zone: step 2 computes exp(1/ln(x)).  When x is close
+        # to 1, ln(x) → 0 so 1/ln(x) → ±∞ and exp blows up.
+        # Practical limit: |ln(x)| > 1/709 ≈ 0.00141, i.e. x ∉ (0.9986, 1.0014).
+        # EML's ln_eml has no such overflow — it only fails at x ≤ 0.
         zero = 0j
         return lambda x: f(zero, f(f(zero, x), c))
     raise NotImplementedError(
@@ -530,3 +536,28 @@ def pow_edl(x: complex, n: float) -> complex:
     for the pure-EDL path once we have a way to represent n as a tree.
     """
     return exp_edl(mul_edl(complex(n), ln_edl(x)))
+
+
+# ── Comparison utility ────────────────────────────────────────────────────────
+
+def compare_op(
+    name: str,
+    op_func: Callable,
+    true_func: Callable,
+    test_values: list,
+) -> None:
+    """Print a table comparing op_func against true_func over test_values.
+
+    Useful for quick accuracy audits during development.  Prints to stdout;
+    intended for interactive use, not production code.
+    """
+    print(f"\n=== {name} ===")
+    for v in test_values:
+        try:
+            raw = op_func(v)
+            result = raw.real if hasattr(raw, "real") else raw
+            expected = true_func(v)
+            err = abs(result - expected)
+            print(f"  {v!s:>10} -> {result:15.8f}  (err {err:.2e})")
+        except Exception as exc:
+            print(f"  {v!s:>10} -> ERROR: {exc}")

@@ -8,6 +8,7 @@ import torch
 from monogate.core import (
     EDL, EML, EDL_NEG_ONE, EDL_ONE, Operator,
     div_edl, exp_edl, ln_edl, make_exp, make_ln, mul_edl, neg_edl, pow_edl, recip_edl,
+    ln_eml, pow_eml,
 )
 from monogate.torch_ops import edl_op
 
@@ -321,3 +322,63 @@ def test_add_edl_raises():
     from monogate.core import add_edl
     with pytest.raises(NotImplementedError):
         add_edl(3 + 0j, 4 + 0j)
+
+
+# ── compare_op ────────────────────────────────────────────────────────────────
+
+def test_compare_op_runs(capsys):
+    from monogate.core import compare_op
+    compare_op("test", lambda x: x**2, lambda x: x**2, [1.0, 2.0, 3.0])
+    out = capsys.readouterr().out
+    assert "test" in out
+    assert "err" in out
+
+
+# ── domain advantage: pow_edl handles x < 1 where pow_eml fails ──────────────
+
+def test_pow_edl_x_less_than_1():
+    # pow_eml(0.5, 10) fails: internally needs ln_eml(ln(0.5)) = ln(-0.693) -> domain error
+    # pow_edl(0.5, 10) works: uses cmath throughout, handles negative intermediates
+    result = pow_edl(0.5 + 0j, 10)
+    assert abs(result.real - 0.5**10) < 1e-15
+
+
+def test_pow_eml_fails_on_x_less_than_1():
+    with pytest.raises(ValueError):
+        pow_eml(0.5, 10)
+
+
+# ── ln_edl overflow dead zone ─────────────────────────────────────────────────
+
+def test_ln_edl_works_away_from_one():
+    assert abs(ln_edl(1.01 + 0j).real - math.log(1.01)) < 1e-10
+    assert abs(ln_edl(0.99 + 0j).real - math.log(0.99)) < 1e-10
+
+
+def test_ln_edl_dead_zone_near_one():
+    # x = 1.001: ln(1.001) ≈ 0.001, so 1/ln(x) ≈ 1000 -> exp(1000) overflows
+    with pytest.raises((OverflowError, ValueError)):
+        ln_edl(1.001 + 0j)
+
+
+def test_ln_eml_handles_near_one():
+    # EML ln has no overflow dead zone — works fine arbitrarily close to 1
+    assert abs(ln_eml(1.001) - math.log(1.001)) < 1e-10
+    assert abs(ln_eml(1.0001) - math.log(1.0001)) < 1e-10
+
+
+# ── deep-chain stability: x^50 relative error ────────────────────────────────
+
+def _chain_mul(fn, x, n):
+    acc = x
+    for _ in range(n - 1):
+        acc = fn(acc, x)
+    return acc
+
+def test_mul_edl_chain_rel_error():
+    # 49-step chain: x^50 should match math.pow to ~1e-12 relative error
+    for x in [1.1, 1.5, 2.0]:
+        result = _chain_mul(mul_edl, complex(x), 50).real
+        ref    = x ** 50
+        rel    = abs(result - ref) / ref
+        assert rel < 1e-12, f"chain_edl({x},50) relative error {rel:.2e} exceeds 1e-12"
