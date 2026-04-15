@@ -1,5 +1,5 @@
 """
-Tests for monogate.optimize — best_optimize() API.
+Tests for monogate.optimize — best_optimize() API, BestRewriter, decorator.
 
 Covers:
   - Expression string detection and node counting
@@ -9,9 +9,13 @@ Covers:
   - Edge cases: empty input, unknown ops, no-savings expressions
 """
 
+import ast
+import math
+
 import pytest
 
 from monogate import best_optimize, optimize, OptimizeResult, OpMatch
+from monogate.optimize import BestRewriter, _ast_rewrite
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -313,6 +317,125 @@ class TestDecoratorAst:
     def test_optimize_alias(self):
         r = optimize("sin(x)")
         assert isinstance(r, OptimizeResult)
+
+
+# ── BestRewriter AST transformer ─────────────────────────────────────────────
+
+class TestBestRewriter:
+    def _rewrite(self, src: str) -> str:
+        tree = ast.parse(src, mode="eval")
+        new_tree = BestRewriter().visit(tree)
+        ast.fix_missing_locations(new_tree)
+        return ast.unparse(new_tree)
+
+    def test_bare_sin_rewritten(self):
+        assert self._rewrite("sin(x)") == "BEST.sin(x)"
+
+    def test_bare_cos_rewritten(self):
+        assert self._rewrite("cos(x)") == "BEST.cos(x)"
+
+    def test_bare_exp_rewritten(self):
+        assert self._rewrite("exp(x)") == "BEST.exp(x)"
+
+    def test_bare_log_rewritten_to_ln(self):
+        assert self._rewrite("log(x)") == "BEST.ln(x)"
+
+    def test_bare_pow_rewritten(self):
+        assert self._rewrite("pow(x, 3)") == "BEST.pow(x, 3)"
+
+    def test_attr_math_sin_rewritten(self):
+        assert self._rewrite("math.sin(x)") == "BEST.sin(x)"
+
+    def test_attr_torch_cos_rewritten(self):
+        assert self._rewrite("torch.cos(x)") == "BEST.cos(x)"
+
+    def test_attr_np_log_rewritten(self):
+        assert self._rewrite("np.log(x)") == "BEST.ln(x)"
+
+    def test_pow_binop_rewritten(self):
+        assert self._rewrite("x ** 3") == "BEST.pow(x, 3)"
+
+    def test_mul_binop_rewritten(self):
+        assert self._rewrite("x * y") == "BEST.mul(x, y)"
+
+    def test_div_binop_rewritten(self):
+        assert self._rewrite("x / y") == "BEST.div(x, y)"
+
+    def test_add_binop_rewritten(self):
+        assert self._rewrite("x + y") == "BEST.add(x, y)"
+
+    def test_sub_binop_rewritten(self):
+        assert self._rewrite("x - y") == "BEST.sub(x, y)"
+
+    def test_nested_expression_rewritten(self):
+        # sin(x)**2 → BEST.pow(BEST.sin(x), 2)
+        result = self._rewrite("sin(x) ** 2")
+        assert "BEST.pow" in result
+        assert "BEST.sin" in result
+
+    def test_complex_expression_rewritten(self):
+        result = self._rewrite("math.sin(x) + math.cos(x) * x ** 3")
+        assert "BEST.sin" in result
+        assert "BEST.cos" in result
+        assert "BEST.pow" in result
+        assert "BEST.mul" in result
+        assert "BEST.add" in result
+
+    def test_ast_rewrite_helper(self):
+        result = _ast_rewrite("def f(x):\n    return math.sin(x)")
+        assert "BEST.sin" in result
+
+    def test_ast_rewrite_invalid_syntax_fallback(self):
+        bad = "def (!!!"
+        result = _ast_rewrite(bad)
+        assert result == bad  # original returned unchanged
+
+
+# ── Decorator — rewritten source ─────────────────────────────────────────────
+
+class TestDecoratorRewrittenSource:
+    def test_rewritten_source_attached(self):
+        @best_optimize
+        def my_fn(x):
+            import math
+            return math.sin(x) + math.cos(x)
+
+        assert hasattr(my_fn, "_best_rewritten_source")
+        assert isinstance(my_fn._best_rewritten_source, str)
+
+    def test_rewritten_source_contains_best(self):
+        @best_optimize
+        def my_fn(x):
+            import math
+            return math.sin(x) * math.cos(x)
+
+        assert "BEST.sin" in my_fn._best_rewritten_source
+        assert "BEST.cos" in my_fn._best_rewritten_source
+
+    def test_original_source_attached(self):
+        @best_optimize
+        def my_fn(x):
+            return x
+
+        assert hasattr(my_fn, "_best_original_source")
+        assert "my_fn" in my_fn._best_original_source
+
+    def test_is_best_optimized_flag(self):
+        @best_optimize
+        def my_fn(x):
+            return x
+
+        assert my_fn._is_best_optimized is True
+
+    def test_python_snippet_uses_ast_rewrite(self):
+        @best_optimize
+        def my_fn(x):
+            import math
+            return math.sin(x)
+
+        snippet = my_fn.best_info.python_snippet
+        assert "BEST.sin" in snippet
+        assert "from monogate import BEST" in snippet
 
 
 # ── Edge cases ────────────────────────────────────────────────────────────────

@@ -313,6 +313,105 @@ def _build_explanation(ops: tuple[OpMatch, ...]) -> tuple[str, ...]:
     return tuple(lines)
 
 
+# ── AST transformer — rewrites math calls to BEST.* equivalents ───────────────
+
+# Maps Python function names (bare or as attr on any module) → BEST method name.
+_CALL_MAP: dict[str, str] = {
+    "sin": "sin", "cos": "cos", "tan": "tan",
+    "exp": "exp",
+    "log": "ln", "log2": "ln", "log10": "ln", "ln": "ln",
+    "pow": "pow", "power": "pow",
+    "sqrt": "sqrt",
+    "abs": "abs", "fabs": "abs",
+    "mul": "mul", "multiply": "mul",
+    "div": "div", "divide": "div", "true_divide": "div",
+}
+
+_BINOP_MAP: dict[type, str] = {
+    ast.Pow:  "pow",
+    ast.Mult: "mul",
+    ast.Div:  "div",
+    ast.Add:  "add",
+    ast.Sub:  "sub",
+}
+
+
+def _best_call(method: str, args: list[ast.expr]) -> ast.Call:
+    """Return AST node for ``BEST.<method>(<args>)``."""
+    return ast.Call(
+        func=ast.Attribute(
+            value=ast.Name(id="BEST", ctx=ast.Load()),
+            attr=method,
+            ctx=ast.Load(),
+        ),
+        args=args,
+        keywords=[],
+    )
+
+
+class BestRewriter(ast.NodeTransformer):
+    """
+    AST NodeTransformer that converts math operations to BEST.* equivalents.
+
+    Handles:
+    - Bare function calls:      sin(x)      → BEST.sin(x)
+    - Library-prefixed calls:   math.sin(x) → BEST.sin(x)
+                                torch.sin(x)→ BEST.sin(x)
+    - Binary operators:         x ** n      → BEST.pow(x, n)
+                                x * y       → BEST.mul(x, y)
+                                x / y       → BEST.div(x, y)
+                                x + y       → BEST.add(x, y)
+                                x - y       → BEST.sub(x, y)
+
+    Note: BEST.add and BEST.sub have the same node cost as EML, so rewriting
+    +/- is semantically neutral but makes the routing explicit.
+    """
+
+    def visit_Call(self, node: ast.Call) -> ast.AST:  # noqa: N802
+        # Recurse into arguments first
+        self.generic_visit(node)
+
+        method: str | None = None
+        if isinstance(node.func, ast.Name):
+            # bare call: sin(x), exp(x), etc.
+            method = _CALL_MAP.get(node.func.id)
+        elif isinstance(node.func, ast.Attribute):
+            # attribute call: math.sin(x), torch.exp(x), np.log(x), etc.
+            method = _CALL_MAP.get(node.func.attr)
+
+        if method:
+            return ast.copy_location(
+                _best_call(method, list(node.args)),
+                node,
+            )
+        return node
+
+    def visit_BinOp(self, node: ast.BinOp) -> ast.AST:  # noqa: N802
+        # Recurse into operands first so nested ops are rewritten too
+        self.generic_visit(node)
+        method = _BINOP_MAP.get(type(node.op))
+        if method:
+            return ast.copy_location(
+                _best_call(method, [node.left, node.right]),
+                node,
+            )
+        return node
+
+
+def _ast_rewrite(src: str) -> str:
+    """
+    Parse *src*, apply BestRewriter, return the unparsed result.
+    Returns the original source unchanged on any parse/unparse error.
+    """
+    try:
+        tree = ast.parse(src)
+        new_tree = BestRewriter().visit(tree)
+        ast.fix_missing_locations(new_tree)
+        return ast.unparse(new_tree)
+    except (SyntaxError, ValueError):
+        return src
+
+
 # ── AST-based decorator analysis ──────────────────────────────────────────────
 
 class _OpCounter(ast.NodeVisitor):
@@ -360,32 +459,36 @@ class _OpCounter(ast.NodeVisitor):
         self.generic_visit(node)
 
 
-def _analyze_fn(func: Callable[..., Any]) -> OptimizeResult:
+def _analyze_fn(func: Callable[..., Any]) -> tuple["OptimizeResult", str]:
     """
-    Parse *func*'s source with ast, count operations, return an OptimizeResult.
-    Falls back to a minimal result if source is unavailable (e.g. built-ins).
+    Parse *func*'s source with ast.
+
+    Returns ``(OptimizeResult, rewritten_source)`` where *rewritten_source* is
+    the AST-rewritten version produced by BestRewriter (or the original source
+    if the source is unavailable or unparseable).
     """
+    _unavailable = OptimizeResult(
+        original=f"<{func.__name__}>",
+        ops=(),
+        total_best_nodes=0,
+        total_eml_nodes=0,
+        savings_pct=0,
+        python_snippet="# source not available for static analysis",
+        rewritten_code="",
+        explanation=("Source could not be inspected — use best_optimize(string) instead.",),
+        message=f"@best_optimize on {func.__name__!r}: source unavailable",
+    )
+
     try:
-        src = inspect.getsource(func)
-        src = textwrap.dedent(src)
+        src = textwrap.dedent(inspect.getsource(func))
         tree = ast.parse(src)
     except (OSError, IndentationError, SyntaxError):
-        # Source not inspectable (C extension, lambda in REPL, etc.)
-        return OptimizeResult(
-            original=f"<{func.__name__}>",
-            ops=(),
-            total_best_nodes=0,
-            total_eml_nodes=0,
-            savings_pct=0,
-            python_snippet="# source not available for static analysis",
-            rewritten_code="",
-            explanation=("Source could not be inspected — use best_optimize(string) instead.",),
-            message=f"@best_optimize on {func.__name__!r}: source unavailable",
-        )
+        return _unavailable, ""
 
+    # Count ops for node-cost analysis
     counter = _OpCounter()
     counter.visit(tree)
-    ops      = _build_ops(counter.counts)
+    ops        = _build_ops(counter.counts)
     total_best = sum(m.best_nodes for m in ops)
     total_eml  = sum(m.eml_nodes  for m in ops)
     savings_pct = (
@@ -393,44 +496,63 @@ def _analyze_fn(func: Callable[..., Any]) -> OptimizeResult:
         if total_eml > 0 else 0
     )
     explanation = _build_explanation(ops)
-    # Generate a rewritten snippet from the raw source
-    rewritten = _rewrite(src)
-    snippet = "from monogate import BEST\nimport math\n\n" + rewritten
+
+    # AST rewrite: math.sin → BEST.sin, x**n → BEST.pow(x,n), etc.
+    rewritten_src = _ast_rewrite(src)
+    snippet = "from monogate import BEST\nimport math\n\n" + rewritten_src
 
     message = (
         f"BEST: {total_best} nodes vs {total_eml} pure EML — {savings_pct}% fewer exp/ln calls"
         if total_eml > total_best
         else f"No savings found ({total_best} nodes — already EML-optimal)"
     )
-    return OptimizeResult(
+    result = OptimizeResult(
         original=src.strip(),
         ops=ops,
         total_best_nodes=total_best,
         total_eml_nodes=total_eml,
         savings_pct=savings_pct,
         python_snippet=snippet,
-        rewritten_code=rewritten,
+        rewritten_code=rewritten_src,
         explanation=explanation,
         message=message,
     )
+    return result, rewritten_src
 
 
 def _decorate_function(func: Callable[..., Any]) -> Callable[..., Any]:
     """
-    Wrap *func* with BEST analysis at decoration time.
+    Wrap *func* with BEST analysis **at decoration time** (not call time).
 
-    - ``func.best_info`` → ``OptimizeResult`` (populated once, at decoration)
-    - The wrapped function behaves identically to the original at call time.
-    - Full AST rewriting (replacing math calls with BEST.*) is Phase 2.
+    Attributes added to the wrapper:
+
+    ``best_info``
+        ``OptimizeResult`` — full node cost breakdown and savings summary.
+
+    ``_best_rewritten_source``
+        The function's source after BestRewriter transforms it — every
+        ``math.sin``, ``torch.cos``, ``x**n`` etc. replaced with
+        ``BEST.sin``, ``BEST.cos``, ``BEST.pow(x,n)`` etc.
+
+    ``_best_original_source``
+        The original (unmodified) source string.
+
+    ``_is_best_optimized``
+        ``True`` — quick membership test.
+
+    Call behaviour is unchanged: the original function runs unchanged.
     """
-    analysis = _analyze_fn(func)
+    analysis, rewritten_src = _analyze_fn(func)
 
     @wraps(func)
     def wrapper(*args: Any, **kwargs: Any) -> Any:
         return func(*args, **kwargs)
 
-    wrapper.best_info = analysis              # type: ignore[attr-defined]
-    wrapper._best_optimize_stub = True        # type: ignore[attr-defined]
+    wrapper.best_info               = analysis          # type: ignore[attr-defined]
+    wrapper._best_rewritten_source  = rewritten_src     # type: ignore[attr-defined]
+    wrapper._best_original_source   = analysis.original # type: ignore[attr-defined]
+    wrapper._is_best_optimized      = True              # type: ignore[attr-defined]
+    wrapper._best_optimize_stub     = True              # type: ignore[attr-defined]
     return wrapper
 
 
