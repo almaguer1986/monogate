@@ -1,5 +1,7 @@
 # monogate · Python
 
+[![PyPI](https://img.shields.io/pypi/v/monogate)](https://pypi.org/project/monogate/)
+
 Pure-Python and PyTorch implementations of **EML arithmetic** — all elementary
 functions constructed from a single binary operator:
 
@@ -15,13 +17,13 @@ Based on [arXiv:2603.21852](https://arxiv.org/abs/2603.21852) (Odrzywołek, 2026
 
 ```bash
 # Core only (no dependencies)
-pip install -e .
+pip install monogate
 
 # With PyTorch support
-pip install -e ".[torch]"
+pip install "monogate[torch]"
 
 # Development (pytest + torch)
-pip install -e ".[dev]"
+pip install "monogate[dev]"
 ```
 
 ---
@@ -148,7 +150,10 @@ fit(
     lr=1e-2,          # Adam learning rate
     log_every=200,    # print interval (0 = silent)
     loss_threshold=1e-8,  # early-stop threshold
-) -> list[float]      # loss values recorded at each log_every step
+    lam=0.0,          # complexity penalty weight
+                      #   EMLTree:    λ · Σ|leaf − 1|
+                      #   EMLNetwork: λ · Σ|weight|  (L1 on linear weights)
+) -> list[float]      # raw loss values (without penalty)
 ```
 
 ---
