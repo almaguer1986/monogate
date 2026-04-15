@@ -398,16 +398,36 @@ class BestRewriter(ast.NodeTransformer):
         return node
 
 
+_EXPR_SENTINEL = "_best_expr_ = "
+
+
 def _ast_rewrite(src: str) -> str:
     """
     Parse *src*, apply BestRewriter, return the unparsed result.
-    Returns the original source unchanged on any parse/unparse error.
+
+    Handles two forms:
+    - Module-level code (function defs, imports, assignments) — parsed directly.
+    - Bare math expressions (``"sin(x)**2 + cos(x)*x**3"``) — wrapped in an
+      assignment sentinel so the parser accepts them, then the sentinel is stripped.
+
+    Returns the original *src* unchanged on any parse/unparse error.
     """
+    # First try: parse as-is (function defs, multi-line code, assignments)
     try:
         tree = ast.parse(src)
         new_tree = BestRewriter().visit(tree)
         ast.fix_missing_locations(new_tree)
         return ast.unparse(new_tree)
+    except (SyntaxError, ValueError):
+        pass
+
+    # Second try: wrap as expression assignment (handles bare "sin(x)**2 + ...")
+    try:
+        tree = ast.parse(f"{_EXPR_SENTINEL}{src.strip()}")
+        new_tree = BestRewriter().visit(tree)
+        ast.fix_missing_locations(new_tree)
+        result = ast.unparse(new_tree)
+        return result.removeprefix(_EXPR_SENTINEL)
     except (SyntaxError, ValueError):
         return src
 
@@ -619,7 +639,9 @@ def best_optimize(
 
     counts    = _scan(source)
     ops       = _build_ops(counts)
-    rewritten = _rewrite(source)
+    # Use AST rewriting — handles nested cases like sin(x)**2 → BEST.pow(BEST.sin(x), 2)
+    # that regex substitution cannot capture correctly.
+    rewritten = _ast_rewrite(source)
 
     total_best = sum(m.best_nodes for m in ops)
     total_eml  = sum(m.eml_nodes  for m in ops)
