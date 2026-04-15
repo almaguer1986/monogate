@@ -91,6 +91,13 @@ class TestExpressionString:
         r = best_optimize("x**3")
         assert "BEST.pow(x, 3)" in r.rewritten_code
 
+    def test_sin_pow_rewritten_via_ast(self):
+        # AST rewriting: sin(x)**2 → BEST.pow(BEST.sin(x), 2), not BEST.sin(x)**2
+        r = best_optimize("sin(x)**2")
+        assert "BEST.pow" in r.rewritten_code
+        assert "BEST.sin" in r.rewritten_code
+        assert "**" not in r.rewritten_code
+
     def test_python_snippet_importline(self):
         r = best_optimize("sin(x)")
         assert "from monogate import BEST" in r.python_snippet
@@ -389,6 +396,34 @@ class TestBestRewriter:
         bad = "def (!!!"
         result = _ast_rewrite(bad)
         assert result == bad  # original returned unchanged
+
+    # Expression strings (not valid module-level code on their own)
+    def test_ast_rewrite_bare_expression_sin_pow(self):
+        # sin(x)**2 should produce BEST.pow(BEST.sin(x), 2) — not BEST.sin(x)**2
+        result = _ast_rewrite("sin(x)**2")
+        assert "BEST.pow" in result
+        assert "BEST.sin" in result
+        # The **2 exponent should be inside BEST.pow, not a trailing **
+        assert "**" not in result
+
+    def test_ast_rewrite_bare_expression_complex(self):
+        result = _ast_rewrite("sin(x)**2 + cos(x)*x**3 + exp(-x)")
+        assert "BEST.pow" in result
+        assert "BEST.sin" in result
+        assert "BEST.cos" in result
+        assert "BEST.exp" in result
+        # No raw ** should remain (all powered via BEST.pow)
+        assert "**" not in result
+
+    def test_ast_rewrite_expr_string_module_code(self):
+        # Module-level function def still works
+        result = _ast_rewrite("def f(x):\n    return math.sin(x)")
+        assert "BEST.sin" in result
+
+    def test_ast_rewrite_expression_no_double_sentinel(self):
+        # Sentinel prefix must be stripped from output
+        result = _ast_rewrite("sin(x)")
+        assert "_best_expr_" not in result
 
 
 # ── Decorator — rewritten source ─────────────────────────────────────────────
