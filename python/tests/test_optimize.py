@@ -517,3 +517,105 @@ class TestEdgeCases:
         m = op_by_name(r, "pow")
         assert m is not None
         assert m.count >= 2
+
+
+# ── New ops: sigmoid / tanh / gelu ────────────────────────────────────────────
+
+class TestCompoundOps:
+    def test_sigmoid_detected_torch(self):
+        r = best_optimize("import torch\ny = torch.sigmoid(x)")
+        m = op_by_name(r, "sigmoid")
+        assert m is not None
+        assert m.best_nodes == 19
+        assert m.eml_nodes  == 36
+        assert m.savings    == 47
+
+    def test_tanh_detected_torch(self):
+        r = best_optimize("import torch\ny = torch.tanh(x)")
+        m = op_by_name(r, "tanh")
+        assert m is not None
+        assert m.best_nodes == 25
+        assert m.eml_nodes  == 45
+        assert m.savings    == 44
+
+    def test_gelu_detected_F(self):
+        r = best_optimize("import torch.nn.functional as F\ny = F.gelu(x)")
+        m = op_by_name(r, "gelu")
+        assert m is not None
+        assert m.best_nodes == 60
+        assert m.eml_nodes  == 115
+
+    def test_tanh_rewritten_by_ast(self):
+        rewritten = best_optimize("torch.tanh(x)").rewritten_code
+        assert "BEST.tanh" in rewritten
+
+    def test_sigmoid_rewritten_by_ast(self):
+        rewritten = best_optimize("import torch\ntorch.sigmoid(x)").rewritten_code
+        assert "BEST.sigmoid" in rewritten
+
+
+# ── BenchmarkResult and benchmark_optimize ────────────────────────────────────
+
+class TestBenchmarkResult:
+    def test_returns_benchmark_result(self):
+        from monogate import benchmark_optimize, sin_eml_taylor, sin_best_taylor
+        from monogate import BenchmarkResult
+
+        r = benchmark_optimize(sin_eml_taylor, sin_best_taylor, 1.5,
+                               label="test_sin", node_savings_pct=74,
+                               min_run_time=0.1)
+        assert isinstance(r, BenchmarkResult)
+
+    def test_speedup_positive(self):
+        from monogate import benchmark_optimize, sin_eml_taylor, sin_best_taylor
+
+        r = benchmark_optimize(sin_eml_taylor, sin_best_taylor, 1.5,
+                               min_run_time=0.1)
+        assert r.speedup > 1.0   # BEST is faster
+
+    def test_before_us_greater_than_after(self):
+        from monogate import benchmark_optimize, sin_eml_taylor, sin_best_taylor
+
+        r = benchmark_optimize(sin_eml_taylor, sin_best_taylor, 1.5,
+                               min_run_time=0.1)
+        assert r.before_us > r.after_us
+
+    def test_node_savings_preserved(self):
+        from monogate import benchmark_optimize, sin_eml_taylor, sin_best_taylor
+
+        r = benchmark_optimize(sin_eml_taylor, sin_best_taylor, 1.5,
+                               node_savings_pct=74, min_run_time=0.1)
+        assert r.node_savings_pct == 74
+
+    def test_str_output(self):
+        from monogate import BenchmarkResult
+
+        r = BenchmarkResult(
+            label="test", before_us=36.0, after_us=12.0,
+            speedup=3.0, node_savings_pct=74,
+        )
+        s = str(r)
+        assert "test" in s
+        assert "36.0" in s
+        assert "12.0" in s
+        assert "3.00x" in s
+        assert "74%" in s
+
+    def test_sin_reference_implementations_agree(self):
+        """sin_eml_taylor and sin_best_taylor must return same value."""
+        import math
+        from monogate import sin_eml_taylor, sin_best_taylor
+
+        for x in [1.1, 1.5, 2.0, 2.5, 3.0]:
+            eml  = sin_eml_taylor(x)
+            best = sin_best_taylor(x)
+            ref  = math.sin(x)
+            assert abs(eml  - ref) < 1e-5, f"sin_eml_taylor({x}) off: {eml}"
+            assert abs(best - ref) < 1e-5, f"sin_best_taylor({x}) off: {best}"
+
+    def test_sin_eml_requires_x_gt_1(self):
+        from monogate import sin_eml_taylor
+        import pytest as _pytest
+
+        with _pytest.raises(ValueError, match="x > 1"):
+            sin_eml_taylor(0.5)

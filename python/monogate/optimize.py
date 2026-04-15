@@ -70,11 +70,26 @@ _EML_NODES: dict[str, int] = {
 }
 _EML_NODES.update({"sin": 245, "cos": 245, "sqrt": 15, "abs": 9})
 
+_BEST_NODES.update({
+    # Compound ops: sigmoid = neg+exp+add+div; tanh = mul+exp+sub+add+div
+    # Node costs assume BEST routing for every sub-operation.
+    "sigmoid": 19,   # neg(6)+exp(1)+add(11)+div(1)  vs EML: neg(9)+exp(1)+add(11)+div(15)=36
+    "tanh":    25,   # mul(7)+exp(1)+sub(5)+add(11)+div(1)  vs EML: mul(13)+...+div(15)=45
+    "gelu":    60,   # tanh(25)+mul(7)×3=21+add(11)+pow(3)  vs EML ~115
+})
+
+_EML_NODES.update({
+    "sigmoid": 36,   # neg(9)+exp(1)+add(11)+div(15)
+    "tanh":    45,   # mul(13)+exp(1)+sub(5)+add(11)+div(15)
+    "gelu":   115,   # tanh(45)+mul(13)×3=39+add(11)+pow(15)
+})
+
 _BEST_SOURCE: dict[str, str] = {
     "exp": "EML", "ln": "EXL", "pow": "EXL", "sqrt": "EXL",
     "mul": "EDL", "div": "EDL", "recip": "EDL", "neg": "EDL",
     "sub": "EML", "add": "EML", "abs": "EML",
     "sin": "EXL", "cos": "EXL",
+    "sigmoid": "EML+EDL", "tanh": "EML+EDL", "gelu": "EML+EDL",
 }
 
 
@@ -88,17 +103,20 @@ class _Rule:
     replacement: str    # what to substitute the matched prefix with
 
 
-# Order matters: ln must come before log to avoid partial-match issues in expr mode.
+# Order matters: tanh before tan, ln before log (avoid partial-match).
 _RULES: tuple[_Rule, ...] = (
-    _Rule("sin",  r"(?:math|torch|np|numpy|F)\.sin\s*\(",    r"\bsin\s*\(",    "BEST.sin("),
-    _Rule("cos",  r"(?:math|torch|np|numpy|F)\.cos\s*\(",    r"\bcos\s*\(",    "BEST.cos("),
-    _Rule("exp",  r"(?:math|torch|np|numpy|F)\.exp\s*\(",    r"\bexp\s*\(",    "BEST.exp("),
-    _Rule("ln",   r"(?:math|torch|np|numpy|F)\.log\w*\s*\(", r"\bln\s*\(",     "BEST.ln("),
-    _Rule("pow",  r"(?:math|torch|np|numpy)\.pow(?:er)?\s*\(",r"\bpow\s*\(",   "BEST.pow("),
-    _Rule("sqrt", r"(?:math|torch|np|numpy)\.sqrt\s*\(",     r"\bsqrt\s*\(",   "BEST.sqrt("),
-    _Rule("abs",  r"(?:math|torch|np|numpy)\.fabs\s*\(",     r"",              "abs("),
-    _Rule("div",  r"(?:torch\.div|np\.divide)\s*\(",         r"",              "BEST.div("),
-    _Rule("mul",  r"(?:torch\.mul|np\.multiply)\s*\(",       r"",              "BEST.mul("),
+    _Rule("sin",     r"(?:math|torch|np|numpy|F)\.sin\s*\(",     r"\bsin\s*\(",     "BEST.sin("),
+    _Rule("cos",     r"(?:math|torch|np|numpy|F)\.cos\s*\(",     r"\bcos\s*\(",     "BEST.cos("),
+    _Rule("tanh",    r"(?:math|torch|np|numpy|F)\.tanh\s*\(",    r"\btanh\s*\(",    "BEST.tanh("),
+    _Rule("sigmoid", r"(?:torch|F)\.sigmoid\s*\(",               r"\bsigmoid\s*\(", "BEST.sigmoid("),
+    _Rule("gelu",    r"(?:F)\.gelu\s*\(",                        r"\bgelu\s*\(",    "BEST.gelu("),
+    _Rule("exp",     r"(?:math|torch|np|numpy|F)\.exp\s*\(",     r"\bexp\s*\(",     "BEST.exp("),
+    _Rule("ln",      r"(?:math|torch|np|numpy|F)\.log\w*\s*\(",  r"\bln\s*\(",      "BEST.ln("),
+    _Rule("pow",     r"(?:math|torch|np|numpy)\.pow(?:er)?\s*\(",r"\bpow\s*\(",     "BEST.pow("),
+    _Rule("sqrt",    r"(?:math|torch|np|numpy)\.sqrt\s*\(",      r"\bsqrt\s*\(",    "BEST.sqrt("),
+    _Rule("abs",     r"(?:math|torch|np|numpy)\.fabs\s*\(",      r"",               "abs("),
+    _Rule("div",     r"(?:torch\.div|np\.divide)\s*\(",          r"",               "BEST.div("),
+    _Rule("mul",     r"(?:torch\.mul|np\.multiply)\s*\(",        r"",               "BEST.mul("),
 )
 
 # Operator-symbol patterns (detected for counting, partly rewritten).
@@ -318,6 +336,9 @@ def _build_explanation(ops: tuple[OpMatch, ...]) -> tuple[str, ...]:
 # Maps Python function names (bare or as attr on any module) → BEST method name.
 _CALL_MAP: dict[str, str] = {
     "sin": "sin", "cos": "cos", "tan": "tan",
+    "tanh": "tanh", "sinh": "sinh", "cosh": "cosh",
+    "sigmoid": "sigmoid",
+    "gelu": "gelu",
     "exp": "exp",
     "log": "ln", "log2": "ln", "log10": "ln", "ln": "ln",
     "pow": "pow", "power": "pow",
@@ -674,6 +695,178 @@ def best_optimize(
         explanation=explanation,
         message=message,
     )
+
+
+# ── Benchmark ─────────────────────────────────────────────────────────────────
+
+@dataclass(frozen=True)
+class BenchmarkResult:
+    """
+    Timing comparison between an original function and its BEST-routed equivalent.
+
+    Attributes
+    ----------
+    label           Short name for the benchmark (e.g. "sin_taylor").
+    before_us       Mean microseconds per call — original (EML-only) code.
+    after_us        Mean microseconds per call — BEST-routed code.
+    speedup         ``before_us / after_us`` — values > 1 mean BEST is faster.
+    node_savings_pct  Static node count reduction reported by best_optimize (0 if
+                      not provided).
+    """
+
+    label: str
+    before_us: float
+    after_us: float
+    speedup: float
+    node_savings_pct: int
+
+    def __str__(self) -> str:
+        direction = "faster" if self.speedup >= 1.0 else "slower"
+        pct = abs(round((self.speedup - 1.0) * 100))
+        lines = [
+            f"Benchmark: {self.label}",
+            f"  Before (EML):  {self.before_us:>8.1f} us/call",
+            f"  After  (BEST): {self.after_us:>8.1f} us/call",
+            f"  Speedup:       {self.speedup:>8.2f}x  ({pct}% {direction})",
+        ]
+        if self.node_savings_pct > 0:
+            lines.append(
+                f"  Node savings:  {self.node_savings_pct:>7}%  (static -- exp/ln calls)"
+            )
+        return "\n".join(lines)
+
+
+def benchmark_optimize(
+    before_fn: Callable[..., Any],
+    after_fn: Callable[..., Any],
+    x: Any,
+    *,
+    label: str = "function",
+    min_run_time: float = 1.0,
+    node_savings_pct: int = 0,
+) -> "BenchmarkResult":
+    """
+    Time *before_fn* vs *after_fn* on input *x*.
+
+    Uses ``torch.utils.benchmark.Timer`` when torch is available, falling back
+    to ``timeit.timeit`` for pure-Python workloads.  Both functions are called
+    as ``fn(x)``.
+
+    Parameters
+    ----------
+    before_fn
+        Original (EML-only or standard) implementation.
+    after_fn
+        BEST-routed implementation.
+    x
+        Input value or tensor passed to both functions.
+    label
+        Name shown in the result table.
+    min_run_time
+        Minimum wall-clock seconds used by the torch benchmark timer.
+        Ignored when falling back to timeit.
+    node_savings_pct
+        Static node count reduction from best_optimize() — decorative only.
+
+    Returns
+    -------
+    BenchmarkResult
+
+    Examples
+    --------
+    >>> import math
+    >>> from monogate import benchmark_optimize
+    >>> from monogate.optimize import sin_eml_taylor, sin_best_taylor
+    >>> r = benchmark_optimize(sin_eml_taylor, sin_best_taylor, math.pi / 4,
+    ...                        label="sin_taylor_8term",
+    ...                        node_savings_pct=74)
+    >>> print(r)
+    """
+    try:
+        from torch.utils.benchmark import Timer as _TorchTimer
+
+        def _time(fn: Callable[..., Any]) -> float:
+            t = _TorchTimer(
+                stmt="fn(x)",
+                globals={"fn": fn, "x": x},
+            ).blocked_autorange(min_run_time=min_run_time)
+            return float(t.mean) * 1e6  # → microseconds
+
+    except ImportError:
+        import timeit as _timeit
+
+        def _time(fn: Callable[..., Any]) -> float:
+            runs = 10_000
+            elapsed = _timeit.timeit(lambda: fn(x), number=runs)
+            return (elapsed / runs) * 1e6
+
+    before_us = _time(before_fn)
+    after_us  = _time(after_fn)
+    speedup   = before_us / after_us if after_us > 0 else float("inf")
+
+    return BenchmarkResult(
+        label=label,
+        before_us=round(before_us, 2),
+        after_us=round(after_us, 2),
+        speedup=round(speedup, 3),
+        node_savings_pct=node_savings_pct,
+    )
+
+
+# ── Reference implementations for benchmarking ────────────────────────────────
+
+def sin_eml_taylor(x: float, terms: int = 8) -> float:
+    """
+    sin(x) via Taylor series using *pure EML* operators (15 nodes per power).
+
+    Uses ``pow_eml`` for every power term.  Requires ``x > 0`` (pow_eml has no
+    real-domain branch for negative bases).  Intended as the EML baseline for
+    ``benchmark_optimize``; compare against ``sin_best_taylor``.
+
+    Node cost: (terms-1) × 15  (powers) + fixed add/sub chain.
+    For 8 terms: 7 × 15 = 105 pow nodes  vs BEST's 7 × 3 = 21.
+    """
+    import math as _math
+    from .core import pow_eml as _pow_eml
+
+    if x <= 1.0:
+        raise ValueError(
+            f"sin_eml_taylor requires x > 1 (got {x!r}).\n"
+            "pow_eml needs ln(x) > 0. Use sin_best_taylor for general x."
+        )
+    result = x  # first term: x / 1!
+    for k in range(1, terms):
+        n    = 2 * k + 1
+        xp   = float(_pow_eml(x, n))
+        term = xp / _math.factorial(n)
+        result += (-1) ** k * term
+    return result
+
+
+def sin_best_taylor(x: float, terms: int = 8) -> float:
+    """
+    sin(x) via Taylor series using *BEST-routed* operators (3 nodes per power).
+
+    Uses ``pow_exl`` (EXL: 3 nodes) for every power term via complex arithmetic.
+    Works for all real ``x``.  Intended as the BEST measurement for
+    ``benchmark_optimize``; compare against ``sin_eml_taylor``.
+
+    Node cost: (terms-1) × 3  (powers) vs EML's (terms-1) × 15.
+    For 8 terms: 7 × 3 = 21 pow nodes  vs EML's 7 × 15 = 105.
+    """
+    import math as _math
+    from .core import pow_exl as _pow_exl
+
+    if x == 0.0:
+        return 0.0
+    cx = complex(x)
+    result = cx
+    for k in range(1, terms):
+        n    = 2 * k + 1
+        xp   = _pow_exl(cx, n)
+        term = xp / _math.factorial(n)
+        result += (-1) ** k * term
+    return float(result.real)
 
 
 # Convenience alias
