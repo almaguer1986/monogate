@@ -5,7 +5,7 @@ import math
 import pytest
 import torch
 
-from monogate.core import EDL, EML, Operator
+from monogate.core import EDL, EML, Operator, exp_edl, ln_edl, make_exp, make_ln
 from monogate.torch_ops import edl_op
 
 
@@ -123,3 +123,60 @@ def test_emlnetwork_edl_forward():
     out = model(x)
     assert out.shape == (4,)
     assert torch.all(torch.isfinite(out))
+
+
+# ── make_exp / make_ln ────────────────────────────────────────────────────────
+
+def test_make_exp_eml():
+    f = make_exp(EML)
+    assert abs(f(1.5) - cmath.exp(1.5)) < 1e-12
+
+
+def test_make_exp_edl():
+    f = make_exp(EDL)
+    assert abs(f(1.5) - cmath.exp(1.5)) < 1e-12
+
+
+def test_exp_edl_singleton():
+    assert abs(exp_edl(0) - 1.0) < 1e-14
+    assert abs(exp_edl(1) - cmath.e) < 1e-14
+
+
+def test_make_ln_eml():
+    f = make_ln(EML)
+    assert abs(f(math.e) - 1.0) < 1e-12
+    assert abs(f(1) - 0.0) < 1e-12
+    assert abs(f(2) - math.log(2)) < 1e-12
+
+
+def test_make_ln_edl():
+    # 3-node formula: edl(0, edl(edl(0, x), e))
+    f = make_ln(EDL)
+    assert abs(f(math.e) - 1.0) < 1e-12
+    assert abs(f(2) - math.log(2)) < 1e-12
+    assert abs(f(10) - math.log(10)) < 1e-12
+
+
+def test_ln_edl_singleton():
+    assert abs(ln_edl(math.e) - 1.0) < 1e-12
+    assert abs(ln_edl(2) - math.log(2)) < 1e-12
+
+
+def test_ln_is_inverse_of_exp_eml():
+    f_exp = make_exp(EML)
+    f_ln  = make_ln(EML)
+    for x in (0.5, 1.0, 2.0, 3.7):
+        assert abs(f_ln(f_exp(x)) - x) < 1e-10
+
+
+def test_ln_is_inverse_of_exp_edl():
+    f_exp = make_exp(EDL)
+    f_ln  = make_ln(EDL)
+    for x in (0.5, 1.0, 2.0, 3.7):
+        assert abs(f_ln(f_exp(x)) - x) < 1e-10
+
+
+def test_make_ln_unknown_operator_raises():
+    other = Operator("OTHER", lambda x, y: x + y, 0j)
+    with pytest.raises(NotImplementedError):
+        make_ln(other)

@@ -27,6 +27,13 @@ __all__ = [
     "pow_eml",
     "recip_eml",
     "IDENTITIES",
+    "Operator",
+    "EML",
+    "EDL",
+    "make_exp",
+    "make_ln",
+    "exp_edl",
+    "ln_edl",
 ]
 
 
@@ -331,3 +338,60 @@ def _edl_func(x: complex, y: complex) -> complex:
 
 
 EDL = Operator("EDL", _edl_func, cmath.e)
+
+
+# ── Derived helpers (operator-agnostic) ───────────────────────────────────────
+#
+# Both EML and EDL share the same *structure* for exp and ln, but the constants
+# differ.  The two neutral elements are:
+#
+#   EML: right-neutral = 1      (eml(x, 1) = exp(x))
+#        "left probe" = 1       (eml(1, x) = e − ln(x), used to extract ln)
+#
+#   EDL: right-neutral = e      (edl(x, e) = exp(x))
+#        left-neutral  = 0      (edl(0, x) = 1/ln(x))
+#
+# exp — same 1-node form for both operators:
+#   EML: eml(x, 1) = exp(x) − ln(1) = exp(x)
+#   EDL: edl(x, e) = exp(x) / ln(e) = exp(x) / 1 = exp(x)
+#
+# ln — 3-node trees with parallel but distinct structure:
+#   EML: eml(1, eml(eml(1, x), 1))
+#        step 1: eml(1, x)       = e − ln(x)
+#        step 2: eml(s, 1)       = exp(e − ln(x)) = eᵉ/x
+#        step 3: eml(1, eᵉ/x)   = e − (e − ln(x)) = ln(x)  ✓
+#
+#   EDL: edl(0, edl(edl(0, x), e))
+#        step 1: edl(0, x)       = 1/ln(x)
+#        step 2: edl(s, e)       = exp(1/ln(x)) / 1 = exp(1/ln(x))
+#        step 3: edl(0, t)       = 1/ln(exp(1/ln(x))) = 1/(1/ln(x)) = ln(x)  ✓
+
+def make_exp(operator: Operator) -> Callable[[complex], complex]:
+    """Return a function computing exp(x) as a 1-node operator tree."""
+    c = operator.constant
+    return lambda x: operator.func(x, c)
+
+
+def make_ln(operator: Operator) -> Callable[[complex], complex]:
+    """Return a function computing ln(x) as a 3-node operator tree.
+
+    EML route: eml(1, eml(eml(1, x), 1))
+    EDL route: edl(0, edl(edl(0, x), e))
+    """
+    f = operator.func
+    c = operator.constant
+    if operator is EML:
+        # c = 1; uses right-neutral in all three positions
+        return lambda x: f(c, f(f(c, x), c))
+    if operator is EDL:
+        # left-neutral 0; right-neutral e (the constant)
+        zero = 0j
+        return lambda x: f(zero, f(f(zero, x), c))
+    raise NotImplementedError(
+        f"make_ln: no ln derivation registered for operator {operator.name!r}"
+    )
+
+
+# Convenience singletons — mirrors the existing exp_eml / ln_eml names
+exp_edl: Callable[[complex], complex] = make_exp(EDL)
+ln_edl:  Callable[[complex], complex] = make_ln(EDL)
