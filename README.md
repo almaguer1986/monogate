@@ -1,230 +1,166 @@
 # monogate
 
-> A single binary operator that generates all elementary functions.
+**monogate** implements EML arithmetic — a formal system where every elementary function is a finite binary tree of identical gates — and routes each operation to the cheapest known operator family, cutting node counts by 20–74% and delivering measurable wall-clock speedup for pow/ln-heavy workloads.
 
 ```
-eml(x, y) = exp(x) − ln(y)
+eml(x, y) = exp(x) − ln(y)       ← the one gate
 ```
 
-From this one operator and the constant `1`, every elementary arithmetic function can be constructed as a pure expression tree. Implementation of:
+From this operator and the constant `1`, every elementary arithmetic function is constructible as an exact expression tree. Implementation of:
 
 > **"All elementary functions from a single operator"**
 > Andrzej Odrzywołek, Jagiellonian University
 > [arXiv:2603.21852v2](https://arxiv.org/abs/2603.21852) · CC BY 4.0
 
-Live explorer: **https://monogate.dev**
-
-| Tab | What it shows |
-|-----|---------------|
-| ✦ viz | Expression tree for any math expression, nodes colored by EML / EDL / EXL routing. Click to highlight subtrees. |
-| sin↗ | sin(x) Taylor accuracy chart (2–20 terms): BEST holds a 74% node reduction at every precision level. |
-| ⚡ demo | Live JS activation timing + Python FFN benchmark. 3.26× speedup where node savings exceed call overhead. |
-| ✦ calc | Interactive calculator — evaluate any expression in BEST / EML / EXL / EDL mode with node breakdown. |
-| ⚙ opt | Paste PyTorch / NumPy code and get a BEST-rewritten version with node savings estimate. |
+Live explorer: **[monogate.dev](https://monogate.dev)**
 
 ---
 
 ## Install
 
-**JavaScript / Node**
-```bash
-npm install monogate            # v0.2.0 — adds EDL, EXL, BEST, sin_best, cos_best
-```
-
 **Python**
 ```bash
-pip install monogate            # v0.3.0 — core only (no dependencies)
-pip install "monogate[torch]"   # + PyTorch differentiable ops + EMLTree / EMLNetwork / HybridNetwork
+pip install monogate                # v0.3.0 — core only, no dependencies
+pip install "monogate[torch]"       # + PyTorch ops, EMLTree, EMLNetwork, HybridNetwork
 ```
 
-## Usage
-
-```js
-import { op, exp, ln, add, mul, pow, E, ZERO } from "monogate";
-
-// The core operator
-op(1, 1);        // e        (exp(1) − ln(1))
-op(1, op(op(1,1), 1));  // 0   (e − e = 0)
-
-// Derived functions — all built from eml + 1
-exp(3);          // e³
-ln(Math.E);      // 1
-add(2, 3);       // 5
-mul(4, 5);       // 20
-pow(2, 10);      // 1024
+**JavaScript / Node**
+```bash
+npm install monogate                # v0.2.0 — EML, EDL, EXL, BEST, sin_best, cos_best
 ```
 
-## API
+---
 
-All functions are pure and stateless. Domain constraints are noted — violating them produces `NaN` or `±Infinity`.
+## Real Speedups
 
-### Core
+Node-count savings translate to wall-clock speedup only above a threshold. Three experiments measured this directly (Python, CPU):
 
-| Export | Formula | Nodes | Depth |
-|--------|---------|-------|-------|
-| `op(x, y)` | `exp(x) − ln(y)` | — | — |
-| `E` | `op(1,1)` | 1 | 1 |
-| `ZERO` | `op(1, op(op(1,1), 1))` | 3 | 3 |
-| `NEG_ONE` | `op(ZERO, op(2,1))` | 5 | 4 |
+| Workload | Activation | Nodes (EML) | Nodes (BEST) | Savings | Speedup |
+|----------|-----------|-------------|-------------|---------|---------|
+| TinyMLP, sin (exp_09) | sin(x) 8-term Taylor | 245 | 63 | **74%** | **2.8–3.1×** |
+| Batch poly eval (exp_11) | x⁴+x³+x² | 67 | 31 | **54%** | **2.1×** |
+| Transformer FFN (exp_10) | tanh-GELU | 17 | 14 | 18% | 0.93× |
 
-### Elementary functions
+Linear model (R²=0.9992): `speedup ≈ 0.033 × savings_pct + 0.32`
 
-| Export | Math | Domain | Nodes | Depth |
-|--------|------|--------|-------|-------|
-| `exp(x)` | eˣ | ℝ | 1 | 1 |
-| `ln(x)` | ln x | x > 0 | 3 | 3 |
-| `sub(x, y)` | x − y | x > 0 | 5 | 4 |
-| `neg(y)` | −y | ℝ (two-regime) | 9 | 5 |
-| `add(x, y)` | x + y | ℝ | 11 | 6 |
-| `mul(x, y)` | x × y | x,y > 0 | 13 | 7 |
-| `div(x, y)` | x / y | x,y > 0 | 15 | 8 |
-| `pow(x, n)` | xⁿ | x > 0 | 15 | 8 |
-| `recip(x)` | 1/x | x > 0 | 5 | 4 |
+**Crossover at ~20% node reduction.** GELU at 18% falls below the threshold — Python call overhead dominates. sin/cos at 74% give a solid 2.8–3.1× gain.
 
-The **depth** ranking of elementary functions by EML tree depth is new to mathematics.
+For reference: native `torch.sin` is ~440× faster than any EML variant. These benchmarks are relevant for symbolic arithmetic, EML tree evaluation, and differentiable programs that use EML as a numeric substrate.
 
-### `IDENTITIES`
-
-An array of `{ name, emlForm, nodes, depth, status }` records — useful for building explorers or documentation.
+---
 
 ## Operator family
 
-EML is not the only universal operator of this form. We have characterised a
-family of related gates and compared them systematically:
+| Operator | Gate | Constant | Complete? | Cheapest operations |
+|----------|------|----------|-----------|---------------------|
+| **EML** | `exp(x) − ln(y)` | 1 | **Yes** | sub (5n), add (11n) |
+| **EDL** | `exp(x) / ln(y)` | e | **Yes** | div (1n), recip (2n), mul (7n) |
+| **EXL** | `exp(x) × ln(y)` | e | No | ln (1n), pow (3n) |
+| EAL | `exp(x) + ln(y)` | 1 | No | — |
+| EMN | `ln(y) − exp(x)` | 1 | No | — |
 
-| Operator | Gate | Constant | Complete? | Best operation |
-|----------|------|----------|-----------|----------------|
-| **EML** | `exp(x) − ln(y)` | 1 | Yes | sub (5n), add (11n) |
-| **EDL** | `exp(x) / ln(y)` | e | Yes | div (1n), mul (7n), recip (2n) |
-| **EXL** | `exp(x) × ln(y)` | e | No  | ln (1n), pow (3n) |
-| EAL | `exp(x) + ln(y)` | 1 | No  | exp (1n) |
-| EMN | `ln(y) − exp(x)` | 1 | No  | — |
-
-**EML and EDL are the only complete operators** — they can each build all
-elementary arithmetic. EXL is incomplete (cannot add arbitrary reals) but gives
-the cheapest ln and pow.
+EML and EDL are the only complete operators. EXL is incomplete (cannot add arbitrary reals) but is the cheapest for `ln` and `pow`.
 
 ### BEST: optimal per-operation routing
 
-`BEST` is a pre-built hybrid that picks the cheapest known operator for each
-operation:
+`BEST` dispatches each primitive to the cheapest known operator:
 
-| Operation | Routed to | Nodes | EML baseline | Saving |
-|-----------|-----------|-------|--------------|--------|
-| exp | EML | 1 | 1 | same |
+| Operation | Operator | BEST nodes | EML baseline | Saving |
+|-----------|----------|-----------|--------------|--------|
+| exp | EML | 1 | 1 | — |
 | ln | EXL | 1 | 3 | −2 |
 | pow | EXL | 3 | 15 | −12 |
 | mul | EDL | 7 | 13 | −6 |
 | div | EDL | 1 | 15 | −14 |
 | recip | EDL | 2 | 5 | −3 |
 | neg | EDL | 6 | 9 | −3 |
-| sub | EML | 5 | 5 | same |
-| add | EML | 11 | 11 | same |
+| sub | EML | 5 | 5 | — |
+| add | EML | 11 | 11 | — |
 
-Total routing overhead: **37 nodes** vs 77 nodes all-EML — **52% fewer nodes**.
+Total: **37 nodes** vs 77 all-EML — 52% fewer. The add/sub steps stay EML; no other operator currently supports arbitrary a ± b.
 
+---
+
+## When to use BEST
+
+Use BEST routing when your workload:
+
+- Contains activations with ≥21% node savings (sin, cos, polynomial expressions)
+- Is dominated by `pow`, `ln`, `mul`, or `div`
+- Builds deep expression trees where overhead amortises across many nodes
+- Is doing symbolic regression or interpretable expression search
+
+Do not expect wall-clock gains when:
+- The primary operations are `add` or `sub` (no savings — EML-only)
+- Total node reduction is under ~20% (GELU at 18% is a concrete example)
+- You are using native PyTorch/NumPy (those are already optimised at the C level)
+
+---
+
+## Quick start
+
+**Python**
 ```python
+from monogate import op, E, ZERO, add_eml, mul_eml, pow_eml
 from monogate import BEST
-BEST.pow(2.0, 10.0)   # 1024.0  (uses pow_exl, 3 nodes)
-BEST.div(6.0, 2.0)    # 3.0     (uses div_edl, 1 node)
-BEST.add(3.0, 4.0)    # 7.0     (uses add_eml, 11 nodes)
-BEST.benchmark()      # prints node-count table + accuracy checks
+
+op(1, 1)             # e
+add_eml(2, 3)        # 5.0
+pow_eml(2, 8)        # 256.0
+
+BEST.pow(2.0, 10.0)  # 1024.0  (EXL, 3 nodes vs 15)
+BEST.div(6.0, 2.0)   # 3.0     (EDL, 1 node  vs 15)
+BEST.add(3.0, 4.0)   # 7.0     (EML, 11 nodes — irreducible)
+BEST.benchmark()     # full node-count + accuracy report
 ```
 
-### sin(x) via Taylor series
+**JavaScript**
+```js
+import { op, exp, ln, add, mul, pow, BEST } from "monogate";
 
-Using BEST routing, sin(x) = x − x³/3! + x⁵/5! − … can be computed with
-**63 nodes** at 8 terms (max error 7.7 × 10⁻⁷) vs **245 nodes** all-EML — a
-74% saving. Machine precision (~6.5 × 10⁻¹⁵) is reached at 13 terms (108 nodes
-BEST vs 420 nodes EML-only).
-
-The additive steps (sub_eml / add_eml) are the irreducible EML-only cost — no
-cousin operator currently supports arbitrary a ± b. This makes EML structurally
-essential even when other operators are cheaper for individual operations.
-
-### GELU activation
-
-`gelu_best_approx(x)` uses the tanh approximation formula with BEST routing
-(EDL `recip` for the final step):
-
-| Implementation | Nodes | Error vs exact |
-|----------------|-------|----------------|
-| `gelu_eml_approx` | 17 | < 1.4 × 10⁻¹² |
-| `gelu_best_approx` | 14 | < 1.4 × 10⁻¹² |
-
-18% fewer nodes vs pure EML. Accuracy matches the standard tanh-GELU formula
-used in GPT/BERT.
-
-## ML benchmarks
-
-Node-count savings translate directly to wall-clock speedup when the savings are
-large enough to overcome Python function-call overhead.
-
-### experiment_09 — TinyMLP with sin activation
-
-A 2-layer MLP (input 1 → hidden 16 → output 1) with `sin` activation, run on
-64-sample batches (1 024 activation calls per forward pass):
-
-| Configuration | ms/forward | Speedup |
-|--------------|-----------|---------|
-| EML-sin (245 nodes) | 39.3 | 1× (baseline) |
-| BEST-sin (63 nodes) | 14.1 | **2.8×** |
-| torch.sin (native) | 0.09 | 440× faster |
-
-BEST routing cuts 74% of activation nodes → **2.8× end-to-end MLP speedup** in
-EML-arithmetic mode. The comparison to `torch.sin` quantifies the overhead of
-operating in the EML-arithmetic substrate — relevant for symbolic regression,
-EML tree evaluation, and differentiable programs that use EML as a numeric
-substrate.
-
-### experiment_10 — Transformer FFN with GELU
-
-A standard 4× FFN block (d=16, hidden=64) with GELU activation, 8-sample batch:
-
-| Configuration | Nodes (GELU) | Relative speedup |
-|--------------|-------------|-----------------|
-| EML-GELU | 17 | 1× (baseline) |
-| BEST-GELU | 14 | ~0.9× (node savings < call overhead) |
-
-The 18% node reduction in GELU is too small to overcome Python call overhead.
-**Larger algebraic savings (sin/cos: 74%) give proportionally larger wall-clock
-gains (~3–4×).** This confirms the node-count model: the ratio of savings to
-overhead determines whether a routing improvement translates to measurable
-wall-clock speedup.
-
-Run the benchmarks:
-```bash
-cd python
-python notebooks/experiment_09_mlp_demo.py
-python notebooks/experiment_10_transformer_ffn.py
+op(1, 1);              // e
+add(2, 3);             // 5
+BEST.pow(2, 10);       // 1024  (EXL, 3 nodes)
+BEST.div(6, 2);        // 3     (EDL, 1 node)
 ```
+
+---
+
+## Explorer (monogate.dev)
+
+| Tab | Description |
+|-----|-------------|
+| **✦ viz** | Expression tree for any math input, nodes colored by EML / EDL / EXL routing. Click subtrees to highlight. |
+| **sin↗** | sin(x) Taylor accuracy chart, 2–20 terms. BEST vs EML node count at every precision level. |
+| **⚡ demo** | Live JS GELU FFN timing (EML vs BEST) + Python experiment_10 numbers side by side. |
+| **Calc** | Evaluate any expression in BEST / EML / EXL / EDL mode with per-operation node breakdown. |
+| **Opt** | Paste Python/NumPy/PyTorch code and get a BEST-rewritten version with node savings estimate. |
+| **Board** | Challenge leaderboard — open problems in EML construction (sin, cos, π). Submit a construction, get credited. |
+
+---
 
 ## Open challenges
 
-These functions have no known **closed-form EML construction** (exact formula, not Taylor series):
+These have no known **closed-form EML construction** (exact tree, not Taylor series):
 
-- **sin x** — Taylor via BEST routing works numerically; exact closed-form unknown
-- **cos x** — same status as sin x
+- **sin x**, **cos x** — Taylor via BEST works numerically; exact closed-form unknown
 - **π** — no construction as a closed EML expression
-- **i** (√−1) — open under strict principal-branch grammar. Under the extended-reals convention (`ln(0) = −∞`), i is constructible from `{1}` alone in K=75 nodes ([pveierland/eml-eval](https://github.com/pveierland/eml-eval)). These are different grammars, not contradictory results.
+- **i** (√−1) — open under strict principal-branch grammar; constructible under the extended-reals convention (K=75 nodes, [pveierland/eml-eval](https://github.com/pveierland/eml-eval)) — different grammars, not contradictory
 
-Pull requests welcome. If you crack one, open an issue — it's publishable.
+Pull requests welcome. Crack one and open an issue — it's publishable.
 
-## How it works
+---
 
-The grammar is just two production rules:
+## Repository structure
 
 ```
-S → 1
-S → eml(S, S)
+monogate/
+├── python/          # pip install monogate  — core, torch_ops, network, optimize
+├── lib/             # npm install monogate  — JS/Node library
+├── explorer/        # monogate.dev          — Vite/React browser app
+└── challenge/       # Challenge board backend
 ```
-
-Any expression built from this grammar computes some value. The paper proves that the specific compositions above equal the named functions exactly (not approximately). Floating-point errors are at machine epsilon (`< 1e-13`).
-
-The `neg` function uses a two-regime construction to avoid overflow:
-- **y ≤ 0**: tower formula via `exp(eʸ)` — stable because `eʸ ≤ 1`
-- **y > 0**: shift formula — computes `exp(y+1)` instead of a tower
 
 ## License
 
-MIT — see [LICENSE](./LICENSE). The underlying mathematics is CC BY 4.0 per the original paper.
+MIT. The underlying mathematics is CC BY 4.0 per the original paper.

@@ -2,29 +2,122 @@
 
 [![PyPI](https://img.shields.io/pypi/v/monogate)](https://pypi.org/project/monogate/)
 
-Pure-Python and PyTorch implementations of **EML arithmetic** — all elementary
-functions constructed from a single binary operator:
+**monogate** implements EML arithmetic — a formal system where every elementary function is a finite binary tree of identical gates — and routes each operation to the cheapest known operator family, cutting node counts by 20–74% and delivering measurable wall-clock speedup for pow/ln-heavy workloads.
 
 ```
-eml(x, y) = exp(x) − ln(y)
+eml(x, y) = exp(x) − ln(y)       ← the one gate
 ```
+
+From this operator and the constant `1`, every elementary arithmetic function is constructible as an exact expression tree. No approximation. No Taylor series for the core identities.
 
 Based on [arXiv:2603.21852](https://arxiv.org/abs/2603.21852) (Odrzywołek, 2026).
+Live explorer: **[monogate.dev](https://monogate.dev)**
 
 ---
 
 ## Install
 
 ```bash
-# Core only (no dependencies)
-pip install monogate            # v0.3.0
+# Core only (pure Python, no dependencies)
+pip install monogate                # v0.3.0
 
-# With PyTorch support (EMLNetwork, HybridNetwork, fit)
+# With PyTorch (EMLNetwork, HybridNetwork, fit, autograd)
 pip install "monogate[torch]"
 
 # Development (pytest + torch)
 pip install "monogate[dev]"
 ```
+
+JavaScript / Node:
+```bash
+npm install monogate
+```
+
+---
+
+## Real Speedups
+
+Node-count savings translate to wall-clock speedup only above a threshold. Three experiments measured this directly:
+
+| Workload | Activation | Nodes (EML) | Nodes (BEST) | Savings | Speedup |
+|----------|-----------|-------------|-------------|---------|---------|
+| TinyMLP, sin (exp_09) | sin(x) 8-term Taylor | 245 | 63 | **74%** | **2.8–3.1×** |
+| Batch poly eval (exp_11) | x⁴+x³+x² | 67 | 31 | **54%** | **2.1×** |
+| Transformer FFN (exp_10) | tanh-GELU | 17 | 14 | 18% | 0.93× |
+
+Linear model fit (R²=0.9992): `speedup ≈ 0.033 × savings_pct + 0.32`
+
+**Crossover at ~20% node reduction.** Functions with ≥21% BEST savings yield wall-clock gains; below that, Python call overhead dominates.
+
+```bash
+# Reproduce
+python notebooks/experiment_09_mlp_demo.py    # TinyMLP, sin
+python notebooks/experiment_10_transformer_ffn.py  # FFN, GELU
+python notebooks/experiment_11.py             # poly, crossover analysis
+```
+
+---
+
+## Operator family
+
+EML is not the only complete operator of this form. Five variants have been characterised:
+
+| Operator | Gate | Constant | Complete? | Cheapest operations |
+|----------|------|----------|-----------|---------------------|
+| **EML** | `exp(x) − ln(y)` | 1 | **Yes** | sub (5n), add (11n) |
+| **EDL** | `exp(x) / ln(y)` | e | **Yes** | div (1n), recip (2n), mul (7n) |
+| **EXL** | `exp(x) × ln(y)` | e | No | ln (1n), pow (3n) |
+| EAL | `exp(x) + ln(y)` | 1 | No | — |
+| EMN | `ln(y) − exp(x)` | 1 | No | — |
+
+EML and EDL are the only complete operators. EXL is incomplete (cannot add arbitrary reals) but gives the cheapest `ln` and `pow`.
+
+### BEST routing — optimal per-operation dispatch
+
+`BEST` routes each primitive to whichever operator costs the fewest nodes:
+
+| Operation | Operator | BEST nodes | EML baseline | Saving |
+|-----------|----------|-----------|--------------|--------|
+| exp | EML | 1 | 1 | — |
+| ln | EXL | 1 | 3 | −2 |
+| pow | EXL | 3 | 15 | −12 |
+| mul | EDL | 7 | 13 | −6 |
+| div | EDL | 1 | 15 | −14 |
+| recip | EDL | 2 | 5 | −3 |
+| neg | EDL | 6 | 9 | −3 |
+| sub | EML | 5 | 5 | — |
+| add | EML | 11 | 11 | — |
+
+Total: **37 nodes** vs 77 all-EML — 52% fewer. The add/sub steps stay EML because no other operator currently supports arbitrary a ± b.
+
+```python
+from monogate import BEST
+
+BEST.pow(2.0, 10.0)   # 1024.0  (EXL, 3 nodes vs 15)
+BEST.div(6.0, 2.0)    # 3.0     (EDL, 1 node  vs 15)
+BEST.ln(math.e)       # 1.0     (EXL, 1 node  vs 3)
+BEST.add(3.0, 4.0)    # 7.0     (EML, 11 nodes — irreducible)
+
+BEST.info()           # routing table + accuracy spot-checks
+BEST.benchmark()      # node counts + accuracy + optional neural regression
+```
+
+---
+
+## When to use BEST
+
+Use BEST routing when your workload:
+
+- Contains activations with ≥21% node savings (sin, cos, polynomial expressions)
+- Is dominated by `pow`, `ln`, `mul`, or `div` (all save ≥6 nodes each)
+- Builds deep expression trees where overhead amortises across many nodes
+- Is doing symbolic regression where formula interpretability matters
+- Evaluates the same expression repeatedly (savings compound across calls)
+
+Do not expect wall-clock gains from BEST when:
+- Your primary operation is `add` or `sub` (no savings — EML-only)
+- The total node reduction is under ~20% (GELU at 18% is a concrete example)
+- You are already using native `torch` or `numpy` primitives (440× faster than any EML variant)
 
 ---
 
@@ -65,37 +158,18 @@ for row in IDENTITIES:
 
 ---
 
-## Operator family (`monogate.core`)
-
-Beyond EML, the package ships four cousin operators and a hybrid routing system.
-
-### Named operators
+## Named operators
 
 ```python
 from monogate import EML, EDL, EXL, EAL, EMN
 
-# Each Operator wraps its gate function and natural constant
-EML.name        # "EML"
-EML.constant    # 1.0+0j  (ln(1) = 0 → eml(x,1) = exp(x))
-EDL.constant    # e       (ln(e) = 1 → edl(x,e) = exp(x))
-
-# Derived operations via __getattr__ dispatch
 EML.pow(2.0, 10.0)   # 1024.0  (15-node formula)
 EDL.div(10.0, 2.0)   # 5.0     (1-node formula)
 EXL.ln(math.e)       # 1.0     (1-node formula — no dead zone)
 EXL.pow(2.0, 8.0)    # 256.0   (3-node formula)
 
-# Summary table
-EML.info()   # prints gate, constant, all derived-function node counts
+EML.info()   # gate, constant, all derived-function node counts
 ```
-
-| Operator | Gate | Complete? | Cheapest operation |
-|----------|------|-----------|-------------------|
-| **EML** | `exp(x) − ln(y)` | Yes | sub (5n), add (11n) |
-| **EDL** | `exp(x) / ln(y)` | Yes | div (1n), mul (7n) |
-| **EXL** | `exp(x) × ln(y)` | No  | ln (1n), pow (3n)  |
-| EAL     | `exp(x) + ln(y)` | No  | — |
-| EMN     | `ln(y) − exp(x)` | No  | — |
 
 ### Operator registry
 
@@ -103,41 +177,14 @@ EML.info()   # prints gate, constant, all derived-function node counts
 from monogate import ALL_OPERATORS, COMPLETE_OPERATORS, get_operator, compare_all, markdown_table
 
 ALL_OPERATORS       # [EML, EDL, EXL, EAL, EMN]
-COMPLETE_OPERATORS  # [EML, EDL]  — can build all elementary arithmetic
+COMPLETE_OPERATORS  # [EML, EDL]
 
-op = get_operator("EXL")      # look up by name
-compare_all()                  # print side-by-side comparison table
-print(markdown_table())        # GFM table string for docs/wikis
+op = get_operator("EXL")
+compare_all()
+print(markdown_table())
 ```
 
-### BEST: optimal per-operation routing
-
-`BEST` is a pre-built `HybridOperator` that routes each operation to whichever
-base operator costs fewest nodes:
-
-```python
-from monogate import BEST, HybridOperator
-
-BEST.pow(2.0, 10.0)   # 1024.0  (EXL, 3 nodes vs EML's 15)
-BEST.div(6.0, 2.0)    # 3.0     (EDL, 1 node  vs EML's 15)
-BEST.ln(math.e)       # 1.0     (EXL, 1 node  vs EML's 3)
-BEST.add(3.0, 4.0)    # 7.0     (EML, 11 nodes — EML only)
-
-# Routing summary + accuracy spot-checks
-BEST.info()
-
-# Full benchmark: node counts + accuracy + optional neural regression
-BEST.benchmark()
-BEST.benchmark(targets=["sin", "cos", "x**3", "poly4"], restarts=3, steps=800)
-```
-
-`BEST.benchmark()` prints three tables:
-
-1. **Node counts** — each routed operation vs EML-only baseline with savings
-2. **Numerical accuracy** — spot-checks for exp, ln, pow, mul, div, add, sub
-3. **Neural regression** — optional; median/min MSE + convergence rate per target
-
-Build a custom routing:
+### Custom routing
 
 ```python
 from monogate import HybridOperator, EXL, EDL, EML
@@ -151,8 +198,7 @@ fast_pow.info()
 
 ## PyTorch API (`monogate.torch_ops`)
 
-Requires `torch`. All functions accept and return `Tensor` objects and are
-fully differentiable through `autograd`.
+Requires `torch`. All functions accept and return `Tensor` objects, fully differentiable via `autograd`.
 
 ```python
 import torch
@@ -163,20 +209,20 @@ y = torch.tensor(3.0, requires_grad=True)
 
 result = add_eml(x, y)
 result.backward()
-print(x.grad)   # ≈ 1.0  (d/dx(x+y) = 1)
+print(x.grad)   # ≈ 1.0
 ```
 
-### `neg_eml` — two-regime via `torch.where`
-
-The two-regime negation (tower formula for y ≤ 0, shift formula for y > 0) is
-implemented with `torch.where` so that both branches are traced and gradients
-flow correctly through the active regime:
+Available gate functions:
 
 ```python
-# Batch with mixed signs — gradients flow through the correct regime per element
-y = torch.tensor([-3., -1., 0., 1., 3.], requires_grad=True)
-neg_eml(y).sum().backward()
-print(y.grad)   # ≈ [−1, −1, −1, −1, −1]
+from monogate.torch_ops import (
+    op,              # EML: exp(x) − ln(y)
+    edl_op,          # EDL: exp(x) / ln(y)    (raw — avoid y near 1)
+    edl_op_safe,     # EDL: exp(x) / ln(y+1)  (safe for training)
+    exl_op,          # EXL: exp(x) * ln(y)
+    eal_op,          # EAL: exp(x) + ln(y)
+    EDL_SAFE_CONSTANT,  # e−1 ≈ 1.718
+)
 ```
 
 ---
@@ -187,9 +233,6 @@ Requires `torch`.
 
 ### `EMLTree` — symbolic regression of constants
 
-Learnable EML expression tree with scalar leaf parameters.  Use to discover
-EML constructions for mathematical constants.
-
 ```python
 import math, torch
 from monogate.network import EMLTree, fit
@@ -198,35 +241,27 @@ model = EMLTree(depth=2)
 losses = fit(model, target=torch.tensor(math.pi), steps=3000, lr=5e-3)
 
 print(f"π ≈ {model().item():.6f}")
-print(model.formula())   # eml(eml(1.2345, 0.9876), eml(…, …))
+print(model.formula())
 ```
 
 ### `EMLNetwork` — differentiable function approximation
-
-Learnable EML expression tree where every leaf is a `nn.Linear` module.
-Approximates arbitrary functions from input features.  When training
-converges, `formula()` prints an interpretable expression.
 
 ```python
 import torch
 from monogate.network import EMLNetwork, fit
 
-# Learn y = x² on x ∈ [0.1, 3.0]
 x = torch.linspace(0.1, 3.0, 60).unsqueeze(1)
 y = x.squeeze() ** 2
 
 model = EMLNetwork(in_features=1, depth=2)
 losses = fit(model, x=x, y=y, steps=3000, lr=1e-2)
 
-print(model.formula())   # eml(eml((w·x0+b), …), …)
+print(model.formula())
 ```
 
 ### `HybridNetwork` — EXL inner + EML outer
 
-Composes two different operators in one network: EXL sub-trees for the inner
-nodes (3-node pow, 1-node ln, numerically stable at deep random init) and an
-EML root node for the final additive step.  Wins 5/7 targets on the operator
-zoo leaderboard.
+EXL sub-trees for inner nodes (stable at deep random init, cheap `pow`/`ln`), EML root for the final additive step. Wins 5/7 targets on the operator zoo leaderboard.
 
 ```python
 from monogate.network import HybridNetwork, fit
@@ -239,133 +274,49 @@ model = HybridNetwork(in_features=1, depth=3)
 losses = fit(model, x=x, y=y, steps=2000, lr=3e-3)
 ```
 
-Custom inner/outer operators:
-
-```python
-from monogate.torch_ops import eal_op
-from monogate.network import HybridNetwork, EMLNetwork
-
-# EAL inner nodes + default EML root
-model = HybridNetwork(in_features=1, depth=3, inner_op=eal_op)
-```
-
 ### `fit()` signature
 
 ```python
 fit(
-    model,            # EMLTree or EMLNetwork
+    model,
     *,
-    target=None,      # scalar Tensor or float   (EMLTree only)
-    x=None,           # (batch, in_features)     (EMLNetwork only)
-    y=None,           # (batch,)                 (EMLNetwork only)
-    steps=2000,       # optimisation steps
-    lr=1e-2,          # Adam learning rate
-    log_every=200,    # print interval (0 = silent)
-    loss_threshold=1e-8,  # early-stop threshold
-    lam=0.0,          # complexity penalty weight
-                      #   EMLTree:    λ · Σ|leaf − 1|
-                      #   EMLNetwork: λ · Σ|weight|  (L1 on linear weights)
-) -> list[float]      # raw loss values (without penalty)
+    target=None,          # scalar Tensor or float   (EMLTree)
+    x=None,               # (batch, in_features)     (EMLNetwork)
+    y=None,               # (batch,)                 (EMLNetwork)
+    steps=2000,
+    lr=1e-2,
+    log_every=200,        # 0 = silent
+    loss_threshold=1e-8,  # early stop
+    lam=0.0,              # complexity penalty (L1 on leaves / weights)
+) -> list[float]          # raw loss values
 ```
 
 ---
-
-## Run tests
-
-```bash
-cd python/
-
-# Core tests (no torch required)
-pytest tests/test_core.py -v
-
-# All tests (torch required)
-pytest tests/ -v
-```
-
----
-
-## PyTorch operator functions
-
-```python
-from monogate.torch_ops import (
-    op,            # EML gate: exp(x) − ln(y)
-    edl_op,        # EDL gate: exp(x) / ln(y)   (raw — avoid y near 1)
-    edl_op_safe,   # EDL gate with y+1 shift     (safe for training)
-    exl_op,        # EXL gate: exp(x) * ln(y)
-    eal_op,        # EAL gate: exp(x) + ln(y)
-    EDL_SAFE_CONSTANT,  # e−1 ≈ 1.718   (natural constant for edl_op_safe)
-)
-```
-
-Pass any of these as `op_func` to `EMLNetwork`:
-
-```python
-from monogate.network import EMLNetwork
-from monogate.torch_ops import exl_op
-
-model = EMLNetwork(in_features=1, depth=3, op_func=exl_op)
-```
 
 ## sin(x) via Taylor series
 
-Using BEST routing, sin(x) can be constructed symbolically with dramatically
-fewer nodes than all-EML:
+BEST routing holds a constant 74% node reduction at every precision level:
 
-| Terms | Nodes (BEST) | Nodes (EML-only) | Saving | max error |
-|-------|-------------|-----------------|--------|-----------|
-| 4     | 27          | 105             | 74%    | 7.5e-02   |
-| 6     | 45          | 175             | 74%    | 4.5e-04   |
-| 8     | 63          | 245             | 74%    | 7.7e-07   |
-| 10    | 81          | 315             | 74%    | 5.3e-10   |
-| 12    | 99          | 385             | 74%    | 1.8e-13   |
+| Terms | Nodes (BEST) | Nodes (EML) | Max error |
+|-------|-------------|-------------|-----------|
+| 4     | 27          | 105         | 7.5e-02   |
+| 6     | 45          | 175         | 4.5e-04   |
+| 8     | 63          | 245         | 7.7e-07   |
+| 10    | 81          | 315         | 5.3e-10   |
+| 12    | 99          | 385         | 1.8e-13   |
 
-Key: `pow_exl` (3 nodes) replaces `pow_eml` (15 nodes); `div_edl` (1 node)
-replaces `div_eml` (15 nodes).  The additive steps `sub_eml`/`add_eml` (5/11n)
-are irreducible — no cousin operator supports arbitrary a ± b.
-
-See `python/notebooks/sin_best.py` for the full analysis.
-
----
-
-## ML benchmarks: node savings vs wall-clock speedup
-
-Node-count reductions translate to wall-clock speedup only above a threshold.
-Three experiments quantify this:
-
-| Experiment | Activation | Nodes EML | Nodes BEST | Savings | Speedup |
-|-----------|-----------|-----------|-----------|---------|---------|
-| exp_09 (TinyMLP, sin) | sin(x) Taylor | 245 | 63 | 74% | **2.8×** |
-| exp_11 (batch 512, poly) | x⁴+x³+x² | 67 | 31 | 54% | **2.1×** |
-| exp_10 (Transformer FFN, GELU) | tanh-GELU | 17 | 14 | 18% | 0.93× |
-
-Linear fit (R²=0.9992): `speedup ≈ 0.033 × savings_pct + 0.32`
-
-**Crossover at ~20% node reduction.** Functions with >20% BEST savings
-(sin, cos, polynomial expressions heavy in `pow`) yield wall-clock gains.
-GELU at 18% falls below the threshold — overhead dominates.
-
-Run the experiments:
-```bash
-python notebooks/experiment_09_mlp_demo.py   # TinyMLP, sin activation
-python notebooks/experiment_10_transformer_ffn.py  # FFN, GELU activation
-python notebooks/experiment_11.py           # polynomial, crossover analysis
-```
+Machine precision (~6.5×10⁻¹⁵) at 13 terms: 108 nodes (BEST) vs 420 nodes (EML-only).
 
 ---
 
 ## Code optimizer (`monogate.optimize`)
 
-`best_optimize` rewrites Python expressions and functions to use BEST-mode
-routing, reports per-operation node savings, and annotates decorated functions
-with their rewritten source.
-
-### Expression strings
+`best_optimize` rewrites Python expressions and functions to use BEST routing, reporting per-operation savings and generating rewritten source.
 
 ```python
 from monogate import best_optimize
 
 r = best_optimize("sin(x)**2 + ln(x+1)")
-print(r)
 # ┌─────────────────────────────────────────────────────────────────┐
 # │  sin(x)**2 + ln(x+1)  →  BEST-mode optimisation report         │
 # ├──────────┬───────┬────────────┬──────────┬──────────────────────┤
@@ -381,37 +332,47 @@ print(r)
 
 r.rewritten_code   # "BEST.pow(BEST.sin(x), 2) + BEST.ln(x + 1)"
 r.savings_pct      # 72
-r["message"]       # dict-style access also supported
 ```
 
-### Decorator
+Decorator form:
 
 ```python
-from monogate import best_optimize
-import math
-
 @best_optimize
 def my_func(x):
     return math.sin(x) ** 2 + math.log(x + 1)
 
-my_func.best_info.savings_pct          # e.g. 72
-my_func._best_rewritten_source         # "BEST.pow(BEST.sin(x), 2) + ..."
-my_func._is_best_optimized             # True
+my_func.best_info.savings_pct   # 72
+my_func._best_rewritten_source  # "BEST.pow(BEST.sin(x), 2) + ..."
 ```
 
-`@best_optimize()` (with parentheses) also works.
+---
 
-### `OptimizeResult` fields
+## Explorer (monogate.dev)
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `ops` | `tuple[OpMatch, …]` | per-operation breakdown |
-| `total_best_nodes` | `int` | total nodes under BEST routing |
-| `total_eml_nodes` | `int` | total nodes under pure EML |
-| `savings_pct` | `int` | integer % reduction |
-| `rewritten_code` | `str` | AST-rewritten source using `BEST.*` |
-| `python_snippet` | `str` | runnable snippet with imports |
-| `message` | `str` | one-line summary |
+| Tab | Description |
+|-----|-------------|
+| **✦ viz** | Expression tree for any math input, nodes colored by EML / EDL / EXL routing. Click subtrees to highlight. |
+| **sin↗** | sin(x) Taylor accuracy chart, 2–20 terms. BEST vs EML node count at each precision level. |
+| **⚡ demo** | Live JS GELU FFN timing (EML vs BEST) + Python experiment_10 numbers side by side. |
+| **Calc** | Evaluate any expression in BEST / EML / EXL / EDL mode with per-operation node breakdown. |
+| **Opt** | Paste Python/NumPy/PyTorch code and get a BEST-rewritten version with node savings estimate. |
+| **Board** | Challenge leaderboard — open problems in EML construction (sin, cos, π). Submit a construction, get credited. |
+
+---
+
+## Run tests
+
+```bash
+cd python/
+
+# Core only (no torch required)
+pytest tests/test_core.py -v
+
+# All tests (torch required)
+pytest tests/ -v
+```
+
+406 passing. 2 pre-existing failures in `test_torch.py` (EMLTree/EMLNetwork parameter assertions, unrelated to core or BEST).
 
 ---
 
@@ -423,20 +384,21 @@ python/
 ├── README.md
 └── monogate/
     ├── __init__.py      # public API, lazy torch import
-    ├── core.py          # pure Python: op, EML/EDL/EXL/EAL/EMN, HybridOperator, BEST
+    ├── core.py          # op, EML/EDL/EXL/EAL/EMN, HybridOperator, BEST
     ├── operators.py     # registry: ALL_OPERATORS, compare_all, markdown_table
-    ├── optimize.py      # best_optimize(), OptimizeResult, OpMatch, BestRewriter
+    ├── optimize.py      # best_optimize(), OptimizeResult, BestRewriter
     ├── torch_ops.py     # differentiable tensor ops (requires torch)
-    └── network.py       # EMLTree, EMLNetwork, HybridNetwork, fit (requires torch)
+    └── network.py       # EMLTree, EMLNetwork, HybridNetwork, fit
 tests/
 ├── test_core.py
 ├── test_torch.py
-├── test_edl.py          # 154 tests for operator family + HybridOperator + BEST
-└── test_optimize.py     # 80 tests for best_optimize, OptimizeResult, BestRewriter
+├── test_edl.py          # 154 tests — operator family, HybridOperator, BEST
+└── test_optimize.py     # 80 tests — best_optimize, OptimizeResult, BestRewriter
 notebooks/
-├── operators_study_v2.py   # algebraic derivations for all 5 operators
-├── operator_zoo.py         # 5-operator × 7-target leaderboard
-├── sin_construction.py     # Taylor sin(x) — 4 sections
-├── sin_best.py             # Deeper sin(x) analysis — 20 terms, node Pareto
-└── regression_comparison.py
+├── experiment_09_mlp_demo.py     # TinyMLP + sin: 2.8× speedup
+├── experiment_10_transformer_ffn.py  # FFN + GELU: below crossover
+├── experiment_11.py              # poly benchmark, linear fit, crossover
+├── sin_best.py                   # 20-term sin(x) analysis, node Pareto
+├── operator_zoo.py               # 5-operator × 7-target leaderboard
+└── operators_study_v2.py         # algebraic derivations for all 5 operators
 ```
