@@ -6,6 +6,24 @@ All notable changes to `monogate` are documented here.
 
 ## [0.12.0-dev] — 2026-04-16
 
+### Session 4: Physics & New Identities
+
+**Extended `monogate/pinn.py`** with 4 new equations:
+
+- **`'schrodinger'`** — −u''(x) = k²·u(x); free-particle Schrödinger. Exact solution
+  u(x) = exp(ikx) = `eml(ikx, 1)` — **1 complex EML node** (new paper-quality result).
+- **`'kdv_soliton'`** — KdV traveling-wave u' − 6u·u' − u''' = 0. Third-derivative
+  residual via three autograd calls. Analytic solution: sech²(x)/2.
+- **`'nls'`** — Time-independent NLS: u'' + |u|²·u = 0. Real-valued proxy.
+- **`'lotka_volterra'`** — Logistic ODE proxy: u'' + α·u' + β·u·u' = 0.
+
+New EMLPINN parameters: `k` (wave number), `c` (wave speed), `alpha`, `beta`.
+26 new tests; full suite 878 passed, 0 failed.
+
+New files: `notebooks/physics_identities.py`, `results/physics_identities.json`.
+
+---
+
 ### Session 2: Symbolic Regression Leaderboard
 
 **New module `monogate.leaderboard`** — standardized benchmark runner over

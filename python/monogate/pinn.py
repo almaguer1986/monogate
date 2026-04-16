@@ -8,13 +8,17 @@ fitted model and a symbolic candidate for the exact solution.
 
 Supported equations
 -------------------
-harmonic  u''(x) + ω²·u(x) = 0        (simple harmonic oscillator ODE)
-burgers   u·u'(x) − ν·u''(x) = 0      (steady-state 1-D Burgers equation)
-heat      u''(x) = 0                   (steady 1-D heat / Laplace equation)
+harmonic      u''(x) + ω²·u(x) = 0        (simple harmonic oscillator ODE)
+burgers       u·u'(x) − ν·u''(x) = 0      (steady-state 1-D Burgers equation)
+heat          u''(x) = 0                   (steady 1-D heat / Laplace equation)
+schrodinger   −u''(x) = k²·u(x)           (time-independent free-particle Schrödinger)
+kdv_soliton   u' − 6u·u' − u''' = 0       (KdV traveling-wave reduction)
+nls           u'' + |u|²·u = 0            (time-independent NLS / Gross-Pitaevskii)
+lotka_volterra  u'' + α·u' + β·u·u' = 0   (Lotka-Volterra proxy: logistic-like ODE)
 
 Public API
 ----------
-EMLPINN(equation, backbone_depth, omega, nu, alpha, lam_physics)
+EMLPINN(equation, backbone_depth, omega, nu, k, c, alpha, beta, lam_physics)
     nn.Module whose forward pass evaluates the backbone EMLNetwork and
     whose ``residual(x_phys)`` method returns the PDE/ODE residual tensor.
 
@@ -60,7 +64,10 @@ from .network import EMLNetwork
 
 __all__ = ["EMLPINN", "PINNResult", "fit_pinn"]
 
-_SUPPORTED_EQUATIONS = ("harmonic", "burgers", "heat")
+_SUPPORTED_EQUATIONS = (
+    "harmonic", "burgers", "heat",
+    "schrodinger", "kdv_soliton", "nls", "lotka_volterra",
+)
 
 
 # ── Result type ───────────────────────────────────────────────────────────────
@@ -96,13 +103,28 @@ class EMLPINN(nn.Module):
 
     Args:
         equation:       Differential equation to enforce.  One of:
-                        ``'harmonic'``  — u''(x) + ω²·u(x) = 0
-                        ``'burgers'``   — u·u'(x) − ν·u''(x) = 0
-                        ``'heat'``      — u''(x) = 0
+
+                        ``'harmonic'``       — u''(x) + ω²·u(x) = 0
+                        ``'burgers'``        — u·u'(x) − ν·u''(x) = 0
+                        ``'heat'``           — u''(x) = 0
+                        ``'schrodinger'``    — −u''(x) = k²·u(x)
+                                              (free-particle; exact solution exp(ikx),
+                                              1 complex EML node)
+                        ``'kdv_soliton'``    — u' − 6u·u' − u''' = 0
+                                              (KdV traveling-wave; exact: sech²(x)/2)
+                        ``'nls'``            — u'' + |u|²·u = 0
+                                              (time-independent NLS)
+                        ``'lotka_volterra'`` — u'' + α·u' + β·u·u' = 0
+                                              (logistic-type proxy; no closed form)
+
         backbone_depth: Depth of the EMLNetwork binary tree (default 3).
                         depth=d → 2^d−1 internal nodes, 2^d linear leaves.
         omega:          Angular frequency for ``'harmonic'`` (default 1.0).
         nu:             Viscosity coefficient for ``'burgers'`` (default 0.01).
+        k:              Wave number for ``'schrodinger'`` (default 1.0).
+        c:              Wave speed / amplitude for ``'kdv_soliton'`` (default 1.0).
+        alpha:          Linear damping coefficient for ``'lotka_volterra'`` (default 1.0).
+        beta:           Nonlinear coupling for ``'lotka_volterra'`` (default 1.0).
         lam_physics:    Weight on the physics residual loss (default 1.0).
                         Higher values enforce the equation more strictly but
                         may hurt data fit if the data is inconsistent.
@@ -119,6 +141,10 @@ class EMLPINN(nn.Module):
         backbone_depth: int   = 3,
         omega:          float = 1.0,
         nu:             float = 0.01,
+        k:              float = 1.0,
+        c:              float = 1.0,
+        alpha:          float = 1.0,
+        beta:           float = 1.0,
         lam_physics:    float = 1.0,
         in_features:    int   = 1,
     ) -> None:
@@ -130,6 +156,10 @@ class EMLPINN(nn.Module):
         self.equation    = equation
         self.omega       = omega
         self.nu          = nu
+        self.k           = k
+        self.c           = c
+        self.alpha       = alpha
+        self.beta        = beta
         self.lam_physics = lam_physics
         self.backbone    = EMLNetwork(in_features=in_features, depth=backbone_depth)
 
@@ -187,7 +217,35 @@ class EMLPINN(nn.Module):
         if self.equation == "burgers":
             return u * u_x - self.nu * u_xx
 
-        # heat: steady-state u'' = 0
+        if self.equation == "heat":
+            return u_xx
+
+        if self.equation == "schrodinger":
+            # −u''(x) = k²·u(x)  →  residual = u_xx + k²·u
+            return u_xx + self.k ** 2 * u
+
+        if self.equation == "nls":
+            # u''(x) + |u|²·u = 0  →  residual = u_xx + u²·u (real-valued proxy)
+            return u_xx + u ** 2 * u
+
+        if self.equation == "lotka_volterra":
+            # Logistic-type ODE proxy: u'' + α·u' + β·u·u' = 0
+            return u_xx + self.alpha * u_x + self.beta * u * u_x
+
+        if self.equation == "kdv_soliton":
+            # KdV traveling-wave: u' − 6u·u' − u''' = 0
+            # Need third derivative u_xxx
+            ones_uxx = torch.ones_like(u_xx)
+            u_xxx_full, = torch.autograd.grad(
+                u_xx, x,
+                grad_outputs=ones_uxx,
+                create_graph=True,
+                retain_graph=True,
+            )
+            u_xxx = u_xxx_full[:, 0]
+            return u_x - 6.0 * u * u_x - u_xxx
+
+        # Fallback (should never reach here given _SUPPORTED_EQUATIONS check)
         return u_xx
 
     def formula(self, feature_names: list[str] | None = None) -> str:

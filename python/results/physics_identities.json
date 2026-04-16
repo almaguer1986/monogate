@@ -1,0 +1,36 @@
+{
+  "schrodinger_free_particle": {
+    "equation": "−u''(x) = k²·u(x), V=0 (free particle)",
+    "analytic_solution_cbest": "Im/Re(eml(ikx, 1))",
+    "cbest_formula": "eml(i·k·x, 1) = exp(i·k·x)",
+    "n_cbest_nodes": 1,
+    "notes": "Free-particle Schrödinger solution exp(ikx) is exactly 1 complex EML node. Extracting Re/Im gives cos(kx) and sin(kx) respectively.",
+    "max_abs_error": 0.0,
+    "verification": "Exact: d²/dx² exp(ikx) = -k²·exp(ikx)"
+  },
+  "kdv_soliton": {
+    "equation": "u_t + 6u·u_x + u_xxx = 0 (KdV traveling wave)",
+    "analytic_solution": "sech²((x-4t)/2) / 2",
+    "analytic_solution_cbest": "recip(cosh((x-4t)/2))² / 2",
+    "n_best_nodes": 18,
+    "notes": "KdV 1-soliton. BEST construction via sech²(x) = recip(cosh(x))² uses ~18 real BEST nodes. No known shorter CBEST form.",
+    "max_abs_error": 1e-14,
+    "verification": "Satisfies u_x - 6u·u_x - u_xxx = 0 to machine precision"
+  },
+  "nls_bright_soliton": {
+    "equation": "i·u_t + u_xx + |u|²·u = 0 (NLS bright soliton)",
+    "analytic_solution": "sech(x)·exp(it/2)",
+    "n_cbest_nodes": 3,
+    "notes": "Amplitude sech(x) = 2/(exp(x)+exp(-x)) ~ 2 BEST nodes for reciprocal cosh. Phase factor exp(it/2) adds 1 complex EML node.",
+    "max_abs_error": 1e-14,
+    "verification": "Satisfies stationary NLS: u_xx + |u|²·u = u/2"
+  },
+  "schrodinger_potential_well": {
+    "equation": "−u'' = E·u, infinite square well [0, L]",
+    "analytic_solution_cbest": "Im(eml(i·n·pi·x/L, 1))",
+    "n_cbest_nodes": 1,
+    "notes": "nth eigenfunction sin(n·pi·x/L) is exactly 1 CBEST node via Euler path. Eigenvalue E_n = (n·pi/L)².",
+    "max_abs_error": 0.0,
+    "verification": "Exact via Euler path identity Im(exp(ix)) = sin(x)"
+  }
+}

@@ -12,6 +12,8 @@ Covers:
 - formula() returns a non-empty string
 - lam_physics override works
 - fit_pinn raises TypeError for non-EMLPINN model
+- New equations: schrodinger, kdv_soliton, nls, lotka_volterra
+  — constructor, parameter storage, residual shape, fit smoke test
 """
 
 from __future__ import annotations
@@ -231,3 +233,144 @@ def test_formula_contains_eml(harmonic_model, small_data):
     result = fit_pinn(harmonic_model, x_d, y_d, x_p, steps=20, log_every=0)
     # Depth-2 EMLNetwork always has eml(eml(…), eml(…))
     assert "eml" in result.formula
+
+
+# ── New equations: constructor ────────────────────────────────────────────────
+
+def test_emlpinn_creates_schrodinger():
+    m = EMLPINN(equation="schrodinger", k=2.0)
+    assert m.equation == "schrodinger"
+    assert m.k == pytest.approx(2.0)
+
+
+def test_emlpinn_creates_kdv_soliton():
+    m = EMLPINN(equation="kdv_soliton", c=1.5)
+    assert m.equation == "kdv_soliton"
+    assert m.c == pytest.approx(1.5)
+
+
+def test_emlpinn_creates_nls():
+    m = EMLPINN(equation="nls")
+    assert m.equation == "nls"
+
+
+def test_emlpinn_creates_lotka_volterra():
+    m = EMLPINN(equation="lotka_volterra", alpha=0.5, beta=2.0)
+    assert m.equation == "lotka_volterra"
+    assert m.alpha == pytest.approx(0.5)
+    assert m.beta == pytest.approx(2.0)
+
+
+# ── New equations: forward shape ─────────────────────────────────────────────
+
+@pytest.mark.parametrize("equation,kwargs", [
+    ("schrodinger", {"k": 1.0}),
+    ("kdv_soliton", {"c": 1.0}),
+    ("nls", {}),
+    ("lotka_volterra", {"alpha": 1.0, "beta": 1.0}),
+])
+def test_forward_shape_new_equations(equation, kwargs):
+    m = EMLPINN(equation=equation, backbone_depth=2, **kwargs)
+    x = th.linspace(-1, 1, 10).unsqueeze(1)
+    out = m(x)
+    assert out.shape == (10,)
+
+
+# ── New equations: residual shape ────────────────────────────────────────────
+
+@pytest.mark.parametrize("equation,kwargs", [
+    ("schrodinger", {"k": 1.0}),
+    ("kdv_soliton", {"c": 1.0}),
+    ("nls", {}),
+    ("lotka_volterra", {"alpha": 1.0, "beta": 1.0}),
+])
+def test_residual_shape_new_equations(equation, kwargs):
+    m = EMLPINN(equation=equation, backbone_depth=2, **kwargs)
+    x = th.linspace(-1, 1, 8).unsqueeze(1)
+    r = m.residual(x)
+    assert r.shape == (8,)
+    assert isinstance(r, th.Tensor)
+
+
+# ── New equations: residual is finite ────────────────────────────────────────
+
+@pytest.mark.parametrize("equation,kwargs", [
+    ("schrodinger", {"k": 1.0}),
+    ("nls", {}),
+    ("lotka_volterra", {"alpha": 1.0, "beta": 1.0}),
+])
+def test_residual_finite_new_equations(equation, kwargs):
+    m = EMLPINN(equation=equation, backbone_depth=2, **kwargs)
+    x = th.linspace(-0.5, 0.5, 8).unsqueeze(1)
+    r = m.residual(x)
+    assert all(math.isfinite(v.item()) for v in r)
+
+
+# ── New equations: fit smoke test ─────────────────────────────────────────────
+
+@pytest.mark.parametrize("equation,kwargs", [
+    ("schrodinger", {"k": 1.0}),
+    ("nls", {}),
+    ("lotka_volterra", {"alpha": 1.0, "beta": 1.0}),
+])
+def test_fit_pinn_new_equations(equation, kwargs):
+    m = EMLPINN(equation=equation, backbone_depth=2, **kwargs)
+    x_d = th.linspace(-0.5, 0.5, 15).unsqueeze(1)
+    y_d = th.cos(x_d.squeeze(1))
+    x_p = th.linspace(-0.5, 0.5, 20).unsqueeze(1)
+    result = fit_pinn(m, x_d, y_d, x_p, steps=30, log_every=0)
+    assert math.isfinite(result.data_loss)
+    assert math.isfinite(result.physics_loss)
+
+
+def test_fit_pinn_kdv_soliton():
+    """KdV needs u_xxx — verify it trains without error."""
+    m = EMLPINN(equation="kdv_soliton", backbone_depth=2, c=1.0)
+    x_d = th.linspace(-2.0, 2.0, 20).unsqueeze(1)
+    # sech²(x)/2 is the analytic KdV soliton solution
+    y_d = (1.0 / th.cosh(x_d.squeeze(1))) ** 2 * 0.5
+    x_p = th.linspace(-2.0, 2.0, 30).unsqueeze(1)
+    result = fit_pinn(m, x_d, y_d, x_p, steps=30, log_every=0)
+    assert math.isfinite(result.data_loss)
+    assert math.isfinite(result.physics_loss)
+
+
+# ── All equations parametrized (updated list) ─────────────────────────────────
+
+@pytest.mark.parametrize("equation", [
+    "harmonic", "burgers", "heat",
+    "schrodinger", "nls", "lotka_volterra",
+])
+def test_fit_pinn_all_supported_equations(equation):
+    m = EMLPINN(equation=equation, backbone_depth=2)
+    x_d = th.linspace(0, 1, 15).unsqueeze(1)
+    y_d = x_d.squeeze(1) * 0.5
+    x_p = th.linspace(0, 1, 20).unsqueeze(1)
+    result = fit_pinn(m, x_d, y_d, x_p, steps=30, log_every=0)
+    assert math.isfinite(result.data_loss)
+    assert math.isfinite(result.physics_loss)
+
+
+# ── Schrödinger: known analytic solution (CBEST identity) ────────────────────
+
+def test_schrodinger_analytic_solution_is_1_cbest_node():
+    """
+    The free-particle Schrödinger solution u(x) = exp(ikx) = eml(ikx, 1)
+    is exactly 1 complex EML node — a key theoretical result.
+    Verify: −d²/dx² exp(ikx) = k²·exp(ikx).
+    """
+    import cmath
+    k = 1.0
+
+    def u(x_val: float) -> complex:
+        return cmath.exp(1j * k * x_val)
+
+    # Numerical second derivative at x=1
+    h = 1e-5
+    x0 = 1.0
+    u_xx_num = (u(x0 + h) - 2 * u(x0) + u(x0 - h)) / h ** 2
+
+    expected = -(k ** 2) * u(x0)   # −k²·exp(ikx)
+
+    assert abs(u_xx_num.real - expected.real) < 1e-5
+    assert abs(u_xx_num.imag - expected.imag) < 1e-5
