@@ -4,7 +4,7 @@ All notable changes to `monogate` are documented here.
 
 ---
 
-## [0.12.0-dev] — 2026-04-16
+## [0.12.0] — 2026-04-16
 
 ### Session 3: Streamlit Web Demo
 

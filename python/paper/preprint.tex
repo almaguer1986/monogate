@@ -276,13 +276,7 @@ dominant non-target local optimum.
 
 \begin{figure}[h]
 \centering
-\fbox{\parbox{0.9\linewidth}{\centering
-  \textit{[AttractorViz screenshot]}\\[4pt]
-  Left: 40 loss curves (green = converges to $\pi$, orange = attractor).
-  Right: final formula values at step 3000.\\
-  $\lambda=0$: all 40 curves orange.
-  $\lambda=0.005$: all 40 curves green.
-}}
+\includegraphics[width=0.92\linewidth]{figures/attractor_landscape}
 \caption{Phase transition in depth-3 EMLTree fitting to $\pi$
   (40 seeds, 3000 Adam steps, lr=$5\times10^{-3}$).
   Data from \texttt{experiments/gen\_attractor\_data.py}.}
