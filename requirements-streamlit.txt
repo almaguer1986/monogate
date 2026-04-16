@@ -1,0 +1,12 @@
+# monogate Streamlit demo dependencies
+# Install: pip install -r requirements-streamlit.txt
+#
+# Optional extras:
+#   torch  — enables Tab 3 (PINN Demo)
+#   scipy  — enables reference plots for Fresnel / Bessel / Airy / digamma
+
+streamlit>=1.32
+matplotlib>=3.8
+numpy>=1.24
+pandas>=2.0
+monogate

@@ -6,6 +6,22 @@ All notable changes to `monogate` are documented here.
 
 ## [0.12.0-dev] — 2026-04-16
 
+### Session 3: Streamlit Web Demo
+
+**New file `streamlit_app.py`** — interactive 5-tab web demo deployable to Streamlit Cloud.
+
+- **Optimizer tab** — paste expression or code → BEST node savings table + rewritten snippet
+- **Special Functions tab** — browse CATALOG (15 functions); EML vs reference plot + error plot
+- **PINN Demo tab** — run `fit_pinn()` interactively for 7 equations; graceful fallback when torch absent
+- **MCTS Explorer tab** — configure + run `mcts_search()` for 6 target functions; convergence plot; results cached in `st.session_state`
+- **Phantom Attractor tab** — pre-computed phase-transition visualisation from `attractor_phase_transition.json`
+
+New `requirements-streamlit.txt` (no torch required: streamlit, matplotlib, numpy, pandas, monogate).
+New `[streamlit]` optional dependency group in `pyproject.toml`.
+Streamlit Cloud badge added to README.
+
+---
+
 ### Session 5: Advanced Theoretical Extensions
 
 **New module `monogate.interval`** — certified interval arithmetic for EML trees.

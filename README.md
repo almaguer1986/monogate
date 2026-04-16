@@ -5,7 +5,7 @@
 From this one gate and the constant `1`: exp, ln, sqrt, pow, div, mul, sin (complex), GELU, tanh — all exact, no look-up tables. BEST routing then dispatches each primitive to whichever of three operator families (EML, EDL, EXL) uses the fewest nodes.
 
 Based on [arXiv:2603.21852](https://arxiv.org/abs/2603.21852) (Odrzywołek, 2026).  
-Paper: **[arXiv:ARXIV_ID_PLACEHOLDER](https://arxiv.org/abs/ARXIV_ID_PLACEHOLDER)** · Live explorer: **[monogate.dev](https://monogate.dev)** · [![PyPI](https://img.shields.io/pypi/v/monogate)](https://pypi.org/project/monogate/)
+Paper: **[arXiv:ARXIV_ID_PLACEHOLDER](https://arxiv.org/abs/ARXIV_ID_PLACEHOLDER)** · Live explorer: **[monogate.dev](https://monogate.dev)** · [![PyPI](https://img.shields.io/pypi/v/monogate)](https://pypi.org/project/monogate/) · [![Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://monogate.streamlit.app)
 
 ```bash
 pip install monogate==0.11.0
@@ -33,6 +33,14 @@ print(r.rewritten_code)   # 72% fewer nodes
 ```
 
 **Try it now in Colab:** [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/almaguer1986/monogate/blob/master/python/notebooks/colab_demo.ipynb)
+
+**Interactive web demo (Streamlit):** [![Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://monogate.streamlit.app) — Optimizer · Special Functions · PINN Demo · MCTS Explorer · Phantom Attractor
+
+Run locally:
+```bash
+pip install -r requirements-streamlit.txt   # no torch required
+streamlit run streamlit_app.py
+```
 
 ---
 
