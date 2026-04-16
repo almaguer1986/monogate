@@ -4,6 +4,167 @@ All notable changes to `monogate` are documented here.
 
 ---
 
+## [1.1.0] — 2026-04-16
+
+### The Neurosymbolic Prover
+
+monogate began as a study of a single operator: `eml(x, y) = exp(x) − ln(y)`.
+Version 1.0 proved that this one gate generates every elementary function as a
+finite expression tree. Version 1.1 takes the next step: **monogate can now
+discover and prove new mathematical identities on its own.**
+
+The flagship feature is a four-tier neurosymbolic theorem prover that combines
+SymPy-exact verification, interval arithmetic certification, MCTS witness
+search, and an online-learning neural scorer that improves with each proof.
+It ships with a catalog of 151 identities, interactive Plotly visualizations,
+and a clean API for mathematical research.
+
+### New: Prover v2 — `monogate.prover`
+
+**`EMLProver` / `EMLProverV2`** — four-tier proof pipeline:
+
+| Tier | Method | Certainty |
+|------|--------|-----------|
+| 1 | Numerical probe (500 random points) | Refutation |
+| 2 | SymPy exact simplification | Proved exact |
+| 3 | Interval arithmetic (monogate.interval) | Certified |
+| 4 | EML witness search (MCTS, depth 5) | Constructive |
+
+```python
+from monogate.prover import EMLProverV2
+
+p = EMLProverV2()
+r = p.prove("sin(x)**2 + cos(x)**2 == 1")
+print(r.status)         # "proved_exact"
+print(r.confidence)     # 1.0
+
+r2 = p.prove("exp(x + y) == exp(x) * exp(y)")
+print(r2.status)        # "proved_exact"
+```
+
+**`generate_conjectures`** — auto-generate candidate identities from the EML
+expression space and filter for plausible ones:
+
+```python
+candidates = p.generate_conjectures(n=20, depth=3, min_confidence=0.7)
+for c in candidates:
+    print(c.expression, c.confidence)
+```
+
+**`compress_proof`** — simplify witness trees using minimax approximation:
+
+```python
+compressed = p.compress_proof(result)
+print(f"{result.node_count} → {compressed.node_count} nodes")
+```
+
+**`batch_prove`** — prove a list of identities, return a `BenchmarkReport`:
+
+```python
+from monogate.identities import TRIG_IDENTITIES
+report = p.batch_prove(TRIG_IDENTITIES[:10])
+print(report.proved_rate)   # fraction proved
+```
+
+**`visualize_proof`** (matplotlib) and **`visualize_proof_interactive`**
+(Plotly, HTML export):
+
+```python
+fig = p.visualize_proof_interactive(r, output_path="proof.html")
+```
+
+### New: Neural Scorer — `monogate.neural_scorer`
+
+A feature-based MLP that learns from successful proofs and guides MCTS toward
+more promising expression trees. No torch required for inference — weights are
+stored as numpy arrays.
+
+**`FeatureBasedEMLScorer`** — 12-feature → 32 → 16 → 1 (sigmoid) MLP:
+
+| Feature | Description |
+|---------|-------------|
+| `depth` | Max tree depth |
+| `eml_nodes` | Internal EML node count |
+| `total_nodes` | All nodes |
+| `leaf_ratio` | Leaves / total_nodes |
+| `x_fraction` | Fraction of variable leaves |
+| `const_mean/std/range` | Constant leaf statistics |
+| `balance` | Left/right size symmetry |
+| `symmetry` | Subtree depth symmetry |
+| `max_const` | Largest constant |
+| `depth_variance` | Variance of leaf depths |
+
+```python
+from monogate import FeatureBasedEMLScorer
+
+scorer = FeatureBasedEMLScorer()
+from monogate.prover import EMLProverV2
+p = EMLProverV2(enable_learning=True)      # scorer auto-created
+r = p.prove("cosh(x)**2 - sinh(x)**2 == 1")
+# scorer updated online from every proved_witness result
+p.scorer.save("scorer_checkpoint.json")   # persist learned weights
+```
+
+**`ExperienceBuffer`** — capped deque with reward clipping, numpy
+serialization, and round-trip JSON save/load.
+
+**`extract_tree_features`** — pure-numpy 12-feature extraction from any EML
+tree dict.
+
+### New: Identity Catalog 120 → 151
+
+31 new identities added across five categories:
+
+| Category | Before | After |
+|----------|--------|-------|
+| Trigonometric | 27 | 32 |
+| Hyperbolic | 20 | 25 |
+| Special functions | 20 | 25 |
+| Physics | 12 | 17 |
+| Open conjectures | 10 | 21 |
+| Exponential + EML | 31 | 31 |
+| **Total** | **120** | **151** |
+
+New entries include: Chebyshev T5/T6, triple-product trig, inverse-trig
+hyperbolic connections, Gudermann function, Bessel J1, digamma shift recurrence,
+erf complement, diffusion kernel, Boltzmann factor, Planck relation, and eleven
+auto-generated EML structure conjectures.
+
+### MCTS scorer integration
+
+`mcts_search` gains an `external_scorer` parameter (backward-compatible,
+default `None`). When a trained `FeatureBasedEMLScorer` is provided:
+
+```
+reward = 0.8 × (1 / (1 + MSE))  +  0.2 × neural_score
+```
+
+The neural bonus adds soft guidance toward structurally similar trees that
+previously led to proofs, while numerical MSE remains dominant.
+
+### Test suite
+
+**1184 tests, 0 failed** (up from 983 at v1.0.0). New test files:
+
+- `tests/test_neural_scorer.py` — 33 tests covering feature extraction,
+  buffer management, scorer lifecycle, MCTS integration, prover integration,
+  and Plotly visualization.
+
+### API additions (all exported from `monogate`)
+
+```python
+from monogate import (
+    FeatureBasedEMLScorer, ExperienceBuffer,
+    extract_tree_features, N_FEATURES,
+    EMLProver, EMLProverV2, ProofResult, BenchmarkReport,
+    Identity, ALL_IDENTITIES, TRIG_IDENTITIES, HYPERBOLIC_IDENTITIES,
+    EXPONENTIAL_IDENTITIES, SPECIAL_IDENTITIES, PHYSICS_IDENTITIES,
+    get_by_difficulty, get_by_category,
+)
+```
+
+---
+
 ## [1.0.0] — 2026-04-16
 
 ### Major release: monogate reaches v1.0.0
