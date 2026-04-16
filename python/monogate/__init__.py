@@ -335,3 +335,41 @@ __all__ += [
     "save_leaderboard",
     "load_leaderboard",
 ]
+
+from .minimax import (  # noqa: F401
+    MinimaxResult,
+    minimax_eml,
+    minimax_survey,
+)
+
+__all__ += [
+    "MinimaxResult",
+    "minimax_eml",
+    "minimax_survey",
+]
+
+from .physics import (  # noqa: F401
+    schrodinger_free_cb,
+    potential_well_cb,
+    nls_soliton_amplitude_cb,
+    heat_kernel_cb,
+    kdv_soliton_cb,
+    wave_cos_cb,
+    wave_sin_cb,
+    PHYSICS_CATALOG,
+)
+
+__all__ += [
+    "schrodinger_free_cb",
+    "potential_well_cb",
+    "nls_soliton_amplitude_cb",
+    "heat_kernel_cb",
+    "kdv_soliton_cb",
+    "wave_cos_cb",
+    "wave_sin_cb",
+    "PHYSICS_CATALOG",
+]
+
+from .sklearn_wrapper import EMLRegressor  # noqa: F401
+
+__all__ += ["EMLRegressor"]
