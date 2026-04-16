@@ -19,7 +19,7 @@ Live explorer: **[monogate.dev](https://monogate.dev)**
 
 ```bash
 # Core only (pure Python, no dependencies)
-pip install monogate                # v0.3.0
+pip install monogate                # v0.3.1
 
 # With PyTorch (EMLNetwork, HybridNetwork, fit, autograd)
 pip install "monogate[torch]"
@@ -298,6 +298,22 @@ Machine precision (~6.5×10⁻¹⁵) at 13 terms: 108 nodes (BEST) vs 420 nodes 
 
 ---
 
+## SIREN / NeRF optimizer
+
+```python
+from monogate import optimize_siren
+
+# Analyze any sin-heavy nn.Module
+report = optimize_siren(my_siren_model, omega=30.0)
+print(report)                   # 73% savings, speedup expected
+print(report.get_rewritten())   # BEST.sin(BEST.mul(30, self.linear(x)))
+```
+
+`optimize_siren` is a thin wrapper around `best_optimize_model` with a SIREN-aware docstring.
+`optimize_nerf` is an alias. Both return `ModelOptimizeReport` — same interface as `best_optimize_model`.
+
+---
+
 ## Code optimizer (`monogate.optimize`)
 
 `best_optimize` rewrites Python expressions and functions to use BEST routing, reporting per-operation savings and generating rewritten source.
@@ -308,6 +324,7 @@ from monogate import best_optimize
 r = best_optimize("sin(x)**2 + ln(x+1)")
 print(r.rewritten_code)   # "BEST.pow(BEST.sin(x), 2) + BEST.ln(x + 1)"
 print(r.savings_pct)      # 72
+print(r)                  # full table + speedup indicator
 ```
 
 Decorator form:
@@ -320,6 +337,36 @@ def my_func(x):
 my_func.best_info.savings_pct   # 72
 ```
 
+Model analysis:
+
+```python
+from monogate import best_optimize_model
+
+# Analyze all forward() methods — reports per-layer savings + speedup indicator
+report = best_optimize_model(my_model, verbose=True)
+print(report)
+
+# Get AST-rewritten source for any forward method
+print(report.get_rewritten())            # root module
+print(report.get_rewritten("encoder"))  # sub-module path
+report.print_rewritten()                 # prints to stdout
+
+# Patch EML-arithmetic methods in-place (for EMLNetwork / EMLTree models)
+report = best_optimize_model(my_model, inplace=True)
+```
+
+Output format:
+
+```
+ModelOptimizeReport: 74% node savings  (63n BEST vs 245n EML)
+  Layers analyzed: 3  |  Methods patched: 0
+  Speedup expected: YES  (74% > 20% crossover threshold)
+  Device: cpu — note: native torch.sin is ~9,000x faster than EML substrate.
+  ------------------------------------------------
+  root.forward: 74% savings  (63n BEST vs 245n EML)
+  Use report.print_rewritten() to view the rewritten forward source.
+```
+
 ---
 
 ## Explorer (monogate.dev)
@@ -329,9 +376,10 @@ my_func.best_info.savings_pct   # 72
 | **✦ viz** | Expression tree for any math input — nodes colored by EML / EDL / EXL routing. Click subtrees to highlight. |
 | **sin↗** | sin(x) Taylor accuracy chart, 2–20 terms. BEST vs EML node count at each precision level. |
 | **⚡ demo** | Live JS GELU FFN timing (EML vs BEST) + Python experiment_10 numbers side by side. |
-| **Calc** | Evaluate any expression in BEST / EML / EXL / EDL mode with per-operation node breakdown. |
-| **Opt** | Paste Python/NumPy/PyTorch code — get a BEST-rewritten version with node savings estimate. |
-| **Board** | Challenge leaderboard — open problems in EML construction (sin, cos, π). Submit and get credited. |
+| **✦ calc** | Evaluate any expression in BEST / EML / EXL / EDL mode with per-operation node breakdown. |
+| **⚙ opt** | Paste Python/NumPy/PyTorch code — get a BEST-rewritten version with node savings estimate. Calls real `best_optimize()` via local API when available. |
+| **⬡ nerf** | SIREN / NeRF optimizer — pre-loaded SIREN presets, before/after diff, Download optimized .py. |
+| **⊞ board** | Challenge leaderboard — open problems in EML construction (sin, cos, π). Submit and get credited. |
 
 ---
 
