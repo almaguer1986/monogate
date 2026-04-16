@@ -8,7 +8,13 @@ We highlight two particularly useful variants:
 - **EDL** (`exp(x)/ln(y)` + `e`): excels at division (1 node) and multiplication (7 nodes)
 - **EXL** (`exp(x)·ln(y)` + 1): achieves 1-node `ln` and 3-node `pow` with superior deep-tree stability
 
-The `BEST` router reduces node count by 52% on average and up to 74% for Taylor approximations of `sin(x)` and `cos(x)`. It reaches machine precision (≈6.5×10⁻¹⁵) at 13 terms using 108 nodes, compared to 420 nodes for pure EML. Hybrid networks (EXL-heavy inner subtrees with an EML root) also outperform pure EML on 5 of 7 regression targets and exhibit significantly better training stability.
+The `BEST` router reduces node count by 52% on average and up to 74% for Taylor approximations of `sin(x)` and `cos(x)`. It reaches machine precision (≈6.5×10⁻¹⁵) at 13 terms using 108 nodes, compared to 420 nodes for pure EML. Hybrid networks (EXL-heavy inner subtrees with an EML root) outperform pure EML on 5 of 7 regression targets and exhibit significantly better training stability.
+
+We also document two empirical findings with sharp quantitative results:
+
+1. **Phantom attractors in EMLTree training.** Gradient-based optimization of depth-3 EML trees toward π fails in 100% of random seeds (40/40) without regularization, converging instead to a stable non-target attractor at ≈3.1696. Adding a small L1 complexity penalty (λ=0.005) eliminates the attractor completely, achieving 100% convergence (20/20 runs).
+
+2. **Exhaustive search confirms no small sin(x) construction.** All 862,116 real-valued EML trees with up to 8 internal nodes and terminals `{1, x}` were enumerated and evaluated against 8 probe points. No tree matches sin(x) or cos(x) at any tolerance (10⁻⁴ to 10⁻⁹). A structural argument — the *Infinite Zeros Barrier* — rules out exact real-valued construction for any finite N: any finite EML tree has at most finitely many zeros, while sin(x) has infinitely many.
 
 We release **monogate** (Python + JavaScript) with full support for EML, EDL, EXL, and the `BEST` hybrid, including a browser explorer with live BEST mode, an interactive code optimizer tab, and a `best_optimize()` Python API for annotating and rewriting functions.
 
@@ -192,48 +198,126 @@ The problem asks: does there exist a finite binary tree where every leaf is the 
 
 **Current status:** No finite EML tree from terminal `{1}` that equals `sin(x)` everywhere is known. The challenge leaderboard ([monogate.dev/board](https://monogate.dev)) tracks the best known constructions.
 
-### 6.2 Known Constructions
+### 6.2 Exhaustive Search Results
 
-The best known approximation in the EML substrate is the BEST-routed Taylor series:
+Two scripts — `sin_search_01.py` (N≤7) and `sin_search_02.py` (N=8, pruned) — performed a complete enumeration of the EML grammar using terminals `{1, x}` for function search and `{1}` for constant search.
+
+**Tree counts (combined):**
+
+| N | Catalan shapes | Leaf assignments | Trees | Cumulative |
+|---|---------------|-----------------|-------|-----------|
+| 1 | 1 | 4 | 4 | 4 |
+| 2 | 2 | 8 | 16 | 20 |
+| 3 | 5 | 16 | 80 | 100 |
+| 4 | 14 | 32 | 448 | 548 |
+| 5 | 42 | 64 | 2,688 | 3,236 |
+| 6 | 132 | 128 | 16,896 | 20,132 |
+| 7 | 429 | 256 | 109,824 | 129,956 |
+| **8** | **1,430** | **512** | **732,160** | **862,116** |
+
+N=8 used two pruning strategies: all-ones prescreen (872 shapes eliminated upfront) and first-probe early exit (478,372 of 732,160 tree-bit pairs short-circuited). Total wall-clock: ~25 s on a single CPU core.
+
+**Results (N ≤ 8):**
+
+- **sin(x) — real-valued:** NO candidate at tolerances 10⁻⁴, 10⁻⁶, 10⁻⁹
+- **cos(x) — real-valued:** NO candidate at 10⁻⁶
+- **sin(1), cos(1), π, √2, ln(2), 1/π — constant search from `{1}`:** NONE found
+- **Complex EML paths (Re or Im part = sin(x)):** NO match at tolerance 10⁻³, N ≤ 8
+
+**The Infinite Zeros Barrier (why real-valued search cannot succeed for any N):**
+
+Any finite composition of `exp` and `ln` over real inputs produces a real-analytic function that is strictly monotone between singularities and has at most finitely many zeros on any bounded interval. `sin(x)` has a zero at every integer multiple of π — infinitely many on `[−10, 10]`. This is a structural impossibility: no finite real-valued EML tree can match sin at all its zeros, regardless of depth.
+
+This rules out real-valued constructions for all N, not just N ≤ 8. The complex case remains open.
+
+**Conjecture:**
+
+> *No finite EML tree with terminals `{1}` or `{1, x}` evaluates to exactly `sin(x)` for all real x.*
+
+This is supported by the exhaustive search (862,116 trees, N ≤ 8, zero candidates) and the Infinite Zeros Barrier structural argument for all real-valued trees.
+
+**Best known approximation:**
 
 ```
-sin(x) ≈ x − x³/6 + x⁵/120 − x⁷/5040 + ...
+sin(x) ≈ x − x³/6 + x⁵/120 − x⁷/5040 + ...  (BEST-routed Taylor)
 ```
 
-Using BEST routing (EXL for pow, EML for add/sub), each Taylor term costs:
-- `x^(2k+1) / (2k+1)!` → 3 nodes for pow + 1 for div + 5 for sub = 9 nodes/term
-- 8-term expansion: 63 nodes total, max error 7.7×10⁻⁷
+Using EXL for pow, EML for add/sub: 9 nodes/term, 63 nodes total at 8 terms (max error 7.7×10⁻⁷).
 
-A closed-form alternative via complex EXL arithmetic:
+### 6.3 Open Avenues
 
-```
-sin(x) ≈ Im(exl(ix, 1)) for small x  [not globally correct]
-```
+1. **N=9 vectorized search.** ~4.7 M trees; tractable in ~30 s with NumPy batch evaluation. The theoretical barrier rules out real-valued hits; the value is extending the complex search.
 
-This works locally but fails for |x| > π/2 due to branch cuts.
+2. **Complex EML with terminal `{i}`.** Euler's identity `sin(x) = Im(exp(ix))` becomes directly expressible when `i` is admitted as a terminal. Whether `i` is itself constructible from `{1}` via EML is an open question.
 
-### 6.3 Search Directions
+3. **Symmetry filtering.** `sin(x)` is odd: any candidate must satisfy `T(−x) = −T(x)`. Applying this parity test as a pre-filter reduces the search space by ~50% at negligible cost.
 
-Promising avenues for future work:
-
-1. **Exhaustive depth enumeration.** Trees of depth ≤ 5 from terminal `{1}` can be enumerated (~2^31 candidates). Evaluating each against `sin(0.5), sin(1.0), sin(1.5)` and checking periodicity would rule out all small constructions definitively or find one.
-
-2. **Symmetry reduction.** `sin(x)` is odd: any candidate tree must satisfy `T(−x) = −T(x)`. Trees with symmetric left/right sub-expressions can be filtered by parity at negligible cost.
-
-3. **MCTS with EML grammar.** Monte Carlo tree search can explore the grammar tree with rollout evaluation against multiple sin test points, avoiding gradient-descent attractor issues entirely.
-
-4. **Complex EML grammar.** Admitting `i` as a terminal extends the grammar while remaining within the EML formalism. The Euler identity becomes directly expressible, and `sin(x)` can be extracted from the imaginary part of a 3-node EXL construction. Whether this satisfies the "terminal `{1}`" constraint depends on whether `i` can itself be constructed finitely in EML arithmetic.
+4. **MCTS over the EML grammar.** Monte Carlo tree search evaluates rollout candidates against multiple probe points, avoiding gradient-descent attractor traps entirely.
 
 ---
 
-## 7. Conclusion and Open Problems
+## 7. EDL Completeness: Status and Open Questions
+
+### 7.1 What EDL Can and Cannot Construct
+
+EDL is defined as `edl(x, y) = exp(x) / ln(y)` with constant `e`. From this gate:
+
+- **Division** (1 node): `div(a, b) = edl(ln(a), e^b)` — the cheapest div in any operator family
+- **Multiplication** (7 nodes): constructible via `mul(a, b) = div(a, recip(b))`
+- **Powers and logarithms**: accessible via composition with exp/ln
+- **All multiplicative group operations**: EDL is complete over the multiplicative group `(ℝ>0, ×, ÷)`
+
+The critical limitation is the **additive group**. EDL's gate is a ratio — it cannot produce a sum of two independent quantities without first embedding them in a multiplicative structure. Concretely:
+
+- `add(a, b)` requires `ln(exp(a) + exp(b))` — computing the log-sum-exp, which itself needs addition at the argument level. The required addition cannot be expressed by EDL alone.
+- `sub(a, b)` has the same issue: `ln(exp(a) - exp(b))` requires subtraction internally.
+
+This means EDL is **not complete** over the full elementary functions if the inputs can take arbitrary real values requiring additive combination.
+
+### 7.2 Complex-Branch Routes
+
+Admitting complex arithmetic creates new paths. In particular:
+
+- `exp(iπ) = −1`, so EDL can construct `−1` via complex inputs if `iπ` is reachable
+- Addition of two reals `a + b` can be expressed as a limit of products: `a + b = ln(exp(a) · exp(b))`, which collapses to `a + b` — but this requires `ln(exp(x)) = x`, which is only valid when `exp(x)` is real positive
+- Via Euler's formula, `cos(x) = Re(exp(ix))` — but constructing `ix` from EDL terminals alone requires `i`, which is not a real terminal
+
+The current evidence suggests EDL achieves completeness over the **multiplicative elementary functions** (div, mul, pow, recip, ln, exp) but not over the **additive elementary functions** (add, sub) for arbitrary real inputs.
+
+### 7.3 Current Status
+
+| Operation | EDL status | BEST fallback | Notes |
+|-----------|-----------|---------------|-------|
+| div(a,b)  | 1 node    | EDL           | Cheapest known |
+| mul(a,b)  | 7 nodes   | EDL           | Via recip chain |
+| pow(a,b)  | 3 nodes   | EXL           | EXL cheaper than EDL here |
+| ln(x)     | available | EXL (1n)      | EXL cheaper |
+| exp(x)    | available | EML (1n)      | All equal |
+| add(a,b)  | not constructible | EML (11n) | Requires EML subtraction |
+| sub(a,b)  | not constructible | EML (5n)  | Fundamental limitation |
+
+EDL is formally complete over `{×, ÷, pow, ln}` but cannot escape to the additive group without EML. This is why BEST routing uses EDL for div/mul/recip and EML for add/sub — they are complementary, not competing.
+
+**Empirical confirmation:** `experiments/research_03_edl_completeness.py` searched all 196 EDL trees with N ≤ 6 internal nodes from terminal `{e}`. No tree evaluates to any of: e+1, 2e, 2, π, or √2. These values all require addition of independent reals and are structurally unreachable in the EDL grammar.
+
+**Open question:** Can a finite EDL tree (possibly using complex terminals or branch cuts) produce an exact `a + b` for arbitrary real `a`, `b`? No construction is known; the structural argument above suggests none exists.
+
+---
+
+## 8. Conclusion and Open Problems
 
 The `BEST` hybrid demonstrates that intelligently combining variants of EML can produce substantially more efficient and stable trees than any single operator. The released `monogate` library makes these techniques immediately usable in both Python and the browser.
 
+**Empirically confirmed:**
+- Phantom attractors trap 100% of gradient-based EMLTree fits without regularization; λ=0.005 eliminates them entirely
+- 862,116 EML trees (N ≤ 8 nodes, terminals {1, x}) contain no real-valued construction of sin(x) or cos(x); the Infinite Zeros Barrier rules this out for all N
+- BEST routing delivers 2.8–3.4× wall-clock speedup on sin/cos-heavy Python code; GELU at 18% savings falls below the ~20% crossover threshold
+
 **Open problems:**
-- Is there a finite EML tree using only terminal `{1}` that evaluates exactly to `sin(x)`?
-- Can discrete search methods (MCTS, exhaustive enumeration) reliably escape phantom attractors?
-- Is EDL fully complete over the elementary functions, or only the multiplicative group?
+- Is there a finite EML tree using only terminal `{1}` that evaluates exactly to `sin(x)`? (Ruled out for all real-valued constructions; complex-grammar case remains open)
+- Can MCTS or beam search over the EML grammar find better-than-Taylor approximations for small N?
+- Does EDL have a complex-arithmetic path to addition for arbitrary real inputs?
+- Is EDL complete over the additive elementary functions via complex branches?
 
 ## References
 

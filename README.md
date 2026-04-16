@@ -13,6 +13,23 @@ Live explorer: **[monogate.dev](https://monogate.dev)**
 
 ---
 
+## Who this is for
+
+monogate delivers measurable speedups on workloads dominated by **sin, cos, pow, ln** in the EML arithmetic substrate:
+
+| Workload | Savings | Speedup |
+|----------|---------|---------|
+| SIREN / NeRF (sin activation) | 74% | **3.4×** |
+| Physics ML (sin + pow-heavy) | 74% | **2.8–3.4×** |
+| Polynomial activations (x⁴+x³+x²) | 54% | **2.1×** |
+| Transformer FFN (GELU) | 18% | 0.93× — below crossover |
+
+Crossover threshold: **~20% node reduction**. Below that, Python function-call overhead dominates any gate savings.
+
+monogate is **not** a PyTorch inference accelerator. Native `torch.sin` is ~9,000× faster than any EML variant. This is a symbolic math optimizer for EML-substrate code, interpretable regression, and formal expression research.
+
+---
+
 ## Install
 
 **Python**
@@ -51,19 +68,46 @@ Total for all nine primitives: **37 nodes** (BEST) vs 77 (all-EML) — 52% fewer
 
 ---
 
-## Real numbers
+## Quick start
 
-Node-count savings translate to wall-clock speedup only above a threshold (~20% reduction). Three experiments measured this directly on Python scalars:
+**Python**
+```python
+from monogate import BEST, best_optimize
 
-| Workload | Operation | Nodes (EML) | Nodes (BEST) | Savings | Speedup |
-|----------|-----------|-------------|-------------|---------|---------|
-| TinyMLP, sin (exp_09, exp_12) | sin Taylor 8-term | 245 | 63 | **74%** | **2.8–3.4×** |
-| Batch poly eval (exp_11) | x⁴+x³+x² | 67 | 31 | **54%** | **2.1×** |
-| Transformer FFN (exp_10) | tanh-GELU | 17 | 14 | 18% | 0.93× |
+# BEST routing — cheapest gate per operation
+BEST.pow(2.0, 10.0)   # 1024.0  (EXL, 3 nodes vs 15)
+BEST.div(6.0, 2.0)    # 3.0     (EDL, 1 node  vs 15)
+BEST.ln(2.718)        # ~1.0    (EXL, 1 node  vs 3)
+BEST.add(3.0, 4.0)    # 7.0     (EML, 11 nodes — irreducible)
 
-Linear model (R²=0.9992): `speedup ≈ 0.033 × savings_pct + 0.32`
+# Code optimizer — analyze any Python/NumPy/PyTorch expression
+r = best_optimize("torch.sin(x)**2 + torch.cos(x) * x**3")
+print(r)              # table + speedup indicator
+print(r.rewritten_code)   # 72% fewer nodes
+```
 
-GELU at 18% falls just below the crossover — Python call overhead dominates. sin/cos at 74% deliver a solid 2.8–3.4× gain within the EML substrate.
+**JavaScript**
+```js
+import { BEST } from "monogate";
+
+BEST.pow(2, 10);   // 1024  (EXL, 3 nodes)
+BEST.div(6, 2);    // 3     (EDL, 1 node)
+```
+
+---
+
+## Research results
+
+**Phantom attractors in EMLTree optimization.**  
+Gradient descent on depth-3 EML trees targeting π converges to the wrong value in 100% of random seeds without regularization. A small L1 penalty (λ=0.005) eliminates the attractor completely — 100% of runs converge. Full study: `python/experiments/research_02_attractors.py`.
+
+**Exact sin(x) — exhaustive search.**  
+All 862,116 EML trees with up to 8 internal nodes (terminals `{1, x}`) were enumerated. No tree matches sin(x) at any tolerance. A structural argument — the *Infinite Zeros Barrier* — proves no finite real-valued EML tree can represent sin(x) for any N: such trees have at most finitely many zeros, while sin has infinitely many.
+
+We conjecture: **no finite EML tree with terminal `{1}` evaluates to exactly sin(x) for all real x.**
+
+**EDL completeness.**  
+EDL (`exp(x)/ln(y)`) is complete over the multiplicative elementary functions (div, mul, pow, recip, ln) but cannot construct addition or subtraction. Exhaustive search over 196 EDL trees from terminal `{e}` (N≤6) confirms no tree evaluates to any additive combination. EML and EDL are complementary — BEST routes optimally to each.
 
 ---
 
@@ -73,9 +117,9 @@ BEST routing pays off when your workload:
 
 - Does symbolic regression or interpretable expression search
 - Is dominated by `pow`, `ln`, `mul`, or `div` (all save ≥6 nodes each)
+- Uses sin/cos activations (NeRF, SIREN, Fourier features, physics ML)
 - Evaluates the same expression repeatedly across many inputs
 - Needs human-readable formula output from a differentiable tree
-- Is building or analyzing EML expression trees
 
 Concrete starting point: [python/examples/symbolic_regression.py](python/examples/symbolic_regression.py) — EML vs BEST on x², side by side.
 
@@ -97,42 +141,16 @@ monogate is the right tool for **symbolic analysis, formula construction, interp
 
 ---
 
-## Quick start
-
-**Python**
-```python
-from monogate import BEST, pow_eml, div_eml
-
-# BEST routing — cheapest gate per operation
-BEST.pow(2.0, 10.0)   # 1024.0  (EXL, 3 nodes vs 15)
-BEST.div(6.0, 2.0)    # 3.0     (EDL, 1 node  vs 15)
-BEST.ln(2.718)        # ~1.0    (EXL, 1 node  vs 3)
-BEST.add(3.0, 4.0)    # 7.0     (EML, 11 nodes — irreducible)
-
-# Symbolic regression — fit a tree to approximate f(x) = x²
-# See python/examples/symbolic_regression.py
-```
-
-**JavaScript**
-```js
-import { BEST } from "monogate";
-
-BEST.pow(2, 10);   // 1024  (EXL, 3 nodes)
-BEST.div(6, 2);    // 3     (EDL, 1 node)
-```
-
----
-
 ## Explorer (monogate.dev)
 
 | Tab | What it shows |
 |-----|---------------|
-| **✦ viz** | Expression tree for any math input — nodes colored by EML / EDL / EXL routing. Click subtrees to highlight. |
+| **✦ viz** | Expression tree for any math input — nodes colored by EML / EDL / EXL routing. |
 | **sin↗** | sin(x) Taylor accuracy chart, 2–20 terms. BEST vs EML node count at every precision level. |
 | **⚡ demo** | Live JS GELU FFN timing (EML vs BEST) + Python experiment_10 numbers side by side. |
 | **Calc** | Evaluate any expression in BEST / EML / EXL / EDL mode with per-operation node breakdown. |
-| **Opt** | Paste Python/NumPy/PyTorch code — get a BEST-rewritten version with node savings estimate. |
-| **Board** | Challenge leaderboard — open problems in EML construction (sin, cos, π). Submit and get credited. |
+| **Opt** | Paste Python/NumPy/PyTorch code — get a BEST-rewritten version + savings estimate. When `python api/main.py` is running locally, uses real AST rewriting via `best_optimize()`. |
+| **Board** | Challenge leaderboard — open problems in EML construction (sin, cos, π). |
 
 ---
 
@@ -140,8 +158,8 @@ BEST.div(6, 2);    // 3     (EDL, 1 node)
 
 No known closed-form EML construction exists for:
 
-- **sin x**, **cos x** — Taylor via BEST works numerically; exact closed-form unknown
-- **π** — no construction as a closed EML expression
+- **sin x**, **cos x** — 862,116 trees (N≤8) searched, zero hits; Taylor via BEST works numerically
+- **π** — no construction as a closed EML expression from terminal `{1}`
 - **i** (√−1) — open under strict principal-branch grammar
 
 Pull requests welcome. Crack one and open an issue — it's publishable.
@@ -155,6 +173,7 @@ monogate/
 ├── python/          # pip install monogate  — core, torch_ops, network, optimize
 ├── lib/             # npm install monogate  — JS/Node library
 ├── explorer/        # monogate.dev          — Vite/React browser app
+├── api/             # Python FastAPI server — powers Opt tab in local mode
 └── challenge/       # Challenge board backend
 ```
 

@@ -320,12 +320,15 @@ def _build_python_snippet(expr: str, rewritten: str,
         round((1 - total_best / total_eml) * 100)
         if total_eml > 0 else 0
     )
-    node_note = (
-        f"# {total_best} nodes (BEST)  vs  {total_eml} (pure EML)"
-        f"  — {savings_pct}% fewer exp/ln calls"
-        if total_eml > total_best
-        else f"# {total_best} nodes (BEST mode)"
-    )
+    if total_eml > total_best:
+        speedup_hint = (
+            f"  — {savings_pct}% fewer exp/ln calls"
+            + (", speedup expected" if savings_pct >= _CROSSOVER_PCT else ", below ~20% crossover")
+        )
+        node_note = f"# {total_best}n (BEST)  vs  {total_eml}n (pure EML){speedup_hint}"
+    else:
+        node_note = f"# {total_best}n (BEST mode — already optimal)"
+
     py_body = rewritten.strip().replace("\n", "\n    ")
     return (
         "from monogate import BEST\n"
@@ -333,8 +336,6 @@ def _build_python_snippet(expr: str, rewritten: str,
         "def f(x):\n"
         f"    {node_note}\n"
         f"    return {py_body}\n"
-        "    # Note: *, /, +, - operators are standard Python arithmetic.\n"
-        "    # For full BEST routing wrap them: BEST.mul(a,b), BEST.div(a,b)\n"
     )
 
 
@@ -1151,13 +1152,46 @@ class ModelOptimizeReport:
     layers            Per-layer breakdown (one entry per analyzed forward method).
     patched_count     Number of forward methods replaced with BEST versions.
     device_note       Model's inferred device string ("cpu", "cuda", or "").
+    rewritten_sources Mapping of ``"path.method"`` → AST-rewritten source code.
+                      Populated for every analyzed method regardless of savings.
     """
     total_best_nodes: int
     total_eml_nodes: int
     savings_pct: int
     layers: tuple[LayerOptimizeResult, ...]
     patched_count: int
-    device_note: str = ""   # populated by best_optimize_model(); "" = unknown
+    device_note: str = ""        # populated by best_optimize_model(); "" = unknown
+    rewritten_sources: tuple[tuple[str, str], ...] = ()  # (key, code) pairs
+
+    def get_rewritten(self, path: str = "") -> str | None:
+        """
+        Return the AST-rewritten source for the method at *path*.
+
+        *path* is the dotted module path (empty string for the root module's
+        forward, ``"encoder"`` for ``model.encoder.forward``, etc.).
+
+        Returns ``None`` if no source was captured for that path.
+
+        Example
+        -------
+        >>> report = best_optimize_model(model)
+        >>> print(report.get_rewritten())          # root forward
+        >>> print(report.get_rewritten("encoder")) # encoder.forward
+        """
+        target = f"{path}.forward" if path else "forward"
+        for key, code in self.rewritten_sources:
+            if key == target:
+                return code
+        return None
+
+    def print_rewritten(self, path: str = "") -> None:
+        """Print the rewritten forward source for *path* (default: root module)."""
+        code = self.get_rewritten(path)
+        if code is None:
+            label = f"{path}.forward" if path else "forward"
+            print(f"# No rewritten source for {label!r}")
+        else:
+            print(code)
 
     def __str__(self) -> str:
         lines = [
@@ -1189,14 +1223,26 @@ class ModelOptimizeReport:
                 "    monogate is relevant for symbolic analysis and expression trees, not\n"
                 "    production inference."
             )
-        # Per-layer breakdown
-        for lr in self.layers:
-            if lr.result.savings_pct > 0 or lr.patched:
-                tag = " [patched]" if lr.patched else ""
-                label = lr.path or "root"
-                lines.append(
-                    f"  {label}.{lr.method}: {lr.result.savings_pct}% savings{tag}"
-                )
+        # Per-layer breakdown — show all methods with savings or patches
+        has_details = any(lr.result.savings_pct > 0 or lr.patched for lr in self.layers)
+        if has_details:
+            lines.append("  " + "-" * 48)
+            for lr in self.layers:
+                if lr.result.savings_pct > 0 or lr.patched:
+                    tag = " [patched]" if lr.patched else ""
+                    label = lr.path or "root"
+                    pct = lr.result.savings_pct
+                    best_n = lr.result.total_best_nodes
+                    eml_n  = lr.result.total_eml_nodes
+                    lines.append(
+                        f"  {label}.{lr.method}: {pct}% savings  "
+                        f"({best_n}n BEST vs {eml_n}n EML){tag}"
+                    )
+        # Hint about rewritten source if any was captured
+        if self.rewritten_sources:
+            lines.append(
+                f"  Use report.print_rewritten() to view the rewritten forward source."
+            )
         return "\n".join(lines)
 
 
@@ -1205,6 +1251,7 @@ def best_optimize_model(
     *,
     verbose: bool = False,
     inplace: bool = False,
+    device: str | None = None,
 ) -> ModelOptimizeReport:
     """
     Analyze (and optionally patch) all ``forward`` methods in an nn.Module.
@@ -1228,6 +1275,15 @@ def best_optimize_model(
         If True, patch forward methods containing EML arithmetic ops with
         compiled BEST versions.  Experimental — only safe for deterministic
         forward methods.
+    device : str or None
+        Override the device note in the report.  Pass ``"cpu"`` or ``"cuda"``
+        to force a specific note regardless of where the model's parameters
+        live.  ``None`` (default) auto-detects from ``model.parameters()``.
+
+        Note: monogate computes in Python scalars via ``math.exp``/``math.log``
+        and does **not** accelerate PyTorch tensor operations on any device.
+        Passing ``device="cuda"`` simply adds a prominent reminder of this
+        in the report output.
 
     Returns
     -------
@@ -1240,24 +1296,39 @@ def best_optimize_model(
     >>> print(report)
     >>> # Patch forward methods in-place where EML ops are found:
     >>> report = best_optimize_model(my_model, inplace=True)
+    >>> # Force the cuda-device warning even on a CPU model:
+    >>> report = best_optimize_model(my_model, device="cuda")
     """
     try:
         import torch.nn as _nn  # noqa: F401  (validate torch is available)
     except ImportError as exc:
         raise ImportError(
-            "best_optimize_model requires PyTorch — pip install torch"
+            "best_optimize_model requires PyTorch — pip install torch\n"
+            "  Or use best_optimize() for plain Python/NumPy expressions."
         ) from exc
 
-    # Detect model device for context note in the report
-    device_note = ""
-    try:
-        params = list(model.parameters())
-        if params:
-            device_note = str(params[0].device.type)
-    except Exception:
-        pass
+    if not hasattr(model, "named_modules"):
+        raise TypeError(
+            f"best_optimize_model expects a torch.nn.Module, got {type(model).__name__}.\n"
+            "  For plain Python expressions use best_optimize(source_string).\n"
+            "  For SIREN / NeRF networks use optimize_siren(model)."
+        )
+
+    # Detect model device for context note in the report.
+    # Caller can override with device="cpu"|"cuda".
+    if device is not None:
+        device_note = device.lower()
+    else:
+        device_note = ""
+        try:
+            params = list(model.parameters())
+            if params:
+                device_note = str(params[0].device.type)
+        except Exception:
+            pass
 
     layers: list[LayerOptimizeResult] = []
+    rewritten_sources_list: list[tuple[str, str]] = []
     total_best = 0
     total_eml  = 0
     patched_total = 0
@@ -1272,6 +1343,17 @@ def best_optimize_model(
             result = best_optimize(src)
         except Exception:
             continue
+
+        # Always capture the rewritten source (useful even without patching)
+        key = f"{path}.forward" if path else "forward"
+        if result.rewritten_code:
+            header = "from monogate import BEST\n\n"
+            full_source = (
+                header + result.rewritten_code
+                if not result.rewritten_code.startswith("from monogate")
+                else result.rewritten_code
+            )
+            rewritten_sources_list.append((key, full_source))
 
         if verbose:
             label = path or "root"
@@ -1322,8 +1404,64 @@ def best_optimize_model(
         layers=tuple(layers),
         patched_count=patched_total,
         device_note=device_note,
+        rewritten_sources=tuple(rewritten_sources_list),
     )
 
 
 # Convenience alias
 optimize = best_optimize
+
+
+# ── SIREN / NeRF optimizer ────────────────────────────────────────────────────
+
+def optimize_siren(
+    model: Any,
+    omega: float = 30.0,
+) -> ModelOptimizeReport:
+    """
+    Analyze a SIREN / NeRF-style network using BEST routing.
+
+    Convenience wrapper around ``best_optimize_model`` for sin-heavy networks.
+    SIREN layers use ``sin(omega_0 * Wx + b)`` as the activation — the high
+    omega_0 value (typically 30) makes sin the dominant operation, which is
+    exactly where BEST routing yields its largest savings (74% node reduction
+    for sin; 2.5–4× measured speedup at the SIREN scale).
+
+    Parameters
+    ----------
+    model : nn.Module
+        The SIREN or NeRF network to analyze.
+    omega : float
+        The omega_0 scaling factor used in the model (informational only —
+        not used in analysis; all sin calls are routed the same way).
+
+    Returns
+    -------
+    ModelOptimizeReport
+        Full per-layer savings report.  Use ``report.get_rewritten()`` to
+        retrieve the BEST-rewritten forward source.
+
+    Example
+    -------
+    >>> from monogate import optimize_siren
+    >>> report = optimize_siren(my_siren_model)
+    >>> print(report)
+    >>> print(report.get_rewritten())
+    """
+    try:
+        import torch.nn as _nn
+    except ImportError:
+        raise RuntimeError(
+            "optimize_siren requires PyTorch — pip install torch"
+        ) from None
+
+    if not isinstance(model, _nn.Module):
+        raise TypeError(
+            f"optimize_siren expects a torch.nn.Module, got {type(model).__name__}"
+        )
+
+    return best_optimize_model(model)
+
+
+# Alias — same function, NeRF-centric name.
+optimize_nerf = optimize_siren

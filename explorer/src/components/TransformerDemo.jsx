@@ -72,6 +72,7 @@ function ffnForward(x, W1, b1, W2, b2, activation) {
   return out;
 }
 
+const RUNS_DISPLAY = "100";
 const D = 16, D_HID = 64, BATCH = 8;
 const W1 = makeMat(D_HID, D, 42),    b1 = new Array(D_HID).fill(0);
 const W2 = makeMat(D, D_HID, 99),    b2 = new Array(D).fill(0);
@@ -268,15 +269,17 @@ export default function TransformerDemo() {
             V8 JIT can make JS results differ.
             <br /><br />
             <span style={{ color: C.green }}>sin/cos</span> save <span style={{ color: C.green }}>74%</span> →{" "}
-            <span style={{ color: C.green }}>2.8× speedup</span> (Python).
+            <span style={{ color: C.green }}>2.8–3.4× speedup</span> (Python).
+            SIREN networks (ω₀=30, sin-only) hit <span style={{ color: C.green }}>3.4×</span> (experiment_12).
             Polynomial activations at ~54% savings land at ~2.1×.
           </div>
           <div>
             {[
-              { fn: "GELU",    pct: 18, py: "~1×",   col: C.muted  },
-              { fn: "sin/cos", pct: 74, py: "2.8×",  col: C.green  },
-              { fn: "div",     pct: 93, py: "—",      col: C.accent },
-              { fn: "pow",     pct: 80, py: "4.77×", col: C.accent },
+              { fn: "GELU",       pct: 18, py: "~1×",   col: C.muted  },
+              { fn: "sin/cos",    pct: 74, py: "2.8×",  col: C.green  },
+              { fn: "SIREN sin",  pct: 74, py: "3.4×",  col: C.green  },
+              { fn: "div",        pct: 93, py: "—",      col: C.accent },
+              { fn: "pow",        pct: 80, py: "4.77×",  col: C.accent },
             ].map(({ fn, pct, py, col }) => (
               <div key={fn} style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
                 <div style={{ width: 48, fontSize: 10, color: C.text }}>{fn}</div>
@@ -296,5 +299,3 @@ export default function TransformerDemo() {
   );
 }
 
-// constant referenced in JSX string interpolation
-const RUNS_DISPLAY = "100";

@@ -1,41 +1,8 @@
-import { useState } from "react";
-
-const C = {
-  bg: "#07080f", surface: "#0d0e1c", border: "#191b2e",
-  text: "#cdd0e0", muted: "#4e5168", accent: "#e8a020",
-  blue: "#6ab0f5", green: "#5ec47a", red: "#e05060", tag: "#1a1c2e",
-};
-
-const PILL = {
-  EML:       { bg: "rgba(124,111,247,0.14)", border: "#7c6ff7",  color: "#a09cf7" },
-  EDL:       { bg: "rgba(45,212,191,0.10)",  border: "#2dd4bf",  color: "#2dd4bf" },
-  EXL:       { bg: "rgba(245,158,11,0.12)",  border: "#f59e0b",  color: "#f5b435" },
-  "EML+EDL": { bg: "rgba(94,196,122,0.10)",  border: "#5ec47a",  color: "#5ec47a" },
-};
-
-// Order matters: longer/more-specific patterns before shorter ones.
-const RULES = [
-  { id: "sin",     label: "sin",       re: /(?:math|torch|np|numpy|F)\.sin\s*\(/g,        eml: 245, best: 63, op: "EXL",     note: "8-term Taylor via EXL pow (63n vs 245n)",           sub: s => s.replace(/(?:math|torch|np|numpy|F)\.sin/, "BEST.sin") },
-  { id: "cos",     label: "cos",       re: /(?:math|torch|np|numpy|F)\.cos\s*\(/g,        eml: 245, best: 63, op: "EXL",     note: "8-term Taylor via EXL pow (63n vs 245n)",           sub: s => s.replace(/(?:math|torch|np|numpy|F)\.cos/, "BEST.cos") },
-  { id: "tanh",    label: "tanh",      re: /(?:math|torch|np|numpy|F)\.tanh\s*\(/g,       eml: 45,  best: 25, op: "EML+EDL", note: "mul+exp+sub+add+div via EDL (25n vs 45n)",          sub: s => s.replace(/(?:math|torch|np|numpy|F)\.tanh/, "BEST.tanh") },
-  { id: "sigmoid", label: "sigmoid",   re: /(?:torch|F)\.sigmoid\s*\(/g,                 eml: 36,  best: 19, op: "EML+EDL", note: "neg+exp+add+div via EDL (19n vs 36n)",              sub: s => s.replace(/(?:torch|F)\.sigmoid/, "BEST.sigmoid") },
-  { id: "gelu",    label: "F.gelu",    re: /F\.gelu\s*\(/g,                              eml: 17,  best: 14, op: "EML+EDL", note: "exp+add+recip_edl = 14n vs 17n (tanh formula)",     sub: s => s.replace(/F\.gelu/, "BEST.gelu") },
-  { id: "log",     label: "log / ln",  re: /(?:math|torch|np|numpy|F)\.log\w*\s*\(/g,    eml: 3,   best: 1,  op: "EXL",     note: "EXL ln: 1n vs EML's 3n",                           sub: s => s.replace(/(?:math|torch|np|numpy|F)\.log\w*/, "BEST.ln") },
-  { id: "exp",     label: "exp",       re: /(?:math|torch|np|numpy|F)\.exp\s*\(/g,        eml: 1,   best: 1,  op: "EML",     note: "same cost across all operators",                    sub: null },
-  { id: "pow_fn",  label: "pow(x,n)",  re: /(?:math|torch|np|numpy)\.pow(?:er)?\s*\(/g,  eml: 15,  best: 3,  op: "EXL",     note: "EXL pow: 3n vs EML's 15n",                         sub: s => s.replace(/(?:math|torch|np|numpy)\.pow(?:er)?/, "BEST.pow") },
-  { id: "pow_op",  label: "x ** n",    re: /\*\*\s*[\d.]+/g,                             eml: 15,  best: 3,  op: "EXL",     note: "EXL pow: 3n vs EML's 15n — simple forms rewritten", sub: null },
-  { id: "sqrt",    label: "sqrt",      re: /(?:math|torch|np|numpy)\.sqrt\s*\(/g,         eml: 15,  best: 3,  op: "EXL",     note: "pow(x, 0.5) via EXL: 3n",                          sub: s => s.replace(/(?:math|torch|np|numpy)\.sqrt/, "BEST.sqrt") },
-  { id: "div_fn",  label: "torch.div", re: /(?:torch\.div|np\.divide)\s*\(/g,            eml: 15,  best: 1,  op: "EDL",     note: "EDL div: 1n vs EML's 15n",                         sub: s => s.replace(/(?:torch\.div|np\.divide)/, "BEST.div") },
-  { id: "mul_fn",  label: "torch.mul", re: /(?:torch\.mul|np\.multiply)\s*\(/g,          eml: 13,  best: 7,  op: "EDL",     note: "EDL mul: 7n vs EML's 13n",                         sub: s => s.replace(/(?:torch\.mul|np\.multiply)/, "BEST.mul") },
-];
-
-// Measured in experiment_09 (TinyMLP, Python CPU).
-const BENCHMARKS = {
-  sin:    { speedup: 2.8, label: "sin Taylor (8 terms)" },
-  cos:    { speedup: 2.8, label: "cos Taylor (8 terms)" },
-  pow_fn: { speedup: 4.8, label: "pow(x, n)" },
-  pow_op: { speedup: 4.8, label: "x ** n" },
-};
+import { useState, useEffect, useCallback } from "react";
+import {
+  API_URL, C, PILL, RULES, CROSSOVER_PCT, BENCHMARKS,
+  analyzeAll, mapPythonResponse,
+} from "../opt-engine.js";
 
 const EXAMPLES = [
   {
@@ -94,104 +61,6 @@ def taylor_sin_term(x, k):
 y = np.sin(x) + np.cos(x) / np.power(x, 2)`,
   },
 ];
-
-
-// ── Source parsing ─────────────────────────────────────────────────────────────
-
-/**
- * Split source into function blocks by `def` boundaries.
- * Returns [{name, body}] sorted by appearance.
- * Simple: uses indentation of the `def` line as the block's base.
- */
-function parseFunctions(src) {
-  const defRe = /^([ \t]*)def\s+(\w+)\s*\(/gm;
-  const positions = [];
-  let m;
-  while ((m = defRe.exec(src)) !== null) {
-    positions.push({ name: m[2], indent: m[1].length, startIdx: m.index });
-  }
-  if (positions.length === 0) return [];
-
-  return positions.map((pos, i) => {
-    // End at the next def at same-or-lesser indent, or end of source.
-    let endIdx = src.length;
-    for (let j = i + 1; j < positions.length; j++) {
-      if (positions[j].indent <= pos.indent) {
-        endIdx = positions[j].startIdx;
-        break;
-      }
-    }
-    return { name: pos.name, body: src.slice(pos.startIdx, endIdx).trimEnd() };
-  });
-}
-
-
-// ── Core analysis ──────────────────────────────────────────────────────────────
-
-function analyzeCode(src) {
-  if (!src.trim()) return null;
-
-  const matches = [];
-  let totalEml = 0, totalBest = 0;
-  let topBenchmark = null, topSavingsPct = 0;
-
-  for (const rule of RULES) {
-    rule.re.lastIndex = 0;
-    const found = src.match(rule.re);
-    const count = found ? found.length : 0;
-    if (count > 0) {
-      matches.push({ ...rule, count });
-      totalEml  += count * rule.eml;
-      totalBest += count * rule.best;
-      const savPct = rule.eml > 0 ? Math.round((1 - rule.best / rule.eml) * 100) : 0;
-      if (savPct > topSavingsPct && BENCHMARKS[rule.id]) {
-        topSavingsPct = savPct;
-        topBenchmark  = BENCHMARKS[rule.id];
-      }
-    }
-  }
-
-  if (matches.length === 0) {
-    return { matches: [], totalEml: 0, totalBest: 0, rewritten: src, topBenchmark: null };
-  }
-
-  // Apply named-function substitutions (sin, cos, log, pow_fn, etc.)
-  let rewritten = src;
-  for (const rule of RULES) {
-    if (!rule.sub) continue;
-    rule.re.lastIndex = 0;
-    rewritten = rewritten.replace(rule.re, m => rule.sub(m));
-  }
-
-  // Rewrite simple `identifier**n` → `BEST.pow(identifier, n)`.
-  // Handles: x**2, h**3, self.x**2.  Does NOT handle fn(x)**2 (complex LHS).
-  rewritten = rewritten.replace(
-    /\b([a-zA-Z_][\w.]*)\s*\*\*\s*([\d.]+)/g,
-    "BEST.pow($1, $2)",
-  );
-
-  // Prepend import if anything substantive changed.
-  const hasGains = matches.some(m => m.best < m.eml);
-  if (hasGains && !rewritten.startsWith("from monogate")) {
-    rewritten = "from monogate import BEST\n\n" + rewritten;
-  }
-
-  return { matches, totalEml, totalBest, rewritten, topBenchmark };
-}
-
-function analyzeAll(src) {
-  if (!src.trim()) return null;
-
-  const overall  = analyzeCode(src);
-  const fnBlocks = parseFunctions(src);
-
-  // Per-function breakdown — skip functions with no recognized ops.
-  const functions = fnBlocks
-    .map(fn => ({ name: fn.name, result: analyzeCode(fn.body) }))
-    .filter(fr => fr.result && fr.result.matches.length > 0);
-
-  return { overall, functions };
-}
 
 
 // ── Small components ───────────────────────────────────────────────────────────
@@ -325,17 +194,62 @@ export default function OptimizeTab() {
   const [copiedKey,   setCopiedKey]   = useState(null);
   const [expandedFns, setExpandedFns] = useState(new Set());
   const [toast,       setToast]       = useState(null); // { label }
+  const [apiStatus,   setApiStatus]   = useState("unknown"); // 'unknown'|'available'|'unavailable'
+  const [apiMode,     setApiMode]     = useState(false);     // true when result came from Python
+  const [analyzing,   setAnalyzing]   = useState(false);
 
-  const runAnalysis = () => {
+  // Probe the Python API once on mount.
+  useEffect(() => {
+    let cancelled = false;
+    fetch(`${API_URL}/health`, { signal: AbortSignal.timeout(1500) })
+      .then(r => r.ok ? "available" : "unavailable")
+      .catch(() => "unavailable")
+      .then(s => { if (!cancelled) setApiStatus(s); });
+    return () => { cancelled = true; };
+  }, []);
+
+  const runAnalysis = useCallback(async () => {
+    if (!src.trim()) return;
+    setAnalyzing(true);
+
+    // Try Python API first when available.
+    if (apiStatus === "available") {
+      try {
+        const resp = await fetch(`${API_URL}/optimize`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ source: src }),
+          signal: AbortSignal.timeout(5000),
+        });
+        if (resp.ok) {
+          const data = await resp.json();
+          if (!data.error) {
+            const r = mapPythonResponse(data, src);
+            setResult(r);
+            setApiMode(true);
+            setExpandedFns(r.functions.length > 1
+              ? new Set(r.functions.map(f => f.name)) : new Set());
+            setAnalyzing(false);
+            return;
+          }
+        }
+      } catch {
+        // fall through to JS analysis
+        setApiStatus("unavailable");
+      }
+    }
+
+    // JS fallback.
     const r = analyzeAll(src);
     setResult(r);
-    // Default all functions open for the first impression.
+    setApiMode(false);
     if (r?.functions?.length > 1) {
       setExpandedFns(new Set(r.functions.map(f => f.name)));
     } else {
       setExpandedFns(new Set());
     }
-  };
+    setAnalyzing(false);
+  }, [src, apiStatus]);
 
   const copy = (key, text, label) => {
     navigator.clipboard.writeText(text).then(() => {
@@ -354,12 +268,13 @@ export default function OptimizeTab() {
   // "Copy Rewritten" — just the rewritten source (with import).
   const rewrittenCode = overall?.rewritten ?? "";
 
-  // "Copy as Python" — adds install comment, ready to paste as a standalone script.
-  const pythonSnippet =
-    "# pip install monogate\n" +
-    (rewrittenCode.startsWith("from monogate")
-      ? rewrittenCode
-      : `from monogate import BEST\n\n${rewrittenCode}`);
+  // "Copy as Python" — prefer the rich snippet from the Python API when available.
+  const pythonSnippet = overall?.pythonSnippet
+    ? "# pip install monogate\n" + overall.pythonSnippet
+    : "# pip install monogate\n" +
+      (rewrittenCode.startsWith("from monogate")
+        ? rewrittenCode
+        : `from monogate import BEST\n\n${rewrittenCode}`);
 
   const card = {
     background: C.surface, border: `1px solid ${C.border}`,
@@ -401,16 +316,51 @@ export default function OptimizeTab() {
 
       {/* ── Header ── */}
       <div style={{ marginBottom: 12 }}>
-        <div style={{ fontSize: 13, fontWeight: 700, color: C.accent, marginBottom: 4 }}>
-          ⚙ Optimize My Code
+        <div style={{
+          display: "flex", alignItems: "center", gap: 8, marginBottom: 4,
+        }}>
+          <span style={{ fontSize: 13, fontWeight: 700, color: C.accent }}>
+            ⚙ Optimize My Code
+          </span>
+          {/* API status badge */}
+          {apiStatus === "available" && (
+            <span style={{
+              fontSize: 8, padding: "1px 6px", borderRadius: 3,
+              background: "rgba(94,196,122,0.12)", border: "1px solid #5ec47a",
+              color: "#5ec47a", fontWeight: 700, letterSpacing: "0.06em",
+            }}>
+              Python API
+            </span>
+          )}
+          {apiMode && (
+            <span style={{
+              fontSize: 8, padding: "1px 6px", borderRadius: 3,
+              background: "rgba(94,196,122,0.07)", border: "1px solid #3a7a4a",
+              color: "#5ec47a", letterSpacing: "0.04em",
+            }}>
+              AST rewrite
+            </span>
+          )}
+          {apiStatus === "unavailable" && (
+            <span style={{
+              fontSize: 8, padding: "1px 6px", borderRadius: 3,
+              background: "rgba(78,81,104,0.15)", border: `1px solid ${C.border}`,
+              color: C.muted, letterSpacing: "0.04em",
+            }}>
+              JS mode
+            </span>
+          )}
         </div>
         <div style={{ fontSize: 10, color: C.muted, lineHeight: 1.7 }}>
           Paste a Python / NumPy / PyTorch snippet or class definition. Each math op
           is routed to the cheapest operator — EXL for{" "}
           <code style={{ color: C.text }}>pow / ln</code>, EDL for{" "}
           <code style={{ color: C.text }}>div / mul</code>, EML for{" "}
-          <code style={{ color: C.text }}>add / sub</code>. Classes with multiple
-          methods show a per-function breakdown.
+          <code style={{ color: C.text }}>add / sub</code>.{" "}
+          {apiStatus === "available"
+            ? <span style={{ color: C.green }}>Using real Python best_optimize() via local API.</span>
+            : <span>Start <code style={{ color: C.text }}>python api/main.py</code> for Python backend.</span>
+          }
         </div>
       </div>
 
@@ -426,9 +376,11 @@ export default function OptimizeTab() {
           <button
             key={ex.label}
             onClick={() => {
-              const r = analyzeAll(ex.code);
               setSrc(ex.code);
+              // Always re-analyze with current API state when loading an example
+              const r = analyzeAll(ex.code);
               setResult(r);
+              setApiMode(false);
               setExpandedFns(
                 r?.functions?.length > 1
                   ? new Set(r.functions.map(f => f.name))
@@ -459,6 +411,7 @@ export default function OptimizeTab() {
           onFocus={e => { e.target.style.borderColor = C.accent; }}
           onBlur={e  => { e.target.style.borderColor = C.border; }}
           onKeyDown={e => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) runAnalysis(); }}
+          disabled={analyzing}
         />
         <div style={{ fontSize: 9, color: C.muted, marginTop: 8, lineHeight: 1.5 }}>
           Supports common PyTorch / NumPy patterns. Complex expressions may need manual wrapping.
@@ -468,12 +421,14 @@ export default function OptimizeTab() {
           marginTop: 8, flexWrap: "wrap", gap: 6,
         }}>
           <span style={{ fontSize: 9, color: C.muted }}>⌘↵ / Ctrl↵ to analyze</span>
-          <button onClick={runAnalysis} style={{
+          <button onClick={runAnalysis} disabled={analyzing} style={{
             ...btnBase, padding: "7px 18px", fontSize: 11, fontWeight: 700,
-            color: C.accent, border: `1px solid ${C.accent}`,
-            background: "rgba(232,160,32,0.08)",
+            color: analyzing ? C.muted : C.accent,
+            border: `1px solid ${analyzing ? C.border : C.accent}`,
+            background: analyzing ? "transparent" : "rgba(232,160,32,0.08)",
+            cursor: analyzing ? "not-allowed" : "pointer",
           }}>
-            Analyze →
+            {analyzing ? "Analyzing…" : "Analyze →"}
           </button>
         </div>
       </div>
@@ -499,13 +454,19 @@ export default function OptimizeTab() {
             display: "flex", justifyContent: "space-between",
             alignItems: "center", flexWrap: "wrap", gap: 8,
           }}>
-            <div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
               {savings > 0
                 ? <SavingsBadge pct={savings} />
                 : <span style={{ fontSize: 11, color: C.muted }}>No node savings — expression is already EML-optimal</span>
               }
+              {savings > 0 && (
+                <span style={{ fontSize: 9, color: savings >= CROSSOVER_PCT ? C.green : C.muted }}>
+                  Speedup expected: {savings >= CROSSOVER_PCT ? "YES" : "NO"}
+                  {" — "}{savings}% {savings >= CROSSOVER_PCT ? ">" : "<"} {CROSSOVER_PCT}% crossover threshold
+                </span>
+              )}
             </div>
-            {overall?.topBenchmark?.speedup && (
+            {overall?.topBenchmark?.speedup && savings >= CROSSOVER_PCT && (
               <span style={{ fontSize: 9, color: C.muted }}>
                 ≈ {overall.topBenchmark.speedup}× wall-clock speedup
                 <span style={{ opacity: 0.55 }}> (measured, experiment_09)</span>
@@ -611,7 +572,7 @@ export default function OptimizeTab() {
                   accentColor={C.green}
                   copyKey="rewritten"
                   copiedKey={copiedKey}
-                  onCopy={() => copy("rewritten", rewrittenCode)}
+                  onCopy={() => copy("rewritten", rewrittenCode, "Rewritten code copied")}
                 />
               </div>
 
@@ -678,7 +639,7 @@ export default function OptimizeTab() {
           }}>
             <span style={{ color: C.muted, fontWeight: 700 }}>Crossover threshold:</span>
             <span style={{ color: C.text }}>
-              {" "}≥21% node savings → wall-clock speedup. Below that, call overhead dominates.
+              {" "}≥{CROSSOVER_PCT}% node savings → wall-clock speedup. Below that, call overhead dominates.
             </span>
           </div>
         </div>

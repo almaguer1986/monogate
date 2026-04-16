@@ -5,6 +5,7 @@ import ChallengeBoard from "./components/ChallengeBoard.jsx";
 import ExprTreeTab from "./components/ExprTreeTab.jsx";
 import SinExplorer from "./components/SinExplorer.jsx";
 import TransformerDemo from "./components/TransformerDemo.jsx";
+import NeRFOptimizerTab from "./components/NeRFOptimizerTab.jsx";
 import { op, exp, ln, E, ZERO, sub, neg, add, mul, div, pow, recip,
          BEST, sin_best, cos_best, pow_exl, div_edl, ln_exl } from "./eml.js";
 import {
@@ -251,14 +252,14 @@ export default function App() {
             </div>
           </div>
           <div style={{ display:"flex", gap:4, flexWrap:"wrap" }}>
-            {["verify","table","sandbox","tree","best","calc","opt","board","viz","sinex","demo"].map(t => {
+            {["verify","table","sandbox","tree","best","calc","opt","board","viz","sinex","demo","nerf"].map(t => {
               const isCalc  = t === "calc";
               const isOpt   = t === "opt";
-              const isHighlit = isCalc || isOpt || t === "viz" || t === "sinex" || t === "demo";
+              const isHighlit = isCalc || isOpt || t === "viz" || t === "sinex" || t === "demo" || t === "nerf";
               const isActive = tab === t;
               const LABELS = {
                 calc: "✦ calc", opt: "⚙ opt", board: "⊞ board",
-                viz: "✦ viz", sinex: "sin↗", demo: "⚡ demo",
+                viz: "✦ viz", sinex: "sin↗", demo: "⚡ demo", nerf: "⬡ nerf",
               };
               return (
                 <button key={t} onClick={() => setTab(t)} style={{
@@ -859,6 +860,9 @@ export default function App() {
 
       {/* ── TAB: DEMO ── */}
       {tab === "demo" && <TransformerDemo />}
+
+      {/* ── TAB: NERF ── */}
+      {tab === "nerf" && <NeRFOptimizerTab />}
 
       {/* ── FEATURED DEMOS ── */}
       <div style={{ marginTop:28, borderTop:`1px solid ${C.border}`, paddingTop:20 }}>

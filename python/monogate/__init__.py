@@ -55,7 +55,7 @@ from .core import (
     compare_op,
 )
 
-__version__ = "0.3.0"
+__version__ = "0.3.1"
 
 __all__ = [
     "op",
@@ -111,6 +111,8 @@ from .optimize import (  # noqa: F401
     LayerOptimizeResult,
     ModelOptimizeReport,
     best_optimize_model,
+    optimize_siren,
+    optimize_nerf,
 )
 
 __all__ += [
@@ -119,6 +121,7 @@ __all__ += [
     "sin_eml_taylor", "sin_best_taylor", "cos_best_taylor",
     "gelu_eml_approx", "gelu_best_approx",
     "LayerOptimizeResult", "ModelOptimizeReport", "best_optimize_model",
+    "optimize_siren", "optimize_nerf",
 ]
 
 from .torch_ops import edl_op_safe, EDL_SAFE_CONSTANT  # noqa: F401
