@@ -92,6 +92,11 @@ _BEST_SOURCE: dict[str, str] = {
     "sigmoid": "EML+EDL", "tanh": "EML+EDL", "gelu": "EML+EDL",
 }
 
+# Wall-clock crossover: BEST routing pays off only above this node-reduction %.
+# Below this threshold Python call overhead dominates any gate savings.
+# Empirical fit from experiments 09/10/11: R²=0.9992.
+_CROSSOVER_PCT: int = 20
+
 
 # ── Detection rules ────────────────────────────────────────────────────────────
 
@@ -211,6 +216,18 @@ class OptimizeResult:
                 f"{self.total_best_nodes:>5}n  {self.total_eml_nodes:>5}n  "
                 f"{self.savings_pct:>4}%"
             )
+            lines.append("")
+            if self.savings_pct >= _CROSSOVER_PCT:
+                lines.append(
+                    f"  Speedup expected: YES  "
+                    f"({self.savings_pct}% > {_CROSSOVER_PCT}% crossover threshold)"
+                )
+            elif self.savings_pct > 0:
+                lines.append(
+                    f"  Speedup expected: NO   "
+                    f"({self.savings_pct}% < {_CROSSOVER_PCT}% crossover threshold — "
+                    f"call overhead will dominate)"
+                )
         lines.append("")
         if self.explanation:
             for note in self.explanation:
@@ -1133,12 +1150,14 @@ class ModelOptimizeReport:
     savings_pct       Overall integer % node reduction.
     layers            Per-layer breakdown (one entry per analyzed forward method).
     patched_count     Number of forward methods replaced with BEST versions.
+    device_note       Model's inferred device string ("cpu", "cuda", or "").
     """
     total_best_nodes: int
     total_eml_nodes: int
     savings_pct: int
     layers: tuple[LayerOptimizeResult, ...]
     patched_count: int
+    device_note: str = ""   # populated by best_optimize_model(); "" = unknown
 
     def __str__(self) -> str:
         lines = [
@@ -1146,6 +1165,31 @@ class ModelOptimizeReport:
             f"({self.total_best_nodes}n BEST vs {self.total_eml_nodes}n EML)",
             f"  Layers analyzed: {len(self.layers)}  |  Methods patched: {self.patched_count}",
         ]
+        # Speedup expectation
+        if self.savings_pct >= _CROSSOVER_PCT:
+            lines.append(
+                f"  Speedup expected: YES  "
+                f"({self.savings_pct}% > {_CROSSOVER_PCT}% crossover threshold)"
+            )
+        elif self.savings_pct > 0:
+            lines.append(
+                f"  Speedup expected: NO   "
+                f"({self.savings_pct}% < {_CROSSOVER_PCT}% crossover threshold)"
+            )
+        # Device context note
+        if self.device_note == "cuda":
+            lines.append(
+                "  Device: cuda — EML arithmetic runs on CPU Python scalars.\n"
+                "    native torch.* on CUDA is orders of magnitude faster.\n"
+                "    monogate is for symbolic analysis, not GPU inference."
+            )
+        elif self.device_note == "cpu":
+            lines.append(
+                "  Device: cpu — note: native torch.sin is ~9,000x faster than EML substrate.\n"
+                "    monogate is relevant for symbolic analysis and expression trees, not\n"
+                "    production inference."
+            )
+        # Per-layer breakdown
         for lr in self.layers:
             if lr.result.savings_pct > 0 or lr.patched:
                 tag = " [patched]" if lr.patched else ""
@@ -1203,6 +1247,15 @@ def best_optimize_model(
         raise ImportError(
             "best_optimize_model requires PyTorch — pip install torch"
         ) from exc
+
+    # Detect model device for context note in the report
+    device_note = ""
+    try:
+        params = list(model.parameters())
+        if params:
+            device_note = str(params[0].device.type)
+    except Exception:
+        pass
 
     layers: list[LayerOptimizeResult] = []
     total_best = 0
@@ -1268,6 +1321,7 @@ def best_optimize_model(
         savings_pct=overall_savings,
         layers=tuple(layers),
         patched_count=patched_total,
+        device_note=device_note,
     )
 
 

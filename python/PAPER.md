@@ -118,7 +118,115 @@ Linear interpolation suggests the crossover occurs at approximately **20% node r
 
 Activations with node reductions above ~20% (sin, cos, polynomial expressions heavy in `pow`) benefit substantially from BEST routing; those below the threshold (GELU with 18% reduction) do not, at typical Python batch sizes.
 
-## 5. Conclusion and Open Problems
+## 5. Phantom Attractors and Training Dynamics
+
+### 5.1 Characterization
+
+Gradient-based training of `EMLTree` with Adam exhibits a rugged loss landscape dominated by a small number of stable non-target local optima. We term these *phantom attractors*: configurations where the tree converges to a semantically wrong but highly stable constant.
+
+In systematic experiments fitting `EMLTree(depth=3)` to π across 40 random seeds (`experiments/research_02_attractors.py`), without a complexity penalty **100% of runs (40/40) converge to the same wrong value** — approximately 3.1696 — with a final loss of ~9×10⁻⁴. Not a single run reaches π (loss < 10⁻⁴) despite 3000 Adam steps.
+
+The dominant attractor at ≈3.1696 is not a simple EML constant — it is a depth-3 tree configuration that approximates π to 1.4% error and sits at the center of an unusually wide gradient basin. The gradient signal from MSE loss cannot distinguish this basin from the true target basin, because any random initialization falls within the attractor's catchment area.
+
+These attractors are not arbitrary — they correspond to efficient expressions in the EML grammar:
+
+- **`e` ≈ 2.718**: `E = op(1,1)` requires only 1 node — the identity of EML
+- **`1.0`**: the terminal constant, zero cost
+- **`2.0`** and **`3.0`**: constructible in 3–5 nodes via standard EML identities
+- **≈3.1696**: the dominant attractor for π targets — a depth-3 configuration that no known EML simplification reduces further
+
+The gradient signal from MSE loss is insufficient to distinguish these attractors from the true target when the tree's random initialization falls in their catchment region.
+
+### 5.2 Escape Strategies
+
+Three approaches reliably reduce attractor entrapment:
+
+**Complexity penalty (`lam > 0`).** Adding an L1 penalty on the distance of leaf parameters from 1.0 discourages the tree from settling in non-identity positions. Measured result: `lam=0` → 0/20 converge; `lam=0.005` → **20/20 converge**. The effect is dramatic and immediate — even a tiny penalty of 0.005 completely eliminates the dominant attractor basin for depth-3 π fitting. This is the single most effective and cheapest escape strategy.
+
+```python
+losses = fit(model, target=torch.tensor(math.pi), steps=3000, lr=5e-3, lam=0.01)
+```
+
+**Ensemble probing.** Running K short (250-step) exploratory fits from different seeds and selecting the lowest-loss probe before refining substantially improves the probability of escaping attractors. Measured result: K=3 probes already achieves 8/8 success rate (100%), adding only ~0.9 s/run overhead. This strategy works even without `lam` because different seeds may initialize outside the dominant attractor basin.
+
+```python
+probes = []
+for seed in range(5):
+    torch.manual_seed(seed)
+    m = EMLTree(depth=3)
+    ls = fit(m, target=target, steps=250, lr=5e-3, log_every=0)
+    probes.append((ls[-1], m))
+_, best = min(probes, key=lambda x: x[0])
+losses = fit(best, target=target, steps=3000, lr=1e-3, log_every=0)
+```
+
+**Temperature scheduling.** Starting with a higher learning rate (or wider random initialization) and annealing forces the tree to explore broader regions before settling. This is less robust than ensemble probing in practice but is cheap to combine with it.
+
+### 5.3 Implications for Exact `sin(x)` Construction
+
+The phantom attractor problem bears directly on the open question of whether a finite EML tree from terminal `{1}` can represent `sin(x)` exactly. Gradient-based search with `EMLNetwork` targeting `sin` consistently identifies good Taylor approximations but never produces candidate constructions with period-correct behavior beyond what the Taylor expansion provides.
+
+Two structural observations:
+
+1. **`sin(x)` is transcendental.** No finite expression built from algebraic operations (including the `exp`/`ln` in EML gates) can produce the exact sine function. The question is therefore not "is there an algebraic formula" but rather "does the limit of nested EML trees converge to `sin`" — and whether an *infinite* but finitely-representable construction exists.
+
+2. **Phantom attractors confound search.** For any finite target evaluation (e.g. `sin(π/4) = √2/2`), the EML landscape contains many nearby non-`sin` attractors that match the target at specific probe points. Exhaustive construction via gradient descent is therefore unreliable for exact `sin` search.
+
+The current best practical path remains the BEST-routed Taylor series: 63 nodes for 8-term (7.7×10⁻⁷ max error), 108 nodes for 13-term (machine precision). These are not exact but are computable and compact.
+
+---
+
+## 6. Exact `sin(x)` from Terminal `{1}` — Open Problem Analysis
+
+### 6.1 Theoretical Constraints
+
+The problem asks: does there exist a finite binary tree where every leaf is the constant `1`, every internal node computes `eml(left, right) = exp(left) − ln(right)`, and the resulting tree evaluates to exactly `sin(x)` for all real `x`?
+
+**Known constraints:**
+
+- The Lindemann–Weierstrass theorem implies `sin(x)` is transcendental over the field of algebraic numbers. Any finite EML tree with algebraic leaf constants would produce an elementary function in the sense of Liouville, but not necessarily `sin`. The question is whether EML transcends Liouville elementarity.
+
+- The EML grammar `S → 1 | eml(S, S)` is equivalent to compositions of `exp`, `ln`, `−`, and `+` (via `eml(x,y) = exp(x) − ln(y)`, `eml(exp(a), exp(b)) = a − b`, etc.). This is exactly the set of Liouville elementary functions of constant depth.
+
+- `sin(x)` can be expressed via the Euler identity `sin(x) = (e^{ix} − e^{−ix})/(2i)`, which requires complex arithmetic. Under the extended-reals convention used by `pow_exl` (which returns complex intermediate values), partial sin constructions are reachable.
+
+**Current status:** No finite EML tree from terminal `{1}` that equals `sin(x)` everywhere is known. The challenge leaderboard ([monogate.dev/board](https://monogate.dev)) tracks the best known constructions.
+
+### 6.2 Known Constructions
+
+The best known approximation in the EML substrate is the BEST-routed Taylor series:
+
+```
+sin(x) ≈ x − x³/6 + x⁵/120 − x⁷/5040 + ...
+```
+
+Using BEST routing (EXL for pow, EML for add/sub), each Taylor term costs:
+- `x^(2k+1) / (2k+1)!` → 3 nodes for pow + 1 for div + 5 for sub = 9 nodes/term
+- 8-term expansion: 63 nodes total, max error 7.7×10⁻⁷
+
+A closed-form alternative via complex EXL arithmetic:
+
+```
+sin(x) ≈ Im(exl(ix, 1)) for small x  [not globally correct]
+```
+
+This works locally but fails for |x| > π/2 due to branch cuts.
+
+### 6.3 Search Directions
+
+Promising avenues for future work:
+
+1. **Exhaustive depth enumeration.** Trees of depth ≤ 5 from terminal `{1}` can be enumerated (~2^31 candidates). Evaluating each against `sin(0.5), sin(1.0), sin(1.5)` and checking periodicity would rule out all small constructions definitively or find one.
+
+2. **Symmetry reduction.** `sin(x)` is odd: any candidate tree must satisfy `T(−x) = −T(x)`. Trees with symmetric left/right sub-expressions can be filtered by parity at negligible cost.
+
+3. **MCTS with EML grammar.** Monte Carlo tree search can explore the grammar tree with rollout evaluation against multiple sin test points, avoiding gradient-descent attractor issues entirely.
+
+4. **Complex EML grammar.** Admitting `i` as a terminal extends the grammar while remaining within the EML formalism. The Euler identity becomes directly expressible, and `sin(x)` can be extracted from the imaginary part of a 3-node EXL construction. Whether this satisfies the "terminal `{1}`" constraint depends on whether `i` can itself be constructed finitely in EML arithmetic.
+
+---
+
+## 7. Conclusion and Open Problems
 
 The `BEST` hybrid demonstrates that intelligently combining variants of EML can produce substantially more efficient and stable trees than any single operator. The released `monogate` library makes these techniques immediately usable in both Python and the browser.
 
