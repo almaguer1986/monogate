@@ -324,16 +324,25 @@ export default function OptimizeTab() {
   const [result,      setResult]      = useState(null);
   const [copiedKey,   setCopiedKey]   = useState(null);
   const [expandedFns, setExpandedFns] = useState(new Set());
+  const [toast,       setToast]       = useState(null); // { label }
 
   const runAnalysis = () => {
-    setResult(analyzeAll(src));
-    setExpandedFns(new Set());
+    const r = analyzeAll(src);
+    setResult(r);
+    // Default all functions open for the first impression.
+    if (r?.functions?.length > 1) {
+      setExpandedFns(new Set(r.functions.map(f => f.name)));
+    } else {
+      setExpandedFns(new Set());
+    }
   };
 
-  const copy = (key, text) => {
+  const copy = (key, text, label) => {
     navigator.clipboard.writeText(text).then(() => {
       setCopiedKey(key);
       setTimeout(() => setCopiedKey(null), 2000);
+      setToast({ label });
+      setTimeout(() => setToast(null), 2000);
     });
   };
 
@@ -375,6 +384,21 @@ export default function OptimizeTab() {
   return (
     <div style={{ overflowX: "hidden" }}>
 
+      {/* ── Toast ── */}
+      {toast && (
+        <div style={{
+          position: "fixed", bottom: 24, right: 24, zIndex: 9999,
+          padding: "8px 16px", borderRadius: 6,
+          background: "#0d0e1c", border: `1px solid ${C.green}`,
+          color: C.green, fontSize: 11, fontFamily: "'Space Mono', monospace",
+          boxShadow: "0 4px 16px rgba(0,0,0,0.5)",
+          pointerEvents: "none",
+          animation: "fadeInUp 0.15s ease",
+        }}>
+          ✓ {toast.label}
+        </div>
+      )}
+
       {/* ── Header ── */}
       <div style={{ marginBottom: 12 }}>
         <div style={{ fontSize: 13, fontWeight: 700, color: C.accent, marginBottom: 4 }}>
@@ -401,7 +425,16 @@ export default function OptimizeTab() {
         {EXAMPLES.map(ex => (
           <button
             key={ex.label}
-            onClick={() => { setSrc(ex.code); setResult(analyzeAll(ex.code)); setExpandedFns(new Set()); }}
+            onClick={() => {
+              const r = analyzeAll(ex.code);
+              setSrc(ex.code);
+              setResult(r);
+              setExpandedFns(
+                r?.functions?.length > 1
+                  ? new Set(r.functions.map(f => f.name))
+                  : new Set()
+              );
+            }}
             style={{ ...btnBase, padding: "4px 10px", background: C.tag }}
           >
             {ex.label}
@@ -427,9 +460,12 @@ export default function OptimizeTab() {
           onBlur={e  => { e.target.style.borderColor = C.border; }}
           onKeyDown={e => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) runAnalysis(); }}
         />
+        <div style={{ fontSize: 9, color: C.muted, marginTop: 8, lineHeight: 1.5 }}>
+          Supports common PyTorch / NumPy patterns. Complex expressions may need manual wrapping.
+        </div>
         <div style={{
           display: "flex", justifyContent: "space-between", alignItems: "center",
-          marginTop: 10, flexWrap: "wrap", gap: 6,
+          marginTop: 8, flexWrap: "wrap", gap: 6,
         }}>
           <span style={{ fontSize: 9, color: C.muted }}>⌘↵ / Ctrl↵ to analyze</span>
           <button onClick={runAnalysis} style={{
@@ -582,7 +618,7 @@ export default function OptimizeTab() {
               {/* Copy buttons */}
               <div style={{ display: "flex", gap: 6, justifyContent: "flex-end", flexWrap: "wrap" }}>
                 <button
-                  onClick={() => copy("rewritten", rewrittenCode)}
+                  onClick={() => copy("rewritten", rewrittenCode, "Rewritten code copied")}
                   style={{
                     ...btnBase,
                     color: copiedKey === "rewritten" ? C.green : C.muted,
@@ -593,7 +629,7 @@ export default function OptimizeTab() {
                   {copiedKey === "rewritten" ? "✓ Copied" : "⎘ Copy Rewritten"}
                 </button>
                 <button
-                  onClick={() => copy("python", pythonSnippet)}
+                  onClick={() => copy("python", pythonSnippet, "Python snippet copied")}
                   style={{
                     ...btnBase,
                     color: copiedKey === "python" ? C.green : C.accent,
