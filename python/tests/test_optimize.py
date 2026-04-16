@@ -287,12 +287,14 @@ class TestDecoratorAst:
 
         assert my_fn.best_info.savings_pct > 0
 
-    def test_stub_marker_set(self):
+    def test_best_compiled_attribute_present(self):
         @best_optimize
         def my_fn(x):
             return x
 
-        assert getattr(my_fn, "_best_optimize_stub", False) is True
+        # _best_compiled is False for functions with no EML ops (no speedup possible)
+        assert hasattr(my_fn, "_best_compiled")
+        assert my_fn._best_compiled is False
 
     def test_bare_decorator_no_parens(self):
         # @best_optimize  (no parentheses)
@@ -619,3 +621,182 @@ class TestBenchmarkResult:
 
         with _pytest.raises(ValueError, match="x > 1"):
             sin_eml_taylor(0.5)
+
+
+# ── Decorator: actual BEST compilation for EML-arithmetic code ────────────────
+
+class TestDecoratorBestCompiled:
+    def test_eml_function_compiled(self):
+        """Decorator compiles EML-arithmetic functions to BEST-routed versions."""
+        from monogate import sin_eml_taylor
+
+        @best_optimize
+        def f(x):
+            return sin_eml_taylor(x)
+
+        assert f._best_compiled is True
+
+    def test_standard_math_not_compiled(self):
+        """Decorator does NOT compile functions using native math.* (already fast)."""
+        import math
+
+        @best_optimize
+        def f(x):
+            return math.sin(x)
+
+        assert f._best_compiled is False
+
+    def test_compiled_result_matches_original(self):
+        """BEST-compiled function must return same value as the EML version."""
+        import math
+        from monogate import sin_eml_taylor, sin_best_taylor
+
+        @best_optimize
+        def f(x):
+            return sin_eml_taylor(x)
+
+        assert f._best_compiled is True
+        for x in [1.2, 1.5, 2.0, 2.5]:
+            assert abs(f(x) - math.sin(x)) < 1e-5, f"f({x}) = {f(x)}, expected ≈ {math.sin(x)}"
+
+    def test_compiled_is_faster(self):
+        """BEST-compiled version must be faster than plain EML on a batch."""
+        import timeit
+        from monogate import sin_eml_taylor
+
+        @best_optimize
+        def fast_sin(x):
+            return sin_eml_taylor(x)
+
+        assert fast_sin._best_compiled is True
+
+        runs = 500
+        t_eml  = timeit.timeit(lambda: sin_eml_taylor(1.5), number=runs)
+        t_best = timeit.timeit(lambda: fast_sin(1.5),        number=runs)
+        # BEST should be at least 20% faster (typically 3x)
+        assert t_best < t_eml * 0.9, (
+            f"Expected BEST ({t_best*1e6/runs:.1f} us) < EML ({t_eml*1e6/runs:.1f} us)"
+        )
+
+    def test_decorated_function_preserves_name(self):
+        from monogate import sin_eml_taylor
+
+        @best_optimize
+        def my_eml_fn(x):
+            return sin_eml_taylor(x)
+
+        assert my_eml_fn.__name__ == "my_eml_fn"
+
+
+# ── cos_best_taylor ───────────────────────────────────────────────────────────
+
+class TestCosBestTaylor:
+    def test_cos_zero(self):
+        from monogate import cos_best_taylor
+        assert cos_best_taylor(0.0) == 1.0
+
+    def test_cos_accuracy(self):
+        import math
+        from monogate import cos_best_taylor
+        for x in [0.5, 1.0, 1.5, 2.0, 3.0]:
+            assert abs(cos_best_taylor(x) - math.cos(x)) < 1e-5, (
+                f"cos_best_taylor({x}) = {cos_best_taylor(x)}, expected {math.cos(x)}"
+            )
+
+    def test_cos_negative_x(self):
+        import math
+        from monogate import cos_best_taylor
+        assert abs(cos_best_taylor(-1.0) - math.cos(-1.0)) < 1e-5
+
+
+# ── gelu_eml_approx / gelu_best_approx ───────────────────────────────────────
+
+class TestGELUApprox:
+    def _ref_gelu(self, x: float) -> float:
+        import math
+        return x * 0.5 * (1.0 + math.tanh(math.sqrt(2.0 / math.pi) * (x + 0.044715 * x**3)))
+
+    def test_gelu_eml_matches_ref(self):
+        from monogate import gelu_eml_approx
+        for x in [-2.0, -1.0, 0.0, 0.5, 1.0, 2.0]:
+            approx = gelu_eml_approx(x)
+            ref    = self._ref_gelu(x)
+            assert abs(approx - ref) < 0.002, f"gelu_eml({x}): got {approx}, ref {ref}"
+
+    def test_gelu_best_matches_ref(self):
+        from monogate import gelu_best_approx
+        for x in [-2.0, -1.0, 0.0, 0.5, 1.0, 2.0]:
+            approx = gelu_best_approx(x)
+            ref    = self._ref_gelu(x)
+            assert abs(approx - ref) < 0.002, f"gelu_best({x}): got {approx}, ref {ref}"
+
+    def test_gelu_eml_vs_best_agree(self):
+        from monogate import gelu_eml_approx, gelu_best_approx
+        for x in [-1.5, -0.5, 0.0, 0.5, 1.0, 1.5, 2.0]:
+            assert abs(gelu_eml_approx(x) - gelu_best_approx(x)) < 1e-8, (
+                f"EML and BEST GELU diverge at x={x}"
+            )
+
+    def test_gelu_best_not_dramatically_slower(self):
+        # gelu_best uses EDL recip (2n) vs EML recip (5n) — the node-count
+        # saving is real but micro-benchmarks at this scale are dominated by
+        # Python function-call and complex-return overhead. We just verify
+        # neither is more than 3× slower than the other.
+        import timeit
+        from monogate import gelu_eml_approx, gelu_best_approx
+        runs = 2000
+        t_eml  = timeit.timeit(lambda: gelu_eml_approx(1.0),  number=runs)
+        t_best = timeit.timeit(lambda: gelu_best_approx(1.0), number=runs)
+        assert t_best < t_eml * 3.0, (
+            f"gelu_best ({t_best*1e6/runs:.1f} us) unexpectedly slow vs gelu_eml ({t_eml*1e6/runs:.1f} us)"
+        )
+
+
+# ── best_optimize_model ───────────────────────────────────────────────────────
+
+class TestBestOptimizeModel:
+    def test_requires_torch(self):
+        from monogate import best_optimize_model
+        # Just confirm it exists and is callable
+        assert callable(best_optimize_model)
+
+    def test_returns_model_optimize_report(self):
+        pytest.importorskip("torch")
+        import torch.nn as nn
+        from monogate import best_optimize_model, ModelOptimizeReport
+
+        model = nn.Sequential(nn.Linear(4, 8), nn.ReLU(), nn.Linear(8, 1))
+        report = best_optimize_model(model)
+        assert isinstance(report, ModelOptimizeReport)
+
+    def test_report_has_layers(self):
+        pytest.importorskip("torch")
+        import torch.nn as nn
+        from monogate import best_optimize_model
+
+        model = nn.Sequential(nn.Linear(4, 8), nn.Linear(8, 1))
+        report = best_optimize_model(model)
+        assert len(report.layers) > 0
+
+    def test_report_str(self):
+        pytest.importorskip("torch")
+        import torch.nn as nn
+        from monogate import best_optimize_model
+
+        model = nn.Linear(4, 1)
+        report = best_optimize_model(model)
+        s = str(report)
+        assert "ModelOptimizeReport" in s
+
+    def test_layer_optimize_result_fields(self):
+        pytest.importorskip("torch")
+        import torch.nn as nn
+        from monogate import best_optimize_model, LayerOptimizeResult
+
+        model = nn.Linear(4, 1)
+        report = best_optimize_model(model)
+        for lr in report.layers:
+            assert isinstance(lr, LayerOptimizeResult)
+            assert isinstance(lr.path, str)
+            assert lr.method == "forward"
+            assert isinstance(lr.patched, bool)

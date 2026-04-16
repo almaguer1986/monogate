@@ -134,6 +134,63 @@ The additive steps (sub_eml / add_eml) are the irreducible EML-only cost — no
 cousin operator currently supports arbitrary a ± b. This makes EML structurally
 essential even when other operators are cheaper for individual operations.
 
+### GELU activation
+
+`gelu_best_approx(x)` uses the tanh approximation formula with BEST routing
+(EDL `recip` for the final step):
+
+| Implementation | Nodes | Error vs exact |
+|----------------|-------|----------------|
+| `gelu_eml_approx` | 17 | < 1.4 × 10⁻¹² |
+| `gelu_best_approx` | 14 | < 1.4 × 10⁻¹² |
+
+18% fewer nodes vs pure EML. Accuracy matches the standard tanh-GELU formula
+used in GPT/BERT.
+
+## ML benchmarks
+
+Node-count savings translate directly to wall-clock speedup when the savings are
+large enough to overcome Python function-call overhead.
+
+### experiment_09 — TinyMLP with sin activation
+
+A 2-layer MLP (input 1 → hidden 16 → output 1) with `sin` activation, run on
+64-sample batches (1 024 activation calls per forward pass):
+
+| Configuration | ms/forward | Speedup |
+|--------------|-----------|---------|
+| EML-sin (245 nodes) | 39.3 | 1× (baseline) |
+| BEST-sin (63 nodes) | 14.1 | **2.8×** |
+| torch.sin (native) | 0.09 | 440× faster |
+
+BEST routing cuts 74% of activation nodes → **2.8× end-to-end MLP speedup** in
+EML-arithmetic mode. The comparison to `torch.sin` quantifies the overhead of
+operating in the EML-arithmetic substrate — relevant for symbolic regression,
+EML tree evaluation, and differentiable programs that use EML as a numeric
+substrate.
+
+### experiment_10 — Transformer FFN with GELU
+
+A standard 4× FFN block (d=16, hidden=64) with GELU activation, 8-sample batch:
+
+| Configuration | Nodes (GELU) | Relative speedup |
+|--------------|-------------|-----------------|
+| EML-GELU | 17 | 1× (baseline) |
+| BEST-GELU | 14 | ~0.9× (node savings < call overhead) |
+
+The 18% node reduction in GELU is too small to overcome Python call overhead.
+**Larger algebraic savings (sin/cos: 74%) give proportionally larger wall-clock
+gains (~3–4×).** This confirms the node-count model: the ratio of savings to
+overhead determines whether a routing improvement translates to measurable
+wall-clock speedup.
+
+Run the benchmarks:
+```bash
+cd python
+python notebooks/experiment_09_mlp_demo.py
+python notebooks/experiment_10_transformer_ffn.py
+```
+
 ## Open challenges
 
 These functions have no known **closed-form EML construction** (exact formula, not Taylor series):

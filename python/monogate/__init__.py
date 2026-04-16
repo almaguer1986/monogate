@@ -105,12 +105,20 @@ from .optimize import (  # noqa: F401
     benchmark_optimize,
     sin_eml_taylor,
     sin_best_taylor,
+    cos_best_taylor,
+    gelu_eml_approx,
+    gelu_best_approx,
+    LayerOptimizeResult,
+    ModelOptimizeReport,
+    best_optimize_model,
 )
 
 __all__ += [
     "best_optimize", "optimize", "OptimizeResult", "OpMatch",
     "BenchmarkResult", "benchmark_optimize",
-    "sin_eml_taylor", "sin_best_taylor",
+    "sin_eml_taylor", "sin_best_taylor", "cos_best_taylor",
+    "gelu_eml_approx", "gelu_best_approx",
+    "LayerOptimizeResult", "ModelOptimizeReport", "best_optimize_model",
 ]
 
 from .torch_ops import edl_op_safe, EDL_SAFE_CONSTANT  # noqa: F401
