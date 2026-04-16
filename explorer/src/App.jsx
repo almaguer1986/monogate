@@ -6,6 +6,7 @@ import ExprTreeTab from "./components/ExprTreeTab.jsx";
 import SinExplorer from "./components/SinExplorer.jsx";
 import TransformerDemo from "./components/TransformerDemo.jsx";
 import NeRFOptimizerTab from "./components/NeRFOptimizerTab.jsx";
+import LandingPage from "./components/LandingPage.jsx";
 import { op, exp, ln, E, ZERO, sub, neg, add, mul, div, pow, recip,
          BEST, sin_best, cos_best, pow_exl, div_edl, ln_exl } from "./eml.js";
 import {
@@ -157,6 +158,11 @@ export default function App() {
   const [customExpr, setCustomExpr] = useState("pow(x, 3)");
   const [customX,    setCustomX]    = useState(2.0);
   const [tab,        setTab]        = useState("calc"); // verify | table | sandbox | tree | best | calc
+  // Show landing on first visit; bypass if URL has params (deep links still work)
+  const [showLanding, setShowLanding] = useState(() => {
+    const p = new URLSearchParams(window.location.search);
+    return !p.has("expr") && !p.has("tab") && !p.has("mode");
+  });
   const [bestX,      setBestX]      = useState(1.0);
   const [treeExpr,   setTreeExpr]   = useState("pow(x, 3)");
   const [treeKey,    setTreeKey]    = useState(0); // increment to restart animation
@@ -223,6 +229,16 @@ export default function App() {
 
   const customResult = safeEval(customExpr, customX);
 
+  // Landing page — rendered instead of explorer on first visit
+  if (showLanding) {
+    return (
+      <LandingPage onEnter={(targetTab) => {
+        if (targetTab) setTab(targetTab);
+        setShowLanding(false);
+      }} />
+    );
+  }
+
   return (
     <div style={{ background:C.bg, minHeight:"100vh", color:C.text,
       fontFamily:"'Space Mono', monospace", padding:"20px 16px",
@@ -244,8 +260,20 @@ export default function App() {
       <div style={{ borderBottom:`1px solid ${C.border}`, paddingBottom:16, marginBottom:20 }}>
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", flexWrap:"wrap", gap:8 }}>
           <div>
-            <div style={{ fontSize:18, fontWeight:700, color:C.accent, letterSpacing:"-0.02em" }}>
-              EML Explorer
+            <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+              <button
+                onClick={() => setShowLanding(true)}
+                style={{
+                  fontSize:18, fontWeight:700, color:C.accent,
+                  letterSpacing:"-0.02em", background:"none",
+                  border:"none", padding:0, cursor:"pointer",
+                  fontFamily:"'Space Mono',monospace",
+                }}
+                title="← Home"
+              >
+                monogate
+              </button>
+              <span style={{ fontSize:10, color:C.muted }}>EML Explorer</span>
             </div>
             <div style={{ fontSize:10, color:C.muted, marginTop:3 }}>
               eml(x,y) = exp(x) − ln(y) · Odrzywołek 2026 · arXiv:2603.21852
