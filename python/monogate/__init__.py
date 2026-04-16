@@ -373,3 +373,13 @@ __all__ += [
 from .sklearn_wrapper import EMLRegressor  # noqa: F401
 
 __all__ += ["EMLRegressor"]
+
+from .prover import EMLProver, ProofResult, BenchmarkReport  # noqa: F401
+from .identities import (Identity, ALL_IDENTITIES, TRIG_IDENTITIES,  # noqa: F401
+    HYPERBOLIC_IDENTITIES, EXPONENTIAL_IDENTITIES, SPECIAL_IDENTITIES,
+    PHYSICS_IDENTITIES, get_by_difficulty, get_by_category)
+
+__all__ += ["EMLProver", "ProofResult", "BenchmarkReport",
+    "Identity", "ALL_IDENTITIES", "TRIG_IDENTITIES", "HYPERBOLIC_IDENTITIES",
+    "EXPONENTIAL_IDENTITIES", "SPECIAL_IDENTITIES", "PHYSICS_IDENTITIES",
+    "get_by_difficulty", "get_by_category"]

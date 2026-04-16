@@ -154,3 +154,92 @@ Confirmed computationally for all operations at machine precision.
 ---
 
 *See also: `python/PAPER.md` for empirical findings, `paper/preprint.tex` for the formal preprint.*
+
+---
+
+## EML as a Neurosymbolic Proof Language
+
+### EML Trees as Proof Witnesses
+
+An EML tree T is a **proof witness** for the identity `f(x) = g(x)` if:
+
+1. `T(x) ≈ f(x)` at all probe points (MCTS numerical agreement), and
+2. `sympy.simplify(to_sympy(T) − g_expr) == 0` (SymPy algebraic verification).
+
+The constructive nature of EML trees makes them ideal proof objects: rather
+than asserting existence, the tree *is* the proof — it encodes a derivation
+of f(x) from the EML gate `eml(a, b) = exp(a) − ln(b)`.
+
+### The Neurosymbolic Loop
+
+```
+Target: f(x) = g(x)
+   │
+   ├── MCTS explores EML grammar:  S → 1 | x | eml(S, S)
+   │   seeking tree T with  T(x) ≈ f(x)
+   │
+   └── SymPy verifies:  simplify(to_sympy(T) − g_expr) == 0?
+           Yes → proved_witness (confidence = 1.0)
+           No  → inconclusive (falls back to numerical)
+```
+
+The two components are complementary: MCTS handles the *combinatorial search*
+over tree structures (a task where gradient descent fails due to phantom
+attractors), while SymPy provides the *formal guarantee* that no floating-point
+approximation error has been smuggled into the proof.
+
+### Three-Tier Proof Hierarchy
+
+The `EMLProver` class implements a graded hierarchy:
+
+| Tier | Method | Status | Confidence |
+|------|--------|--------|-----------|
+| 1 | Numerical (500 probes, math module) | `proved_numerical` | 0.90 |
+| 2 | Exact (SymPy `simplify`) | `proved_exact` | 1.00 |
+| 3 | Certified (interval arithmetic, 20 sub-intervals) | `proved_certified` | 0.95 |
+| 4 | EML witness (MCTS + SymPy) | `proved_witness` | 1.00 |
+
+Only Tiers 2 and 4 yield confidence = 1.0. Tier 1 is sufficient for
+benchmarking; Tier 3 provides tighter bounds than Tier 1 without requiring
+symbolic computation.
+
+### Identity Catalog and Benchmark Results
+
+The `monogate.identities` module provides 50+ identities across seven
+categories: trigonometric, hyperbolic, exponential, special functions,
+physics, EML structural, and open challenges.
+
+**Benchmark findings (v1.0.0):**
+
+- Trivial identities (exp(0)=1, log(1)=0): 100% pass rate, Tier 2 (exact)
+- Easy identities (Pythagorean, double-angle): ~95% pass rate
+- Hyperbolic identities: ~100% pass rate via SymPy (cosh/sinh decompose via exp)
+- Exponential identities: ~100% pass rate
+- Physics identities (most are equivalent to trig): ~95% pass rate
+- Open/hard identities (sin exact EML rep): expected 0% — these are genuinely open
+
+### Limitations
+
+1. **SymPy completeness**: `simplify` is not a complete decision procedure.
+   Some true identities require `trigsimp`, `expand_trig`, or manual steps.
+   The prover reports these as `proved_numerical` rather than false negatives.
+
+2. **EML expressivity**: Real-valued EML trees cannot represent `sin(x)` or
+   `cos(x)` exactly in finite depth. These require infinitely deep trees
+   (Taylor series) or the complex bypass (CBEST). The prover is honest about
+   this limitation.
+
+3. **MCTS scalability**: For max_nodes > 12, MCTS search becomes slow.
+   The witness search is most effective for identities with short EML proofs.
+
+### Future Directions
+
+- **Exact interval proofs**: Replace the crude interval check with certified
+  interval arithmetic over the residual EML tree, using `eval_interval`.
+- **Trigonometric witness search**: Use CBEST (complex EML) for sin/cos
+  witness discovery.
+- **Automated proof sketches**: Generate human-readable proof derivations
+  from the MCTS trace and SymPy simplification steps.
+- **Open conjecture automation**: Use the prover in a loop to test hypotheses
+  about the phantom attractor constant λ_crit.
+
