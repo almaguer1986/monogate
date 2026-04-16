@@ -113,6 +113,9 @@ from .optimize import (  # noqa: F401
     best_optimize_model,
     optimize_siren,
     optimize_nerf,
+    context_aware_best_optimize,
+    ContextAwareResult,
+    StabilityWarning,
 )
 
 __all__ += [
@@ -122,6 +125,7 @@ __all__ += [
     "gelu_eml_approx", "gelu_best_approx",
     "LayerOptimizeResult", "ModelOptimizeReport", "best_optimize_model",
     "optimize_siren", "optimize_nerf",
+    "context_aware_best_optimize", "ContextAwareResult", "StabilityWarning",
 ]
 
 try:

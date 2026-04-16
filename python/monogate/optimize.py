@@ -35,7 +35,8 @@ import ast
 import inspect
 import re
 import textwrap
-from dataclasses import dataclass
+import warnings
+from dataclasses import dataclass, field
 from functools import wraps
 from typing import Any, Callable, Union
 
@@ -1465,3 +1466,379 @@ def optimize_siren(
 
 # Alias — same function, NeRF-centric name.
 optimize_nerf = optimize_siren
+
+
+# ── context_aware_best_optimize ───────────────────────────────────────────────
+
+# Operations whose deep chaining is numerically risky in EML arithmetic.
+_RISKY_OPS: frozenset[str] = frozenset({"sub", "add", "neg"})
+
+# Operations where switching to EXL in a deep subtree often helps.
+_EXL_CANDIDATES: frozenset[str] = frozenset({"pow", "mul", "ln", "sqrt"})
+
+_STABILITY_HINTS: dict[str, str] = {
+    "sub": (
+        "EML subtraction at depth>{d} risks catastrophic cancellation — "
+        "consider restructuring as EXL multiplication chains."
+    ),
+    "add": (
+        "EML addition at depth>{d} creates nested exp towers — "
+        "verify inputs stay in [-20, 20] or use log-sum-exp reformulation."
+    ),
+    "pow": (
+        "Deep EXL pow chain at depth>{d} is numerically stable but may overflow "
+        "for large inputs — validate input range."
+    ),
+    "mul": (
+        "EDL multiplication chain at depth>{d}: check for intermediate values "
+        "near zero (ln singularity in EDL)."
+    ),
+}
+
+
+@dataclass
+class StabilityWarning:
+    """One detected potential stability issue."""
+    op: str           # canonical op name
+    depth: int        # subtree depth where it was found
+    count: int        # occurrences at or deeper than threshold
+    suggestion: str   # human-readable fix suggestion
+    alt_nodes: int | None = None  # node cost delta if rerouted
+
+    def __str__(self) -> str:
+        base = (
+            f"  [{self.op.upper():<8}] depth={self.depth}, "
+            f"occurrences={self.count}: {self.suggestion}"
+        )
+        if self.alt_nodes is not None:
+            base += f" (+{self.alt_nodes} nodes if rerouted)"
+        return base
+
+
+@dataclass
+class ContextAwareResult:
+    """
+    Result of context_aware_best_optimize().
+
+    Attributes
+    ----------
+    base_result       The underlying OptimizeResult from static BEST analysis.
+    stability_issues  List of StabilityWarning (empty if none detected).
+    dynamic_profile   Dict of profiling stats (only populated when
+                      sample_inputs was provided).
+    diagnostics       Summary dict for programmatic consumption.
+    """
+    base_result: OptimizeResult
+    stability_issues: list[StabilityWarning] = field(default_factory=list)
+    dynamic_profile: dict[str, Any] = field(default_factory=dict)
+    diagnostics: dict[str, Any] = field(default_factory=dict)
+
+    def __str__(self) -> str:
+        lines = [str(self.base_result)]
+        if self.stability_issues:
+            lines.append("  Stability analysis:")
+            for w in self.stability_issues:
+                lines.append(str(w))
+            lines.append("")
+        if self.dynamic_profile:
+            lines.append("  Dynamic profile:")
+            for k, v in self.dynamic_profile.items():
+                lines.append(f"    {k}: {v}")
+            lines.append("")
+        return "\n".join(lines)
+
+
+class _DepthWalker(ast.NodeVisitor):
+    """
+    Walk a Python AST and record the call depth at which each recognized
+    operation appears.  Returns {op_name: [depth, depth, ...]} per call site.
+    """
+
+    _FUNC_MAP: dict[str, str] = {
+        "sin": "sin", "cos": "cos", "exp": "exp", "log": "ln",
+        "log2": "ln", "ln": "ln", "pow": "pow", "sqrt": "sqrt",
+        "tanh": "tanh", "sigmoid": "sigmoid", "gelu": "gelu", "abs": "abs",
+    }
+    _ATTR_MAP: dict[str, str] = {
+        "sin": "sin", "cos": "cos", "exp": "exp", "log": "ln",
+        "log2": "ln", "log1p": "ln", "pow": "pow", "sqrt": "sqrt",
+        "tanh": "tanh", "sigmoid": "sigmoid", "gelu": "gelu",
+    }
+
+    def __init__(self) -> None:
+        self.op_depths: dict[str, list[int]] = {}
+        self._depth = 0
+
+    def visit_Call(self, node: ast.Call) -> None:  # noqa: N802
+        op_name: str | None = None
+        if isinstance(node.func, ast.Name):
+            op_name = self._FUNC_MAP.get(node.func.id)
+        elif isinstance(node.func, ast.Attribute):
+            op_name = self._ATTR_MAP.get(node.func.attr)
+        if op_name:
+            self.op_depths.setdefault(op_name, []).append(self._depth)
+        self._depth += 1
+        self.generic_visit(node)
+        self._depth -= 1
+
+    def visit_BinOp(self, node: ast.BinOp) -> None:  # noqa: N802
+        op_map = {
+            ast.Add: "add", ast.Sub: "sub", ast.Mult: "mul",
+            ast.Div: "div", ast.Pow: "pow",
+        }
+        op_name = op_map.get(type(node.op))
+        if op_name:
+            self.op_depths.setdefault(op_name, []).append(self._depth)
+        self._depth += 1
+        self.generic_visit(node)
+        self._depth -= 1
+
+
+def _analyze_ast_depths(source: str) -> dict[str, list[int]]:
+    """
+    Parse *source* and return {op_name: [call_depths]}.
+    Falls back to an empty dict on any syntax error.
+    """
+    try:
+        tree = ast.parse(textwrap.dedent(source))
+    except SyntaxError:
+        try:
+            tree = ast.parse(f"_result = {source.strip()}")
+        except SyntaxError:
+            return {}
+    walker = _DepthWalker()
+    walker.visit(tree)
+    return walker.op_depths
+
+
+def _profile_static_best(
+    source: str,
+    sample_inputs: Any,
+) -> dict[str, Any]:
+    """
+    Evaluate the expression on *sample_inputs* (using NumPy) and report
+    potential numerical issues: NaN, Inf, dynamic range.
+
+    Returns a dict with keys: has_nan, has_inf, max_abs_value,
+    dynamic_range_db, n_samples.
+    """
+    stats: dict[str, Any] = {
+        "has_nan": False, "has_inf": False,
+        "max_abs_value": None, "dynamic_range_db": None, "n_samples": 0,
+    }
+    try:
+        import numpy as np  # noqa: PLC0415
+
+        arr = np.asarray(sample_inputs, dtype=float).ravel()
+        stats["n_samples"] = len(arr)
+        if len(arr) == 0:
+            return stats
+
+        safe_ns: dict[str, Any] = {
+            "np": np, "x": arr,
+            "sin": np.sin, "cos": np.cos, "exp": np.exp,
+            "log": np.log, "ln": np.log, "sqrt": np.sqrt,
+            "pow": np.power, "tanh": np.tanh, "abs": np.abs,
+        }
+        expr = source.strip()
+        for prefix in ("return ", "y = ", "out = "):
+            if expr.startswith(prefix):
+                expr = expr[len(prefix):]
+                break
+        try:
+            result = eval(expr, {"__builtins__": {}}, safe_ns)  # noqa: S307
+            result = np.asarray(result, dtype=float).ravel()
+        except Exception:
+            return stats
+
+        stats["has_nan"] = bool(np.any(np.isnan(result)))
+        stats["has_inf"] = bool(np.any(np.isinf(result)))
+        finite = result[np.isfinite(result)]
+        if len(finite):
+            amax = float(np.max(np.abs(finite)))
+            nonzero = finite[finite != 0]
+            amin = float(np.min(np.abs(nonzero))) if len(nonzero) else 1.0
+            stats["max_abs_value"] = amax
+            stats["dynamic_range_db"] = float(20 * np.log10(amax / amin + 1e-15))
+    except ImportError:
+        pass
+    return stats
+
+
+def context_aware_best_optimize(
+    expr_or_func: Union[str, Callable[..., Any]],
+    dynamic: bool = False,
+    stability_threshold: int = 10,
+    sample_inputs: Any = None,
+    warn: bool = True,
+    **kwargs: Any,
+) -> ContextAwareResult:
+    """
+    Static BEST routing with optional lightweight context-awareness.
+
+    By default (``dynamic=False``) this is a thin wrapper around
+    :func:`best_optimize` with zero overhead.  Enable additional analysis
+    with the flags below.
+
+    Parameters
+    ----------
+    expr_or_func : str or callable
+        A math expression string, a Python/NumPy/PyTorch code snippet,
+        or a decorated callable.  Passed directly to :func:`best_optimize`.
+    dynamic : bool, default False
+        If True, perform AST analysis to compute subtree depths for each
+        detected operation and flag potential stability issues (risky EML
+        subtraction chains, deep exp towers, etc.).  Pure static analysis
+        — no code execution unless ``sample_inputs`` is also provided.
+    stability_threshold : int, default 10
+        Minimum call-site depth at which an operation is flagged as a
+        potential stability concern.  Lower values produce more warnings.
+    sample_inputs : array-like or None, default None
+        If provided, evaluate the expression on these inputs (using NumPy)
+        and report large intermediate values, NaNs, or high dynamic range.
+        Only active when ``dynamic=True``.  Does not require torch.
+    warn : bool, default True
+        Emit :func:`warnings.warn` for each detected stability issue.
+        Set to False to inspect ``result.stability_issues`` programmatically.
+    **kwargs
+        Forwarded to :func:`best_optimize`.
+
+    Returns
+    -------
+    ContextAwareResult
+        Wraps the underlying ``OptimizeResult`` and adds
+        ``stability_issues``, ``dynamic_profile``, and ``diagnostics``.
+
+    Examples
+    --------
+    Basic usage — identical to best_optimize:
+
+    >>> r = context_aware_best_optimize("sin(x)**2 + exp(-x) * cos(x)")
+    >>> print(r.base_result.savings_pct)
+    74
+
+    Depth-aware stability check on a deeply nested expression:
+
+    >>> deep_expr = "exp(exp(exp(x - exp(x - exp(x - 1)))))"
+    >>> r = context_aware_best_optimize(
+    ...     deep_expr,
+    ...     dynamic=True,
+    ...     stability_threshold=3,
+    ...     warn=False,
+    ... )
+    >>> for issue in r.stability_issues:
+    ...     print(issue)
+
+    Profiling with sample inputs:
+
+    >>> import numpy as np
+    >>> r = context_aware_best_optimize(
+    ...     "exp(x) - exp(-x)",
+    ...     dynamic=True,
+    ...     sample_inputs=np.linspace(-50, 50, 1000),
+    ... )
+    >>> r.dynamic_profile  # {'has_nan': False, 'has_inf': True, ...}
+    """
+    # Step 1: run the existing static optimizer unconditionally.
+    base = best_optimize(expr_or_func, **kwargs)
+
+    issues: list[StabilityWarning] = []
+    profile: dict[str, Any] = {}
+
+    # Step 2: optional AST depth analysis.
+    if dynamic:
+        source = (
+            inspect.getsource(expr_or_func)
+            if callable(expr_or_func)
+            else str(expr_or_func)
+        )
+        op_depths = _analyze_ast_depths(source)
+
+        for op_name, depths in op_depths.items():
+            deep_hits = [d for d in depths if d >= stability_threshold]
+            if not deep_hits:
+                continue
+
+            hint_template = _STABILITY_HINTS.get(op_name)
+            if hint_template is None:
+                if op_name in _RISKY_OPS or op_name in _EXL_CANDIDATES:
+                    hint_template = (
+                        f"{op_name} at depth>{{d}} may benefit from "
+                        "EXL rerouting for numerical stability."
+                    )
+                else:
+                    continue
+
+            max_depth = max(deep_hits)
+            suggestion = hint_template.format(d=stability_threshold)
+
+            alt_nodes: int | None = None
+            if op_name in _EXL_CANDIDATES:
+                best_cost = _BEST_NODES.get(op_name, 0)
+                eml_cost = _EML_NODES.get(op_name, 0)
+                if eml_cost > best_cost:
+                    alt_nodes = eml_cost - best_cost
+
+            issue = StabilityWarning(
+                op=op_name,
+                depth=max_depth,
+                count=len(deep_hits),
+                suggestion=suggestion,
+                alt_nodes=alt_nodes,
+            )
+            issues.append(issue)
+            if warn:
+                warnings.warn(
+                    f"monogate: {suggestion} "
+                    f"(op={op_name!r}, max_depth={max_depth}, "
+                    f"occurrences={len(deep_hits)})",
+                    stacklevel=2,
+                    category=UserWarning,
+                )
+
+        # Step 3: optional dynamic profiling.
+        if sample_inputs is not None:
+            profile = _profile_static_best(source, sample_inputs)
+            if warn:
+                if profile.get("has_nan"):
+                    warnings.warn(
+                        "monogate: NaN detected in forward pass on sample_inputs. "
+                        "Check for log(0) or exp overflow in the expression.",
+                        stacklevel=2,
+                        category=UserWarning,
+                    )
+                if profile.get("has_inf"):
+                    warnings.warn(
+                        "monogate: Inf detected in forward pass on sample_inputs. "
+                        "Large inputs to exp() chains may exceed float64 range.",
+                        stacklevel=2,
+                        category=UserWarning,
+                    )
+                dr = profile.get("dynamic_range_db")
+                if dr is not None and dr > 200:
+                    warnings.warn(
+                        f"monogate: High dynamic range ({dr:.0f} dB) detected. "
+                        "Consider normalising inputs or using log-domain arithmetic.",
+                        stacklevel=2,
+                        category=UserWarning,
+                    )
+
+    diagnostics: dict[str, Any] = {
+        "savings_pct": base.savings_pct,
+        "speedup_expected": base.savings_pct >= _CROSSOVER_PCT,
+        "n_stability_issues": len(issues),
+        "issue_ops": [w.op for w in issues],
+    }
+    if profile:
+        diagnostics.update({
+            "has_nan": profile.get("has_nan"),
+            "has_inf": profile.get("has_inf"),
+            "dynamic_range_db": profile.get("dynamic_range_db"),
+        })
+
+    return ContextAwareResult(
+        base_result=base,
+        stability_issues=issues,
+        dynamic_profile=profile,
+        diagnostics=diagnostics,
+    )
