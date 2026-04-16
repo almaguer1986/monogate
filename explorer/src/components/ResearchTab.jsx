@@ -25,26 +25,40 @@ const C = {
 };
 
 // ── Known exhaustive search results (hard-coded from published runs) ─────────
+// N=11 completed 2026-04-16 via sin_search_05.py — 281,026,468 trees, 0 candidates
 const EXHAUSTIVE_RESULTS = [
-  { n: 1,  catalan: 1,      trees: 4,          after_parity: 2,          result: "none" },
-  { n: 2,  catalan: 2,      trees: 24,         after_parity: 12,         result: "none" },
-  { n: 3,  catalan: 5,      trees: 80,         after_parity: 40,         result: "none" },
-  { n: 4,  catalan: 14,     trees: 480,        after_parity: 240,        result: "none" },
-  { n: 5,  catalan: 42,     trees: 2688,       after_parity: 1344,       result: "none" },
-  { n: 6,  catalan: 132,    trees: 16896,      after_parity: 8448,       result: "none" },
-  { n: 7,  catalan: 429,    trees: 109824,     after_parity: 54912,      result: "none" },
-  { n: 8,  catalan: 1430,   trees: 733440,     after_parity: 366720,     result: "none" },
-  { n: 9,  catalan: 4862,   trees: 4980736,    after_parity: 2490368,    result: "none" },
-  { n: 10, catalan: 16796,  trees: 34398208,   after_parity: 17200000,   result: "none" },
-  { n: 11, catalan: 58786,  trees: 240820736,  after_parity: null,       result: "running" },
+  { n: 1,  catalan: 1,      trees: 4,           after_parity: 2,           result: "none" },
+  { n: 2,  catalan: 2,      trees: 16,          after_parity: 8,           result: "none" },
+  { n: 3,  catalan: 5,      trees: 80,          after_parity: 40,          result: "none" },
+  { n: 4,  catalan: 14,     trees: 448,         after_parity: 224,         result: "none" },
+  { n: 5,  catalan: 42,     trees: 2_688,       after_parity: 1_344,       result: "none" },
+  { n: 6,  catalan: 132,    trees: 16_896,      after_parity: 8_448,       result: "none" },
+  { n: 7,  catalan: 429,    trees: 109_824,     after_parity: 54_912,      result: "none" },
+  { n: 8,  catalan: 1_430,  trees: 732_160,     after_parity: 366_080,     result: "none" },
+  { n: 9,  catalan: 4_862,  trees: 4_978_688,   after_parity: 2_489_344,   result: "none" },
+  { n: 10, catalan: 16_796, trees: 34_398_208,  after_parity: 17_199_104,  result: "none" },
+  { n: 11, catalan: 58_786, trees: 240_787_456, after_parity: 208_901_719, result: "none", highlight: true },
 ];
 
 // ── Known near-miss approximations ───────────────────────────────────────────
+// Top entries from N=11 exhaustive search (sin_search_05.py, 2026-04-16)
+// Plus reference baselines and the exact complex-domain result
 const NEAR_MISSES = [
-  { formula: "eml(x, 1.0)",             mse: 0.42,    depth: 1, method: "MCTS",       notes: "= exp(x) − 0 (just exp(x))" },
-  { formula: "eml(eml(x,x), 1)",        mse: 0.31,    depth: 2, method: "MCTS",       notes: "Best 2-node real approx found" },
-  { formula: "Im(eml(i·x, 1))",         mse: 0.0,     depth: 1, method: "Euler",      notes: "EXACT — in complex domain" },
-  { formula: "eml(eml(x,eml(1,x)),1)",  mse: 0.28,    depth: 3, method: "beam",       notes: "Best 3-node real approx" },
+  // ── Complex exact ──
+  { formula: "Im(eml(i·x, 1))",         mse: 0.0,        depth: 1, method: "Euler",     notes: "EXACT — Euler path in complex domain", exact: true },
+  // ── N=11 exhaustive near-misses ──
+  { formula: "eml(eml(eml(x,1),eml(1,1)),eml(eml(eml(eml(x,1),eml(1,1)),eml(x,1)),eml(x,1)))",
+    mse: 1.4781e-4, depth: 11, method: "exhaustive", notes: "Best real-domain result from 281M-tree search" },
+  { formula: "eml(eml(1,1),eml(eml(eml(1,1),eml(x,1)),eml(eml(eml(eml(x,1),eml(1,1)),1),1)))",
+    mse: 1.4822e-4, depth: 11, method: "exhaustive", notes: "#2 from N=11 search" },
+  { formula: "eml(x,eml(1,eml(x,eml(eml(eml(x,eml(x,1)),eml(eml(1,eml(x,1)),eml(x,1))),1))))",
+    mse: 2.5052e-4, depth: 11, method: "exhaustive", notes: "#3 from N=11 search" },
+  { formula: "eml(1,eml(eml(1,eml(x,1)),eml(1,eml(eml(x,1),eml(eml(x,eml(eml(1,1),1)),1)))))",
+    mse: 3.1694e-4, depth: 11, method: "exhaustive", notes: "#4 from N=11 search" },
+  // ── MCTS / beam search baselines ──
+  { formula: "eml(eml(x,eml(1,x)),1)",  mse: 0.28,    depth: 3, method: "beam",       notes: "Best 3-node real approx (beam search)" },
+  { formula: "eml(eml(x,x), 1)",        mse: 0.31,    depth: 2, method: "MCTS",       notes: "Best 2-node real approx (MCTS)" },
+  { formula: "eml(x, 1.0)",             mse: 0.42,    depth: 1, method: "analytic",   notes: "Trivial baseline: exp(x)" },
 ];
 
 // ── API endpoint detection ────────────────────────────────────────────────────
@@ -239,12 +253,31 @@ function SearchProgress({ apiAvailable }) {
   );
 }
 
+// ── arXiv config ─────────────────────────────────────────────────────────────
+// Run: python scripts/update_arxiv_id.py <id>   (updates this line automatically)
+const ARXIV_ID  = "";   // ARXIV_ID_PLACEHOLDER — leave empty until submitted
+const ARXIV_URL = ARXIV_ID
+  ? `https://arxiv.org/abs/${ARXIV_ID}`
+  : "https://github.com/almaguer1986/monogate/blob/master/python/paper/preprint.tex";
+const ARXIV_LABEL = ARXIV_ID ? `arXiv:${ARXIV_ID}` : "preprint (pending)";
+
+const BIBTEX = `@article{almaguer2026eml,
+  title  = {Practical Extensions to the {EML} Universal Operator:
+             Hybrid Routing, Phantom Attractors, Performance Kernels,
+             and the {N=11} Sin Barrier},
+  author = {Almaguer, Art},
+  year   = {2026},
+  note   = {arXiv:${ARXIV_ID || "ARXIV_ID_PLACEHOLDER"}}
+}`;
+
 // ── Main component ────────────────────────────────────────────────────────────
 export default function ResearchTab() {
   const [section, setSection]         = useState("barrier");
   const [apiAvailable, setApiAvail]   = useState(false);
   const [showProof, setShowProof]     = useState(false);
   const [n12est, setN12est]           = useState(false);
+  const [showCite, setShowCite]       = useState(false);
+  const [citeCopied, setCiteCopied]   = useState(false);
 
   useEffect(() => {
     checkApiAvailable().then(setApiAvail);
@@ -258,6 +291,101 @@ export default function ResearchTab() {
 
   return (
     <div style={{ fontFamily: "monospace", color: C.text, padding: "20px 0" }}>
+      {/* Paper banner */}
+      <div style={{
+        background: "#0d1a0d",
+        border: `1px solid ${C.green}55`,
+        borderRadius: 8,
+        padding: "10px 16px",
+        marginBottom: 8,
+        display: "flex",
+        alignItems: "center",
+        gap: 12,
+        flexWrap: "wrap",
+      }}>
+        <span style={{ fontSize: 18 }}>📄</span>
+        <div style={{ flex: 1, minWidth: 200 }}>
+          <span style={{ color: C.green, fontWeight: 700, fontSize: 13 }}>
+            {ARXIV_ID ? "Now on arXiv" : "Paper submission-ready"}
+          </span>
+          <span style={{ color: C.muted, fontSize: 12, marginLeft: 8 }}>
+            "Practical Extensions to the EML Universal Operator"
+          </span>
+        </div>
+        <button
+          onClick={() => { setShowCite(!showCite); setCiteCopied(false); }}
+          style={{
+            background: showCite ? C.surface : "transparent",
+            border: `1px solid ${C.accent}55`,
+            color: C.accent,
+            fontSize: 12,
+            cursor: "pointer",
+            borderRadius: 4,
+            padding: "3px 10px",
+            whiteSpace: "nowrap",
+            fontFamily: "monospace",
+          }}
+        >
+          {showCite ? "▲ cite" : "▼ cite"}
+        </button>
+        <a
+          href={ARXIV_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            color: C.blue,
+            fontSize: 12,
+            textDecoration: "none",
+            border: `1px solid ${C.blue}44`,
+            borderRadius: 4,
+            padding: "3px 10px",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {ARXIV_LABEL} →
+        </a>
+      </div>
+
+      {/* BibTeX dropdown */}
+      {showCite && (
+        <div style={{
+          background: C.surface,
+          border: `1px solid ${C.accent}44`,
+          borderRadius: "0 0 8px 8px",
+          padding: "12px 16px",
+          marginBottom: 16,
+        }}>
+          <div style={{ color: C.muted, fontSize: 11, marginBottom: 6,
+                        fontWeight: 700, letterSpacing: 1, textTransform: "uppercase" }}>
+            BibTeX
+          </div>
+          <pre style={{
+            color: C.text, fontSize: 11, margin: "0 0 8px",
+            whiteSpace: "pre-wrap", lineHeight: 1.6,
+            background: C.tag, padding: "8px 12px", borderRadius: 4,
+          }}>
+            {BIBTEX}
+          </pre>
+          <button
+            onClick={() => {
+              navigator.clipboard.writeText(BIBTEX).then(() => {
+                setCiteCopied(true);
+                setTimeout(() => setCiteCopied(false), 2000);
+              });
+            }}
+            style={{
+              background: citeCopied ? C.green + "22" : C.tag,
+              border: `1px solid ${citeCopied ? C.green : C.border}`,
+              color: citeCopied ? C.green : C.muted,
+              fontSize: 12, cursor: "pointer", borderRadius: 4,
+              padding: "4px 12px", fontFamily: "monospace",
+            }}
+          >
+            {citeCopied ? "✓ copied" : "copy BibTeX"}
+          </button>
+        </div>
+      )}
+
       {/* Header */}
       <div style={{ marginBottom: 20 }}>
         <h2 style={{ color: C.text, margin: "0 0 4px", fontSize: 18 }}>
@@ -334,6 +462,23 @@ export default function ResearchTab() {
             </button>
           </div>
 
+          {/* N=11 completion banner */}
+          <div style={{
+            background: C.surface, border: `1px solid ${C.green}44`,
+            borderRadius: 8, padding: "10px 16px", marginBottom: 20,
+            display: "flex", alignItems: "center", gap: 12,
+          }}>
+            <span style={{ color: C.green, fontSize: 16 }}>✓</span>
+            <div>
+              <span style={{ color: C.green, fontWeight: 700, fontSize: 13 }}>
+                N=11 search complete
+              </span>
+              <span style={{ color: C.muted, fontSize: 12, marginLeft: 10 }}>
+                281,026,468 trees · 323 s · 0 candidates · 2026-04-16
+              </span>
+            </div>
+          </div>
+
           {/* Search results table */}
           <h3 style={{ color: C.text, fontSize: 14, margin: "0 0 12px" }}>
             Exhaustive search — cumulative results
@@ -350,42 +495,39 @@ export default function ResearchTab() {
                 </tr>
               </thead>
               <tbody>
-                {EXHAUSTIVE_RESULTS.map(row => {
-                  const isPending = row.result === "running";
-                  return (
-                    <tr key={row.n}
-                        style={{ borderBottom: `1px solid ${C.border}22`,
-                                  background: isPending ? C.surface : "transparent" }}>
-                      <td style={{ padding: "5px 10px", textAlign: "right",
-                                   color: C.accent, fontWeight: row.n >= 10 ? 700 : 400 }}>
-                        {row.n}
-                      </td>
-                      <td style={{ padding: "5px 10px", textAlign: "right", color: C.text }}>
-                        {row.catalan.toLocaleString()}
-                      </td>
-                      <td style={{ padding: "5px 10px", textAlign: "right", color: C.text }}>
-                        {row.trees.toLocaleString()}
-                      </td>
-                      <td style={{ padding: "5px 10px", textAlign: "right", color: C.text }}>
-                        {row.after_parity !== null
-                          ? "~" + row.after_parity.toLocaleString()
-                          : <span style={{ color: C.muted }}>computing…</span>}
-                      </td>
-                      <td style={{ padding: "5px 10px", textAlign: "center" }}>
-                        {isPending
-                          ? <span style={{ color: C.accent }}>⏳ in progress</span>
-                          : <span style={{ color: C.green }}>✓ none</span>}
-                      </td>
-                    </tr>
-                  );
-                })}
+                {EXHAUSTIVE_RESULTS.map(row => (
+                  <tr key={row.n}
+                      style={{
+                        borderBottom: `1px solid ${C.border}22`,
+                        background: row.highlight ? C.surface : "transparent",
+                      }}>
+                    <td style={{
+                      padding: "5px 10px", textAlign: "right",
+                      color: C.accent, fontWeight: row.n >= 10 ? 700 : 400,
+                    }}>
+                      {row.n}
+                    </td>
+                    <td style={{ padding: "5px 10px", textAlign: "right", color: C.text }}>
+                      {row.catalan.toLocaleString()}
+                    </td>
+                    <td style={{ padding: "5px 10px", textAlign: "right", color: C.text }}>
+                      {row.trees.toLocaleString()}
+                    </td>
+                    <td style={{ padding: "5px 10px", textAlign: "right", color: C.text }}>
+                      {row.after_parity.toLocaleString()}
+                    </td>
+                    <td style={{ padding: "5px 10px", textAlign: "center" }}>
+                      <span style={{ color: C.green }}>✓ none</span>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
               <tfoot>
                 <tr style={{ borderTop: `1px solid ${C.border}`, fontWeight: 700 }}>
                   <td style={{ padding: "6px 10px", color: C.accent }}>Total</td>
                   <td></td>
                   <td style={{ padding: "6px 10px", textAlign: "right", color: C.text }}>
-                    {(240_820_736 + 34_398_208 + 5_840_804).toLocaleString()}+
+                    {(281_026_468).toLocaleString()}
                   </td>
                   <td></td>
                   <td style={{ padding: "6px 10px", textAlign: "center", color: C.green }}>
@@ -442,31 +584,38 @@ export default function ResearchTab() {
             Shown to illustrate how "close" the finite EML grammar can get.
           </p>
 
-          {NEAR_MISSES.map((nm, i) => (
-            <div
-              key={i}
-              style={{
-                background: C.surface,
-                border: `1px solid ${C.border}`,
-                borderRadius: 8,
-                padding: "10px 14px",
-                marginBottom: 8,
-              }}
-            >
-              <div style={{ display: "flex", gap: 12, alignItems: "baseline" }}>
-                <code style={{ color: C.text, fontSize: 13, flex: 1 }}>{nm.formula}</code>
-                <span style={{
-                  color: nm.mse === 0 ? C.green : nm.mse < 0.3 ? C.accent : C.muted,
-                  fontFamily: "monospace", fontSize: 12,
-                }}>
-                  MSE = {nm.mse === 0 ? "0 (exact)" : nm.mse.toFixed(3)}
-                </span>
+          {NEAR_MISSES.map((nm, i) => {
+            const mseStr = nm.mse === 0
+              ? "0 (exact)"
+              : nm.mse < 0.01
+                ? nm.mse.toExponential(4)
+                : nm.mse.toFixed(3);
+            const mseColor = nm.mse === 0 ? C.green : nm.mse < 1e-3 ? C.accent : C.muted;
+            return (
+              <div
+                key={i}
+                style={{
+                  background: C.surface,
+                  border: `1px solid ${nm.exact ? C.green + "44" : C.border}`,
+                  borderRadius: 8,
+                  padding: "10px 14px",
+                  marginBottom: 8,
+                }}
+              >
+                <div style={{ display: "flex", gap: 12, alignItems: "baseline", flexWrap: "wrap" }}>
+                  <code style={{ color: C.text, fontSize: 12, flex: 1, wordBreak: "break-all" }}>
+                    {nm.formula}
+                  </code>
+                  <span style={{ color: mseColor, fontFamily: "monospace", fontSize: 12, whiteSpace: "nowrap" }}>
+                    MSE = {mseStr}
+                  </span>
+                </div>
+                <div style={{ color: C.muted, fontSize: 11, marginTop: 4 }}>
+                  N={nm.depth} leaves · via {nm.method} · {nm.notes}
+                </div>
               </div>
-              <div style={{ color: C.muted, fontSize: 11, marginTop: 4 }}>
-                depth={nm.depth} · via {nm.method} · {nm.notes}
-              </div>
-            </div>
-          ))}
+            );
+          })}
 
           <div style={{
             marginTop: 20, padding: "12px 16px",

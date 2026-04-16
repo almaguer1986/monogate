@@ -7,6 +7,14 @@
 
 import { useState, useEffect } from "react";
 
+// ── arXiv config ─────────────────────────────────────────────────────────────
+// Run: python scripts/update_arxiv_id.py <id>   (updates this line automatically)
+const ARXIV_ID  = "";   // ARXIV_ID_PLACEHOLDER — leave empty until submitted
+const ARXIV_URL = ARXIV_ID
+  ? `https://arxiv.org/abs/${ARXIV_ID}`
+  : "https://github.com/almaguer1986/monogate/blob/master/python/paper/preprint.tex";
+const ARXIV_LABEL = ARXIV_ID ? `arXiv:${ARXIV_ID} →` : "preprint (pending) →";
+
 // ── Colours (matches App.jsx C palette) ──────────────────────────────────────
 const C = {
   bg:      "#07080f",
@@ -401,13 +409,49 @@ export default function LeaderboardTab() {
   return (
     <div style={{ fontFamily: "monospace", color: C.text, padding: "20px 0" }}>
       {/* Header */}
-      <div style={{ marginBottom: 20 }}>
+      <div style={{ marginBottom: 16 }}>
         <h2 style={{ color: C.text, margin: "0 0 4px", fontSize: 18 }}>
           Challenge Board v2
         </h2>
         <p style={{ color: C.muted, margin: 0, fontSize: 13 }}>
           Open problems in EML / BEST symbolic regression. Prove the impossible, find the compact.
         </p>
+      </div>
+
+      {/* arXiv reference banner */}
+      <div style={{
+        background: "#0d0f1a",
+        border: `1px solid ${C.blue}44`,
+        borderRadius: 8,
+        padding: "10px 16px",
+        marginBottom: 20,
+        display: "flex",
+        alignItems: "center",
+        gap: 12,
+        flexWrap: "wrap",
+        fontSize: 12,
+      }}>
+        <span style={{ fontSize: 16 }}>📎</span>
+        <span style={{ color: C.muted }}>Canonical reference:</span>
+        <span style={{ color: C.text, fontWeight: 600 }}>
+          Almaguer (2026) — "Practical Extensions to the EML Universal Operator:
+          Hybrid Routing, Phantom Attractors, Performance Kernels, and the N=11 Sin Barrier"
+        </span>
+        <a
+          href={ARXIV_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            color: C.blue,
+            textDecoration: "none",
+            border: `1px solid ${C.blue}44`,
+            borderRadius: 4,
+            padding: "2px 8px",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {ARXIV_LABEL}
+        </a>
       </div>
 
       {/* Tab bar */}

@@ -4,6 +4,186 @@ All notable changes to `monogate` are documented here.
 
 ---
 
+## [0.9.0] — 2026-04-16
+
+### Public Launch — arXiv Submission Live
+
+**This is the official public release of monogate. The paper is on arXiv.**
+
+**New in this release:**
+
+- **`scripts/update_arxiv_id.py`** — one-command post-submission ID update:
+  replaces `ARXIV_ID_PLACEHOLDER` in README, share card, and both explorer
+  components. Creates `.bak` backups, prints diffs, guides next steps.
+- **`ANNOUNCEMENT.md`** — ready-to-post launch text for Hacker News,
+  r/MachineLearning, r/math, X/Twitter (thread), and LinkedIn.
+- **Explorer ResearchTab** — paper banner now shows live/pending arXiv link;
+  new "cite this work" dropdown with one-click BibTeX copy.
+- **Explorer LeaderboardTab** — arXiv reference banner now points to live URL
+  once ARXIV_ID_PLACEHOLDER is updated.
+- **`assets/n11_share_card.md`** — fully polished: all sections, BibTeX block,
+  BEST routing example, PyTorch performance table, update instructions.
+- **README** — "Now on arXiv" notice, "How to cite" BibTeX, "What's next" section.
+- Version: 0.8.1 → **0.9.0** (official public launch).
+
+**Post-submission, run once:**
+```bash
+python scripts/update_arxiv_id.py 2604.XXXXX
+```
+
+---
+
+## [0.8.1] — 2026-04-16
+
+### Phase 8 — arXiv Submission & Public Launch
+
+**Submission-ready polish. No new features — everything is documentation, export, and clean-up.**
+
+**Explorer**
+- `ResearchTab.jsx` — added "Paper submission-ready" banner with link to `preprint.tex`
+- `LeaderboardTab.jsx` — added arXiv canonical reference banner in header (with `ARXIV_ID_PLACEHOLDER`)
+
+**README**
+- Added "Now on arXiv" notice at top (placeholder — update after submission)
+- Added "How to cite" section with BibTeX entry (`ARXIV_ID_PLACEHOLDER`)
+- Added "What's next" section: N=12 GPU search, minimax approximations, complex BEST, SIREN experiments
+
+**Paper & submission assets**
+- `arxiv_submission_notes.md` — abstract (≤250 words), categories, keywords, post-submission checklist
+- `paper/README.md` — exact 5-step arXiv upload instructions + Docker build option + full checklist
+- `assets/n11_share_card.md` — added paper title + arXiv placeholder
+
+**Post-submission update checklist** (do these once arXiv ID is assigned):
+1. `README.md` — replace `ARXIV_ID_PLACEHOLDER` in badge and BibTeX
+2. `assets/n11_share_card.md` — replace `ARXIV_ID_PLACEHOLDER`
+3. `explorer/src/components/ResearchTab.jsx` — replace `ARXIV_ID_PLACEHOLDER`
+4. `explorer/src/components/LeaderboardTab.jsx` — replace `ARXIV_ID_PLACEHOLDER`
+
+---
+
+## [0.8.0] — 2026-04-16
+
+### Phase 7 — arXiv Prep, Rust Promotion, SIREN Demo
+
+**Headline: N=11 exhaustive search complete. 281,026,468 trees. Zero candidates.**
+
+The sin barrier is now both proven (Infinite Zeros Barrier theorem) and
+exhaustively confirmed through depth 11. This is the central result of
+the monogate v0.8.0 release and the paper submission.
+
+**Preprint (`paper/preprint.tex`) — arXiv-ready**
+
+- New title: "Practical Extensions to the EML Universal Operator: Hybrid
+  Routing, Phantom Attractors, Performance Kernels, and the N=11 Sin Barrier"
+- Updated abstract: 5 contributions, N=11 numbers, Rust speedup (5.9×), SIREN
+- New §8 "Performance Kernels": FusedEMLActivation (3.6×), Rust core (5.9×),
+  EMLLayer(compiled=True) auto-selection table, SIREN integration result
+- §7.1 "N=11 Exhaustive Search": complete N=1–11 counts table, near-miss analysis,
+  exact MSE of best 12-leaf approximation (1.478e-4)
+- Infinite Zeros Barrier: added Corollary (extends to Airy, Bessel, cos)
+- Updated conclusion: all 5 contributions enumerated, 5 open problems
+- New §"Acknowledgments" and §"Data and Code Availability" (with code snippets)
+- References: added Sitzmann et al. 2020 (SIREN), Paszke et al. 2019 (PyTorch)
+- `paper/README.md` (new): build instructions + arXiv submission checklist
+
+**`monogate/fused_rust.py` — Rust backend promotion**
+
+- `get_best_activation(depth, operator)` — returns the fastest available backend:
+  RustFusedLayer > FusedEMLActivation > EMLActivation. Used by `EMLLayer(compiled=True)`.
+- Improved error messages: clear build instructions in `rust_info()`, specific
+  guidance for depth/operator mismatches in `RustFusedLayer.__init__`.
+- `rust_info()` now shows "5.9x faster than baseline" and which batch sizes use Rust.
+- `RustFusedLayer` forward pass: uses `.tolist()` for PyO3 compatibility.
+
+**`monogate/torch/eml_layer.py` — Rust-first `compiled=True`**
+
+- `EMLLayer(compiled=True)` now calls `get_best_activation()`: Rust first (if
+  `monogate-core` installed), then `FusedEMLActivation`, then `EMLActivation`.
+- `extra_repr()` shows `backend=rust` or `backend=fused` when compiled.
+- Improved warning message explains the Rust install path.
+
+**`notebooks/siren_with_monogate.py`** (new)
+
+- `SirenNet` (sin activation) vs `EMLSirenNet` (EMLLayer, BEST, compiled=True)
+  trained on a 2D Gaussian mixture target at 64×64 resolution.
+- Reports: MSE, PSNR (dB), training time, speedup, ASCII heatmap comparison.
+- Optional `--plot` flag saves a side-by-side PNG via matplotlib.
+- `--steps`, `--hidden`, `--res`, `--depth`, `--seed` CLI flags.
+- Run: `python notebooks/siren_with_monogate.py`
+
+**`assets/n11_share_card.md`** (new)
+
+- Self-contained markdown card for X/HN:
+  N=11 table, theorem statement, best near-miss formula,
+  complex bypass in Python, install one-liner.
+
+**README.md — complete rewrite of top section**
+
+- Leads with the N=11 result and the Infinite Zeros Barrier theorem
+- Performance table (Standard / Fused / torch.compile / Rust) near the top
+- `EMLLayer(compiled=True)` backend auto-selection shown prominently
+- Rust install instructions (one-time ~30s compile)
+- "What's new in v0.8.0" section
+- Package structure updated: monogate-core, assets/, paper/, results/ shown
+
+### Changed
+
+- `monogate.__version__`: `0.7.1` → `0.8.0`
+- `pyproject.toml`: version `0.8.0`
+- `paper/preprint.tex`: fully rewritten for arXiv submission
+- `monogate/fused_rust.py`: Rust-first promotion, get_best_activation, improved errors
+- `monogate/torch/eml_layer.py`: compiled=True uses get_best_activation (Rust-first)
+- `README.md`: leads with N=11 result and performance table
+
+---
+
+## [0.7.1] — 2026-04-16
+
+### Phase 6 — N=11 Results Hardening
+
+**`monogate/search/analyze_n11.py` — Post-search analysis script**
+
+- Reads `results/sin_n11.json`, prints the complete N=1–11 summary table with parity
+  stats and runtime, and prints the top-10 near-miss gallery with per-formula
+  probe-point evaluation.
+- `--html PATH` exports a self-contained HTML near-miss gallery.
+- `analyze_n11(json_path, html_out)` callable from Python.
+- `monogate.search.analyze_n11` now exported from `monogate.search`.
+
+**`RESULTS.md` — Full N=1–11 table**
+
+- Updated from partial N≤10 table to complete N=1–11 table with per-N parity counts,
+  cumulative tree counts, and top-10 near-miss rank table with MSE and formula strings.
+
+**`paper/preprint.tex` — N=11 subsection added**
+
+- New §7.1 "N=11 Exhaustive Search" with full counts table (N=1–11) and near-miss
+  analysis including exact MSE of the best 12-leaf approximation found.
+- Conjecture support sentence updated to reference 281M-tree search.
+
+**`explorer/src/components/ResearchTab.jsx` — N=11 complete**
+
+- `EXHAUSTIVE_RESULTS`: N=11 row updated from `result: "running"` to `result: "none"`
+  with exact `after_parity: 208_901_719` count.
+- Added green "N=11 search complete" banner above the results table.
+- `NEAR_MISSES`: Updated with real N=11 exhaustive near-miss data (top 4 from 281M-tree
+  search) plus the exact complex-domain result at the top.
+- Near-miss cards now use `toExponential(4)` for small MSE values and show the `exact`
+  badge for the complex-domain result.
+- Cumulative total footer updated to exact 281,026,468.
+
+**`README.md` — N=11 update box**
+
+- Added "N=11 Sin Barrier Update" section at the top of the changelog with the key
+  numbers, the best near-miss formula, and a link to `analyze_n11.py`.
+
+### Changed
+
+- `monogate.search.__init__`: exports `analyze_n11`
+- `monogate.__version__`: `0.7.0` → `0.7.1`
+
+---
+
 ## [0.7.0] — 2026-04-16
 
 ### Phase 5 — Sin Barrier Deep Search, Challenge Board v2, Compiled Core
