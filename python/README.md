@@ -327,6 +327,32 @@ See `python/notebooks/sin_best.py` for the full analysis.
 
 ---
 
+## ML benchmarks: node savings vs wall-clock speedup
+
+Node-count reductions translate to wall-clock speedup only above a threshold.
+Three experiments quantify this:
+
+| Experiment | Activation | Nodes EML | Nodes BEST | Savings | Speedup |
+|-----------|-----------|-----------|-----------|---------|---------|
+| exp_09 (TinyMLP, sin) | sin(x) Taylor | 245 | 63 | 74% | **2.8×** |
+| exp_11 (batch 512, poly) | x⁴+x³+x² | 67 | 31 | 54% | **2.1×** |
+| exp_10 (Transformer FFN, GELU) | tanh-GELU | 17 | 14 | 18% | 0.93× |
+
+Linear fit (R²=0.9992): `speedup ≈ 0.033 × savings_pct + 0.32`
+
+**Crossover at ~20% node reduction.** Functions with >20% BEST savings
+(sin, cos, polynomial expressions heavy in `pow`) yield wall-clock gains.
+GELU at 18% falls below the threshold — overhead dominates.
+
+Run the experiments:
+```bash
+python notebooks/experiment_09_mlp_demo.py   # TinyMLP, sin activation
+python notebooks/experiment_10_transformer_ffn.py  # FFN, GELU activation
+python notebooks/experiment_11.py           # polynomial, crossover analysis
+```
+
+---
+
 ## Code optimizer (`monogate.optimize`)
 
 `best_optimize` rewrites Python expressions and functions to use BEST-mode

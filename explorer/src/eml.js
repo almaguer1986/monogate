@@ -82,6 +82,33 @@ export const BEST = {
   },
 };
 
+// ─── GELU approximation ──────────────────────────────────────────────────────
+// tanh formula: GELU(x) ≈ 0.5·x·(1 + tanh(C1·(x + 0.044715·x³)))
+// Both variants clamp the inner argument to ±3.25 for numerical stability.
+
+const _GC1 = Math.sqrt(2 / Math.PI);   // 0.7978845608028654
+const _GC2 = _GC1 * 0.044715;          // 0.03567740813446277
+
+/** GELU — pure EML arithmetic, 17 nodes (exp:1 + add:11 + recip_eml:5) */
+export const gelu_eml = (x) => {
+  const inner = _GC1 * x + _GC2 * x * x * x;
+  if (inner >  3.25) return x;
+  if (inner < -3.25) return 0;
+  const e2i = exp(2 * inner);
+  const den  = add(e2i, 1.0);
+  return 0.5 * x * (1 + (1 - 2 * recip(den)));
+};
+
+/** GELU — BEST-routed, 14 nodes (exp:1 + add:11 + recip_edl:2) */
+export const gelu_best = (x) => {
+  const inner = _GC1 * x + _GC2 * x * x * x;
+  if (inner >  3.25) return x;
+  if (inner < -3.25) return 0;
+  const e2i = exp(2 * inner);
+  const den  = add(e2i, 1.0);
+  return 0.5 * x * (1 + (1 - 2 * recip_edl(den)));
+};
+
 /** sin(x) via 8-term Taylor using pow_exl (3 nodes/power, 63 nodes total) */
 export const sin_best = (x, terms = 8) => {
   if (x === 0) return 0;

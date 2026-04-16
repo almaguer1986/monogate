@@ -95,7 +95,28 @@ The 74% node reduction in `sin` yields a **2.8× end-to-end speedup** in EML-ari
 | EML-GELU (17n)  | 4.736       | 1× (baseline)   |
 | BEST-GELU (14n) | 5.115       | ~0.93×          |
 
-The 18% node reduction in GELU is insufficient to overcome Python call overhead at typical batch sizes. The comparison across the two experiments confirms the node-count model: **savings / overhead ratio** determines whether routing improvements yield measurable wall-clock gains. Activations with ≥74% node reductions (sin, cos) benefit substantially; those with ≤20% reductions (GELU) do not.
+The 18% node reduction in GELU is insufficient to overcome Python call overhead at typical batch sizes.
+
+**experiment_11 — Polynomial activation x⁴+x³+x²** (scalar batch of 512, Python 3.14 CPU):
+
+| Configuration    | ms / batch | us / elem | Speedup |
+|------------------|-----------|-----------|---------|
+| EML-poly (67n)   | 10.22     | 19.96     | 1×      |
+| BEST-poly (31n)  | 4.93      | 9.62      | **2.08×** |
+
+The 53.7% node reduction in the polynomial activation yields a **2.08× speedup**, confirming that the crossover lies between GELU (18%) and sin (74%). Fitting a linear model through all three data points (R²=0.9992):
+
+> **speedup ≈ 0.033 × savings_pct + 0.32**
+
+Linear interpolation suggests the crossover occurs at approximately **20% node reduction**. Below that threshold, Python function-call overhead dominates and BEST routing is marginally slower; above it, gate savings translate to measurable wall-clock gains. The full three-experiment comparison is shown below:
+
+| Experiment | Nodes EML | Nodes BEST | Savings | Speedup |
+|-----------|-----------|-----------|---------|---------|
+| sin/cos (exp_09) | 245 | 63 | 74% | 2.8× |
+| poly (exp_11) | 67 | 31 | 54% | 2.1× |
+| GELU (exp_10) | 17 | 14 | 18% | 0.93× |
+
+Activations with node reductions above ~20% (sin, cos, polynomial expressions heavy in `pow`) benefit substantially from BEST routing; those below the threshold (GELU with 18% reduction) do not, at typical Python batch sizes.
 
 ## 5. Conclusion and Open Problems
 
