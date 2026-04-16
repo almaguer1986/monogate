@@ -1,0 +1,360 @@
+{
+  "config": {
+    "n_seeds": 100,
+    "depth": 3,
+    "target": 3.141592653589793,
+    "steps": 3000,
+    "tolerance": 1e-06,
+    "universality": true,
+    "output": "results/attractor_investigation.json"
+  },
+  "n_constants_tested": 72,
+  "attractor_float": -Infinity,
+  "attractor_hp": "-inf",
+  "values_collected": [
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity,
+    -Infinity
+  ],
+  "collection_elapsed_s": 79.34302249999018,
+  "constant_matches": [],
+  "constant_top_20": [
+    [
+      "pi",
+      3.141592653589793,
+      Infinity
+    ],
+    [
+      "e",
+      2.718281828459045,
+      Infinity
+    ],
+    [
+      "phi (golden)",
+      1.618033988749895,
+      Infinity
+    ],
+    [
+      "sqrt(2)",
+      1.4142135623730951,
+      Infinity
+    ],
+    [
+      "sqrt(3)",
+      1.7320508075688772,
+      Infinity
+    ],
+    [
+      "sqrt(5)",
+      2.23606797749979,
+      Infinity
+    ],
+    [
+      "sqrt(6)",
+      2.449489742783178,
+      Infinity
+    ],
+    [
+      "sqrt(7)",
+      2.6457513110645907,
+      Infinity
+    ],
+    [
+      "sqrt(10)",
+      3.1622776601683795,
+      Infinity
+    ],
+    [
+      "sqrt(pi)",
+      1.772453850905516,
+      Infinity
+    ],
+    [
+      "sqrt(e)",
+      1.6487212707001282,
+      Infinity
+    ],
+    [
+      "cbrt(pi)",
+      1.4645918875615234,
+      Infinity
+    ],
+    [
+      "cbrt(e)",
+      1.3956124250860895,
+      Infinity
+    ],
+    [
+      "cbrt(30)",
+      3.107232505953859,
+      Infinity
+    ],
+    [
+      "pi^(2/3)",
+      2.1450293971110255,
+      Infinity
+    ],
+    [
+      "e^(2/3)",
+      1.947734041054676,
+      Infinity
+    ],
+    [
+      "ln(2)",
+      0.6931471805599453,
+      Infinity
+    ],
+    [
+      "ln(3)",
+      1.0986122886681098,
+      Infinity
+    ],
+    [
+      "ln(5)",
+      1.6094379124341003,
+      Infinity
+    ],
+    [
+      "ln(10)",
+      2.302585092994046,
+      Infinity
+    ]
+  ],
+  "attractor_tree": {
+    "final_value": -Infinity,
+    "leaf_values": [
+      0.9116265177726746,
+      1.0884507894515991,
+      1.0998244285583496,
+      0.900036633014679,
+      4.185969829559326,
+      -0.1429063230752945,
+      0.7773371338844299,
+      1.2240420579910278
+    ],
+    "intermediate_levels": [
+      [
+        0.9116265177726746,
+        1.0884507894515991,
+        1.0998244285583496,
+        0.900036633014679,
+        4.185969829559326,
+        -0.1429063230752945,
+        0.7773371338844299,
+        1.2240420579910278
+      ],
+      [
+        2.403611183166504,
+        3.1089584827423096,
+        88.78308868408203,
+        1.9735125303268433
+      ],
+      [
+        9.928767204284668,
+        Infinity
+      ],
+      [
+        -Infinity
+      ]
+    ],
+    "target": 3.141592653589793,
+    "depth": 3
+  },
+  "universality": {
+    "pi": {
+      "2": {
+        "mean": 3.141596555709839,
+        "std": 0.0,
+        "clustered": true,
+        "attractor_differs_from_target": false
+      },
+      "3": {
+        "mean": -Infinity,
+        "std": NaN,
+        "clustered": false,
+        "attractor_differs_from_target": true
+      }
+    },
+    "e": {
+      "2": {
+        "mean": 2.7182843685150146,
+        "std": 0.0,
+        "clustered": true,
+        "attractor_differs_from_target": false
+      },
+      "3": {
+        "mean": -Infinity,
+        "std": NaN,
+        "clustered": false,
+        "attractor_differs_from_target": true
+      }
+    },
+    "sqrt2": {
+      "2": {
+        "mean": 1.4141936302185059,
+        "std": 0.0,
+        "clustered": true,
+        "attractor_differs_from_target": false
+      },
+      "3": {
+        "mean": -Infinity,
+        "std": NaN,
+        "clustered": false,
+        "attractor_differs_from_target": true
+      }
+    },
+    "ln10": {
+      "2": {
+        "mean": 2.3025856018066406,
+        "std": 0.0,
+        "clustered": true,
+        "attractor_differs_from_target": false
+      },
+      "3": {
+        "mean": -Infinity,
+        "std": NaN,
+        "clustered": false,
+        "attractor_differs_from_target": true
+      }
+    },
+    "1.5": {
+      "2": {
+        "mean": 1.4999804496765137,
+        "std": 0.0,
+        "clustered": true,
+        "attractor_differs_from_target": false
+      },
+      "3": {
+        "mean": -Infinity,
+        "std": NaN,
+        "clustered": false,
+        "attractor_differs_from_target": true
+      }
+    },
+    "2.0": {
+      "2": {
+        "mean": 2.0,
+        "std": 0.0,
+        "clustered": true,
+        "attractor_differs_from_target": false
+      },
+      "3": {
+        "mean": -Infinity,
+        "std": NaN,
+        "clustered": false,
+        "attractor_differs_from_target": true
+      }
+    },
+    "3.0": {
+      "2": {
+        "mean": 3.0000035762786865,
+        "std": 0.0,
+        "clustered": true,
+        "attractor_differs_from_target": false
+      },
+      "3": {
+        "mean": -Infinity,
+        "std": NaN,
+        "clustered": false,
+        "attractor_differs_from_target": true
+      }
+    }
+  }
+}

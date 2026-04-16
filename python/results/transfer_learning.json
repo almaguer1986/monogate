@@ -1,0 +1,193 @@
+{
+  "matrix": {
+    "trig": {
+      "trig": 1.0,
+      "hyperbolic": 1.321159810119908,
+      "exponential": 1.1879800513205663,
+      "special": 1.0686902802872515,
+      "physics": 1.0450842171706987
+    },
+    "hyperbolic": {
+      "trig": 0.8026195669715646,
+      "hyperbolic": 1.0,
+      "exponential": 0.9769660165209687,
+      "special": 0.8442095748512666,
+      "physics": 1.178482060895638
+    },
+    "exponential": {
+      "trig": 1.0908673796894452,
+      "hyperbolic": 0.8999343610220604,
+      "exponential": 1.0,
+      "special": 1.0557969803978298,
+      "physics": 1.0644377257111297
+    },
+    "special": {
+      "trig": 0.9534733713925098,
+      "hyperbolic": 1.0326693386409969,
+      "exponential": 0.9746069700742195,
+      "special": 1.0,
+      "physics": 0.9182783954209244
+    },
+    "physics": {
+      "trig": 0.8897310699520121,
+      "hyperbolic": 0.9837600763232649,
+      "exponential": 0.8746666681673984,
+      "special": 1.0814052608686322,
+      "physics": 1.0
+    }
+  },
+  "raw": {
+    "trig": {
+      "trig": {
+        "transfer_benefit": 1.0
+      },
+      "hyperbolic": {
+        "baseline_mean": 0.07769937916358079,
+        "transfer_mean": 0.058811491666953465,
+        "transfer_benefit": 1.321159810119908,
+        "transfer_helps": true
+      },
+      "exponential": {
+        "baseline_mean": 0.007269408334347342,
+        "transfer_mean": 0.006119133335838948,
+        "transfer_benefit": 1.1879800513205663,
+        "transfer_helps": true
+      },
+      "special": {
+        "baseline_mean": 0.16961201249917698,
+        "transfer_mean": 0.1587101666664239,
+        "transfer_benefit": 1.0686902802872515,
+        "transfer_helps": true
+      },
+      "physics": {
+        "baseline_mean": 0.0492046333347389,
+        "transfer_mean": 0.047081979161400035,
+        "transfer_benefit": 1.0450842171706987,
+        "transfer_helps": true
+      }
+    },
+    "hyperbolic": {
+      "trig": {
+        "baseline_mean": 0.03041266666696174,
+        "transfer_mean": 0.03789175833541473,
+        "transfer_benefit": 0.8026195669715646,
+        "transfer_helps": false
+      },
+      "hyperbolic": {
+        "transfer_benefit": 1.0
+      },
+      "exponential": {
+        "baseline_mean": 0.007484854165037784,
+        "transfer_mean": 0.007661324998480268,
+        "transfer_benefit": 0.9769660165209687,
+        "transfer_helps": false
+      },
+      "special": {
+        "baseline_mean": 0.17966286666827122,
+        "transfer_mean": 0.21281784999882802,
+        "transfer_benefit": 0.8442095748512666,
+        "transfer_helps": false
+      },
+      "physics": {
+        "baseline_mean": 0.04564394583333827,
+        "transfer_mean": 0.03873113333490134,
+        "transfer_benefit": 1.178482060895638,
+        "transfer_helps": true
+      }
+    },
+    "exponential": {
+      "trig": {
+        "baseline_mean": 0.025588262498786207,
+        "transfer_mean": 0.023456804168138962,
+        "transfer_benefit": 1.0908673796894452,
+        "transfer_helps": true
+      },
+      "hyperbolic": {
+        "baseline_mean": 0.0692031000010805,
+        "transfer_mean": 0.07689794167041934,
+        "transfer_benefit": 0.8999343610220604,
+        "transfer_helps": false
+      },
+      "exponential": {
+        "transfer_benefit": 1.0
+      },
+      "special": {
+        "baseline_mean": 0.17705550833125017,
+        "transfer_mean": 0.1676984416687143,
+        "transfer_benefit": 1.0557969803978298,
+        "transfer_helps": true
+      },
+      "physics": {
+        "baseline_mean": 0.03905416249714714,
+        "transfer_mean": 0.0366899458313128,
+        "transfer_benefit": 1.0644377257111297,
+        "transfer_helps": true
+      }
+    },
+    "special": {
+      "trig": {
+        "baseline_mean": 0.028072770838965273,
+        "transfer_mean": 0.029442637499111395,
+        "transfer_benefit": 0.9534733713925098,
+        "transfer_helps": false
+      },
+      "hyperbolic": {
+        "baseline_mean": 0.06623518333193108,
+        "transfer_mean": 0.06413977916599833,
+        "transfer_benefit": 1.0326693386409969,
+        "transfer_helps": true
+      },
+      "exponential": {
+        "baseline_mean": 0.008918758330158502,
+        "transfer_mean": 0.009151133332731357,
+        "transfer_benefit": 0.9746069700742195,
+        "transfer_helps": false
+      },
+      "special": {
+        "transfer_benefit": 1.0
+      },
+      "physics": {
+        "baseline_mean": 0.04216250000172295,
+        "transfer_mean": 0.0459147250027551,
+        "transfer_benefit": 0.9182783954209244,
+        "transfer_helps": false
+      }
+    },
+    "physics": {
+      "trig": {
+        "baseline_mean": 0.024514774999261135,
+        "transfer_mean": 0.027553016666691594,
+        "transfer_benefit": 0.8897310699520121,
+        "transfer_helps": false
+      },
+      "hyperbolic": {
+        "baseline_mean": 0.0628914291652715,
+        "transfer_mean": 0.06392964166661841,
+        "transfer_benefit": 0.9837600763232649,
+        "transfer_helps": false
+      },
+      "exponential": {
+        "baseline_mean": 0.006443862498902793,
+        "transfer_mean": 0.007367220832141659,
+        "transfer_benefit": 0.8746666681673984,
+        "transfer_helps": false
+      },
+      "special": {
+        "baseline_mean": 0.17584015416772067,
+        "transfer_mean": 0.16260338332964844,
+        "transfer_benefit": 1.0814052608686322,
+        "transfer_helps": true
+      },
+      "physics": {
+        "transfer_benefit": 1.0
+      }
+    }
+  },
+  "categories": [
+    "trig",
+    "hyperbolic",
+    "exponential",
+    "special",
+    "physics"
+  ]
+}

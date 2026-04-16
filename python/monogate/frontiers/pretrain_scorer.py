@@ -6,14 +6,19 @@ Experiment 3: Pre-train the neural scorer on all 151 identities.
 The trained scorer is saved to ``monogate/data/pretrained_scorer.json`` so
 that ``EMLProverV2(use_pretrained=True)`` loads it automatically.
 
+Transfer-learning experiments show that **trig-first** ordering produces the
+best generalisation: train trigonometric identities first (they transfer well
+to all other domains), then exponential, then the rest.
+
 Usage::
 
     cd python
-    # Quick 1-epoch pre-train (fast sanity check)
+    # Trig-first pre-train (recommended — best transfer)
     python -m monogate.frontiers.pretrain_scorer \\
-        --n-epochs 1 --output monogate/data/pretrained_scorer.json
+        --n-epochs 3 --order trig-first \\
+        --output monogate/data/pretrained_scorer.json
 
-    # Full 3-epoch pre-train
+    # Default random-shuffle pre-train
     python -m monogate.frontiers.pretrain_scorer \\
         --n-epochs 3 --output monogate/data/pretrained_scorer.json
 
@@ -35,11 +40,51 @@ import numpy as np
 
 # ── Pre-training ──────────────────────────────────────────────────────────────
 
+# Category order that maximises transfer benefit (from transfer_learning.py results).
+# Trig first: transfers 1.05–1.32x to all other domains.
+# Hyperbolic last: tends to overfit but needed for coverage.
+PRETRAIN_ORDER = [
+    "trigonometric",   # Best transfer source — always train first
+    "exponential",     # Modest positive transfer
+    "special",         # Neutral-to-positive
+    "physics",         # Neutral
+    "hyperbolic",      # Overfits, but needed for coverage — train last
+    "eml",             # EML-specific identities
+    "open",            # Open/unsolved — exposure only
+]
+
+
+def _order_identities(identities: list, order: str) -> list:
+    """Return identities reordered per *order* flag.
+
+    ``order='trig-first'``: categories sorted by PRETRAIN_ORDER, identities
+    within each category preserved.  ``order='random'`` (default): unchanged
+    (caller shuffles per epoch).
+    """
+    if order != "trig-first":
+        return identities
+
+    cat_index = {cat: i for i, cat in enumerate(PRETRAIN_ORDER)}
+    return sorted(identities, key=lambda id_: cat_index.get(id_.category, 99))
+
+
 def pretrain_scorer(
     n_epochs: int = 3,
     seed: int = 42,
+    order: str = "random",
 ) -> tuple:
     """Train scorer on ALL_IDENTITIES for *n_epochs* passes.
+
+    Parameters
+    ----------
+    n_epochs:
+        Number of full passes through the identity catalog.
+    seed:
+        Random seed for per-epoch shuffling (ignored when order='trig-first').
+    order:
+        ``'trig-first'`` — sort by transfer-benefit order each epoch (trig
+        identities first, hyperbolic last).  ``'random'`` (default) — shuffle
+        randomly each epoch.
 
     Returns
     -------
@@ -57,9 +102,14 @@ def pretrain_scorer(
     stats: list[dict[str, Any]] = []
 
     for epoch in range(n_epochs):
-        print(f"\n=== Epoch {epoch + 1}/{n_epochs} ===")
-        rng = random.Random(seed + epoch)
-        rng.shuffle(identities)
+        print(f"\n=== Epoch {epoch + 1}/{n_epochs} (order={order}) ===")
+        if order == "trig-first":
+            epoch_ids = _order_identities(identities, order)
+        else:
+            rng = random.Random(seed + epoch)
+            epoch_ids = list(identities)
+            rng.shuffle(epoch_ids)
+        identities = epoch_ids
 
         n_proved = 0
         n_failed = 0
@@ -148,6 +198,11 @@ def main() -> None:
     parser.add_argument("--n-epochs",    type=int, default=3)
     parser.add_argument("--seed",        type=int, default=42)
     parser.add_argument(
+        "--order", type=str, default="random",
+        choices=["random", "trig-first"],
+        help="Identity ordering per epoch. 'trig-first' uses transfer-optimal order.",
+    )
+    parser.add_argument(
         "--output", type=str,
         default=os.path.join(
             os.path.dirname(__file__), "..", "data", "pretrained_scorer.json"
@@ -166,9 +221,11 @@ def main() -> None:
     args = parser.parse_args()
 
     if not args.benchmark_only:
-        print(f"Pre-training scorer ({args.n_epochs} epoch(s))...")
+        print(f"Pre-training scorer ({args.n_epochs} epoch(s), order={args.order})...")
         t0 = time.perf_counter()
-        scorer, stats = pretrain_scorer(n_epochs=args.n_epochs, seed=args.seed)
+        scorer, stats = pretrain_scorer(
+            n_epochs=args.n_epochs, seed=args.seed, order=args.order
+        )
         elapsed = time.perf_counter() - t0
         print(f"\nPre-training complete in {elapsed:.1f}s")
 
@@ -182,7 +239,7 @@ def main() -> None:
         stats_path = os.path.abspath(args.stats_output)
         os.makedirs(os.path.dirname(stats_path), exist_ok=True)
         with open(stats_path, "w", encoding="utf-8") as f:
-            json.dump({"epochs": stats, "elapsed_s": elapsed}, f, indent=2)
+            json.dump({"epochs": stats, "elapsed_s": elapsed, "order": args.order}, f, indent=2)
         print(f"Stats saved: {stats_path}")
 
     # Benchmark

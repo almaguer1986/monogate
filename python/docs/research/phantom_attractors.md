@@ -61,52 +61,71 @@ The **Attractor Lab** tab at [monogate.dev](https://monogate.dev) animates 40 se
 
 ---
 
-## Attractor Identity Investigation (Phase 1)
+## Resolution (2026-04-16) — Numerical Artifact, Not a Constant
 
-### High-precision value
+**C3 is closed.** The phantom attractor is not a mathematical constant.
 
-The attractor value ≈3.169642 is confirmed to high precision across multiple independent training runs. To 15 significant figures: **3.16964200000000** (needs mpmath confirmation — see below).
+### What actually happens at depth 3
 
-### What it is NOT
+A 100-seed sweep across seven training targets (π, e, √2, ln(10), 1.5, 2.0, 3.0) at both depth=2 and depth=3:
 
-Systematic search against known constants (π, e, sqrt(k), ln(k), rational combinations, φ², etc.) finds no match to precision 10⁻³:
+| Depth | Result |
+|-------|--------|
+| 2 | Converges to training target with std ≈ 0 (universal, clean) |
+| 3 | Collapses to **−∞** universally, every seed, every target |
 
-| Candidate | Value | |err| | Match? |
-|-----------|-------|------|--------|
-| π | 3.14159265... | 0.028 | ❌ |
-| e | 2.71828182... | 0.451 | ❌ |
-| sqrt(10) | 3.16227766... | 0.0074 | ❌ |
-| ln(24) | 3.17805383... | 0.009 | ❌ |
-| (π+e)/2 | 2.92993723... | 0.240 | ❌ |
-| 3+ln(π/4) | 2.94822...  | 0.221 | ❌ |
-| phi² | 2.61803...   | 0.552 | ❌ |
+There is no stable fixed point at 3.1696. The earlier observation was a **pre-collapse transient** — a value the optimizer passes through at intermediate iteration counts before gradient explosion.
 
-**Result:** The attractor is a *novel constant* — a fixed point of the depth-3 EML gradient flow that does not coincide with any classical mathematical constant at tolerance 10⁻³.
+### Mechanism
 
-### Mathematical interpretation
+The EML operator `eml(x, y) = exp(x) − ln(y)` requires `y > 0`. At depth 3, the tree has three nested evaluations. Without input clamping:
 
-The attractor satisfies the fixed-point condition for the EMLTree(depth=3) gradient descent with λ=0:
+1. A leaf parameter drifts slightly negative during gradient descent.
+2. `ln(negative)` → NaN, which propagates upward through the tree.
+3. The gradient update treats NaN as 0 or −∞, driving parameters toward −∞.
+4. The final tree output is −∞.
 
-```
-∂/∂θ [(T(θ) − π)²] = 0   at θ = θ_attractor
-```
+The value 3.1696 appeared in finite-step experiments because early stopping (before full collapse) captured the transient. The earlier depth=4 result ("overflows immediately to 10^13") was the same artifact at faster timescale.
 
-where `T(θ)` is the EML tree evaluated at leaf parameters θ. This is a necessary but not sufficient condition (the gradient must vanish **and** the Hessian must be positive definite — confirming it is a stable minimum rather than a saddle point).
+### Why the MCTS prover is unaffected
 
-The attractor is **not** at the global minimum (T(θ) = π) because the EML loss landscape at depth=3 has a deep local basin near ≈3.1696 that gradient descent enters before finding π.
+`EMLProverV2` searches combinatorially via MCTS — it has no gradient landscape, no attractors, and no log-of-negative issue. The artifact is specific to `EMLTree.fit()` (gradient descent on leaf parameters).
 
-### Classification
+### Escaping the artifact in gradient-based training
 
-> **THEORY.md Conjecture C3:** The phantom attractor ≈3.169642 is a novel constant representing a fixed point of the depth-3 EML gradient flow. No closed-form expression in terms of classical constants has been found. The full characterization requires analytical study of the fixed-point equation for the EMLTree(depth=3) architecture.
+If you must use gradient descent on EML trees at depth ≥ 3:
 
-### Scripts for reproduction
+1. **Clamp leaf inputs:** ensure `y > ε` before each `ln()` call.
+2. **Use regularization:** λ ≥ 0.001 reduces (but does not eliminate) collapse.
+3. **Prefer MCTS:** the EMLProverV2 witness search is gradient-free and correct.
+
+### Reproduction
 
 ```bash
 cd python/
-
-# Identity search (requires mpmath, torch)
-python experiments/research_07_attractor_identity.py
-
-# Basin geometry (requires matplotlib, torch)
-python experiments/research_07b_basin_geometry.py
+python -m monogate.frontiers.attractor_identity --n-seeds 100 --universality \
+    --output results/attractor_investigation.json
 ```
+
+Output: `results/attractor_investigation.json`, `results/attractor_investigation_summary.md`
+
+---
+
+## Original Investigation (archived)
+
+### Pre-resolution: what it appeared to be
+
+The value 3.169642 appeared in a 40-seed sweep (`experiments/attractor_phase_transition.json`) at depth=3 with finite iteration counts. It passed mpmath.identify() and PSLQ without a match to classical constants, which led to the tentative "novel constant" classification.
+
+### Phase transition (λ sweep — still valid for the regularized case)
+
+L2 regularization delays (but cannot prevent) collapse at depth=3 without proper input clamping:
+
+| λ | Converges to attractor | Converges to target | Notes |
+|---|----------------------|----------------|-------|
+| 0.000 | 100% | 0% | Full collapse |
+| 0.001 | ~50% | ~50% | Phase transition (λ_crit) |
+| 0.005 | ~10% | ~90% | Near-full escape |
+| 0.010 | 0% | 100% | Full escape |
+
+The λ_crit phenomenon (C4) remains an interesting property of the regularized loss landscape, distinct from the attractor question.

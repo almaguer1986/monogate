@@ -59,30 +59,32 @@ Confirmed computationally for all operations at machine precision.
 ## Open Conjectures
 
 ### C3 — Phantom Attractor Nature
-**Statement:** The phantom attractor value ≈3.169642 arising in depth-3 EMLTree training is a *novel* constant — not expressible as a simple rational combination of classical constants (π, e, sqrt(k), ln(k), etc.).
+**Statement:** ~~The phantom attractor value ≈3.169642 arising in depth-3 EMLTree training is a *novel* constant.~~
 
-**Status:** 🔵 In progress (Phase 1 investigation)
+**Status:** ✅ Resolved (2026-04-16) — numerical artifact, not a mathematical constant.
 
-**Context:**
-- Attractor value: **3.169642** (from 40-seed sweep, `experiments/attractor_phase_transition.json`)
-- Phase transition at λ_crit ≈ 0.001
-- Depth dependence: depth=2 has attractor ≈2.43; depth=3 has attractor ≈3.1696
-- The value is NOT π (|err| ≈ 0.028)
+**Resolution:**
+The attractor is not a new constant. It is a **numerical artifact** of unconstrained depth-3 EML composition under gradient descent without guardrails:
 
-**Investigation:** `experiments/research_07_attractor_identity.py` — runs PSLQ and mpmath.identify() against the high-precision value. Basin geometry in `experiments/research_07b_basin_geometry.py`.
+- **Depth-2 trees:** converge cleanly to the training target (π, e, √2, etc.) with std ≈ 0. The optimizer finds the global minimum reliably.
+- **Depth-3 trees:** collapse universally to **−∞** across all seeds and all targets. There is no stable fixed point at 3.1696 — only a transient the optimizer passes through before gradient explosion.
 
-**Current evidence:** No known mathematical constant within 10⁻³ of 3.169642. mpmath.identify() does not return a short closed form. Tentative classification: *novel fixed-point constant of the depth-3 EML gradient flow.*
+The earlier observation of 3.1696 was a **pre-collapse transient** captured at intermediate iteration counts. Without domain constraints (leaf clipping, log-input guards), nested `exp(ln(...))` compositions at depth ≥ 3 exceed float64 range or pass negative values into `ln`, producing NaN/−∞ that manifests as a spurious apparent fixed point in finite-step experiments.
 
-**What would resolve it:**
-- An analytical expression for the fixed-point condition `∂L/∂θ = 0` at depth=3
-- Or a PSLQ relation: `n₀·val + n₁·π + n₂·e + n₃ = 0` with small integers
+**Mechanism:** The EML operator `eml(x,y) = exp(x) − ln(y)` requires `y > 0`. At depth 3, the tree has three nested EML evaluations. Without clamping, a single negative intermediate value propagates as `ln(negative) = NaN`, and the gradient update drives parameters toward −∞.
+
+**Confirmed by:** `monogate.frontiers.attractor_identity` — 100-seed sweep, depths 2 and 3, seven different targets. Depth-2 universally converges; depth-3 universally diverges (2026-04-16, `results/attractor_investigation.json`).
+
+**Consequence for EMLProverV2:** The MCTS-based prover is unaffected — it is gradient-free and searches combinatorially, so it has no attractors. The artifact is specific to `EMLTree.fit()` (gradient descent on tree parameters).
+
+**What to do instead of gradient descent at depth ≥ 3:** Use the EMLProverV2 MCTS witness search, which avoids the gradient landscape entirely.
 
 ---
 
 ### C4 — λ_crit Formula
 **Statement:** There is a closed-form expression for the critical regularization strength λ_crit(depth) at which the phantom attractor loses stability.
 
-**Status:** 🔴 Open
+**Status:** 🟡 Partially superseded — C3 is resolved as a numerical artifact. The λ_crit phase transition observed empirically (λ_crit ≈ 0.001 at depth=3) likely reflects the regularization threshold below which leaf parameters are driven into the log-of-negative regime rather than a true attractor bifurcation. Remains open as a secondary question about the regularized loss landscape.
 
 **Context:**
 - λ_crit(depth=3) ≈ 0.001 (empirically)

@@ -1,0 +1,27 @@
+{
+  "epochs": [
+    {
+      "epoch": 1,
+      "n_proved": 130,
+      "n_failed": 21,
+      "buffer_size": 0,
+      "is_trained": false
+    },
+    {
+      "epoch": 2,
+      "n_proved": 130,
+      "n_failed": 21,
+      "buffer_size": 0,
+      "is_trained": false
+    },
+    {
+      "epoch": 3,
+      "n_proved": 130,
+      "n_failed": 21,
+      "buffer_size": 0,
+      "is_trained": false
+    }
+  ],
+  "elapsed_s": 27.15979880001396,
+  "order": "trig-first"
+}
