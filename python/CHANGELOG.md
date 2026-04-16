@@ -4,7 +4,15 @@ All notable changes to `monogate` are documented here.
 
 ---
 
-## [0.11.0-dev] — 2026-04-16
+## [0.11.0] — 2026-04-16
+
+### Full Release: EML Universality, Complex BEST, PINN, Theory & Reproducibility
+
+This release completes the v0.9 → v0.10 → v0.11 research arc. Together the three
+phases deliver: the Infinite Zeros Barrier theorem, 281M-tree exhaustive sin search,
+Complex BEST routing (sin/cos at 1 node via Euler path), Physics-Informed EML Networks,
+minimax/GPU search extensions, formal conjecture index (C1–C7), and a fully reproducible
+infrastructure verified end-to-end.
 
 ### Phase 11: Formal Theory, Conjectures, and Full Reproducibility
 

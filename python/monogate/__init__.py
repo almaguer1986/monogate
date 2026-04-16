@@ -55,7 +55,7 @@ from .core import (
     compare_op,
 )
 
-__version__ = "0.11.0-dev"
+__version__ = "0.11.0"
 
 __all__ = [
     "op",
