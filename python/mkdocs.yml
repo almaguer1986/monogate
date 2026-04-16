@@ -66,6 +66,7 @@ nav:
     - Special Functions: guide/special_functions.md
     - PINN (Physics): guide/pinn.md
     - Symbolic Regression: guide/symbolic_regression.md
+    - Prover: guide/prover.md
   - Research & Theory:
     - Research Findings: research/findings.md
     - Exhaustive Search: research/exhaustive_search.md
