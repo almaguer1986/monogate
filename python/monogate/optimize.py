@@ -1630,6 +1630,15 @@ def _profile_static_best(
         import numpy as np  # noqa: PLC0415
 
         arr = np.asarray(sample_inputs, dtype=float).ravel()
+        _MAX_PROFILE_SAMPLES = 10_000
+        if len(arr) > _MAX_PROFILE_SAMPLES:
+            warnings.warn(
+                f"monogate: sample_inputs has {len(arr)} elements; "
+                f"profiling truncated to first {_MAX_PROFILE_SAMPLES}.",
+                stacklevel=3,
+                category=UserWarning,
+            )
+            arr = arr[:_MAX_PROFILE_SAMPLES]
         stats["n_samples"] = len(arr)
         if len(arr) == 0:
             return stats

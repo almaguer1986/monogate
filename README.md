@@ -13,6 +13,30 @@ Live explorer: **[monogate.dev](https://monogate.dev)**
 
 ---
 
+## What's new in v0.9.0
+
+- **Phantom attractor landscape visualization** — `plot_attractor_landscape.py` generates a 2D MSE loss-surface slice showing the wide false basin (~3.1696) and the narrow π basin, with three L1-penalty contour overlays. Run `python python/experiments/plot_attractor_landscape.py` to reproduce the paper figure.
+- **Preprint §5.5** — new subsection explaining the geometric reason gradient-based search fails: basin geometry, L1 tilt effect, and implications for exact-function search.
+- **Preprint: emlbox highlight** — the Infinite Zeros Barrier section now includes a styled callout box with theorem, proof, complex bypass equation, and `sin_via_euler` usage example.
+- **`context_aware_best_optimize()`** — new public API wrapping `best_optimize()` with optional AST depth analysis and NumPy forward profiling. Detects risky deep subtraction chains, NaN/Inf, and high dynamic range before you commit to a routing choice.
+
+```python
+from monogate import context_aware_best_optimize
+import numpy as np
+
+r = context_aware_best_optimize(
+    "exp(x) - exp(-x)",
+    dynamic=True,
+    sample_inputs=np.linspace(-50, 50, 500),
+    warn=False,
+)
+print(r.diagnostics)   # {'savings_pct': 0, 'has_inf': True, ...}
+for issue in r.stability_issues:
+    print(issue)       # [SUB] depth>threshold: catastrophic cancellation risk
+```
+
+---
+
 ## Who this is for
 
 monogate delivers measurable speedups on workloads dominated by **sin, cos, pow, ln** in the EML arithmetic substrate:

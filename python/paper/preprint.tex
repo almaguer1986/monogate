@@ -289,7 +289,9 @@ Quantitative result (40 seeds $\times$ 2 $\lambda$ configs):
 
 The attractor at $3.1696$ is not a known simple closed form; it sits
 at the center of an unusually wide gradient basin such that any random
-initialization falls within its catchment area.
+initialization falls within its catchment area
+(see Section~\ref{sec:attractor_landscape} and Figure~\ref{fig:landscape}
+for a 2D loss-surface visualization).
 
 \subsection{Depth-4: The Numerical Overflow Barrier}
 
@@ -584,9 +586,9 @@ import cmath
 def sin_eml(x):
     return cmath.exp(1j * x).imag  # Im(eml(ix, 1))
 
-# or, using monogate:
-from monogate.complex_eval import complex_eml_sin
-sin_eml(1.5707963268)  # -> 1.0 (machine precision)
+# using monogate (sin_via_euler wraps the same single-node computation):
+from monogate.complex_eval import sin_via_euler
+sin_via_euler(1.5707963268)  # -> 1.0 (machine precision)
 \end{lstlisting}
 
 \smallskip

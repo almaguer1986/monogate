@@ -12,6 +12,27 @@ All notable changes to `monogate` are documented here.
 
 **New in this release:**
 
+- **Phantom attractor landscape figure** — `experiments/plot_attractor_landscape.py`
+  generates a 400×400 2D MSE loss-surface slice for a depth-3 EMLTree.
+  Shows the wide phantom basin (~3.1696) and narrow π basin side-by-side,
+  with three overlaid L1-penalty contour sets (λ=0/0.001/0.005).
+  Output: `paper/figures/attractor_landscape.{pdf,png}`.
+
+- **Preprint §5.5 "Visualizing the Phantom Attractor Landscape"** — new subsection
+  in the paper explaining basin geometry, the L1 tilt effect, and implications
+  for deeper trees and exact-function search.
+
+- **Preprint: emlbox highlight box** — the Infinite Zeros Barrier section now
+  includes a tcolorbox callout that packages theorem, proof, corollary, complex
+  bypass equation, and `sin_via_euler` usage example in a single scannable block.
+
+- **`context_aware_best_optimize()`** — wraps `best_optimize()` with optional
+  AST depth analysis (flags risky deep EML subtraction/add chains) and NumPy
+  forward profiling (NaN, Inf, dynamic-range checks on sample inputs).
+  Exported as `monogate.context_aware_best_optimize`.
+
+**Previous entries:**
+
 - **`scripts/update_arxiv_id.py`** — one-command post-submission ID update:
   replaces `ARXIV_ID_PLACEHOLDER` in README, share card, and both explorer
   components. Creates `.bak` backups, prints diffs, guides next steps.
