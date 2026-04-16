@@ -1,0 +1,1471 @@
+{
+  "timestamp": "20260416_135949",
+  "n_simulations": 2000,
+  "identity_census": [
+    {
+      "name": "Boltzmann entropy (additive)",
+      "category": "thermodynamics",
+      "expression": "exp(x) * exp(y) == exp(x + y)",
+      "status": "proved_exact",
+      "tier": 2,
+      "confidence": 1.0,
+      "elapsed_s": 0.17793509998591617,
+      "node_count": 0,
+      "lhs_formula": null
+    },
+    {
+      "name": "Free energy relation",
+      "category": "thermodynamics",
+      "expression": "exp(x) / exp(y) == exp(x - y)",
+      "status": "proved_exact",
+      "tier": 2,
+      "confidence": 1.0,
+      "elapsed_s": 0.018981700006406754,
+      "node_count": 0,
+      "lhs_formula": null
+    },
+    {
+      "name": "Entropy log identity",
+      "category": "thermodynamics",
+      "expression": "log(exp(x)) == x",
+      "status": "proved_numerical",
+      "tier": 1,
+      "confidence": 0.9,
+      "elapsed_s": 0.03386820000014268,
+      "node_count": 0,
+      "lhs_formula": null
+    },
+    {
+      "name": "Gibbs factor",
+      "category": "thermodynamics",
+      "expression": "exp(log(x)) == x",
+      "status": "proved_exact",
+      "tier": 2,
+      "confidence": 1.0,
+      "elapsed_s": 0.002789999998640269,
+      "node_count": 0,
+      "lhs_formula": null
+    },
+    {
+      "name": "Double-angle energy",
+      "category": "mechanics",
+      "expression": "2*sin(x)*cos(x) == sin(2*x)",
+      "status": "proved_exact",
+      "tier": 2,
+      "confidence": 1.0,
+      "elapsed_s": 0.035575299989432096,
+      "node_count": 0,
+      "lhs_formula": null
+    },
+    {
+      "name": "Pythagorean (energy partition)",
+      "category": "mechanics",
+      "expression": "sin(x)**2 + cos(x)**2 == 1",
+      "status": "proved_exact",
+      "tier": 2,
+      "confidence": 1.0,
+      "elapsed_s": 0.028008799999952316,
+      "node_count": 0,
+      "lhs_formula": null
+    },
+    {
+      "name": "Hyperbolic identity (rapidity)",
+      "category": "relativity",
+      "expression": "cosh(x)**2 - sinh(x)**2 == 1",
+      "status": "proved_exact",
+      "tier": 2,
+      "confidence": 1.0,
+      "elapsed_s": 0.03999449999537319,
+      "node_count": 0,
+      "lhs_formula": null
+    },
+    {
+      "name": "Tanh via sinh/cosh",
+      "category": "relativity",
+      "expression": "tanh(x) == sinh(x) / cosh(x)",
+      "status": "proved_exact",
+      "tier": 2,
+      "confidence": 1.0,
+      "elapsed_s": 0.04892530001234263,
+      "node_count": 0,
+      "lhs_formula": null
+    },
+    {
+      "name": "Phasor exponential",
+      "category": "electromagnetism",
+      "expression": "exp(x + y) == exp(x) * exp(y)",
+      "status": "proved_exact",
+      "tier": 2,
+      "confidence": 1.0,
+      "elapsed_s": 0.05804830000852235,
+      "node_count": 0,
+      "lhs_formula": null
+    },
+    {
+      "name": "RC discharge identity",
+      "category": "electromagnetism",
+      "expression": "exp(-x) * exp(x) == 1",
+      "status": "proved_exact",
+      "tier": 2,
+      "confidence": 1.0,
+      "elapsed_s": 0.0028794999816454947,
+      "node_count": 0,
+      "lhs_formula": null
+    },
+    {
+      "name": "Norm of Gaussian wavefunction",
+      "category": "quantum",
+      "expression": "exp(x)**2 == exp(2*x)",
+      "status": "proved_exact",
+      "tier": 2,
+      "confidence": 1.0,
+      "elapsed_s": 0.005252500006463379,
+      "node_count": 0,
+      "lhs_formula": null
+    },
+    {
+      "name": "Commutator-free evolution",
+      "category": "quantum",
+      "expression": "exp(2*x) == exp(x)**2",
+      "status": "proved_exact",
+      "tier": 2,
+      "confidence": 1.0,
+      "elapsed_s": 0.0042508000042289495,
+      "node_count": 0,
+      "lhs_formula": null
+    },
+    {
+      "name": "Partition function ratio",
+      "category": "statistical",
+      "expression": "exp(x - y) == exp(x) / exp(y)",
+      "status": "proved_exact",
+      "tier": 2,
+      "confidence": 1.0,
+      "elapsed_s": 0.07976790002430789,
+      "node_count": 0,
+      "lhs_formula": null
+    },
+    {
+      "name": "Boltzmann detailed balance",
+      "category": "statistical",
+      "expression": "exp(x) * exp(-x) == 1",
+      "status": "proved_exact",
+      "tier": 2,
+      "confidence": 1.0,
+      "elapsed_s": 0.004807199991773814,
+      "node_count": 0,
+      "lhs_formula": null
+    },
+    {
+      "name": "Cross-entropy bound",
+      "category": "information",
+      "expression": "log(exp(x) * exp(y)) == x + y",
+      "status": "failed",
+      "tier": 0,
+      "confidence": 0.0,
+      "elapsed_s": 0.07300829997984692,
+      "node_count": 0,
+      "lhs_formula": null
+    }
+  ],
+  "functional_census": [
+    {
+      "name": "Boltzmann weight",
+      "category": "thermodynamics",
+      "description": "Z = exp(-E/kT), E/kT = -x",
+      "expected": "1-node EML (native: eml(x, 1))",
+      "depth_2": {
+        "mse": 0.0,
+        "formula": "eml(x, 1.0)"
+      },
+      "depth_4": {
+        "mse": 0.0,
+        "formula": "eml(x, 1.0)"
+      },
+      "depth_6": {
+        "mse": 0.0,
+        "formula": "eml(x, 1.0)"
+      },
+      "eml_native": true,
+      "min_effective_depth": 2,
+      "elapsed_s": 0.38891499998862855
+    },
+    {
+      "name": "Exponential decay",
+      "category": "statistical",
+      "description": "Radioactive decay N(t)=N\u2080exp(-\u03bbt), x=\u03bbt",
+      "expected": "3-5 nodes (requires building -x)",
+      "depth_2": {
+        "mse": 0.549851949205683,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 0.549851949205683,
+        "formula": "1.0"
+      },
+      "depth_6": {
+        "mse": 0.549851949205683,
+        "formula": "1.0"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.1616230999934487
+    },
+    {
+      "name": "Arrhenius rate",
+      "category": "chemistry",
+      "description": "k=A\u00b7exp(-Ea/RT), x=RT/Ea",
+      "expected": "3-5 nodes (requires 1/x then exp)",
+      "depth_2": {
+        "mse": 0.1674905895304585,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 0.1674905895304585,
+        "formula": "1.0"
+      },
+      "depth_6": {
+        "mse": 0.1674905895304585,
+        "formula": "1.0"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.13946209999267012
+    },
+    {
+      "name": "RC discharge",
+      "category": "electromagnetism",
+      "description": "V(t)=V\u2080(1-exp(-t/RC)), x=t/RC",
+      "expected": "3-5 nodes (1 - exp(-x))",
+      "depth_2": {
+        "mse": 0.12975361980067995,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 0.12975361980067995,
+        "formula": "1.0"
+      },
+      "depth_6": {
+        "mse": 0.12975361980067995,
+        "formula": "1.0"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.14112919999752194
+    },
+    {
+      "name": "Planck / Bose-Einstein",
+      "category": "quantum",
+      "description": "\u27e8n\u27e9=1/(exp(h\u03bd/kT)-1), x=h\u03bd/kT",
+      "expected": "3-5 nodes",
+      "depth_2": {
+        "mse": 0.6513444260562253,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 0.632259388297632,
+        "formula": "eml(1.0, eml(x, x))"
+      },
+      "depth_6": {
+        "mse": 0.632259388297632,
+        "formula": "eml(1.0, eml(x, x))"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.13684420002391562
+    },
+    {
+      "name": "Fermi-Dirac",
+      "category": "quantum",
+      "description": "f(E)=1/(exp((E-\u03bc)/kT)+1)",
+      "expected": "3-5 nodes",
+      "depth_2": {
+        "mse": 0.35046944490861,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 0.35046944490861,
+        "formula": "1.0"
+      },
+      "depth_6": {
+        "mse": 0.35046944490861,
+        "formula": "1.0"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.14074489998165518
+    },
+    {
+      "name": "Maxwell-Boltzmann speed",
+      "category": "statistical",
+      "description": "f(v)\u221dv\u00b2\u00b7exp(-mv\u00b2/2kT), x=v/v_th",
+      "expected": "5-7 nodes",
+      "depth_2": {
+        "mse": 0.5459024182919147,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 0.5459024182919147,
+        "formula": "1.0"
+      },
+      "depth_6": {
+        "mse": 0.5459024182919147,
+        "formula": "1.0"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.131855399988126
+    },
+    {
+      "name": "Entropy (information)",
+      "category": "information",
+      "description": "H=-p\u00b7ln(p) contribution per state",
+      "expected": "3-5 nodes",
+      "depth_2": {
+        "mse": 0.19102021128804253,
+        "formula": "x"
+      },
+      "depth_4": {
+        "mse": 0.07388775331837091,
+        "formula": "eml(x, eml(eml(x, 1.0), 1.0))"
+      },
+      "depth_6": {
+        "mse": 0.12344281459988662,
+        "formula": "eml(eml(x, eml(eml(1.0, 1.0), x)), 1.0)"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.12369540001964197
+    },
+    {
+      "name": "Kepler 3rd law",
+      "category": "mechanics",
+      "description": "T \u221d a^(3/2)",
+      "expected": "5-7 nodes (power law needs exp\u00b7log composition)",
+      "depth_2": {
+        "mse": 1.0259681039460586,
+        "formula": "x"
+      },
+      "depth_4": {
+        "mse": 1.0259681039460586,
+        "formula": "x"
+      },
+      "depth_6": {
+        "mse": 1.0259681039460586,
+        "formula": "x"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.13974579999921843
+    },
+    {
+      "name": "Newtonian gravity",
+      "category": "mechanics",
+      "description": "F \u221d 1/r\u00b2",
+      "expected": "5-7 nodes",
+      "depth_2": {
+        "mse": 0.7836397293429673,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 0.3476336498778533,
+        "formula": "eml(1.0, eml(x, 1.0))"
+      },
+      "depth_6": {
+        "mse": 0.25334037113737967,
+        "formula": "eml(eml(1.0, eml(eml(x, x), 1.0)), 1.0)"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.18537019999348558
+    },
+    {
+      "name": "Kinetic energy",
+      "category": "mechanics",
+      "description": "KE = \u00bdmv\u00b2, x=v",
+      "expected": "5-7 nodes (polynomial)",
+      "depth_2": {
+        "mse": 0.3105498246589012,
+        "formula": "x"
+      },
+      "depth_4": {
+        "mse": 0.3105498246589012,
+        "formula": "x"
+      },
+      "depth_6": {
+        "mse": 0.3105498246589012,
+        "formula": "x"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.10855739997350611
+    },
+    {
+      "name": "Wien's law",
+      "category": "thermodynamics",
+      "description": "\u03bb_max\u00b7T = b \u2192 \u03bb_max = b/T",
+      "expected": "3-5 nodes (1/x = exp(-ln(x)))",
+      "depth_2": {
+        "mse": 0.3826476383934825,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 0.3826476383934825,
+        "formula": "1.0"
+      },
+      "depth_6": {
+        "mse": 0.3826476383934825,
+        "formula": "1.0"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.13655409999773838
+    },
+    {
+      "name": "Stefan-Boltzmann",
+      "category": "thermodynamics",
+      "description": "P = \u03c3T\u2074",
+      "expected": "5-7 nodes",
+      "depth_2": {
+        "mse": 8.797417306896543,
+        "formula": "eml(x, 1.0)"
+      },
+      "depth_4": {
+        "mse": 7.576399391738835,
+        "formula": "eml(x, eml(1.0, eml(x, 1.0)))"
+      },
+      "depth_6": {
+        "mse": 6.314218886805526,
+        "formula": "eml(x, eml(eml(1.0, eml(eml(1.0, 1.0), 1.0)), x))"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.28358300001127645
+    },
+    {
+      "name": "Lorentz factor",
+      "category": "relativity",
+      "description": "\u03b3 = 1/\u221a(1-\u03b2\u00b2), x=v/c",
+      "expected": "5-7 nodes",
+      "depth_2": {
+        "mse": 0.15638095663054052,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 0.029416430154749085,
+        "formula": "eml(x, eml(x, 1.0))"
+      },
+      "depth_6": {
+        "mse": 0.15638095663054052,
+        "formula": "1.0"
+      },
+      "eml_native": false,
+      "min_effective_depth": 4,
+      "elapsed_s": 0.152348500007065
+    },
+    {
+      "name": "Gaussian wavefunction",
+      "category": "quantum",
+      "description": "\u03c8(x) \u221d exp(-x\u00b2/2\u03c3\u00b2), ground state harmonic oscillator",
+      "expected": "3-5 nodes",
+      "depth_2": {
+        "mse": 0.43789842483040353,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 0.43789842483040353,
+        "formula": "1.0"
+      },
+      "depth_6": {
+        "mse": 0.43789842483040353,
+        "formula": "1.0"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.1283611000108067
+    }
+  ],
+  "control_census": [
+    {
+      "name": "exp(-x^2)",
+      "category": "control",
+      "depth_2": {
+        "mse": 0.43789842483040353,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 0.43789842483040353,
+        "formula": "1.0"
+      },
+      "depth_6": {
+        "mse": 0.43789842483040353,
+        "formula": "1.0"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.06162559997756034
+    },
+    {
+      "name": "1/(1+x^2)",
+      "category": "control",
+      "depth_2": {
+        "mse": 0.5311163444252894,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 0.5311163444252894,
+        "formula": "1.0"
+      },
+      "depth_6": {
+        "mse": 0.5311163444252894,
+        "formula": "1.0"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.06328750000102445
+    },
+    {
+      "name": "ln(x)",
+      "category": "control",
+      "depth_2": {
+        "mse": 0.40853323241216577,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 9.732867529893183e-33,
+        "formula": "eml(1.0, eml(eml(1.0, x), 1.0))"
+      },
+      "depth_6": {
+        "mse": 9.732867529893183e-33,
+        "formula": "eml(1.0, eml(eml(1.0, x), 1.0))"
+      },
+      "eml_native": false,
+      "min_effective_depth": 4,
+      "elapsed_s": 0.053156100009800866
+    },
+    {
+      "name": "exp(x)",
+      "category": "control",
+      "depth_2": {
+        "mse": 0.0,
+        "formula": "eml(x, 1.0)"
+      },
+      "depth_4": {
+        "mse": 0.0,
+        "formula": "eml(x, 1.0)"
+      },
+      "depth_6": {
+        "mse": 0.0,
+        "formula": "eml(x, 1.0)"
+      },
+      "eml_native": true,
+      "min_effective_depth": 2,
+      "elapsed_s": 0.13970979998703115
+    },
+    {
+      "name": "1/x^2",
+      "category": "control",
+      "depth_2": {
+        "mse": 0.7836397293429673,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 0.3476336498778533,
+        "formula": "eml(1.0, eml(x, 1.0))"
+      },
+      "depth_6": {
+        "mse": 0.4461519666444779,
+        "formula": "eml(1.0, eml(x, x))"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.06267569999909028
+    },
+    {
+      "name": "ln(x)",
+      "category": "control",
+      "depth_2": {
+        "mse": 0.40853323241216577,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 9.732867529893183e-33,
+        "formula": "eml(1.0, eml(eml(1.0, x), 1.0))"
+      },
+      "depth_6": {
+        "mse": 9.732867529893183e-33,
+        "formula": "eml(1.0, eml(eml(1.0, x), 1.0))"
+      },
+      "eml_native": false,
+      "min_effective_depth": 4,
+      "elapsed_s": 0.05789830000139773
+    },
+    {
+      "name": "1/(1+x^2)",
+      "category": "control",
+      "depth_2": {
+        "mse": 0.5311163444252894,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 0.5311163444252894,
+        "formula": "1.0"
+      },
+      "depth_6": {
+        "mse": 0.5311163444252894,
+        "formula": "1.0"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.055061599996406585
+    },
+    {
+      "name": "exp(-x)",
+      "category": "control",
+      "depth_2": {
+        "mse": 0.5317654161935546,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 0.5317654161935546,
+        "formula": "1.0"
+      },
+      "depth_6": {
+        "mse": 0.5317654161935546,
+        "formula": "1.0"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.054408099997090176
+    },
+    {
+      "name": "1/x",
+      "category": "control",
+      "depth_2": {
+        "mse": 0.317989129907985,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 0.317989129907985,
+        "formula": "1.0"
+      },
+      "depth_6": {
+        "mse": 0.2862856984518928,
+        "formula": "eml(x, eml(eml(x, eml(1.0, eml(1.0, x))), 1.0))"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.06255069997860119
+    },
+    {
+      "name": "sin(x)",
+      "category": "control",
+      "depth_2": {
+        "mse": 1.516948274423744,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 1.516948274423744,
+        "formula": "1.0"
+      },
+      "depth_6": {
+        "mse": 0.5169482744237438,
+        "formula": "eml(1.0, eml(eml(1.0, 1.0), 1.0))"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.05244719999609515
+    },
+    {
+      "name": "x*ln(x)",
+      "category": "control",
+      "depth_2": {
+        "mse": 0.6556274048664971,
+        "formula": "x"
+      },
+      "depth_4": {
+        "mse": 0.6556274048664971,
+        "formula": "x"
+      },
+      "depth_6": {
+        "mse": 0.6556274048664971,
+        "formula": "x"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.053037900011986494
+    },
+    {
+      "name": "1/x^2",
+      "category": "control",
+      "depth_2": {
+        "mse": 0.7836397293429673,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 0.3476336498778533,
+        "formula": "eml(1.0, eml(x, 1.0))"
+      },
+      "depth_6": {
+        "mse": 0.4461519666444779,
+        "formula": "eml(1.0, eml(x, x))"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.05783249999512918
+    },
+    {
+      "name": "exp(x)",
+      "category": "control",
+      "depth_2": {
+        "mse": 0.0,
+        "formula": "eml(x, 1.0)"
+      },
+      "depth_4": {
+        "mse": 0.0,
+        "formula": "eml(x, 1.0)"
+      },
+      "depth_6": {
+        "mse": 0.0,
+        "formula": "eml(x, 1.0)"
+      },
+      "eml_native": true,
+      "min_effective_depth": 2,
+      "elapsed_s": 0.13810579999699257
+    },
+    {
+      "name": "1/(1+x^2)",
+      "category": "control",
+      "depth_2": {
+        "mse": 0.5311163444252894,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 0.5311163444252894,
+        "formula": "1.0"
+      },
+      "depth_6": {
+        "mse": 0.5311163444252894,
+        "formula": "1.0"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.05101600001216866
+    },
+    {
+      "name": "cos(x)",
+      "category": "control",
+      "depth_2": {
+        "mse": 1.4149421952095493,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 1.4149421952095493,
+        "formula": "1.0"
+      },
+      "depth_6": {
+        "mse": 0.4830517255762561,
+        "formula": "eml(1.0, eml(eml(1.0, 1.0), 1.0))"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.06069069998920895
+    },
+    {
+      "name": "exp(x)",
+      "category": "control",
+      "depth_2": {
+        "mse": 0.0,
+        "formula": "eml(x, 1.0)"
+      },
+      "depth_4": {
+        "mse": 0.0,
+        "formula": "eml(x, 1.0)"
+      },
+      "depth_6": {
+        "mse": 0.0,
+        "formula": "eml(x, 1.0)"
+      },
+      "eml_native": true,
+      "min_effective_depth": 2,
+      "elapsed_s": 0.1390112999943085
+    },
+    {
+      "name": "x*ln(x)",
+      "category": "control",
+      "depth_2": {
+        "mse": 0.6556274048664971,
+        "formula": "x"
+      },
+      "depth_4": {
+        "mse": 0.6556274048664971,
+        "formula": "x"
+      },
+      "depth_6": {
+        "mse": 0.6556274048664971,
+        "formula": "x"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.05194089998258278
+    },
+    {
+      "name": "1/(exp(x)-1)",
+      "category": "control",
+      "depth_2": {
+        "mse": 0.5384874218940671,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 0.25519511988714283,
+        "formula": "eml(1.0, eml(eml(1.0, 1.0), 1.0))"
+      },
+      "depth_6": {
+        "mse": 0.5384874218940671,
+        "formula": "1.0"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.05575020000105724
+    },
+    {
+      "name": "exp(-x^2)",
+      "category": "control",
+      "depth_2": {
+        "mse": 0.43789842483040353,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 0.43789842483040353,
+        "formula": "1.0"
+      },
+      "depth_6": {
+        "mse": 0.43789842483040353,
+        "formula": "1.0"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.05638980001094751
+    },
+    {
+      "name": "x*ln(x)",
+      "category": "control",
+      "depth_2": {
+        "mse": 0.6556274048664971,
+        "formula": "x"
+      },
+      "depth_4": {
+        "mse": 0.6556274048664971,
+        "formula": "x"
+      },
+      "depth_6": {
+        "mse": 0.6556274048664971,
+        "formula": "x"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.051400500000454485
+    },
+    {
+      "name": "exp(-x)",
+      "category": "control",
+      "depth_2": {
+        "mse": 0.5317654161935546,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 0.5317654161935546,
+        "formula": "1.0"
+      },
+      "depth_6": {
+        "mse": 0.5317654161935546,
+        "formula": "1.0"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.05564270002651028
+    },
+    {
+      "name": "x^2*exp(-x)",
+      "category": "control",
+      "depth_2": {
+        "mse": 0.4112202690504036,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 0.4112202690504036,
+        "formula": "1.0"
+      },
+      "depth_6": {
+        "mse": 0.4112202690504036,
+        "formula": "1.0"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.05128580000018701
+    },
+    {
+      "name": "ln(1+x)",
+      "category": "control",
+      "depth_2": {
+        "mse": 0.19697967360349153,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 0.19697967360349153,
+        "formula": "1.0"
+      },
+      "depth_6": {
+        "mse": 0.19697967360349153,
+        "formula": "1.0"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.05209080001804978
+    },
+    {
+      "name": "x*exp(-x)",
+      "category": "control",
+      "depth_2": {
+        "mse": 0.6115651862216376,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 0.6115651862216376,
+        "formula": "1.0"
+      },
+      "depth_6": {
+        "mse": 0.6115651862216376,
+        "formula": "1.0"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.051493699982529506
+    },
+    {
+      "name": "1/x",
+      "category": "control",
+      "depth_2": {
+        "mse": 0.317989129907985,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 0.317989129907985,
+        "formula": "1.0"
+      },
+      "depth_6": {
+        "mse": 0.2862856984518928,
+        "formula": "eml(x, eml(eml(x, eml(1.0, eml(1.0, x))), 1.0))"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.05384400000912137
+    },
+    {
+      "name": "x^3",
+      "category": "control",
+      "depth_2": {
+        "mse": 1.8043276811624218,
+        "formula": "eml(x, 1.0)"
+      },
+      "depth_4": {
+        "mse": 0.367427100936522,
+        "formula": "eml(x, eml(1.0, x))"
+      },
+      "depth_6": {
+        "mse": 0.13700376032288492,
+        "formula": "eml(x, eml(eml(1.0, eml(x, x)), x))"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.1767311999865342
+    },
+    {
+      "name": "ln(x)",
+      "category": "control",
+      "depth_2": {
+        "mse": 0.40853323241216577,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 9.732867529893183e-33,
+        "formula": "eml(1.0, eml(eml(1.0, x), 1.0))"
+      },
+      "depth_6": {
+        "mse": 9.732867529893183e-33,
+        "formula": "eml(1.0, eml(eml(1.0, x), 1.0))"
+      },
+      "eml_native": false,
+      "min_effective_depth": 4,
+      "elapsed_s": 0.081580700003542
+    },
+    {
+      "name": "cos(x)",
+      "category": "control",
+      "depth_2": {
+        "mse": 1.4149421952095493,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 1.4149421952095493,
+        "formula": "1.0"
+      },
+      "depth_6": {
+        "mse": 0.4830517255762561,
+        "formula": "eml(1.0, eml(eml(1.0, 1.0), 1.0))"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.08153070000116713
+    },
+    {
+      "name": "x*ln(x)",
+      "category": "control",
+      "depth_2": {
+        "mse": 0.6556274048664971,
+        "formula": "x"
+      },
+      "depth_4": {
+        "mse": 0.6556274048664971,
+        "formula": "x"
+      },
+      "depth_6": {
+        "mse": 0.6556274048664971,
+        "formula": "x"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.07610330000170507
+    },
+    {
+      "name": "1/(exp(x)-1)",
+      "category": "control",
+      "depth_2": {
+        "mse": 0.5384874218940671,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 0.25519511988714283,
+        "formula": "eml(1.0, eml(eml(1.0, 1.0), 1.0))"
+      },
+      "depth_6": {
+        "mse": 0.5384874218940671,
+        "formula": "1.0"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.08047790001728572
+    },
+    {
+      "name": "1/x",
+      "category": "control",
+      "depth_2": {
+        "mse": 0.317989129907985,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 0.317989129907985,
+        "formula": "1.0"
+      },
+      "depth_6": {
+        "mse": 0.2862856984518928,
+        "formula": "eml(x, eml(eml(x, eml(1.0, eml(1.0, x))), 1.0))"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.08007310001994483
+    },
+    {
+      "name": "ln(1+x)",
+      "category": "control",
+      "depth_2": {
+        "mse": 0.19697967360349153,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 0.19697967360349153,
+        "formula": "1.0"
+      },
+      "depth_6": {
+        "mse": 0.19697967360349153,
+        "formula": "1.0"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.08032509998884052
+    },
+    {
+      "name": "exp(x)",
+      "category": "control",
+      "depth_2": {
+        "mse": 0.0,
+        "formula": "eml(x, 1.0)"
+      },
+      "depth_4": {
+        "mse": 0.0,
+        "formula": "eml(x, 1.0)"
+      },
+      "depth_6": {
+        "mse": 0.0,
+        "formula": "eml(x, 1.0)"
+      },
+      "eml_native": true,
+      "min_effective_depth": 2,
+      "elapsed_s": 0.23669069999596104
+    },
+    {
+      "name": "exp(-x^2)",
+      "category": "control",
+      "depth_2": {
+        "mse": 0.43789842483040353,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 0.43789842483040353,
+        "formula": "1.0"
+      },
+      "depth_6": {
+        "mse": 0.43789842483040353,
+        "formula": "1.0"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.06555140001000836
+    },
+    {
+      "name": "1/x^2",
+      "category": "control",
+      "depth_2": {
+        "mse": 0.7836397293429673,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 0.3476336498778533,
+        "formula": "eml(1.0, eml(x, 1.0))"
+      },
+      "depth_6": {
+        "mse": 0.4461519666444779,
+        "formula": "eml(1.0, eml(x, x))"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.07375480001792312
+    },
+    {
+      "name": "x",
+      "category": "control",
+      "depth_2": {
+        "mse": 0.0,
+        "formula": "x"
+      },
+      "depth_4": {
+        "mse": 0.0,
+        "formula": "x"
+      },
+      "depth_6": {
+        "mse": 0.0,
+        "formula": "x"
+      },
+      "eml_native": true,
+      "min_effective_depth": 2,
+      "elapsed_s": 0.05015229998389259
+    },
+    {
+      "name": "x^2*exp(-x)",
+      "category": "control",
+      "depth_2": {
+        "mse": 0.4112202690504036,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 0.4112202690504036,
+        "formula": "1.0"
+      },
+      "depth_6": {
+        "mse": 0.4112202690504036,
+        "formula": "1.0"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.07127489999402314
+    },
+    {
+      "name": "exp(x^2)",
+      "category": "control",
+      "depth_2": {
+        "mse": 1.781454024025652,
+        "formula": "eml(x, 1.0)"
+      },
+      "depth_4": {
+        "mse": 1.781454024025652,
+        "formula": "eml(x, 1.0)"
+      },
+      "depth_6": {
+        "mse": 1.781454024025652,
+        "formula": "eml(x, 1.0)"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.14070049999281764
+    },
+    {
+      "name": "exp(-x^2)",
+      "category": "control",
+      "depth_2": {
+        "mse": 0.43789842483040353,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 0.43789842483040353,
+        "formula": "1.0"
+      },
+      "depth_6": {
+        "mse": 0.43789842483040353,
+        "formula": "1.0"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.07535309999366291
+    },
+    {
+      "name": "x*exp(-x)",
+      "category": "control",
+      "depth_2": {
+        "mse": 0.6115651862216376,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 0.6115651862216376,
+        "formula": "1.0"
+      },
+      "depth_6": {
+        "mse": 0.6115651862216376,
+        "formula": "1.0"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.08053319997270592
+    },
+    {
+      "name": "x",
+      "category": "control",
+      "depth_2": {
+        "mse": 0.0,
+        "formula": "x"
+      },
+      "depth_4": {
+        "mse": 0.0,
+        "formula": "x"
+      },
+      "depth_6": {
+        "mse": 0.0,
+        "formula": "x"
+      },
+      "eml_native": true,
+      "min_effective_depth": 2,
+      "elapsed_s": 0.06392270000651479
+    },
+    {
+      "name": "1/x",
+      "category": "control",
+      "depth_2": {
+        "mse": 0.317989129907985,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 0.317989129907985,
+        "formula": "1.0"
+      },
+      "depth_6": {
+        "mse": 0.2862856984518928,
+        "formula": "eml(x, eml(eml(x, eml(1.0, eml(1.0, x))), 1.0))"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.062194099999032915
+    },
+    {
+      "name": "ln(1+x)",
+      "category": "control",
+      "depth_2": {
+        "mse": 0.19697967360349153,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 0.19697967360349153,
+        "formula": "1.0"
+      },
+      "depth_6": {
+        "mse": 0.19697967360349153,
+        "formula": "1.0"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.06834649998927489
+    },
+    {
+      "name": "x^1.5",
+      "category": "control",
+      "depth_2": {
+        "mse": 1.0259681039460586,
+        "formula": "x"
+      },
+      "depth_4": {
+        "mse": 1.0259681039460586,
+        "formula": "x"
+      },
+      "depth_6": {
+        "mse": 1.0259681039460586,
+        "formula": "x"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.059978999983286485
+    },
+    {
+      "name": "exp(-x)",
+      "category": "control",
+      "depth_2": {
+        "mse": 0.5317654161935546,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 0.5317654161935546,
+        "formula": "1.0"
+      },
+      "depth_6": {
+        "mse": 0.5317654161935546,
+        "formula": "1.0"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.07642379999742843
+    },
+    {
+      "name": "ln(1+x)",
+      "category": "control",
+      "depth_2": {
+        "mse": 0.19697967360349153,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 0.19697967360349153,
+        "formula": "1.0"
+      },
+      "depth_6": {
+        "mse": 0.19697967360349153,
+        "formula": "1.0"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.07616289998986758
+    },
+    {
+      "name": "sqrt(x)",
+      "category": "control",
+      "depth_2": {
+        "mse": 0.1691026240629154,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 0.1691026240629154,
+        "formula": "1.0"
+      },
+      "depth_6": {
+        "mse": 0.1691026240629154,
+        "formula": "1.0"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.07740099998773076
+    },
+    {
+      "name": "sin(x)",
+      "category": "control",
+      "depth_2": {
+        "mse": 1.516948274423744,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 1.516948274423744,
+        "formula": "1.0"
+      },
+      "depth_6": {
+        "mse": 0.5169482744237438,
+        "formula": "eml(1.0, eml(eml(1.0, 1.0), 1.0))"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.08078739998745732
+    },
+    {
+      "name": "x^1.5",
+      "category": "control",
+      "depth_2": {
+        "mse": 1.0259681039460586,
+        "formula": "x"
+      },
+      "depth_4": {
+        "mse": 1.0259681039460586,
+        "formula": "x"
+      },
+      "depth_6": {
+        "mse": 1.0259681039460586,
+        "formula": "x"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.08074889998533763
+    },
+    {
+      "name": "1/(exp(x)-1)",
+      "category": "control",
+      "depth_2": {
+        "mse": 0.5384874218940671,
+        "formula": "1.0"
+      },
+      "depth_4": {
+        "mse": 0.25519511988714283,
+        "formula": "eml(1.0, eml(eml(1.0, 1.0), 1.0))"
+      },
+      "depth_6": {
+        "mse": 0.5384874218940671,
+        "formula": "1.0"
+      },
+      "eml_native": false,
+      "min_effective_depth": null,
+      "elapsed_s": 0.06662590001360513
+    }
+  ],
+  "rediscovery": [],
+  "comparison": {
+    "depth_2": {
+      "law_mean": 0.9653556429187007,
+      "law_median": 0.3826476383934825,
+      "control_mean": 0.5706155470518284,
+      "control_median": 0.5311163444252894,
+      "n_laws": 15,
+      "n_controls": 50
+    },
+    "depth_4": {
+      "law_mean": 0.8373419084635755,
+      "law_median": 0.35046944490861,
+      "control_mean": 0.47420763861425813,
+      "control_median": 0.3893236849934628,
+      "n_laws": 15,
+      "n_controls": 50
+    },
+    "depth_6": {
+      "law_mean": 0.7586782954024772,
+      "law_median": 0.35046944490861,
+      "control_mean": 0.41269591562657915,
+      "control_median": 0.4420251957374407,
+      "n_laws": 15,
+      "n_controls": 50
+    },
+    "native_rate": {
+      "laws": 0.06666666666666667,
+      "controls": 0.12
+    }
+  }
+}

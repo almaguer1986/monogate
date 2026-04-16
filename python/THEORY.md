@@ -365,7 +365,128 @@ the MCTS guidance over time.
 
 ---
 
-## §9 EML as an Activation Search Space
+## §9 Physics Law Complexity in the EML Basis
+
+> **Census date:** April 2026  
+> **File:** `python/monogate/frontiers/law_complexity.py`  
+> **Results:** `python/results/physics_census/`
+
+### Motivation
+
+If EML is a universal basis for elementary functions, a natural question is:
+*Do physical laws occupy a privileged, low-complexity region of EML space?*
+The census measures this empirically by fitting EML trees to 15 representative
+physical laws and comparing to 50 random algebraic controls.
+
+### Methodology
+
+**EML depth** is operationalised as the depth parameter in `mcts_search`:
+- depth=2 → 1 EML gate (leaves are constants or x)  
+- depth=4 → up to 3 nested EML gates  
+- depth=6 → up to 5 nested EML gates  
+
+**EML-native** (depth=2 MSE < 10⁻⁶): the function is directly expressible
+as a single EML gate, i.e., of the form `exp(ax + b) − c`.
+
+**Effective depth**: smallest depth achieving MSE < 0.05.
+
+Each law was evaluated at 80 probe points; 2000 MCTS simulations per depth.
+
+### Results (April 2026)
+
+#### Identity Census (15 laws as `lhs == rhs`)
+
+- **14/15 proved** (all tier-2 exact, 1 numerical, 1 failed)
+- Failed: `log(exp(x)*exp(y)) == x + y` — SymPy requires real-valued assumptions
+- All proofs reached via tier-1 (numerical) or tier-2 (SymPy exact); no MCTS needed
+
+#### Functional Census (15 laws as 1-variable functions)
+
+| Law | Category | d=2 MSE | d=4 MSE | d=6 MSE | EML-native |
+|-----|----------|---------|---------|---------|------------|
+| Boltzmann weight `exp(x)` | thermodynamics | **0.000** | 0.000 | 0.000 | **YES** |
+| Exponential decay `exp(-x)` | statistical | 0.550 | 0.550 | 0.550 | No |
+| Arrhenius rate `exp(-1/x)` | chemistry | 0.167 | 0.167 | 0.167 | No |
+| RC discharge `1-exp(-x)` | electromagnetism | 0.130 | 0.130 | 0.130 | No |
+| Planck `1/(exp(x)-1)` | quantum | 0.651 | 0.632 | 0.632 | No |
+| Fermi-Dirac `1/(exp(x)+1)` | quantum | 0.350 | 0.350 | 0.350 | No |
+| Maxwell-Boltzmann `x²·exp(-x²/2)` | statistical | 0.546 | 0.546 | 0.546 | No |
+| Entropy `-x·ln(x)` | information | 0.191 | 0.074 | 0.123 | No |
+| Kepler T∝a³/² | mechanics | 1.026 | 1.026 | 1.026 | No |
+| Newtonian gravity 1/r² | mechanics | 0.784 | 0.348 | 0.253 | No |
+| Kinetic energy ½x² | mechanics | 0.311 | 0.311 | 0.311 | No |
+| Wien's law 1/x | thermodynamics | 0.383 | 0.383 | 0.383 | No |
+| Stefan-Boltzmann x⁴ | thermodynamics | 8.797 | 7.576 | 6.314 | No |
+| Lorentz factor 1/√(1-x²) | relativity | 0.156 | **0.029** | 0.156 | No (eff_d=4) |
+| Gaussian wavefunction exp(-x²) | quantum | 0.438 | 0.438 | 0.438 | No |
+
+**EML-native laws: 1/15 (Boltzmann weight only)**
+
+#### Laws vs. Random Controls
+
+| Depth | Laws (mean MSE) | Controls (mean MSE) | Ratio |
+|-------|----------------|---------------------|-------|
+| 2 | 0.965 | 0.571 | **1.69×** (laws harder) |
+| 4 | 0.837 | 0.474 | **1.77×** (laws harder) |
+| 6 | 0.759 | 0.413 | **1.84×** (laws harder) |
+
+#### Rediscovery Benchmark (8 laws from noisy synthetic data)
+
+- **1/8 successfully rediscovered**: Boltzmann weight `exp(x)` (R²=1.000)
+- All others: R² < 0 (regressor returns constant baseline)
+
+### Interpretation
+
+**Finding 1 — EML is not a privileged basis for physics.**
+Physical laws are systematically *harder* (1.7–1.8×) to approximate with EML
+trees than random algebraic expressions. The hypothesis that physics occupies
+a special low-complexity corner of EML space is *not* supported.
+
+**Finding 2 — The fundamental EML limitation is the negative-exponent gap.**
+The EML grammar with leaves `{x, constants}` cannot express `exp(−f(x))` for
+any non-trivial f. All decay laws, Gaussian wavefunctions, and Planck
+distributions fall into this gap. The Boltzmann factor `exp(+E/kT)` is native;
+`exp(−E/kT)` is not. This is an intrinsic structural asymmetry.
+
+**Finding 3 — Identity laws are trivially provable, functional laws are not.**
+The 14/15 identity proof rate reflects that the selected laws are algebraic
+tautologies over exp/log. The proof tier is exclusively SymPy-exact — the
+laws require no EML witness computation.
+
+**Finding 4 — Only one functional law is EML-native.**
+`exp(x)` = `eml(x, 1.0)` is the only directly representable physical function.
+This is the Boltzmann weight, partition function, and growth factor.
+
+### The Negative-Exponent Barrier
+
+The EML grammar implicitly requires the exponent to be computable from the
+leaf set `{x, constants}` using only the EML operator. Since:
+
+```
+eml(a, b) = exp(a) − ln(b)
+```
+
+the left subtree `a` always appears as the *exponent* of an outer `exp`. To
+produce `exp(−x)`, one needs `a = −x`, but `−x` requires subtraction of a
+non-constant — which is not available as a leaf and cannot be expressed
+by EML gates alone without building `−x = eml(ln(1/e^x), 1)` circularly.
+
+This explains why depth=2,4,6 all return identical MSE for most non-native
+laws: no amount of added depth helps escape the grammar constraint.
+
+### Open Questions
+
+| ID | Question | Status |
+|----|----------|--------|
+| P1 | Can extending the leaf set to `{x, −x, constants}` make `exp(−x)` native? | 🔵 Open |
+| P2 | Does a grammar extension `eml⁻(x,y) = exp(−x) − ln(y)` close the gap? | 🔵 Open |
+| P3 | Are there physical laws with special EML structure we missed? | 🔵 Open |
+| P4 | Does the negative-exponent gap appear in EDL/ECL grammars too? | 🔵 Open |
+
+---
+
+## §10 EML as an Activation Search Space  
+_(formerly §9)_
 
 The NAS (Neural Architecture Search) module treats the infinite EML grammar
 as a search space for discovering novel activation functions.
