@@ -1,0 +1,1914 @@
+{
+  "timestamp": "20260416_124542",
+  "count": 106,
+  "discoveries": [
+    {
+      "identity": {
+        "name": "auto_double_arg_Cosine negation",
+        "expression": "cos(-(2*x)) == cos((2*x))",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.0040453999827150255,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_half_arg_Cosine negation",
+        "expression": "cos(-(x/2)) == cos((x/2))",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.0040726000152062625,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_shift1_Cosine negation",
+        "expression": "cos(-(x+1)) == cos((x+1))",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.003923899988876656,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_triple_arg_Cosine negation",
+        "expression": "cos(-(3*x)) == cos((3*x))",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.004361599974799901,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_double_arg_Sine negation",
+        "expression": "sin(-(2*x)) == -sin((2*x))",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.0048559999850112945,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_half_arg_Sine negation",
+        "expression": "sin(-(x/2)) == -sin((x/2))",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.003795299999183044,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_shift1_Sine negation",
+        "expression": "sin(-(x+1)) == -sin((x+1))",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.004675000003771856,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_triple_arg_Sine negation",
+        "expression": "sin(-(3*x)) == -sin((3*x))",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.003712300007464364,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_negate_Cosine negation",
+        "expression": "(-(cos(-x))) == (-(cos(x)))",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.004180499992799014,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_negate_Sine negation",
+        "expression": "(-(sin(-x))) == (-(-sin(x)))",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.003854799986584112,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_scale2_Cosine negation",
+        "expression": "(2*(cos(-x))) == (2*(cos(x)))",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.004373900010250509,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_scale_half_Cosine negation",
+        "expression": "((cos(-x))/2) == ((cos(x))/2)",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.0043366999889258295,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_scale3_Cosine negation",
+        "expression": "(3*(cos(-x))) == (3*(cos(x)))",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.004206799989333376,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_scale2_Sine negation",
+        "expression": "(2*(sin(-x))) == (2*(-sin(x)))",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.004277899977751076,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_scale_half_Sine negation",
+        "expression": "((sin(-x))/2) == ((-sin(x))/2)",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.004356499994173646,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_scale3_Sine negation",
+        "expression": "(3*(sin(-x))) == (3*(-sin(x)))",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.004680099984398112,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_double_arg_Pythagorean identity",
+        "expression": "sin((2*x))**2 + cos((2*x))**2 == 1",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.22167199998511933,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 2.220446049250313e-16
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_half_arg_Pythagorean identity",
+        "expression": "sin((x/2))**2 + cos((x/2))**2 == 1",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.03452980000292882,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 2.220446049250313e-16
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_shift1_Pythagorean identity",
+        "expression": "sin((x+1))**2 + cos((x+1))**2 == 1",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.07432439998956397,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 2.220446049250313e-16
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_triple_arg_Pythagorean identity",
+        "expression": "sin((3*x))**2 + cos((3*x))**2 == 1",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.04302680000546388,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 2.220446049250313e-16
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_double_arg_Cosine negation",
+        "expression": "cos(-(2*x)) == cos((2*x))",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.002784499985864386,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_half_arg_Cosine negation",
+        "expression": "cos(-(x/2)) == cos((x/2))",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.002703800011659041,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_shift1_Cosine negation",
+        "expression": "cos(-(x+1)) == cos((x+1))",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.002942299994174391,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_triple_arg_Cosine negation",
+        "expression": "cos(-(3*x)) == cos((3*x))",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.002723299985518679,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_double_arg_Sine negation",
+        "expression": "sin(-(2*x)) == -sin((2*x))",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.002849600015906617,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_half_arg_Sine negation",
+        "expression": "sin(-(x/2)) == -sin((x/2))",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.0028337000112514943,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_shift1_Sine negation",
+        "expression": "sin(-(x+1)) == -sin((x+1))",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.0029810999985784292,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_triple_arg_Sine negation",
+        "expression": "sin(-(3*x)) == -sin((3*x))",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.002954600000521168,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_negate_Cosine negation",
+        "expression": "(-(cos(-x))) == (-(cos(x)))",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.002689699991606176,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_negate_Sine negation",
+        "expression": "(-(sin(-x))) == (-(-sin(x)))",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.0026726000069174916,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_scale2_Cosine negation",
+        "expression": "(2*(cos(-x))) == (2*(cos(x)))",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.002915100019890815,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_scale_half_Cosine negation",
+        "expression": "((cos(-x))/2) == ((cos(x))/2)",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.0034377999836578965,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_scale3_Cosine negation",
+        "expression": "(3*(cos(-x))) == (3*(cos(x)))",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.00412480000522919,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_scale2_Sine negation",
+        "expression": "(2*(sin(-x))) == (2*(-sin(x)))",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.0036800999951083213,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_scale_half_Sine negation",
+        "expression": "((sin(-x))/2) == ((-sin(x))/2)",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.003624099976150319,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_scale3_Sine negation",
+        "expression": "(3*(sin(-x))) == (3*(-sin(x)))",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.004119000019272789,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_rand_shift_Cosine negation",
+        "expression": "cos(-(x+-0.25)) == cos((x+-0.25))",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.0032482999959029257,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_rand_shift_Sine negation",
+        "expression": "sin(-(x+-0.25)) == -sin((x+-0.25))",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.004192299995338544,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_double_arg_Pythagorean identity",
+        "expression": "sin((2*x))**2 + cos((2*x))**2 == 1",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.036673499998869374,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 2.220446049250313e-16
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_half_arg_Pythagorean identity",
+        "expression": "sin((x/2))**2 + cos((x/2))**2 == 1",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.02882910001790151,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 2.220446049250313e-16
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_rand_shift_Cosine negation",
+        "expression": "cos(-(x+-0.1)) == cos((x+-0.1))",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.0033796000061556697,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_rand_shift_Sine negation",
+        "expression": "sin(-(x+0.25)) == -sin((x+0.25))",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.003236999997170642,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_rand_shift_Sine negation",
+        "expression": "sin(-(x+-0.1)) == -sin((x+-0.1))",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.005281699995975941,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_rand_shift_Cosine negation",
+        "expression": "cos(-(x+0.1)) == cos((x+0.1))",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.003149600001052022,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_rand_shift_Cosine negation",
+        "expression": "cos(-(x+0.25)) == cos((x+0.25))",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.004463400022359565,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_rand_shift_Sine negation",
+        "expression": "sin(-(x+0.1)) == -sin((x+0.1))",
+        "category": "trigonometric",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.006037099985405803,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_negate_Exp zero",
+        "expression": "(-(exp(0))) == (-(1))",
+        "category": "exponential",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.0036299999919719994,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_negate_Log one",
+        "expression": "(-(log(1))) == (-(0))",
+        "category": "exponential",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.0034320999984629452,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_scale2_Exp zero",
+        "expression": "(2*(exp(0))) == (2*(1))",
+        "category": "exponential",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.003646400000434369,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_scale_half_Exp zero",
+        "expression": "((exp(0))/2) == ((1)/2)",
+        "category": "exponential",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.0038592999917455018,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_scale3_Exp zero",
+        "expression": "(3*(exp(0))) == (3*(1))",
+        "category": "exponential",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.003973300015786663,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_scale2_Log one",
+        "expression": "(2*(log(1))) == (2*(0))",
+        "category": "exponential",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.0038272000092547387,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_scale_half_Log one",
+        "expression": "((log(1))/2) == ((0)/2)",
+        "category": "exponential",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.0037265999999362975,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_scale3_Log one",
+        "expression": "(3*(log(1))) == (3*(0))",
+        "category": "exponential",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.0037253999907989055,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_negate_Exp of log",
+        "expression": "(-(exp(log(x)))) == (-(x))",
+        "category": "exponential",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.0038494000036735088,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_negate_Log of exp",
+        "expression": "(-(log(exp(x)))) == (-(x))",
+        "category": "exponential",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_numerical",
+        "confidence": 0.9,
+        "elapsed_s": 0.021968499990180135,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "numerical",
+        "max_residual": 1.1102230246251565e-16
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_shift1_Log of reciprocal",
+        "expression": "log(1/(x+1)) == -log((x+1))",
+        "category": "exponential",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_numerical",
+        "confidence": 0.9,
+        "elapsed_s": 0.03170059999683872,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "numerical",
+        "max_residual": 4.440892098500626e-16
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_double_arg_Log of reciprocal",
+        "expression": "log(1/(2*x)) == -log((2*x))",
+        "category": "exponential",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_numerical",
+        "confidence": 0.9,
+        "elapsed_s": 0.02587449998827651,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "numerical",
+        "max_residual": 2.220446049250313e-16
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_half_arg_Log of reciprocal",
+        "expression": "log(1/(x/2)) == -log((x/2))",
+        "category": "exponential",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_numerical",
+        "confidence": 0.9,
+        "elapsed_s": 0.025149399996735156,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "numerical",
+        "max_residual": 4.440892098500626e-16
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_triple_arg_Log of reciprocal",
+        "expression": "log(1/(3*x)) == -log((3*x))",
+        "category": "exponential",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_numerical",
+        "confidence": 0.9,
+        "elapsed_s": 0.01984779999474995,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "numerical",
+        "max_residual": 4.440892098500626e-16
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_scale2_Exp of log",
+        "expression": "(2*(exp(log(x)))) == (2*(x))",
+        "category": "exponential",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.004833699989831075,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_scale_half_Exp of log",
+        "expression": "((exp(log(x)))/2) == ((x)/2)",
+        "category": "exponential",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.003703399997903034,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_scale3_Exp of log",
+        "expression": "(3*(exp(log(x)))) == (3*(x))",
+        "category": "exponential",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.004292400000849739,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_scale_half_Log of exp",
+        "expression": "((log(exp(x)))/2) == ((x)/2)",
+        "category": "exponential",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_numerical",
+        "confidence": 0.9,
+        "elapsed_s": 0.019102799997199327,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "numerical",
+        "max_residual": 5.551115123125783e-17
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_scale2_Log of exp",
+        "expression": "(2*(log(exp(x)))) == (2*(x))",
+        "category": "exponential",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_numerical",
+        "confidence": 0.9,
+        "elapsed_s": 0.019354599993675947,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "numerical",
+        "max_residual": 2.220446049250313e-16
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_scale3_Log of exp",
+        "expression": "(3*(log(exp(x)))) == (3*(x))",
+        "category": "exponential",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_numerical",
+        "confidence": 0.9,
+        "elapsed_s": 0.019437799986917526,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "numerical",
+        "max_residual": 4.440892098500626e-16
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_negate_Erf at zero",
+        "expression": "(-(erf(0))) == (-(0))",
+        "category": "special",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.0021948999783489853,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_negate_Bessel J0 at zero",
+        "expression": "(-(cos(0))) == (-(1))",
+        "category": "special",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.002209800004493445,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_scale2_Erf at zero",
+        "expression": "(2*(erf(0))) == (2*(0))",
+        "category": "special",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.0022933000000193715,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_scale_half_Erf at zero",
+        "expression": "((erf(0))/2) == ((0)/2)",
+        "category": "special",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.002216199995018542,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_scale3_Erf at zero",
+        "expression": "(3*(erf(0))) == (3*(0))",
+        "category": "special",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.002216599998064339,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_scale2_Bessel J0 at zero",
+        "expression": "(2*(cos(0))) == (2*(1))",
+        "category": "special",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.002209500002209097,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_scale_half_Bessel J0 at zero",
+        "expression": "((cos(0))/2) == ((1)/2)",
+        "category": "special",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.0022293999791145325,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_scale3_Bessel J0 at zero",
+        "expression": "(3*(cos(0))) == (3*(1))",
+        "category": "special",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.002285099995788187,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_double_arg_Erf odd symmetry",
+        "expression": "erf((2*x)) == -erf(-(2*x))",
+        "category": "special",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.0026823000225704163,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_half_arg_Erf odd symmetry",
+        "expression": "erf((x/2)) == -erf(-(x/2))",
+        "category": "special",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.0026416000036988407,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_shift1_Erf odd symmetry",
+        "expression": "erf((x+1)) == -erf(-(x+1))",
+        "category": "special",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.0028403000032994896,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_triple_arg_Erf odd symmetry",
+        "expression": "erf((3*x)) == -erf(-(3*x))",
+        "category": "special",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.002615099976537749,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_negate_Erf odd symmetry",
+        "expression": "(-(erf(x))) == (-(-erf(-x)))",
+        "category": "special",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.002466000005370006,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_double_arg_Erf sum identity",
+        "expression": "erf((2*x)) + erf(-(2*x)) == 0",
+        "category": "special",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.0029798000177834183,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_half_arg_Erf sum identity",
+        "expression": "erf((x/2)) + erf(-(x/2)) == 0",
+        "category": "special",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.0022375000116880983,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_shift1_Erf sum identity",
+        "expression": "erf((x+1)) + erf(-(x+1)) == 0",
+        "category": "special",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.0021754000044893473,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_triple_arg_Erf sum identity",
+        "expression": "erf((3*x)) + erf(-(3*x)) == 0",
+        "category": "special",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.002192599989939481,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_double_arg_erf complementary",
+        "expression": "erf((2*x)) + erfc((2*x)) == 1",
+        "category": "special",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_numerical",
+        "confidence": 0.9,
+        "elapsed_s": 0.0123639999947045,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "numerical",
+        "max_residual": 2.220446049250313e-16
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_half_arg_erf complementary",
+        "expression": "erf((x/2)) + erfc((x/2)) == 1",
+        "category": "special",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_numerical",
+        "confidence": 0.9,
+        "elapsed_s": 0.01253139998880215,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "numerical",
+        "max_residual": 2.220446049250313e-16
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_shift1_erf complementary",
+        "expression": "erf((x+1)) + erfc((x+1)) == 1",
+        "category": "special",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_numerical",
+        "confidence": 0.9,
+        "elapsed_s": 0.017169699975056574,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "numerical",
+        "max_residual": 2.220446049250313e-16
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_double_arg_Wave cosine even par",
+        "expression": "cos((2*x)) == cos(-(2*x))",
+        "category": "physics",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.00426850002259016,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_half_arg_Wave cosine even par",
+        "expression": "cos((x/2)) == cos(-(x/2))",
+        "category": "physics",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.004170000000158325,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_shift1_Wave cosine even par",
+        "expression": "cos((x+1)) == cos(-(x+1))",
+        "category": "physics",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.004423999984283,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_triple_arg_Wave cosine even par",
+        "expression": "cos((3*x)) == cos(-(3*x))",
+        "category": "physics",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.0036088000051677227,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_negate_Wave cosine even par",
+        "expression": "(-(cos(x))) == (-(cos(-x)))",
+        "category": "physics",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.004211699997540563,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_scale2_Wave cosine even par",
+        "expression": "(2*(cos(x))) == (2*(cos(-x)))",
+        "category": "physics",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.004441199998836964,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_scale_half_Wave cosine even par",
+        "expression": "((cos(x))/2) == ((cos(-x))/2)",
+        "category": "physics",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.004404000006616116,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_scale3_Wave cosine even par",
+        "expression": "(3*(cos(x))) == (3*(cos(-x)))",
+        "category": "physics",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.004346200003055856,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_double_arg_Schrodinger unitarit",
+        "expression": "cos((2*x))**2 + sin((2*x))**2 == 1",
+        "category": "physics",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.05895890001556836,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 2.220446049250313e-16
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_half_arg_Schrodinger unitarit",
+        "expression": "cos((x/2))**2 + sin((x/2))**2 == 1",
+        "category": "physics",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.04323209999711253,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 2.220446049250313e-16
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_shift1_Schrodinger unitarit",
+        "expression": "cos((x+1))**2 + sin((x+1))**2 == 1",
+        "category": "physics",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.0778015999821946,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 2.220446049250313e-16
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_triple_arg_Schrodinger unitarit",
+        "expression": "cos((3*x))**2 + sin((3*x))**2 == 1",
+        "category": "physics",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.03691959998104721,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 2.220446049250313e-16
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_negate_Arrhenius normalizat",
+        "expression": "(-(exp(-1/x) / exp(-1/x))) == (-(1))",
+        "category": "physics",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.0043040000018663704,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_negate_Schrodinger unitarit",
+        "expression": "(-(cos(x)**2 + sin(x)**2)) == (-(1))",
+        "category": "physics",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.04221559999859892,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 2.220446049250313e-16
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_double_arg_KdV symmetry",
+        "expression": "1/cosh((2*x))**2 == 1/cosh(-(2*x))**2",
+        "category": "physics",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.00538570000207983,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_half_arg_KdV symmetry",
+        "expression": "1/cosh((x/2))**2 == 1/cosh(-(x/2))**2",
+        "category": "physics",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.0037090000114403665,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_shift1_KdV symmetry",
+        "expression": "1/cosh((x+1))**2 == 1/cosh(-(x+1))**2",
+        "category": "physics",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.003441899985773489,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_triple_arg_KdV symmetry",
+        "expression": "1/cosh((3*x))**2 == 1/cosh(-(3*x))**2",
+        "category": "physics",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.003180300001986325,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_negate_Gaussian normalizati",
+        "expression": "(-(exp(-x**2))) == (-(exp(-(-x)**2)))",
+        "category": "physics",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.003298499999800697,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0.0
+      }
+    },
+    {
+      "identity": {
+        "name": "auto_scale2_Arrhenius normalizat",
+        "expression": "(2*(exp(-1/x) / exp(-1/x))) == (2*(1))",
+        "category": "physics",
+        "difficulty": "medium"
+      },
+      "proof": {
+        "status": "proved_exact",
+        "confidence": 1.0,
+        "elapsed_s": 0.002697699994314462,
+        "node_count": 0,
+        "mcts_simulations": 0,
+        "lhs_formula": null,
+        "verification_method": "sympy",
+        "max_residual": 0
+      }
+    }
+  ]
+}
