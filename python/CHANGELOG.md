@@ -4,6 +4,33 @@ All notable changes to `monogate` are documented here.
 
 ---
 
+## [0.12.0-dev] — 2026-04-16
+
+### Session 1: Special Functions Library
+
+**New module `monogate.special`** — 15 pre-computed short CBEST/BEST expressions
+for special functions. Key results:
+
+- **sin(x), cos(x)** — 1 CBEST node each (exact Euler path)
+- **Fresnel integrands** — 2 CBEST nodes each (`Im/Re(eml(i·πx²/2, 1))`)
+- **erf(x)** — 5 CBEST nodes (`tanh(1.2025x)`, max error ~1.5e-2)
+- **Bessel J₀** — 7 CBEST nodes (complex MCTS, MSE < 1e-4)
+- **Airy Ai** — 9 CBEST nodes (complex MCTS, MSE ~2e-3)
+- **sinh, cosh, tanh, sech** — algebraic BEST constructions (exact)
+- **lgamma** — Stirling series (~12 BEST nodes, max error < 1e-9)
+- **digamma** — numerical diff of lgamma (~14 BEST nodes)
+
+New exports: `sin_cb`, `cos_cb`, `sinh_cb`, `cosh_cb`, `tanh_cb`, `sech_cb`,
+`erf_cb`, `fresnel_s_cb`, `fresnel_c_cb`, `fresnel_s_integrand_cb`,
+`fresnel_c_integrand_cb`, `j0_cb`, `ai_cb`, `lgamma_cb`, `digamma_cb`,
+`SpecialFnEntry`, `SPECIAL_CATALOG`, `catalog_summary`, `save_catalog`.
+
+New files: `monogate/special.py`, `tests/test_special.py`,
+`notebooks/special_functions_gallery.py`, `docs/guide/special_functions.md`,
+`results/special_catalog.json`.
+
+---
+
 ## [0.11.0] — 2026-04-16
 
 ### Full Release: EML Universality, Complex BEST, PINN, Theory & Reproducibility

@@ -255,3 +255,29 @@ try:
     __all__ += ["EMLPINN", "PINNResult", "fit_pinn"]
 except ImportError:
     pass  # torch not installed
+
+from .special import (  # noqa: F401
+    SpecialFnEntry,
+    CATALOG as SPECIAL_CATALOG,
+    sin_cb, cos_cb,
+    sinh_cb, cosh_cb, tanh_cb, sech_cb,
+    erf_cb,
+    fresnel_s_integrand_cb, fresnel_c_integrand_cb,
+    fresnel_s_cb, fresnel_c_cb,
+    j0_cb, ai_cb,
+    lgamma_cb, digamma_cb,
+    catalog_summary, save_catalog,
+)
+
+__all__ += [
+    "SpecialFnEntry",
+    "SPECIAL_CATALOG",
+    "sin_cb", "cos_cb",
+    "sinh_cb", "cosh_cb", "tanh_cb", "sech_cb",
+    "erf_cb",
+    "fresnel_s_integrand_cb", "fresnel_c_integrand_cb",
+    "fresnel_s_cb", "fresnel_c_cb",
+    "j0_cb", "ai_cb",
+    "lgamma_cb", "digamma_cb",
+    "catalog_summary", "save_catalog",
+]
