@@ -250,43 +250,118 @@ physics, EML structural, and open challenges.
 
 ## §8 EML as a Conjecture Engine
 
-The EMLProverV2 class extends the prover with automated conjecture generation,
-treating the EML grammar itself as a source of mathematical hypotheses.
+### Lessons from Experiment (April 2026)
 
-### Grammar-Based Mutation
+Before describing the design, here are the empirical results that shaped it:
 
-Given a seed identity $L(x) = R(x)$, five mutation operators produce candidate
-conjectures:
+| Finding | Implication |
+|---------|-------------|
+| Neural scorer gives **1.30× speedup** in MCTS proof search | Keep the scorer; it works |
+| Scorer buffer stays at 0 during batch pre-training | Scorer learns only from MCTS witnesses; 86% of identities never reach MCTS |
+| Trig-first transfer: **1.05–1.32×** benefit to all domains | Use trig as the primary mutation seed |
+| Hyperbolic transfer to others: **0.80–0.98×** (hurts) | Train hyperbolic last; don't over-index on it |
+| Depth-3 EML gradient descent → −∞ universally (100 seeds) | Phantom attractor at ~3.1696 was a transient artifact (C3 closed) |
 
-| Mutation | Rule | Example |
-|----------|------|---------|
-| Substitution x→2x | $L(2x) = R(2x)$ | $\sin^2(2x) + \cos^2(2x) = 1$ |
-| Substitution x→x/2 | $L(x/2) = R(x/2)$ | $\sin^2(x/2) + \cos^2(x/2) = 1$ |
-| Negation | $-L(x) = -R(x)$ | $-\sin^2(x) - \cos^2(x) = -1$ |
-| Scaling ×2 | $2L(x) = 2R(x)$ | $2\sin^2(x) + 2\cos^2(x) = 2$ |
-| Scaling ×1/2 | $L(x)/2 = R(x)/2$ | $\sin^2(x)/2 + \cos^2(x)/2 = 1/2$ |
+**Design principle derived from these results:** Do not rely on batch pretraining. Focus the neural scorer on the minority of identities that actually reach the MCTS witness tier. The exploration loop (§8.3) is the right mechanism for accumulating this training data naturally.
 
-Each candidate is immediately verified numerically (500 probe points, threshold
-$10^{-6}$) and deduplicated against the existing catalog.
+---
 
-### Novelty Scoring
+### §8.1 Temperature-Controlled Mutation
 
-Conjectures are ranked by a novelty score:
-$$\text{novelty}(c) = \frac{1}{1 + \text{residual}(c) \times 10^6}$$
-where $\text{residual}(c)$ is the maximum absolute difference between the two
-sides of the candidate identity over all probe points. Lower residual = higher
-novelty score = more precisely true.
+Given a seed identity $L(x) = R(x)$, the mutation engine generates candidates
+with aggressiveness controlled by a `temperature` parameter in $[0, 1]$:
 
-### Proof Compression
+| Temperature | Tier | Mutations added |
+|-------------|------|----------------|
+| 0.0–0.3 | Conservative | $L(2x) = R(2x)$, $L(x/2) = R(x/2)$ |
+| 0.3–0.6 | Moderate | + negation, ×2 scaling, ×½ scaling, shift by 1 |
+| 0.6–0.8 | Creative | + triple-arg ($3x$), phase shifts ($x+π/4$, $x+π/6$), ×3 scaling |
+| 0.8–1.0 | Aggressive | + random rational scale, random small shift |
+
+Every candidate is immediately numerically verified (500 probe points, residual
+threshold $10^{-6}$) and deduplicated against the existing catalog. High
+temperatures produce more diverse candidates but a lower pass rate through
+numerical filtering — the filter is the natural quality gate.
+
+**Ranking:** Candidates are ranked by:
+$$\text{score}(c) = 0.6 \cdot \text{novelty}(c) + 0.2 \cdot \text{simplicity}(c) + 0.2 \cdot \text{neural\_hint}(c)$$
+
+where $\text{simplicity}(c) = 1/(1 + |c|/80)$ rewards shorter expressions
+(which tend to have shorter EML witnesses) and $\text{neural\_hint}(c)$
+amplifies simplicity when the scorer is trained. When the scorer is untrained,
+the formula reduces to $0.7 \cdot \text{novelty} + 0.3 \cdot \text{simplicity}$.
+
+---
+
+### §8.2 Grammar-Based Mutation (Original Set)
+
+The conservative mutation set (temperature < 0.3) preserves the original
+five operators for backward compatibility:
+
+| Mutation | Rule |
+|----------|------|
+| double\_arg | $x \to 2x$ |
+| half\_arg | $x \to x/2$ |
+| negate | $L \to -L$, $R \to -R$ |
+| scale2 | $L \to 2L$, $R \to 2R$ |
+| scale\_half | $L \to L/2$, $R \to R/2$ |
+
+---
+
+### §8.3 The Exploration Loop (`explore()`)
+
+The `explore()` method closes the conjecture–verify–learn loop:
+
+```
+for round in 1..n_rounds:
+    conjectures = generate_conjectures(category="trig", temperature=0.7, n=20)
+    for c in conjectures:
+        result = prove(c)                    # 4-tier pipeline
+        if result.proved():
+            if result.witness_tree:
+                result = compress_proof(result)   # Occam's razor
+            # scorer.update() fires automatically inside prove()
+            # when an MCTS witness is found
+            discovered.append((c, result))
+```
+
+This loop is the **primary mechanism for training the neural scorer**. Unlike
+batch pretraining (which failed because easy identities never reach MCTS),
+the exploration loop deliberately generates novel candidates — some of which
+will be hard enough to require the MCTS witness tier, generating real training
+signal.
+
+The trig seed domain is preferred because:
+- It has the most identities (largest mutation pool)
+- It transfers 1.05–1.32× to all other domains (per transfer experiment)
+- Trig identities tend to have compact EML witnesses (good scorer training)
+
+---
+
+### §8.4 Proof Compression (Occam's Razor)
 
 `compress_proof` iteratively seeks shorter EML trees equivalent to the
-witness, calling `minimax_eml()` with decreasing node budgets until no
-shorter certificate can be found:
+witness, calling `minimax_eml()` with decreasing node budgets:
 
 $$\text{compress}(T^*) = \arg\min_{|T| < |T^*|} \|f_T - f_{T^*}\|_\infty < 10^{-10}$$
 
-This implements a form of occam's razor: among all EML witnesses for a
-proved identity, prefer the one with fewest nodes.
+Among all valid witnesses, prefer the one with fewest nodes. This is both
+aesthetically principled (shorter proofs are cleaner) and practically useful:
+the scorer learns to associate compact trees with high reward, which sharpens
+the MCTS guidance over time.
+
+---
+
+### §8.5 Open Questions Remaining
+
+| ID | Problem | Status |
+|----|---------|--------|
+| C3 | Phantom attractor identity | ✅ Resolved — numerical artifact |
+| C4 | λ\_crit formula | 🟡 Superseded (see §8 resolution above) |
+| C5 | N=12 sin search | 🔴 Open (GPU-scale exhaustive search) |
+| C6 | CBEST completeness | 🔴 Open |
+| C7 | EMLNetwork convergence | 🔴 Open |
+| — | When does explore() saturate? | 🔵 Active — track via learning curve |
 
 ---
 

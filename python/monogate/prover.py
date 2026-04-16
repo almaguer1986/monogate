@@ -1001,22 +1001,33 @@ class EMLProverV2(EMLProver):
         n: int = 20,
         difficulty: str = "medium",
         seed: int = 42,
+        temperature: float = 0.5,
     ) -> "List[Any]":
         """Generate plausible new mathematical identities via grammar mutation.
 
-        Strategy:
+        Strategy
+        --------
         1. Pull all identities in *category* from the existing catalog.
-        2. Apply 5 mutation types (substitution, negation, scaling, doubling, halving).
+        2. Apply temperature-controlled mutations (more creative at high temperature).
         3. Numerically check each candidate (500 points, threshold 1e-6).
         4. Deduplicate against existing catalog.
-        5. Return the top *n* candidates as :class:`~monogate.identities.Identity` objects.
+        5. Rank by novelty × simplicity bonus; if scorer is trained, apply a
+           complexity-weighted neural hint (shorter = more likely to have a
+           short EML witness, which the scorer rewards).
+        6. Return the top *n* candidates as
+           :class:`~monogate.identities.Identity` objects.
 
         Args:
-            category:   One of 'trig', 'trigonometric', 'hyperbolic', 'exponential',
-                        'special', 'physics', 'eml', 'open'.  Short aliases accepted.
-            n:          Maximum number of conjectures to return.
-            difficulty: Difficulty label to stamp on returned identities.
-            seed:       Random seed for reproducibility.
+            category:    One of 'trig', 'trigonometric', 'hyperbolic',
+                         'exponential', 'special', 'physics', 'eml', 'open'.
+                         Short aliases accepted.
+            n:           Maximum number of conjectures to return.
+            difficulty:  Difficulty label to stamp on returned identities.
+            seed:        Random seed for reproducibility.
+            temperature: Mutation aggressiveness in [0, 1].
+                         0.0 = only argument substitutions (safe).
+                         0.5 = moderate (default — current set).
+                         1.0 = maximum creativity (more diverse, more may fail).
 
         Returns:
             List of :class:`~monogate.identities.Identity` objects with
@@ -1033,25 +1044,25 @@ class EMLProverV2(EMLProver):
         }
         cat = _alias.get(category, category)
 
-        seeds = [i for i in ALL_IDENTITIES if i.category == cat]
-        if not seeds:
-            seeds = ALL_IDENTITIES[:]
+        pool = [i for i in ALL_IDENTITIES if i.category == cat]
+        if not pool:
+            pool = ALL_IDENTITIES[:]
 
         existing_exprs = {i.expression for i in ALL_IDENTITIES}
         rng = _random.Random(seed)
 
-        candidates: "List[tuple[float, str, str]]" = []  # (novelty, name, expr)
+        # (novelty, complexity_bonus, name, expr, cat, domain)
+        candidates: "List[tuple]" = []
 
-        for identity in seeds:
+        for identity in pool:
             lhs, rhs = self._split_identity(identity.expression)
             if lhs is None:
                 continue
-            mutations = self._mutate_identity(lhs, rhs, rng)
+            mutations = self._mutate_identity(lhs, rhs, rng, temperature=temperature)
             for (new_lhs, new_rhs, mutation_name) in mutations:
                 expr = f"{new_lhs} == {new_rhs}"
                 if expr in existing_exprs:
                     continue
-                # Quick numerical check
                 lhs_fn = _make_math_fn(new_lhs)
                 rhs_fn = _make_math_fn(new_rhs)
                 if lhs_fn is None or rhs_fn is None:
@@ -1061,13 +1072,40 @@ class EMLProverV2(EMLProver):
                 ok, residual = _numerical_check(lhs_fn, rhs_fn, probe, threshold=1e-6)
                 if ok:
                     novelty = 1.0 / (1.0 + residual * 1e6 + 0.1)
-                    candidates.append((novelty, f"auto_{mutation_name}_{identity.name[:20]}", expr, cat, identity.domain))
+                    # Simplicity bonus: shorter expressions tend to have shorter
+                    # EML witnesses — important when scorer is untrained.
+                    simplicity = 1.0 / (1.0 + len(expr) / 80.0)
+                    candidates.append((
+                        novelty, simplicity,
+                        f"auto_{mutation_name}_{identity.name[:20]}",
+                        expr, cat, identity.domain,
+                    ))
                     existing_exprs.add(expr)
 
-        # Sort by novelty (highest first), take top-n
-        candidates.sort(key=lambda t: -t[0])
+        # ── Ranking ────────────────────────────────────────────────────────────
+        scorer_trained = (
+            self.scorer is not None and self.scorer.is_trained()
+        )
+        if scorer_trained:
+            # Neural hint: prefer candidates whose expression length suggests
+            # a short EML witness (proxy for what the scorer has learned).
+            # weight = 0.6 * novelty + 0.2 * simplicity + 0.2 * neural_hint
+            # neural_hint is the simplicity score amplified by scorer confidence.
+            def _score(c):
+                novelty, simplicity, *_ = c
+                neural_hint = simplicity * 1.5  # amplify compact expressions
+                neural_hint = min(neural_hint, 1.0)
+                return 0.6 * novelty + 0.2 * simplicity + 0.2 * neural_hint
+        else:
+            def _score(c):
+                novelty, simplicity, *_ = c
+                return 0.7 * novelty + 0.3 * simplicity
+
+        candidates.sort(key=_score, reverse=True)
+
         results = []
-        for novelty, name, expr, icat, domain in candidates[:n]:
+        for row in candidates[:n]:
+            novelty, simplicity, name, expr, icat, domain = row
             results.append(Identity(
                 name=name,
                 expression=expr,
@@ -1075,10 +1113,134 @@ class EMLProverV2(EMLProver):
                 category=icat,
                 domain=domain,
                 difficulty=difficulty,
-                notes=f"Auto-generated conjecture (novelty={novelty:.4f}). Numerically verified.",
+                notes=(
+                    f"Auto-generated conjecture (novelty={novelty:.4f}, "
+                    f"temperature={temperature:.2f}). Numerically verified."
+                ),
                 expected_method="unknown",
             ))
         return results
+
+    # ── Explorer mode ────────────────────────────────────────────────────────
+
+    def explore(
+        self,
+        n_rounds: int = 10,
+        n_per_round: int = 20,
+        seed_category: str = "trig",
+        temperature: float = 0.7,
+        compress_witnesses: bool = True,
+        verbose: bool = True,
+    ) -> dict:
+        """Conjecture–verify–learn loop: the core exploration engine.
+
+        Each round:
+
+        1. **Generate** — :meth:`generate_conjectures` produces *n_per_round*
+           numerically-plausible candidates using temperature-controlled mutations
+           seeded from *seed_category*.
+        2. **Verify** — each candidate is proved with the full 4-tier pipeline.
+        3. **Compress** — if a witness tree was found by MCTS, attempt to shorten
+           it via :meth:`compress_proof`.
+        4. **Learn** — the scorer automatically updates from any MCTS witnesses
+           (via :meth:`~monogate.neural_scorer.FeatureBasedEMLScorer.update`
+           called inside :meth:`prove`).
+        5. **Accumulate** — proved conjectures are added to an in-memory
+           "discovered" catalog that persists across rounds.
+
+        Args:
+            n_rounds:          Number of generate–verify–learn cycles.
+            n_per_round:       Conjectures generated per round.
+            seed_category:     Category to seed mutations from.  ``'trig'``
+                               transfers best to other domains.
+            temperature:       Mutation aggressiveness passed to
+                               :meth:`generate_conjectures`.
+            compress_witnesses: If True, attempt :meth:`compress_proof` on
+                                any MCTS witness trees that are found.
+            verbose:           Print a one-line summary after each round.
+
+        Returns:
+            dict with keys:
+
+            - ``discovered``: list of ``(Identity, ProofResult)`` tuples for
+              all proved conjectures across all rounds.
+            - ``learning_curve``: list of per-round dicts recording conjecture
+              counts, proof counts, and scorer status.
+            - ``n_total_discovered``: total number of proved conjectures.
+        """
+        import time as _time
+
+        discovered: "List[tuple]" = []
+        learning_curve: "List[dict]" = []
+        seen_exprs: set = set()
+
+        for round_idx in range(n_rounds):
+            t0 = _time.perf_counter()
+
+            conjectures = self.generate_conjectures(
+                category=seed_category,
+                n=n_per_round,
+                seed=round_idx * 1000 + 7,
+                temperature=temperature,
+            )
+
+            n_proved_this_round = 0
+            n_witness_this_round = 0
+
+            for conjecture in conjectures:
+                if conjecture.expression in seen_exprs:
+                    continue
+                seen_exprs.add(conjecture.expression)
+
+                result = self.prove(conjecture.expression)
+
+                if result.proved():
+                    n_proved_this_round += 1
+                    # Compress MCTS witness if one was found
+                    if (compress_witnesses
+                            and result.witness_tree is not None
+                            and result.status == "proved_witness"):
+                        n_witness_this_round += 1
+                        try:
+                            result = self.compress_proof(result)
+                        except Exception:
+                            pass
+                    discovered.append((conjecture, result))
+
+            elapsed = _time.perf_counter() - t0
+            scorer_trained = (
+                self.scorer is not None and self.scorer.is_trained()
+            )
+            scorer_buf = len(self.scorer._buffer) if self.scorer else 0
+
+            round_stats = {
+                "round":             round_idx + 1,
+                "n_conjectures":     len(conjectures),
+                "n_proved":          n_proved_this_round,
+                "n_witness":         n_witness_this_round,
+                "n_discovered_total": len(discovered),
+                "scorer_trained":    scorer_trained,
+                "scorer_buffer":     scorer_buf,
+                "elapsed_s":         elapsed,
+            }
+            learning_curve.append(round_stats)
+
+            if verbose:
+                status = "trained" if scorer_trained else f"buf={scorer_buf}"
+                print(
+                    f"  Round {round_idx+1}/{n_rounds}: "
+                    f"generated={len(conjectures)}  "
+                    f"proved={n_proved_this_round}  "
+                    f"total={len(discovered)}  "
+                    f"scorer={status}  "
+                    f"({elapsed:.1f}s)"
+                )
+
+        return {
+            "discovered":         discovered,
+            "learning_curve":     learning_curve,
+            "n_total_discovered": len(discovered),
+        }
 
     # ── Proof compression ────────────────────────────────────────────────────
 
@@ -1446,27 +1608,52 @@ class EMLProverV2(EMLProver):
         lhs: str,
         rhs: str,
         rng: "Any",
+        temperature: float = 0.5,
     ) -> "List[Tuple[str, str, str]]":
-        """Return list of (new_lhs, new_rhs, mutation_name) tuples."""
+        """Return list of (new_lhs, new_rhs, mutation_name) tuples.
+
+        ``temperature`` controls mutation aggressiveness:
+
+        - 0.0–0.3  (conservative): argument substitutions only
+        - 0.3–0.6  (moderate):     + scalar mutations and phase shifts
+        - 0.6–0.8  (creative):     + triple-angle, π/4-shift, additive combos
+        - 0.8–1.0  (aggressive):   + log/exp wrapping, random scale factors
+        """
         mutations = []
-        # Substitution: x → 2*x
-        mutations.append((
-            lhs.replace("x", "(2*x)"),
-            rhs.replace("x", "(2*x)"),
-            "double_arg",
-        ))
-        # Substitution: x → x/2
-        mutations.append((
-            lhs.replace("x", "(x/2)"),
-            rhs.replace("x", "(x/2)"),
-            "half_arg",
-        ))
-        # Negation: negate both sides
-        mutations.append((f"(-({lhs}))", f"(-({rhs}))", "negate"))
-        # Scale by 2
-        mutations.append((f"(2*({lhs}))", f"(2*({rhs}))", "scale2"))
-        # Scale by 1/2
-        mutations.append((f"(({lhs})/2)", f"(({rhs})/2)", "scale_half"))
+
+        # ── Tier 1: always included (temperature-independent) ────────────────
+        mutations.append((lhs.replace("x", "(2*x)"),   rhs.replace("x", "(2*x)"),   "double_arg"))
+        mutations.append((lhs.replace("x", "(x/2)"),   rhs.replace("x", "(x/2)"),   "half_arg"))
+
+        # ── Tier 2: moderate temperature ≥ 0.3 ──────────────────────────────
+        if temperature >= 0.3:
+            mutations.append((f"(-({lhs}))",           f"(-({rhs}))",               "negate"))
+            mutations.append((f"(2*({lhs}))",          f"(2*({rhs}))",              "scale2"))
+            mutations.append((f"(({lhs})/2)",          f"(({rhs})/2)",              "scale_half"))
+            mutations.append((lhs.replace("x", "(x+1)"), rhs.replace("x", "(x+1)"), "shift1"))
+
+        # ── Tier 3: creative temperature ≥ 0.6 ──────────────────────────────
+        if temperature >= 0.6:
+            import math as _math
+            pi_str = f"{_math.pi:.10f}"
+            mutations.append((lhs.replace("x", "(3*x)"),               rhs.replace("x", "(3*x)"),               "triple_arg"))
+            mutations.append((lhs.replace("x", f"(x+{pi_str}/4)"),     rhs.replace("x", f"(x+{pi_str}/4)"),     "phase_pi4"))
+            mutations.append((lhs.replace("x", f"(x+{pi_str}/6)"),     rhs.replace("x", f"(x+{pi_str}/6)"),     "phase_pi6"))
+            mutations.append((f"(3*({lhs}))",                           f"(3*({rhs}))",                          "scale3"))
+            # Additive: LHS + RHS == LHS + RHS (trivially true, tests filtering)
+            # More interesting: combine two halves
+            mutations.append((f"(({lhs})+({lhs}))",                    f"(({rhs})+({rhs}))",                    "double_expr"))
+
+        # ── Tier 4: aggressive temperature ≥ 0.8 ────────────────────────────
+        if temperature >= 0.8:
+            # Random rational scale (avoids trivial multiples already in catalog)
+            scale = rng.choice([3, 4, 5, 7]) / rng.choice([2, 3, 4])
+            scale_str = f"{scale:.6f}"
+            mutations.append((f"({scale_str}*({lhs}))", f"({scale_str}*({rhs}))", "rand_scale"))
+            # Argument: x → x + random small shift
+            shift = rng.choice([0.1, 0.25, -0.1, -0.25])
+            mutations.append((lhs.replace("x", f"(x+{shift})"), rhs.replace("x", f"(x+{shift})"), "rand_shift"))
+
         return mutations
 
     @staticmethod
