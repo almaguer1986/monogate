@@ -914,7 +914,18 @@ class HybridOperator:
         if name in routing:
             # Delegate to the routed Operator's attribute of the same name.
             # E.g. BEST.pow -> getattr(EXL, 'pow') -> pow_exl via EXL.__getattr__
-            return getattr(routing[name], name)
+            delegate = getattr(routing[name], name)
+            # EDL and EXL operators use cmath internally, so their results are
+            # complex even when the imaginary part is zero.  Strip it at this
+            # boundary so HybridOperator always returns float to user code.
+            import functools
+
+            @functools.wraps(delegate)
+            def _real_result(*args, **kwargs):
+                v = delegate(*args, **kwargs)
+                return v.real if isinstance(v, complex) else v
+
+            return _real_result
         raise AttributeError(
             f"HybridOperator {self.name!r}: no routing for {name!r}. "
             f"Available: {sorted(routing)}"
