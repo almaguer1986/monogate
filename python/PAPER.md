@@ -95,11 +95,11 @@ The 74% node reduction in `sin` yields a **2.8× end-to-end speedup** in EML-ari
 | EML-GELU (17n)  | 4.736       | 1× (baseline)   |
 | BEST-GELU (14n) | 5.115       | ~0.93×          |
 
-The 18% node reduction in GELU is insufficient to overcome Python call overhead. The comparison across the two experiments confirms the node-count model: **savings / overhead ratio** determines whether routing improvements yield measurable wall-clock gains. Activations with ≥74% node reductions (sin, cos) benefit substantially; those with ≤20% reductions (GELU) do not at typical batch sizes.
+The 18% node reduction in GELU is insufficient to overcome Python call overhead at typical batch sizes. The comparison across the two experiments confirms the node-count model: **savings / overhead ratio** determines whether routing improvements yield measurable wall-clock gains. Activations with ≥74% node reductions (sin, cos) benefit substantially; those with ≤20% reductions (GELU) do not.
 
 ## 5. Conclusion and Open Problems
 
-The `BEST` hybrid shows that intelligently combining variants of EML can produce substantially more efficient and stable trees than any single operator. The released `monogate` library makes these techniques immediately usable in both Python and the browser.
+The `BEST` hybrid demonstrates that intelligently combining variants of EML can produce substantially more efficient and stable trees than any single operator. The released `monogate` library makes these techniques immediately usable in both Python and the browser.
 
 **Open problems:**
 - Is there a finite EML tree using only terminal `{1}` that evaluates exactly to `sin(x)`?
