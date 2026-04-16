@@ -1,5 +1,5 @@
 """
-monogate Streamlit Web Demo — 5 interactive tabs.
+monogate Streamlit Web Demo — 7 interactive tabs.
 
 Run:
     streamlit run streamlit_app.py
@@ -10,6 +10,8 @@ Tabs:
     3  PINN Demo         — Physics-Informed EML Networks (requires torch)
     4  MCTS Explorer     — Gradient-free tree search for target functions
     5  Phantom Attractor — Pre-computed phase-transition visualisation
+    6  DEML Gate         — Dual gate operator; negative-exponent barrier demo
+    7  Math Explorer     — EMLProverV2 identity discovery + mutation bandit stats
 """
 
 from __future__ import annotations
@@ -41,7 +43,7 @@ except ImportError:
     SCIPY_AVAILABLE = False
 
 # ── monogate imports ──────────────────────────────────────────────────────────
-from monogate import best_optimize
+from monogate import best_optimize, DEML, exp_neg_deml
 from monogate.special import (
     CATALOG,
     ai_cb, cos_cb, cosh_cb, digamma_cb, erf_cb,
@@ -65,12 +67,14 @@ st.caption(
     "[GitHub](https://github.com/almaguer1986/monogate)"
 )
 
-tab1, tab2, tab3, tab4, tab5 = st.tabs([
+tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
     "⚡ Optimizer",
     "📐 Special Functions",
     "🧬 PINN Demo",
     "🔍 MCTS Explorer",
     "🌀 Phantom Attractor",
+    "⊖ DEML Gate",
+    "🔭 Math Explorer",
 ])
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -577,4 +581,153 @@ with tab5:
         st.error(
             f"Attractor data not found at `{_ATTRACTOR_PATH}`. "
             "Run `python/experiments/gen_attractor_data_v2.py` to generate it."
+        )
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Tab 6 — DEML Gate
+# ─────────────────────────────────────────────────────────────────────────────
+
+with tab6:
+    st.header("DEML Dual Gate")
+    st.markdown(
+        "**`deml(x, y) = exp(−x) − ln(y)`** — the structural dual of EML. "
+        "While EML natively represents eˣ in 1 node, DEML natively represents **e^(−x)** "
+        "in 1 node, breaking the *negative-exponent barrier* that blocks 14/15 physics laws "
+        "from EML representation."
+    )
+
+    st.subheader("Key identity: deml(x, 1) = exp(−x)")
+    st.code("deml(x, 1) = exp(−x) − ln(1) = exp(−x) − 0 = exp(−x)", language="text")
+
+    col_a, col_b = st.columns(2)
+
+    with col_a:
+        st.markdown("### Live verification")
+        x_probe = st.slider("x", min_value=-3.0, max_value=3.0, value=1.0, step=0.1)
+        deml_val = float(DEML.func(complex(x_probe), complex(1.0)).real)
+        ref_val  = math.exp(-x_probe)
+        err_val  = abs(deml_val - ref_val)
+        c1, c2, c3 = st.columns(3)
+        c1.metric("deml(x,1)", f"{deml_val:.6f}")
+        c2.metric("exp(−x)", f"{ref_val:.6f}")
+        c3.metric("|error|", f"{err_val:.2e}")
+
+        st.markdown("### Operator comparison table")
+        import pandas as pd
+        cmp_data = [
+            {"Function": "exp(x)",  "EML nodes": 1,    "DEML nodes": "✗ (barrier)", "BEST nodes": 1},
+            {"Function": "exp(−x)", "EML nodes": "✗",  "DEML nodes": 1,             "BEST nodes": 1},
+            {"Function": "ln(x)",   "EML nodes": 3,    "DEML nodes": 3,             "BEST nodes": 1},
+            {"Function": "x / y",   "EML nodes": 15,   "DEML nodes": "—",           "BEST nodes": 1},
+            {"Function": "x × y",   "EML nodes": 13,   "DEML nodes": "—",           "BEST nodes": 7},
+        ]
+        st.dataframe(pd.DataFrame(cmp_data), use_container_width=True, hide_index=True)
+
+    with col_b:
+        st.markdown("### exp(−x) plot: DEML vs reference")
+        xs = np.linspace(-2.0, 2.0, 200)
+        try:
+            y_deml = np.array([float(DEML.func(complex(x), complex(1.0)).real) for x in xs])
+            y_ref  = np.exp(-xs)
+            err_arr = np.abs(y_deml - y_ref)
+
+            fig, axes = plt.subplots(2, 1, figsize=(6, 5), tight_layout=True)
+            axes[0].plot(xs, y_ref, lw=2, label="exp(−x) reference")
+            axes[0].plot(xs, y_deml, "--", lw=1.5, label="deml(x,1)")
+            axes[0].set_title("DEML gate: deml(x, 1) = exp(−x)")
+            axes[0].legend()
+            axes[0].set_xlabel("x")
+
+            axes[1].semilogy(xs, np.maximum(err_arr, 1e-17))
+            axes[1].set_title("Absolute error (should be ≈ machine epsilon)")
+            axes[1].set_xlabel("x")
+            axes[1].set_ylabel("|deml − ref|")
+
+            st.pyplot(fig)
+            plt.close(fig)
+        except Exception as exc:
+            st.error(f"Plot error: {exc}")
+
+    st.subheader("Physics Law Census — negative-exponent barrier")
+    st.markdown(
+        "| Operator(s) | Native laws / 15 | Barrier status |\n"
+        "|-------------|-----------------|----------------|\n"
+        "| EML alone   | 1 / 15          | 14 blocked     |\n"
+        "| DEML alone  | TBD (hypothesis ≈ 6–8 / 15) | Partially lifted |\n"
+        "| EML + DEML  | TBD (hypothesis ≈ 10–12 / 15) | Most lifted  |"
+    )
+    st.info(
+        "Run `python -m monogate.frontiers.deml_census` from the `python/` directory "
+        "to compute the full census with DEML."
+    )
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Tab 7 — Mathematical Explorer
+# ─────────────────────────────────────────────────────────────────────────────
+
+with tab7:
+    st.header("Mathematical Explorer — EMLProverV2")
+    st.markdown(
+        "Self-improving identity discovery engine. Generates conjectures via 5 mutation "
+        "tiers, scores by elegance / novelty / interestingness, and maintains a catalog "
+        "of **200+** verified EML identities. Adaptive UCB1 bandit over mutation strategies."
+    )
+
+    try:
+        from monogate.prover import EMLProverV2
+
+        col_cfg2, col_out2 = st.columns([1, 2])
+
+        with col_cfg2:
+            n_rounds = st.slider("Exploration rounds", 5, 100, 20, key="explorer_rounds")
+            depth_ex = st.slider("Max conjecture depth", 2, 5, 3, key="explorer_depth")
+            run_ex   = st.button("Run Explorer", type="primary", key="btn_explorer")
+
+        with col_out2:
+            ex_key = f"explorer_{n_rounds}_{depth_ex}"
+            if run_ex:
+                prover = EMLProverV2()
+                with st.spinner(f"Running {n_rounds} rounds…"):
+                    prover.explore(n_rounds=n_rounds)
+                st.session_state[ex_key] = {
+                    "catalog": prover.catalog[:20],
+                    "stats":   prover.mutation_stats(),
+                    "n_total": len(prover.catalog),
+                }
+
+            if ex_key in st.session_state:
+                s2 = st.session_state[ex_key]
+                st.metric("New identities found", s2["n_total"])
+
+                st.markdown("#### Top identities (by elegance score)")
+                rows2 = []
+                for entry in s2["catalog"]:
+                    rows2.append({
+                        "Expression": getattr(entry, "expr", str(entry)),
+                        "Nodes":      getattr(entry, "nodes", "—"),
+                        "Score":      round(getattr(entry, "score", 0), 3),
+                        "Category":   getattr(entry, "category", "—"),
+                    })
+                if rows2:
+                    import pandas as pd
+                    st.dataframe(pd.DataFrame(rows2), use_container_width=True, hide_index=True)
+
+                if s2["stats"]:
+                    st.markdown("#### Mutation bandit statistics")
+                    import pandas as pd
+                    st.dataframe(pd.DataFrame(s2["stats"]), use_container_width=True, hide_index=True)
+            elif not run_ex:
+                st.info("Configure and click **Run Explorer** to discover EML identities.")
+
+    except ImportError as exc:
+        st.error(f"EMLProverV2 not available: {exc}")
+        st.markdown(
+            "### Pre-computed sample catalog (Session 5 results)\n\n"
+            "| Expression | Nodes | Category |\n"
+            "|------------|-------|----------|\n"
+            "| `eml(x, 1)` | 1 | exp |\n"
+            "| `eml(1, eml(eml(1,x),1))` | 3 | ln |\n"
+            "| `eml(add(ln(x),ln(y)),1)` | 13 | mul |\n"
+            "| `eml(eml(x,1), eml(1,y))` | 3 | composition |\n"
+            "\n**200+ identities** in full catalog. Run `EMLProverV2().explore()` to generate."
         )

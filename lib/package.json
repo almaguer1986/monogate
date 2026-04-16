@@ -1,6 +1,6 @@
 {
   "name": "monogate",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "A single binary operator eml(x,y) = exp(x) − ln(y) that generates all elementary functions. Implementation of arXiv:2603.21852 (Odrzywołek, 2026).",
   "type": "module",
   "main": "./src/index.js",

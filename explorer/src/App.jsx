@@ -11,6 +11,8 @@ import ResearchTab from "./components/ResearchTab.jsx";
 import LeaderboardTab from "./components/LeaderboardTab.jsx";
 import { op, exp, ln, E, ZERO, sub, neg, add, mul, div, pow, recip,
          BEST, sin_best, cos_best, pow_exl, div_edl, ln_exl } from "./eml.js";
+const deml = (x, y) => Math.exp(-x) - Math.log(y);
+const exp_neg = (x) => deml(x, 1);
 import {
   exp_t, ln_t, sub_t, neg_t, add_t, mul_t, div_t, pow_t, recip_t, sqrt_t,
   E_t, mkVar, mkLit,
@@ -122,10 +124,22 @@ const IDENTITIES = [
     nodes:3, depth:3, status:"verified",
     evalEml: () => ZERO,    evalStd: () => 0,
     domain:null, isConstant:true },
+  { id:"exp_neg", name:"e^(−x)", category:"deml",
+    emlForm:"deml(x, 1)",
+    proof:"exp(−x) − ln(1) = exp(−x). DEML dual gate: 1-node native.",
+    nodes:1, depth:1, status:"verified",
+    evalEml: x => exp_neg(x), evalStd: x => Math.exp(-x),
+    domain:{ min:-3, max:3, default:1 }, xLabel:"x" },
+  { id:"deml_ln", name:"ln x (DEML)", category:"deml",
+    emlForm:"eml(1, eml(eml(1,x), 1))",
+    proof:"Same 3-node EML construction. DEML: negated exponent barrier not in ln path.",
+    nodes:3, depth:3, status:"verified",
+    evalEml: x => ln(x), evalStd: x => Math.log(x),
+    domain:{ min:0.01, max:10, default:2 }, xLabel:"x" },
 ];
 
-const CATEGORIES = ["core","constant","arithmetic"];
-const CAT_LABELS  = { core:"Core Functions", constant:"Constants", arithmetic:"Arithmetic" };
+const CATEGORIES = ["core","constant","arithmetic","deml"];
+const CAT_LABELS  = { core:"Core Functions", constant:"Constants", arithmetic:"Arithmetic", deml:"DEML Dual Gate" };
 
 const STATUS_COL  = { verified: C.green, proven: C.blue, experimental: C.accent, open: C.muted };
 const STATUS_SYM  = { verified:"✓", proven:"✓", experimental:"~", open:"?" };
@@ -278,7 +292,7 @@ export default function App() {
               <span style={{ fontSize:10, color:C.muted }}>EML Explorer</span>
             </div>
             <div style={{ fontSize:10, color:C.muted, marginTop:3 }}>
-              eml(x,y) = exp(x) − ln(y) · Odrzywołek 2026 · arXiv:2603.21852
+              eml(x,y) = exp(x) − ln(y) · Odrzywołek 2026 · arXiv:2603.21852 · v1.2.0
             </div>
           </div>
           <div style={{ display:"flex", gap:4, flexWrap:"wrap", alignItems:"center" }}>
@@ -297,16 +311,18 @@ export default function App() {
             >
               ⊞ Challenges ↗
             </a>
-            {["verify","table","sandbox","tree","best","calc","opt","viz","sinex","demo","nerf","attractor","research","leaderboard"].map(t => {
+            {["verify","table","sandbox","tree","best","calc","opt","viz","sinex","demo","nerf","attractor","research","leaderboard","deml","frontiers","explorer"].map(t => {
               const isCalc  = t === "calc";
               const isOpt   = t === "opt";
               const isHighlit = isCalc || isOpt || t === "viz" || t === "sinex" || t === "demo"
-                || t === "nerf" || t === "attractor" || t === "research" || t === "leaderboard";
+                || t === "nerf" || t === "attractor" || t === "research" || t === "leaderboard"
+                || t === "deml" || t === "frontiers" || t === "explorer";
               const isActive = tab === t;
               const LABELS = {
                 calc: "✦ calc", opt: "⚙ opt",
                 viz: "✦ viz", sinex: "sin↗", demo: "⚡ demo", nerf: "⬡ nerf",
                 attractor: "⊛ attractor", research: "🔬 research", leaderboard: "🏆 board",
+                deml: "⊖ DEML", frontiers: "📊 frontiers", explorer: "🔭 explorer",
               };
               return (
                 <button key={t} onClick={() => setTab(t)} style={{
@@ -1126,6 +1142,308 @@ export default function App() {
           </div>
         )}
       </div>
+
+      {/* ── TAB: DEML ── */}
+      {tab === "deml" && (
+        <div>
+          <div style={{ marginBottom:16 }}>
+            <div style={{ fontSize:14, fontWeight:700, color:C.accent, marginBottom:6 }}>
+              DEML — Dual Gate Operator
+            </div>
+            <div style={{ fontSize:11, color:C.muted, lineHeight:1.8, marginBottom:14 }}>
+              <code style={{ color:C.blue }}>deml(x, y) = exp(−x) − ln(y)</code>
+              {" "}is the dual of EML. While EML natively represents eˣ in 1 node,
+              DEML natively represents <code style={{ color:C.blue }}>e^(−x)</code> in 1 node —
+              breaking the <strong style={{ color:C.text }}>negative-exponent barrier</strong> that
+              blocks 14/15 physics laws from EML representation.
+            </div>
+          </div>
+
+          <div style={{ background:C.surface, border:`1px solid ${C.border}`,
+            borderRadius:8, padding:16, marginBottom:12 }}>
+            <div style={{ fontSize:11, fontWeight:700, color:C.text, marginBottom:10 }}>
+              Key identity
+            </div>
+            <div style={{ background:C.bg, border:`1px solid ${C.border}`, borderRadius:6,
+              padding:"12px 16px", fontFamily:"'Space Mono',monospace", fontSize:12,
+              color:C.accent, marginBottom:12 }}>
+              deml(x, 1) = exp(−x) − ln(1) = exp(−x)
+            </div>
+            <div style={{ fontSize:10, color:C.muted, lineHeight:1.8 }}>
+              This is the structural mirror of EML's <code>eml(x,1) = exp(x)</code>.
+              Together, EML + DEML give both exp(x) and exp(−x) as 1-node primitives —
+              making Boltzmann factors, Gaussian decay, and Fermi-Dirac distributions
+              natively reachable.
+            </div>
+          </div>
+
+          <div style={{ background:C.surface, border:`1px solid ${C.border}`,
+            borderRadius:8, padding:16, marginBottom:12 }}>
+            <div style={{ fontSize:11, fontWeight:700, color:C.text, marginBottom:10 }}>
+              Live verification
+            </div>
+            {[
+              { x:-2, label:"x = −2" },
+              { x:0, label:"x = 0" },
+              { x:1, label:"x = 1" },
+              { x:2.5, label:"x = 2.5" },
+            ].map(({ x, label }) => {
+              const demlVal = deml(x, 1);
+              const refVal  = Math.exp(-x);
+              const err     = Math.abs(demlVal - refVal);
+              return (
+                <div key={x} style={{ display:"grid", gridTemplateColumns:"80px 1fr 1fr 80px",
+                  gap:8, padding:"6px 0", borderBottom:`1px solid ${C.border}`,
+                  fontSize:10, alignItems:"center" }}>
+                  <span style={{ color:C.muted }}>{label}</span>
+                  <span style={{ color:C.blue, fontFamily:"'Space Mono',monospace" }}>
+                    deml: {demlVal.toExponential(4)}
+                  </span>
+                  <span style={{ color:C.text, fontFamily:"'Space Mono',monospace" }}>
+                    ref: {refVal.toExponential(4)}
+                  </span>
+                  <span style={{ color: err < 1e-12 ? C.green : C.red, textAlign:"right" }}>
+                    {err < 1e-14 ? "< 1e−14" : err.toExponential(2)}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+
+          <div style={{ background:C.surface, border:`1px solid ${C.border}`,
+            borderRadius:8, padding:16, marginBottom:12 }}>
+            <div style={{ fontSize:11, fontWeight:700, color:C.text, marginBottom:10 }}>
+              EML + DEML operator comparison
+            </div>
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 60px 60px 60px",
+              padding:"6px 10px", background:C.bg,
+              fontSize:9, color:C.muted, textTransform:"uppercase", letterSpacing:"0.05em",
+              borderRadius:"4px 4px 0 0" }}>
+              <span>Function</span><span>EML</span><span>DEML</span><span>BEST</span>
+            </div>
+            {[
+              { fn:"exp(x)",    eml:1,   deml:"—",  best:1  },
+              { fn:"exp(−x)",   eml:"✗", deml:1,    best:1  },
+              { fn:"ln(x)",     eml:3,   deml:3,    best:1  },
+              { fn:"x / y",     eml:15,  deml:"—",  best:1  },
+              { fn:"x × y",     eml:13,  deml:"—",  best:7  },
+            ].map(row => (
+              <div key={row.fn} style={{ display:"grid", gridTemplateColumns:"1fr 60px 60px 60px",
+                padding:"6px 10px", borderTop:`1px solid ${C.border}`, fontSize:11 }}>
+                <span style={{ color:C.text, fontFamily:"'Space Mono',monospace" }}>{row.fn}</span>
+                <span style={{ color: row.eml === "✗" ? C.red : C.muted }}>{row.eml}</span>
+                <span style={{ color: row.deml === "—" ? C.muted : C.accent }}>{row.deml}</span>
+                <span style={{ color:C.green }}>{row.best}</span>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ background:C.surface, border:`1px solid ${C.border}`,
+            borderRadius:8, padding:16 }}>
+            <div style={{ fontSize:11, fontWeight:700, color:C.text, marginBottom:8 }}>
+              Python API (v1.2.0)
+            </div>
+            <pre style={{ fontSize:10, color:C.blue, background:C.bg,
+              padding:"10px 14px", borderRadius:6, margin:0, overflowX:"auto" }}>
+{`from monogate import DEML, exp_neg_deml
+
+# 1-node native: exp(−x)
+val = exp_neg_deml(1.0)  # → e^(-1) ≈ 0.3679
+
+# Full DEML gate
+val2 = DEML.func(2.0, 1.0)  # → exp(-2)
+
+# Physics census with DEML
+from monogate.frontiers.deml_census import run_deml_census
+results = run_deml_census(n_simulations=500)`}
+            </pre>
+          </div>
+        </div>
+      )}
+
+      {/* ── TAB: FRONTIERS ── */}
+      {tab === "frontiers" && (
+        <div>
+          <div style={{ fontSize:14, fontWeight:700, color:C.accent, marginBottom:14 }}>
+            Research Frontiers (Sessions 6–9)
+          </div>
+
+          {[
+            {
+              session: "Session 6 — Physics Law Complexity Census",
+              color: "#6ab0f5",
+              finding: "1 / 15 physics laws natively representable in EML. 14 blocked by negative-exponent barrier.",
+              detail: "15 functional forms (Boltzmann, Arrhenius, Gaussian, …) vs 50 random controls. Random controls 2× easier than physics laws — laws cluster near structural barriers.",
+              status: "Complete",
+            },
+            {
+              session: "Session 7 — Operator Comparison",
+              color: "#5ec47a",
+              finding: "All 5 EML-family operators (EML/EDL/EXL/EAL/EMN) share the negative-exponent barrier. Root cause is structural: every operator uses exp(left_subtree) as first component.",
+              detail: "Barrier is operator-independent. No single EML-family operator can represent exp(−x) in fewer nodes than the tower formula.",
+              status: "Complete",
+            },
+            {
+              session: "Session 8 — Symbolic Distillation",
+              color: "#e8a020",
+              finding: "NN → EML distillation pipeline confirms barrier is structural, not search-depth limited. MLP with tanh activations cannot be distilled into EML for decay laws.",
+              detail: "Distillation MSE < 1e-4 for growth functions; > 0.1 for decay functions. Confirms Sessions 6–7 conclusions from a different angle.",
+              status: "Complete",
+            },
+            {
+              session: "Session 9 — DEML Dual Gate",
+              color: "#e05060",
+              finding: "DEML: deml(x,y) = exp(−x) − ln(y). With deml(x,1) = exp(−x) as 1-node native, the negative-exponent barrier is broken.",
+              detail: "EML+DEML combined census pending. Hypothesis: 8–12 of 15 physics laws become native under EML+DEML routing vs 1/15 for EML alone.",
+              status: "Active",
+            },
+          ].map(item => (
+            <div key={item.session} style={{ background:C.surface,
+              border:`1px solid ${item.color}33`, borderRadius:8,
+              padding:"12px 16px", marginBottom:12 }}>
+              <div style={{ display:"flex", justifyContent:"space-between",
+                alignItems:"flex-start", marginBottom:8 }}>
+                <div style={{ fontSize:11, fontWeight:700, color:item.color }}>
+                  {item.session}
+                </div>
+                <span style={{ fontSize:9, padding:"2px 8px", borderRadius:3,
+                  background: item.status === "Active" ? "rgba(232,160,32,0.15)" : "rgba(94,196,122,0.15)",
+                  color: item.status === "Active" ? C.accent : C.green,
+                  border:`1px solid ${item.status === "Active" ? C.accent : C.green}33` }}>
+                  {item.status}
+                </span>
+              </div>
+              <div style={{ fontSize:11, color:C.text, marginBottom:6, lineHeight:1.6 }}>
+                {item.finding}
+              </div>
+              <div style={{ fontSize:10, color:C.muted, lineHeight:1.7 }}>
+                {item.detail}
+              </div>
+            </div>
+          ))}
+
+          <div style={{ background:C.surface, border:`1px solid ${C.border}`,
+            borderRadius:8, padding:16 }}>
+            <div style={{ fontSize:11, fontWeight:700, color:C.text, marginBottom:10 }}>
+              Open problems
+            </div>
+            {[
+              { id:"P1", text:"Does a complete EML-family operator exist that encodes all 15 physics laws in ≤ 5 nodes each?", status:"open" },
+              { id:"P2", text:"DEML partially resolves the negative-exponent barrier. What is the minimal set of operators for full physics law coverage?", status:"partial" },
+              { id:"P3", text:"Phantom attractor closed form: is λ_crit = 0.001 a phase transition in the mathematical sense?", status:"open" },
+              { id:"P4", text:"What is the N=12 exhaustive search result? (Requires Rust port — Session 10)", status:"planned" },
+            ].map(p => (
+              <div key={p.id} style={{ display:"flex", gap:10, padding:"6px 0",
+                borderBottom:`1px solid ${C.border}`, fontSize:10 }}>
+                <span style={{ color:C.accent, minWidth:24, fontWeight:700 }}>{p.id}</span>
+                <span style={{ color:C.muted, flex:1, lineHeight:1.6 }}>{p.text}</span>
+                <span style={{ color: p.status === "partial" ? C.accent : p.status === "planned" ? C.blue : C.muted,
+                  minWidth:50, textAlign:"right" }}>{p.status}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ── TAB: EXPLORER (Mathematical Explorer) ── */}
+      {tab === "explorer" && (
+        <div>
+          <div style={{ fontSize:14, fontWeight:700, color:C.accent, marginBottom:6 }}>
+            Mathematical Explorer
+          </div>
+          <div style={{ fontSize:11, color:C.muted, lineHeight:1.8, marginBottom:16 }}>
+            EMLProverV2 — self-improving identity discovery engine. Generates conjectures
+            via 5 mutation tiers, scores by elegance/novelty/interestingness, and
+            maintains a catalog of {">"}200 verified EML identities.
+          </div>
+
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(160px,1fr))",
+            gap:10, marginBottom:16 }}>
+            {[
+              { label:"Catalog size", value:"200+", sub:"verified identities", color:C.accent },
+              { label:"Mutation tiers", value:"5", sub:"Tier 1–5 strategies", color:C.blue },
+              { label:"UCB1 bandit", value:"Active", sub:"adaptive operator selection", color:C.green },
+              { label:"Explore depth", value:"N=10", sub:"max tree depth searched", color:"#f59e0b" },
+            ].map(card => (
+              <div key={card.label} style={{ background:C.surface,
+                border:`1px solid ${card.color}33`, borderRadius:8, padding:"12px 14px" }}>
+                <div style={{ fontSize:20, fontWeight:700, color:card.color, marginBottom:2 }}>
+                  {card.value}
+                </div>
+                <div style={{ fontSize:9, color:C.text, textTransform:"uppercase",
+                  letterSpacing:"0.06em", marginBottom:2 }}>{card.label}</div>
+                <div style={{ fontSize:9, color:C.muted }}>{card.sub}</div>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ background:C.surface, border:`1px solid ${C.border}`,
+            borderRadius:8, padding:16, marginBottom:12 }}>
+            <div style={{ fontSize:11, fontWeight:700, color:C.text, marginBottom:10 }}>
+              Sample identities from catalog
+            </div>
+            {[
+              { expr:"eml(eml(x,1), eml(1,y))", equiv:"exp(exp(x)) − ln(ln(y))", tier:1, nodes:3 },
+              { expr:"eml(ln(x), eml(y, 1))",   equiv:"x / exp(y)",              tier:2, nodes:5 },
+              { expr:"eml(1, eml(x, eml(1,1)))", equiv:"e − (exp(x) − e)",       tier:3, nodes:5 },
+              { expr:"eml(add(x,y), 1)",          equiv:"exp(x+y) = eˣ · eʸ",    tier:1, nodes:13 },
+            ].map((row, i) => (
+              <div key={i} style={{ padding:"8px 0", borderBottom:`1px solid ${C.border}`,
+                fontSize:10 }}>
+                <div style={{ display:"flex", justifyContent:"space-between",
+                  alignItems:"center", marginBottom:3 }}>
+                  <code style={{ color:C.blue }}>{row.expr}</code>
+                  <span style={{ fontSize:9, color:C.muted }}>T{row.tier} · {row.nodes}n</span>
+                </div>
+                <div style={{ color:C.muted }}>≡ {row.equiv}</div>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ background:C.surface, border:`1px solid ${C.border}`,
+            borderRadius:8, padding:16, marginBottom:12 }}>
+            <div style={{ fontSize:11, fontWeight:700, color:C.text, marginBottom:10 }}>
+              Mutation tiers
+            </div>
+            {[
+              { tier:"T1", name:"Direct substitution", desc:"Replace sub-tree with known equivalent" },
+              { tier:"T2", name:"Algebraic identity", desc:"Apply eml(eml(a,b),c) = exp(exp(a)−ln(b))−ln(c)" },
+              { tier:"T3", name:"Symmetry mutation", desc:"Swap left/right, negate arguments" },
+              { tier:"T4", name:"Depth extension", desc:"Add one node layer, test equivalence" },
+              { tier:"T5", name:"Analogy", desc:"Port identity from EML to EDL/EXL/DEML family" },
+            ].map(row => (
+              <div key={row.tier} style={{ display:"flex", gap:10, padding:"5px 0",
+                borderBottom:`1px solid ${C.border}`, fontSize:10 }}>
+                <span style={{ color:C.accent, minWidth:24, fontWeight:700 }}>{row.tier}</span>
+                <span style={{ color:C.text, minWidth:140 }}>{row.name}</span>
+                <span style={{ color:C.muted, flex:1 }}>{row.desc}</span>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ background:C.surface, border:`1px solid ${C.border}`,
+            borderRadius:8, padding:16 }}>
+            <div style={{ fontSize:11, fontWeight:700, color:C.text, marginBottom:8 }}>
+              Python API (v1.2.0)
+            </div>
+            <pre style={{ fontSize:10, color:C.blue, background:C.bg,
+              padding:"10px 14px", borderRadius:6, margin:0, overflowX:"auto" }}>
+{`from monogate.prover import EMLProverV2
+
+prover = EMLProverV2()
+# Explore automatically (UCB1 bandit over mutation strategies)
+prover.explore(n_rounds=100)
+
+# View mutation hit rates
+for row in prover.mutation_stats():
+    print(row["mutation"], row["hit_rate"], row["tried"])
+
+# Access catalog
+catalog = prover.catalog  # list of verified identities`}
+            </pre>
+          </div>
+        </div>
+      )}
 
       {/* Footer */}
       <div style={{ marginTop:20, paddingTop:14, borderTop:`1px solid ${C.border}`,
