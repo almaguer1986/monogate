@@ -23,8 +23,10 @@ Example::
 
 from .mcts import mcts_search, beam_search, MCTSResult, BeamResult
 from .sin_search_05 import run_exhaustive, run_mcts_approx, SearchResult
+from .analyze_n11 import run as analyze_n11
 
 __all__ = [
     "mcts_search", "beam_search", "MCTSResult", "BeamResult",
     "run_exhaustive", "run_mcts_approx", "SearchResult",
+    "analyze_n11",
 ]

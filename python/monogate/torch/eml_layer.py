@@ -198,13 +198,27 @@ class EMLLayer(nn.Module):
 
         One-liner speedup with ``compiled=True``::
 
-            # ~3–8× faster on CPU (depth <= 3, mode='activation')
+            # Automatically selects fastest available backend:
+            #   Rust (5.9×) > FusedEMLActivation (3.6×) > standard
             layer = EMLLayer(256, 256, depth=2, compiled=True)
-            out   = layer(x)   # same API, no code changes needed
+            out   = layer(x)   # same API, no code changes
 
-            # For the absolute fastest path: also torch.compile:
+            # Maximum speed: also apply torch.compile
             fast  = layer.compile()
-            out   = fast(x)
+
+            # Check which backend is active:
+            print(layer)
+            # ...backend=rust  (if monogate-core installed)
+            # ...backend=fused (Python fallback, still 3.6×)
+
+        **Rust backend (recommended for best performance):**
+        Install ``monogate-core`` once (~30 s compile) and all
+        ``EMLLayer(compiled=True)`` instances automatically use the
+        Rust path for batches ≥ 512 elements::
+
+            cd monogate-core
+            pip install maturin && maturin develop --release
+            # 5.9× speedup — no code changes needed
 
     **mode='tree'** (fully interpretable EML trees):
 
@@ -259,24 +273,26 @@ class EMLLayer(nn.Module):
         self.mode         = mode_
         self.compiled     = compiled
 
-        # ── Activation mode: Linear + EMLActivation (or FusedEMLActivation) ─
+        # ── Activation mode: Linear + EMLActivation (or accelerated variant) ─
         if self.mode == "activation":
             self.linear = nn.Linear(in_features, out_features)
             nn.init.uniform_(self.linear.weight, -0.05, 0.05)
             nn.init.ones_(self.linear.bias)
 
-            # Use the fused kernel when compiled=True and depth is in [1,3]
             if compiled and 1 <= depth <= 3 and self.operator in ("EML", "BEST"):
-                import warnings
-                from ..compile.fused import FusedEMLActivation
-                self.activation = FusedEMLActivation(depth=depth, operator=operator)
+                # Priority: Rust > FusedEMLActivation > standard
+                # get_best_activation picks the fastest available backend
+                from ..fused_rust import get_best_activation
+                self.activation = get_best_activation(depth=depth, operator=operator)
             else:
                 if compiled and (depth > 3 or self.operator not in ("EML", "BEST")):
                     import warnings
                     warnings.warn(
-                        f"EMLLayer compiled=True requires depth<=3 and operator in "
-                        f"('EML','BEST'); got depth={depth}, operator={operator!r}. "
-                        "Falling back to standard EMLActivation.",
+                        f"EMLLayer compiled=True is only accelerated for depth<=3 and "
+                        f"operator in ('EML','BEST'); got depth={depth}, "
+                        f"operator={operator!r}. "
+                        "Using standard EMLActivation. "
+                        "For Rust acceleration: install monogate-core.",
                         stacklevel=2,
                     )
                 self.activation = EMLActivation(depth=depth, operator=operator)
@@ -329,12 +345,19 @@ class EMLLayer(nn.Module):
     def extra_repr(self) -> str:
         n_nodes  = (1 << self.depth) - 1
         n_leaves = 1 << self.depth
-        fused_tag = ", fused=True" if self.compiled else ""
+        if self.compiled:
+            from ..fused_rust import RUST_AVAILABLE
+            if RUST_AVAILABLE:
+                backend_tag = ", backend=rust"
+            else:
+                backend_tag = ", backend=fused"
+        else:
+            backend_tag = ""
         return (
             f"in={self.in_features}, out={self.out_features}, "
             f"depth={self.depth}, operator={self.operator!r}, "
             f"mode={self.mode!r}, nodes/tree={n_nodes}, leaves/tree={n_leaves}"
-            f"{fused_tag}"
+            f"{backend_tag}"
         )
 
     @property

@@ -19,8 +19,14 @@ const BENCH = [
   { op: "ln(x)",                 best: 1,   eml: 3,   pct: 67 },
 ];
 
-const IS     = ["Symbolic math optimizer", "Research & educational tool", "Scalar / embedded math", "Novel operator theory results"];
-const IS_NOT = ["PyTorch inference accelerator", "Faster than torch.sin (9,000×)", "General ML optimization library", "Production-ready for most models"];
+const PERF = [
+  { label: "FusedEMLLayer depth=3, N=16",  speedup: "3.6×", detail: "vs EMLLayer on CPU" },
+  { label: "FusedEMLLayer depth=2, N=1024", speedup: "2.5×", detail: "vs EMLLayer on CPU" },
+  { label: "SIREN training step, w=64",     speedup: "1.2×", detail: "Fused vs standard EML" },
+];
+
+const IS     = ["Symbolic math optimizer", "Performance-critical scalar math", "Research & educational tool", "Embedded / tinyML use cases"];
+const IS_NOT = ["PyTorch inference accelerator", "Faster than torch.sin (9,000×)", "General ML optimization library", "Replacement for BLAS/cuDNN"];
 
 function NavLink({ label, tab, onEnter, accent }) {
   const base = {
@@ -86,6 +92,9 @@ export default function LandingPage({ onEnter }) {
           }}>
             eml(x, y) = exp(x) − ln(y)
           </code>
+          <div style={{ fontSize: 9, color: C.muted, marginTop: 8, letterSpacing: "0.03em" }}>
+            Odrzywołek, A. (2026) · arXiv:2603.21852
+          </div>
         </div>
 
         {/* ── Primary CTA ──────────────────────────────────────────────── */}
@@ -105,7 +114,7 @@ export default function LandingPage({ onEnter }) {
             Open Explorer →
           </button>
           <span style={{ fontSize: 10, color: C.muted }}>
-            calculator · tree visualizer · optimizer · challenge board
+            calculator · tree visualizer · optimizer
           </span>
         </div>
 
@@ -138,6 +147,78 @@ export default function LandingPage({ onEnter }) {
               </div>
             </div>
           ))}
+        </Section>
+
+        {/* ── Performance kernels ──────────────────────────────────────── */}
+        <Section label="v0.6.0 — FusedEMLLayer speedups (CPU)">
+          <div style={{
+            background: C.surface, border: `1px solid ${C.border}`,
+            borderRadius: 8, overflow: "hidden",
+          }}>
+            <div style={{
+              display: "grid", gridTemplateColumns: "2.5fr 80px 1fr",
+              padding: "7px 16px", borderBottom: `1px solid ${C.border}`,
+              fontSize: 8, color: C.muted, letterSpacing: "0.10em", textTransform: "uppercase",
+            }}>
+              {["Config", "Speedup", ""].map((h, i) => (
+                <div key={i} style={{ textAlign: i > 0 ? "right" : "left" }}>{h}</div>
+              ))}
+            </div>
+            {PERF.map(({ label, speedup, detail }, i) => (
+              <div key={label} style={{
+                display: "grid", gridTemplateColumns: "2.5fr 80px 1fr",
+                padding: "10px 16px", alignItems: "center",
+                borderBottom: i < PERF.length - 1 ? `1px solid ${C.border}` : "none",
+                background: i % 2 ? "rgba(255,255,255,0.012)" : "transparent",
+              }}>
+                <div style={{ fontSize: 10, color: C.text }}>{label}</div>
+                <div style={{ fontSize: 13, color: C.green, textAlign: "right", fontWeight: 700 }}>{speedup}</div>
+                <div style={{ fontSize: 9, color: C.muted, textAlign: "right" }}>{detail}</div>
+              </div>
+            ))}
+            <div style={{
+              padding: "8px 16px", borderTop: `1px solid ${C.border}`,
+              fontSize: 9, color: C.muted, lineHeight: 1.7,
+            }}>
+              <code style={{ color: C.accent, fontSize: 9 }}>
+                from monogate.compile import FusedEMLLayer
+              </code>
+              {" "}· drop-in replacement for EMLLayer · ONNX-exportable
+            </div>
+          </div>
+        </Section>
+
+        {/* ── LLM optimizer callout ─────────────────────────────────────── */}
+        <Section label="v0.6.0 — LLM-assisted optimizer">
+          <div style={{
+            background: C.surface, border: `1px solid ${C.border}`,
+            borderRadius: 8, padding: "16px 18px",
+          }}>
+            <div style={{ fontSize: 10, color: C.text, marginBottom: 10, lineHeight: 1.7 }}>
+              Describe any function in plain English. monogate asks an LLM to
+              express it, then routes through BEST for the most compact EML tree.
+            </div>
+            <code style={{
+              display: "block",
+              background: "#070810", border: `1px solid ${C.border}`,
+              borderRadius: 5, padding: "10px 14px", fontSize: 10,
+              color: C.muted, lineHeight: 1.8,
+            }}>
+              <span style={{ color: C.muted }}>$ </span>
+              <span style={{ color: C.text }}>monogate-optimize </span>
+              <span style={{ color: C.green }}>"sigmoid function"</span>
+              <br/>
+              <span style={{ color: C.muted }}>  LLM  : math.exp(x) / (1 + math.exp(x))</span>
+              <br/>
+              <span style={{ color: C.muted }}>  BEST : BEST.exp(x) / (1 + BEST.exp(x))</span>
+              <br/>
+              <span style={{ color: C.accent }}>  Nodes: 21 EML → 7 BEST  (67% savings)</span>
+            </code>
+            <div style={{ marginTop: 10, fontSize: 9, color: C.muted }}>
+              <code style={{ color: C.accent }}>pip install "monogate[llm]"</code>
+              {" "}· providers: mock (free) · openai · groq · anthropic
+            </div>
+          </div>
         </Section>
 
         {/* ── Benchmark table ──────────────────────────────────────────── */}
@@ -222,15 +303,15 @@ export default function LandingPage({ onEnter }) {
         {/* ── Explorer nav ─────────────────────────────────────────────── */}
         <Section label="Jump to">
           <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-            <NavLink label="✦ calc"    tab="calc"    onEnter={onEnter} accent />
-            <NavLink label="⚙ opt"     tab="opt"     onEnter={onEnter} />
-            <NavLink label="⬡ nerf"    tab="nerf"    onEnter={onEnter} />
-            <NavLink label="✦ viz"     tab="viz"     onEnter={onEnter} />
-            <NavLink label="sin↗"      tab="sinex"   onEnter={onEnter} />
-            <NavLink label="⚡ demo"   tab="demo"    onEnter={onEnter} />
-            <NavLink label="⊞ board"   tab="board"   onEnter={onEnter} />
-            <NavLink label="table"     tab="table"   onEnter={onEnter} />
-            <NavLink label="verify"    tab="verify"  onEnter={onEnter} />
+            <NavLink label="✦ calc"      tab="calc"      onEnter={onEnter} accent />
+            <NavLink label="⚙ opt"       tab="opt"       onEnter={onEnter} />
+            <NavLink label="⬡ nerf"      tab="nerf"      onEnter={onEnter} />
+            <NavLink label="✦ viz"       tab="viz"       onEnter={onEnter} />
+            <NavLink label="sin↗"        tab="sinex"     onEnter={onEnter} />
+            <NavLink label="⚡ demo"     tab="demo"      onEnter={onEnter} />
+            <NavLink label="⊛ attractor" tab="attractor" onEnter={onEnter} />
+            <NavLink label="table"       tab="table"     onEnter={onEnter} />
+            <NavLink label="verify"      tab="verify"    onEnter={onEnter} />
           </div>
         </Section>
 

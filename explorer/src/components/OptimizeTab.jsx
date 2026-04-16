@@ -92,16 +92,43 @@ function SavingsBadge({ pct, small = false }) {
   );
 }
 
+function SavingsBar({ pct }) {
+  if (!pct || pct <= 0) return null;
+  const color = pct >= 70 ? C.green : pct >= 40 ? C.accent : C.blue;
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+      <div style={{ flex: 1, height: 3, borderRadius: 2, background: C.border, overflow: "hidden" }}>
+        <div style={{ width: `${pct}%`, height: "100%", background: color, borderRadius: 2, transition: "width 0.4s" }} />
+      </div>
+      <span style={{ fontSize: 9, color, minWidth: 28, textAlign: "right", fontWeight: 700 }}>
+        -{pct}%
+      </span>
+    </div>
+  );
+}
+
 function OpTable({ matches, totalEml, totalBest }) {
   return (
     <div>
+      {/* Header */}
+      <div style={{
+        display: "grid", gridTemplateColumns: "1fr 60px 62px 62px 80px",
+        gap: 8, padding: "4px 0 8px", borderBottom: `1px solid ${C.border}`,
+        fontSize: 8, color: C.muted, textTransform: "uppercase", letterSpacing: "0.08em",
+      }}>
+        <span>Operation</span>
+        <span style={{ textAlign: "center" }}>Family</span>
+        <span style={{ textAlign: "right" }}>BEST</span>
+        <span style={{ textAlign: "right" }}>EML</span>
+        <span style={{ textAlign: "right" }}>Saving</span>
+      </div>
       {matches.map(m => {
         const savPct = m.eml > 0 ? Math.round((1 - m.best / m.eml) * 100) : 0;
         return (
           <div key={m.id} style={{
-            display: "grid", gridTemplateColumns: "1fr 70px 76px 76px",
+            display: "grid", gridTemplateColumns: "1fr 60px 62px 62px 80px",
             alignItems: "center", gap: 8,
-            padding: "6px 0", borderBottom: `1px solid ${C.border}`,
+            padding: "7px 0", borderBottom: `1px solid ${C.border}`,
           }}>
             <div>
               <span style={{ fontSize: 11, color: C.text }}>{m.label}</span>
@@ -110,12 +137,13 @@ function OpTable({ matches, totalEml, totalBest }) {
               )}
               <div style={{ fontSize: 9, color: C.muted, marginTop: 1 }}>{m.note}</div>
             </div>
-            <OpPill op={m.op} />
+            <div style={{ display: "flex", justifyContent: "center" }}>
+              <OpPill op={m.op} />
+            </div>
             <div style={{ textAlign: "right" }}>
               <span style={{ fontSize: 11, color: savPct > 0 ? C.accent : C.muted }}>
                 {m.count * m.best}n
               </span>
-              <span style={{ fontSize: 9, color: C.muted }}> BEST</span>
             </div>
             <div style={{ textAlign: "right" }}>
               <span style={{
@@ -124,13 +152,15 @@ function OpTable({ matches, totalEml, totalBest }) {
               }}>
                 {m.count * m.eml}n
               </span>
-              <span style={{ fontSize: 9, color: C.muted }}> EML</span>
+            </div>
+            <div>
+              <SavingsBar pct={savPct} />
             </div>
           </div>
         );
       })}
       <div style={{
-        display: "grid", gridTemplateColumns: "1fr 70px 76px 76px",
+        display: "grid", gridTemplateColumns: "1fr 60px 62px 62px 80px",
         alignItems: "center", gap: 8, paddingTop: 8,
       }}>
         <span style={{ fontSize: 10, color: C.muted, textTransform: "uppercase", letterSpacing: "0.06em" }}>
@@ -143,6 +173,11 @@ function OpTable({ matches, totalEml, totalBest }) {
         <span style={{ fontSize: 13, color: C.muted, textAlign: "right", textDecoration: "line-through" }}>
           {totalEml}n
         </span>
+        <div>
+          {totalEml > 0 && (
+            <SavingsBar pct={Math.round((1 - totalBest / totalEml) * 100)} />
+          )}
+        </div>
       </div>
     </div>
   );

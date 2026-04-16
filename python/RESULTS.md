@@ -86,3 +86,66 @@ Mildly left-heavy trees (balance score 1) outperform both right-chain and perfec
 - Why does `eml(eml(0.45, 1), eml(1, 1))` form a stable attractor for e at depth=2?
 - Can a discrete search (exhaustive or MCTS) escape phantoms that gradient descent cannot?
 - Is there a penalty schedule that avoids phantom attractors and reaches the true Pareto frontier?
+
+
+---
+
+## Exhaustive Sin-Search: Complete Results (N ≤ 11)
+
+**Date:** 2026-04-16 · **Script:** `monogate/search/sin_search_05.py`
+
+### Summary table
+
+| N  | Catalan(N) | Raw trees | After exact parity | Cumulative | Result |
+|----|------------|-----------|-------------------|------------|--------|
+| 1  | 1 | 4 | 2 | 4 | no candidate |
+| 2  | 2 | 16 | 8 | 20 | no candidate |
+| 3  | 5 | 80 | 40 | 100 | no candidate |
+| 4  | 14 | 448 | 224 | 548 | no candidate |
+| 5  | 42 | 2,688 | 1,344 | 3,236 | no candidate |
+| 6  | 132 | 16,896 | 8,448 | 20,132 | no candidate |
+| 7  | 429 | 109,824 | 54,912 | 129,956 | no candidate |
+| 8  | 1,430 | 732,160 | 366,080 | 862,116 | no candidate |
+| 9  | 4,862 | 4,978,688 | 2,489,344 | 5,840,804 | no candidate |
+| 10 | 16,796 | 34,398,208 | 17,199,104 | 40,239,012 | no candidate |
+| **11** | **58,786** | **240,787,456** | **208,901,719** | **281,026,468** | **no candidate** |
+
+**N=11 runtime:** 323.1s (5.4 min) · parity filter eliminated 13.2% of raw assignments
+
+```
+RESULT: NO EML tree with terminals {1, x} equals sin(x) for any N ≤ 11.
+        281,026,468 trees searched. Zero candidates at any tolerance (1e−4 to 1e−9).
+```
+
+**Theory:** The Infinite Zeros Barrier proves this holds for all N: sin(x) has
+infinitely many zeros (at kπ); every finite real-valued EML tree is real-analytic
+and has only finitely many zeros. The exhaustive search provides empirical
+confirmation. See `paper/preprint.tex` §7 and `PAPER.md §6`.
+
+**Complex bypass (exact, 1 node):**
+```
+Im(eml(i·x, 1)) = Im(exp(ix) − ln(1)) = Im(e^(ix)) = sin(x)
+```
+Exact for all x ∈ ℝ. The barrier is a real-domain statement only.
+
+### Near-miss gallery (top 10 closest to sin(x) found at N=11)
+
+These are the closest real-valued EML trees — not exact, but the best achievable:
+
+| Rank | MSE | Formula |
+|------|-----|---------|
+| #1 | 1.4781e-04 | `eml(eml(eml(x,1),eml(1,1)),eml(eml(eml(eml(x,1),eml(1,1)),eml(x,1)),eml(x,1)))` |
+| #2 | 1.4822e-04 | `eml(eml(1,1),eml(eml(eml(1,1),eml(x,1)),eml(eml(eml(eml(x,1),eml(1,1)),1),1)))` |
+| #3 | 2.5052e-04 | `eml(x,eml(1,eml(x,eml(eml(eml(x,eml(x,1)),eml(eml(1,eml(x,1)),eml(x,1))),1))))` |
+| #4 | 3.1694e-04 | `eml(1,eml(eml(1,eml(x,1)),eml(1,eml(eml(x,1),eml(eml(x,eml(eml(1,1),1)),1)))))` |
+| #5 | 3.1694e-04 | `eml(1,eml(eml(1,eml(x,1)),eml(1,eml(1,eml(eml(x,eml(eml(eml(x,1),1),1)),1)))))` |
+| #6 | 5.3702e-04 | `eml(1,eml(eml(1,eml(x,1)),eml(1,eml(eml(1,eml(1,eml(eml(x,eml(1,1)),1))),1))))` |
+| #7 | 5.3966e-04 | `eml(x,eml(1,eml(eml(x,eml(x,1)),eml(eml(eml(x,eml(1,eml(1,1))),eml(x,1)),1))))` |
+| #8 | 6.9860e-04 | `eml(1,eml(eml(1,eml(x,1)),eml(eml(1,eml(eml(1,1),eml(1,1))),eml(x,eml(x,1)))))` |
+| #9 | 7.3270e-04 | `eml(1,eml(eml(1,eml(x,1)),eml(x,eml(eml(eml(x,eml(eml(1,eml(1,1)),1)),1),1))))` |
+| #10 | 8.2106e-04 | `eml(1,eml(eml(1,eml(x,1)),eml(1,eml(eml(eml(x,eml(1,1)),eml(x,eml(x,1))),1))))` |
+
+Best near-miss (#1) is 2,842× closer to sin(x) than the trivial baseline exp(x) (MSE≈0.42).
+
+**Analysis script:** `python monogate/search/analyze_n11.py`
+**HTML gallery:** `python monogate/search/analyze_n11.py --html output/n11_gallery.html`

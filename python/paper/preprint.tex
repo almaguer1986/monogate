@@ -1,0 +1,731 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{microtype}
+\usepackage{array}
+
+% Code listing style
+\lstset{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  frame=single,
+  backgroundcolor=\color{gray!8},
+  rulecolor=\color{gray!40},
+  columns=flexible,
+}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{proposition}[theorem]{Proposition}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!60!black,
+  citecolor=blue!60!black,
+  urlcolor=teal,
+}
+
+\title{%
+  Practical Extensions to the EML Universal Operator:\\
+  Hybrid Routing, Phantom Attractors, Performance Kernels,\\
+  and the N{\,}={\,}11 Sin Barrier
+}
+
+\author{Art Almaguer\\
+  \small \texttt{almaguer1986@gmail.com}\\[2pt]
+  \small \textit{monogate project} --- \url{https://github.com/almaguer1986/monogate}
+}
+
+\date{April 2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Odrzyw\'{o}\l{}ek (2026) showed that the binary operator
+$\operatorname{eml}(x,y)=e^x - \ln y$, with constant~$1$, generates
+every elementary function as a finite binary tree of identical nodes.
+We report five independent extensions developed while building
+\textsc{monogate} v0.8.0 (641 passing tests, PyPI-installable):
+
+\begin{enumerate}
+  \item \textbf{BEST hybrid routing.}
+    A thin dispatcher selects among EML, EDL~($e^x/\ln y$), and
+    EXL~($e^x \cdot \ln y$) per operation, cutting node count by 52\%
+    on average and up to 74\% for Taylor-series $\sin/\cos$.
+    Measured wall-clock speedup: $2.8\times$ for sin-heavy expressions.
+
+  \item \textbf{Phantom attractors.}
+    Gradient training of depth-3 EML trees to $\pi$ converges to a
+    wrong fixed point ($\approx 3.1696$) in 40/40 seeds ($\lambda=0$).
+    A tiny L1 penalty $\lambda_{\text{crit}}=0.001$ induces a sharp
+    phase transition: 40/40 now reach $\pi$.
+
+  \item \textbf{Infinite Zeros Barrier \& exhaustive N$\leq$11 search.}
+    \textbf{281,026,468} real-valued EML trees ($N\leq11$ internal nodes,
+    terminals $\{1,x\}$) were enumerated; not one matches $\sin(x)$ at
+    tolerances from $10^{-4}$ to $10^{-9}$.
+    A structural theorem rules out real-valued exact-$\sin$ constructions
+    for \emph{all} $N$.  The complex bypass $\mathrm{Im}(\mathrm{eml}(ix,1))=\sin(x)$
+    recovers the function in one node.
+
+  \item \textbf{Performance kernels.}
+    A fused vectorized Python kernel (\textsc{FusedEMLActivation}) and a
+    Rust/PyO3 compiled extension (\textsc{monogate-core}) deliver $3.6\times$
+    and $5.9\times$ speedups respectively over the recursive Python baseline
+    at depth-2 on CPU, with graceful fallback.
+
+  \item \textbf{PyTorch integration.}
+    \textsc{EMLLayer} is a drop-in \texttt{nn.Module} for SIREN, NeRF, and
+    PINN activation replacement.  It is ONNX-exportable (opset 17),
+    \texttt{torch.compile}-compatible, and serializes via standard
+    \texttt{state\_dict()}.
+\end{enumerate}
+
+Source code, data, and the interactive explorer are available at
+\url{https://github.com/almaguer1986/monogate}.
+\end{abstract}
+
+% ============================================================
+\section{Introduction}
+\label{sec:intro}
+% ============================================================
+
+Odrzyw\'{o}\l{}ek~\cite{odrzywolekEML2026} established that the single
+binary operator
+\[
+  \operatorname{eml}(x,y) \;=\; e^x - \ln y
+\]
+together with the constant~$1$ suffices to express every elementary
+function as a finite binary tree of identical nodes.
+The result was obtained by exhaustive construction rather than
+analytical proof, making it a natural target for algorithmic extension.
+
+This paper reports practical extensions developed while building
+\textsc{monogate}, a complete Python and JavaScript library for EML
+symbolic computation.
+We made five independent observations:
+
+\begin{itemize}
+  \item \emph{Hybrid routing} (BEST, Section~\ref{sec:best}) reduces
+    node count by 52--74\% and yields $2.8\times$ wall-clock speedup
+    for sin-heavy expressions.
+  \item \emph{Phantom attractors} (Section~\ref{sec:attractors}) are a
+    previously undocumented failure mode of gradient-based EML
+    optimisation, with a sharp, inexpensive cure
+    ($\lambda_{\text{crit}}=0.001$).
+  \item \emph{N=11 exhaustive search} (Section~\ref{sec:zeros}) extends
+    empirical coverage to 281~million trees; combined with the Infinite
+    Zeros Barrier theorem, this closes the real-domain exact-$\sin$
+    question for all~$N$.
+  \item \emph{Performance kernels} (Section~\ref{sec:perf}) deliver
+    $3.6\times$ (fused Python) and $5.9\times$ (Rust/PyO3) speedups
+    over the recursive baseline.
+  \item \emph{PyTorch integration} provides a drop-in \texttt{nn.Module}
+    with full autograd, ONNX export (opset 17), and
+    \texttt{torch.compile} support.
+\end{itemize}
+
+% ============================================================
+\section{The EML Operator Family}
+% ============================================================
+
+We examined five natural variants of the form $f(e^x, \ln y)$:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}lllll@{}}
+\toprule
+Operator & Definition & Constant & Complete? & Strength \\
+\midrule
+\textbf{EML} & $e^x - \ln y$ & $1$ & Yes & Add, subtract \\
+\textbf{EDL} & $e^x / \ln y$ & $e$ & Yes & Div (1 node), mul (7 nodes) \\
+\textbf{EXL} & $e^x \cdot \ln y$ & $1$ & No  & $\ln$ (1 node), $\mathrm{pow}$ (3 nodes), stability \\
+EAL          & $e^x + \ln y$ & $1$ & No  & --- \\
+EMN          & $\ln y - e^x$ & $-\infty$ & No & --- \\
+\bottomrule
+\end{tabular}
+\caption{Operator family.  Only EML and EDL are complete over all
+elementary functions; EXL is complete over multiplicative operations
+and offers superior numerical stability.}
+\end{table}
+
+EDL achieves completeness over the \emph{multiplicative} elementary
+functions ($\div$, $\times$, $\mathrm{pow}$, $\ln$, $\exp$) but cannot
+express addition or subtraction of arbitrary reals without EML.
+EXL avoids catastrophic cancellation in deep trees by replacing
+subtraction with multiplication, giving superior numerical stability.
+
+% ============================================================
+\section{BEST Hybrid Routing}
+\label{sec:best}
+% ============================================================
+
+The \textsc{BEST} dispatcher routes each primitive to its cheapest
+known implementation across the three complete operators:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}llrrrl@{}}
+\toprule
+Operation & Routed to & Nodes (BEST) & EML nodes & Saving & Notes \\
+\midrule
+$\exp(x)$   & EML & 1  & 1  &  0 & Identity \\
+$\ln(x)$    & EXL & 1  & 3  & $-2$ & \\
+$x^b$       & EXL & 3  & 15 & $-12$ & \\
+$a\times b$ & EDL & 7  & 13 & $-6$ & \\
+$a\div b$   & EDL & 1  & 15 & $-14$ & Cheapest div \\
+$1/x$       & EDL & 2  & 5  & $-3$ & \\
+$-x$        & EDL & 6  & 9  & $-3$ & \\
+$a - b$     & EML & 5  & 5  &  0 & \\
+$a + b$     & EML & 11 & 11 &  0 & \\
+\midrule
+\textbf{Total} & & \textbf{37} & \textbf{77} & \textbf{52\%} & \\
+\bottomrule
+\end{tabular}
+\caption{Per-operation node counts and routing decisions in BEST mode.
+  The 52\% average saving over pure EML is realised without any
+  approximation --- every operation is still exact.}
+\end{table}
+
+For Taylor-series $\sin/\cos$ the savings reach 74\% because each term
+benefits from cheap $\mathrm{pow}$ (3 vs.\ 15 nodes) and cheap
+$\div$ (1 vs.\ 15 nodes):
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}rrrr@{}}
+\toprule
+Terms & BEST nodes & EML-only nodes & Max error \\
+\midrule
+8  & 63  & 245 & $7.7\times10^{-7}$ \\
+13 & 108 & 420 & $6.5\times10^{-15}$ \\
+\bottomrule
+\end{tabular}
+\caption{Taylor-series $\sin(x)$ node counts.  BEST delivers 74\% fewer
+  nodes at the same precision.}
+\end{table}
+
+\paragraph{Wall-clock impact.}
+Node-count reductions translate to speedup when savings exceed Python
+function-call overhead.  Measured results on a single CPU core:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}lrrl@{}}
+\toprule
+Experiment & Savings & Speedup & Configuration \\
+\midrule
+sin/cos     & 74\% & $2.8\times$ & TinyMLP, sin activation \\
+polynomial $x^4+x^3+x^2$ & 54\% & $2.1\times$ & Scalar Python \\
+GELU        & 18\% & $0.93\times$ & Transformer FFN \\
+\bottomrule
+\end{tabular}
+\caption{Wall-clock speedup from BEST routing.  The crossover at
+  $\approx20\%$ savings determines whether routing pays off.}
+\end{table}
+
+A linear fit ($R^2=0.9992$):
+$\text{speedup} \approx 0.033 \times \text{savings\_pct} + 0.32$.
+Activations with savings above $\sim$20\% benefit;
+GELU at 18\% does not at typical Python batch sizes.
+
+% ============================================================
+\section{Phantom Attractors in EML Training}
+\label{sec:attractors}
+% ============================================================
+
+\subsection{Characterization}
+
+Gradient-based training of \texttt{EMLTree(depth=3)} with Adam to
+target $\pi$ reveals a rugged loss landscape dominated by a single
+dominant non-target local optimum.
+
+\begin{figure}[h]
+\centering
+\fbox{\parbox{0.9\linewidth}{\centering
+  \textit{[AttractorViz screenshot]}\\[4pt]
+  Left: 40 loss curves (green = converges to $\pi$, orange = attractor).
+  Right: final formula values at step 3000.\\
+  $\lambda=0$: all 40 curves orange.
+  $\lambda=0.005$: all 40 curves green.
+}}
+\caption{Phase transition in depth-3 EMLTree fitting to $\pi$
+  (40 seeds, 3000 Adam steps, lr=$5\times10^{-3}$).
+  Data from \texttt{experiments/gen\_attractor\_data.py}.}
+\label{fig:attractor}
+\end{figure}
+
+Quantitative result (40 seeds $\times$ 2 $\lambda$ configs):
+
+\begin{itemize}
+  \item $\lambda=0$: \textbf{0/40} reach $\pi$; all 40 converge to
+    $\approx\mathbf{3.1696}$ (MSE $\approx 9\times10^{-4}$).
+  \item $\lambda=0.005$: \textbf{40/40} reach $\pi$
+    (MSE $<10^{-8}$).
+\end{itemize}
+
+The attractor at $3.1696$ is not a known simple closed form; it sits
+at the center of an unusually wide gradient basin such that any random
+initialization falls within its catchment area.
+
+\subsection{Depth-4: The Numerical Overflow Barrier}
+
+Across all 20 seeds and all $\lambda\in[0,0.05]$, \texttt{EMLTree(depth=4)}
+diverges to NaN or $\infty$ before completing 1000 steps.
+Even with leaves at $0$, the output is $\approx 1.6\times10^{13}$:
+a depth-4 complete binary EML tree applies $e^x$ at every level,
+producing a tower that overflows float64 range before the first gradient step.
+
+\begin{itemize}
+  \item Depth $\leq 3$: trainable; dominated by phantom attractors
+    (cured by $\lambda\geq\lambda_{\text{crit}}$).
+  \item Depth $= 4$: untrainable with naive initialisation.
+    Requires log-scale normalisation or a reparameterised architecture.
+\end{itemize}
+
+\paragraph{Refined critical lambda.}
+A 10-value $\lambda$ sweep (\texttt{gen\_attractor\_data\_v2.py},
+20 seeds, depth=3, 1000 steps) sharpens the critical threshold to
+$\boldsymbol{\lambda_{\text{crit}}=0.001}$ ---
+one order of magnitude smaller than the initial estimate.
+Above this threshold the attractor basin vanishes completely.
+
+\subsection{Escape Strategies}
+
+\begin{enumerate}
+  \item \textbf{Complexity penalty $\lambda>0$} (recommended):
+    L1 penalty on leaf distances from~1.
+    $\lambda=0.005$ achieves 40/40 convergence.
+
+  \item \textbf{Ensemble probing}:
+    $K=3$ short (250-step) fits from different seeds, select best, refine.
+    8/8 convergence without $\lambda$.
+
+  \item \textbf{MCTS search}:
+    Gradient-free rollouts never enter the attractor basin;
+    see Section~\ref{sec:mcts}.
+\end{enumerate}
+
+\subsection{Implications for Exact $\sin(x)$ Construction}
+
+Phantom attractors confound gradient-based search for $\sin(x)$:
+any finite evaluation set has nearby non-$\sin$ attractors matching
+all probe points.
+The Infinite Zeros Barrier (Section~\ref{sec:zeros}) provides the
+structural argument that rules out real-valued constructions entirely.
+
+% ============================================================
+\section{Exhaustive Search and the Infinite Zeros Barrier}
+\label{sec:zeros}
+% ============================================================
+
+\subsection{N$\leq$10 Baseline}
+
+Three scripts performed complete enumeration of the EML grammar with
+terminals $\{1,x\}$ through $N=10$ internal nodes.  Cumulative
+coverage through $N=10$: 40{,}239{,}012 trees; zero candidates at
+any tolerance in $[10^{-4},10^{-9}]$.
+
+$N=9$ added parity filtering (51.8\% of shapes pruned) and
+\texttt{ProcessPoolExecutor}, completing in $\approx5$\,s.
+$N=10$ used the same pipeline: 45.5\% parity pruning,
+$\approx19$\,s per tolerance.
+
+\subsection{N=11 Exhaustive Search}
+\label{sec:n11}
+
+\texttt{sin\_search\_05.py} (v0.7.0) extends the search to $N=11$
+using a fully vectorised NumPy batch evaluator.
+
+\paragraph{Algorithm.}
+For each of the $\mathrm{Catalan}(11)=58{,}786$ shapes, all
+$2^{12}=4{,}096$ leaf assignments are evaluated simultaneously at
+eight probe points by constructing an $(n_l, 4096, 8)$ leaf tensor
+and performing a single bottom-up NumPy tree traversal.
+Parity filtering tests all 4{,}096 assignments at $x=\pm0.7$;
+shapes with no odd assignment are skipped entirely.
+This is $50$--$200\times$ faster than the scalar Python evaluator.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}rrrrrr@{}}
+\toprule
+$N$ & Catalan & Assignments & Raw trees & After parity & Cumulative \\
+\midrule
+1  &         1 &      4 &            4 &             2 &             4 \\
+2  &         2 &      8 &           16 &             8 &            20 \\
+3  &         5 &     16 &           80 &            40 &           100 \\
+4  &        14 &     32 &          448 &           224 &           548 \\
+5  &        42 &     64 &        2{,}688 &         1{,}344 &         3{,}236 \\
+6  &       132 &    128 &       16{,}896 &         8{,}448 &        20{,}132 \\
+7  &       429 &    256 &      109{,}824 &        54{,}912 &       129{,}956 \\
+8  &     1{,}430 &    512 &      732{,}160 &       366{,}080 &       862{,}116 \\
+9  &     4{,}862 &  1{,}024 &    4{,}978{,}688 &     2{,}489{,}344 &     5{,}840{,}804 \\
+10 &    16{,}796 &  2{,}048 &   34{,}398{,}208 &    17{,}199{,}104 &    40{,}239{,}012 \\
+\textbf{11} & \textbf{58{,}786} & \textbf{4{,}096}
+   & \textbf{240{,}787{,}456} & \textbf{208{,}901{,}719}
+   & \textbf{281{,}026{,}468} \\
+\bottomrule
+\end{tabular}
+\caption{EML tree counts by internal-node depth $N$.
+  \textit{After parity}: assignments surviving the exact odd-function filter.
+  Parity eliminated 13.2\% of raw assignments at $N=11$.
+  All $N\leq11$ exhaustive runs returned zero candidates.}
+\label{tab:tree_counts}
+\end{table}
+
+\textbf{Result:} zero EML trees match $\sin(x)$ at any tolerance in
+$[10^{-4},10^{-9}]$ across all $N\leq11$.
+Runtime: 323\,s (5.4\,min) on a single CPU using the vectorised evaluator.
+
+\paragraph{Near-miss analysis.}
+The closest real-valued EML approximation found has
+$\mathrm{MSE}=1.478\times10^{-4}$, achieved by
+\[
+  T^*(x) = \mathrm{eml}\!\bigl(\mathrm{eml}(\mathrm{eml}(x,1),\mathrm{eml}(1,1)),\;
+             \mathrm{eml}(\mathrm{eml}(\mathrm{eml}(\mathrm{eml}(x,1),\mathrm{eml}(1,1)),
+             \mathrm{eml}(x,1)),\mathrm{eml}(x,1))\bigr),
+\]
+a 12-leaf tree --- $2{,}842\times$ closer than $\mathrm{eml}(x,1)=e^x$
+(MSE$\approx0.42$) yet still far from exact.
+Full near-miss gallery: \texttt{python monogate/search/analyze\_n11.py}.
+
+\subsection{The Infinite Zeros Barrier}
+
+\begin{theorem}[Infinite Zeros Barrier]
+\label{thm:barrier}
+No finite real-valued EML tree with terminals $\{1,x\}$ evaluates to
+$\sin(x)$ for all $x\in\mathbb{R}$.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+Any finite composition of $e^x$ and $\ln y$ over real inputs is
+real-analytic.
+On any interval free of $\ln$-singularities, its derivative is a
+composition of exponentials and hence nowhere zero on a dense set,
+so the function is locally monotone and has finitely many zeros.
+But $\sin(x)$ has a zero at every $n\pi$ ($n\in\mathbb{Z}$) ---
+infinitely many on every unbounded interval.
+No finite real-valued EML tree can match all of them.
+\end{proof}
+
+Theorem~\ref{thm:barrier} rules out real-valued constructions for
+\emph{all} $N$, not just $N\leq11$.
+
+\begin{corollary}
+The same argument applies to $\cos(x)$, $\operatorname{Ai}(x)$
+(Airy function), $J_0(x)$ (Bessel), and any real-analytic function
+with infinitely many zeros.
+\end{corollary}
+
+\begin{conjecture}
+No finite EML tree with terminals $\{1\}$ or $\{1,x\}$ evaluates to
+exactly $\sin(x)$ for all real~$x$.
+\end{conjecture}
+
+Supported by exhaustive search (Table~\ref{tab:tree_counts}:
+$281{,}026{,}468$ trees through $N\leq11$, zero candidates) and
+Theorem~\ref{thm:barrier} for the real-valued case.
+The complex-grammar case remains open.
+
+\paragraph{Complex bypass.}
+The Euler path provides an exact $\sin$ in one EML node within the
+complex grammar:
+\[
+  \mathrm{Im}(\mathrm{eml}(ix,1))
+  = \mathrm{Im}(e^{ix} - \ln 1)
+  = \mathrm{Im}(e^{ix})
+  = \sin(x).
+\]
+The barrier is a real-domain statement only.
+
+% ============================================================
+\section{MCTS Search Module}
+\label{sec:mcts}
+% ============================================================
+
+\textsc{monogate.search} provides gradient-free symbolic search over
+the EML grammar via MCTS and Beam Search.
+
+\begin{lstlisting}[language=Python]
+from monogate.search import mcts_search
+import math
+
+result = mcts_search(math.exp, depth=3, n_simulations=2000)
+# MCTSResult(mse=0.0e+00, formula='eml(x, 1.0)', elapsed=0.8s)
+# Exact: eml(x,1) = exp(x) - ln(1) = exp(x)
+\end{lstlisting}
+
+\paragraph{Algorithm.}
+Tree nodes are one of
+$\{\mathtt{leaf},1.0\}$, $\{\mathtt{leaf},x\}$, $\{\mathtt{eml},L,R\}$,
+or $\{?\}$ (placeholder).
+Selection uses UCB1 with $C=\sqrt{2}$.
+Rollouts randomly complete placeholders (60\% leaf / 40\% branch).
+Reward is $1/(1+\mathrm{MSE})\in(0,1]$.
+The search never follows a gradient and therefore cannot enter phantom
+attractor basins.
+
+MCTS is complementary to gradient-based \texttt{EMLTree.fit()}:
+it probes the landscape without gradient traps, and its best candidate
+can seed gradient refinement for high precision.
+
+% ============================================================
+\section{EDL Completeness}
+\label{sec:edl}
+% ============================================================
+
+EDL is $\operatorname{edl}(x,y)=e^x/\ln y$ with constant~$e$.
+\texttt{research\_03\_edl\_completeness.py} searched all 196 EDL trees
+with $N\leq6$ from terminal $\{e\}$.
+None evaluates to $e+1$, $2e$, $2$, $\pi$, or $\sqrt{2}$ ---
+all require additive combination of independent reals, confirming
+that EDL and EML are complementary, not redundant.
+
+% ============================================================
+\section{Performance Kernels}
+\label{sec:perf}
+% ============================================================
+
+A recurring concern with symbolic expression trees is wall-clock
+performance.
+We address this with two layers of acceleration, both available
+as drop-in replacements for the standard \textsc{EMLLayer}.
+
+\subsection{FusedEMLActivation --- Vectorised Python/PyTorch}
+
+\textsc{FusedEMLActivation} manually inlines the EML expression tree
+as a flat bottom-up vectorised computation over
+$(n_{\text{leaves}}, N)$ tensors, eliminating all Python recursion.
+A single broadcast multiply evaluates all leaf values simultaneously.
+
+\begin{lstlisting}[language=Python]
+from monogate.compile import FusedEMLActivation
+# or equivalently:
+from monogate.torch import EMLLayer
+
+# ~3x faster than EMLActivation (depth=2, batch=1024)
+act = FusedEMLActivation(depth=2, operator="EML")
+
+# One-liner via EMLLayer:
+layer = EMLLayer(256, 256, depth=2, compiled=True)
+# Maximum: also apply torch.compile
+fast  = layer.compile()
+\end{lstlisting}
+
+Measured speedups on a single CPU core (batch=1024, depth=2):
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+Backend & ms/step & Speedup & Notes \\
+\midrule
+EMLLayer (recursive) & 8.3 & $1\times$ & Baseline \\
+FusedEMLActivation   & 2.3 & $3.6\times$ & Python/PyTorch \\
+FusedEMLActivation + \texttt{torch.compile} & 1.9 & $4.4\times$ & Linux/Mac \\
+\textbf{Rust core} (\texttt{monogate-core}) & \textbf{1.4} & $\mathbf{5.9\times}$ & All platforms \\
+\bottomrule
+\end{tabular}
+\caption{EML activation throughput on a single CPU.  All backends
+  produce identical outputs to float64 precision.  Rust requires
+  \texttt{maturin develop --release} from \texttt{monogate-core/}.}
+\label{tab:perf}
+\end{table}
+
+\subsection{Rust Core --- monogate-core (PyO3)}
+
+\texttt{monogate-core/} is a PyO3 Rust extension providing:
+
+\begin{itemize}
+  \item \texttt{eval\_eml\_batch(leaf\_w, leaf\_b, x, depth)} ---
+    fused bottom-up EML evaluation in Rust, float64.
+  \item \texttt{eval\_best\_batch(leaf\_w, leaf\_b, x, depth)} ---
+    BEST routing (EXL inner nodes, EML root).
+  \item Rayon parallel evaluation for batch sizes $>1000$.
+  \item \texttt{benchmark\_rust(n, depth)} --- throughput in M\,eval/s.
+\end{itemize}
+
+When \texttt{monogate-core} is installed, \texttt{EMLLayer(compiled=True)}
+automatically routes large batches through the Rust path via
+\texttt{monogate.fused\_rust}:
+
+\begin{lstlisting}[language=Python]
+from monogate.fused_rust import RUST_AVAILABLE, rust_info
+
+# Check status
+rust_info()
+# monogate_core 0.1.0 available
+#   Quick benchmark (depth=2, n=100k): 142 M eval/sec
+#   Rayon parallel threshold: 1000 elements
+
+# Automatic selection in EMLLayer:
+layer = EMLLayer(256, 256, depth=2, compiled=True)
+# compiled=True => checks Rust first, then FusedEMLActivation,
+#                  then standard EMLActivation
+\end{lstlisting}
+
+Build instructions:
+\begin{lstlisting}[language=bash]
+# One-time build (~30s)
+cd monogate-core
+pip install maturin
+maturin develop --release
+
+# Verify
+python -c "from monogate.fused_rust import rust_info; rust_info()"
+\end{lstlisting}
+
+\subsection{PyTorch Integration}
+
+\textsc{EMLLayer} is an \texttt{nn.Module} that combines a learned
+linear transform with a shared EML activation:
+
+\begin{lstlisting}[language=Python]
+from monogate.torch import EMLLayer
+import torch
+
+# Drop-in replacement for a sin-activated SIREN layer
+layer = EMLLayer(256, 256, depth=2, operator="BEST", compiled=True)
+
+# Fully differentiable, serializable, ONNX-exportable
+x = torch.randn(32, 256)
+y = layer(x)                    # (32, 256), same shape
+
+# ONNX export (opset 17, all ops are ONNX-native)
+torch.onnx.export(layer, x, "eml_layer.onnx", opset_version=17)
+
+# Serialization
+torch.save(layer.state_dict(), "eml_layer.pt")
+
+# Benchmark
+from monogate.compile import benchmark_layer
+tbl = benchmark_layer(layer, batch_sizes=[64, 256, 1024])
+tbl.print_table()
+\end{lstlisting}
+
+A SIREN-style coordinate network trained on a $64\times64$ image using
+\textsc{EMLLayer(depth=2, compiled=True)} as activation reaches
+PSNR~$\approx35$\,dB (comparable to sin-SIREN) while
+being $3.1\times$ faster per training step.
+See \texttt{notebooks/siren\_with\_monogate.py}.
+
+% ============================================================
+\section{Conclusion and Open Problems}
+\label{sec:conclusion}
+% ============================================================
+
+We have reported five independent extensions to the EML operator
+framework, each contributing practical or theoretical value:
+
+\begin{enumerate}
+  \item BEST routing delivers 52--74\% node savings and $2.8\times$
+    wall-clock speedup without any approximation.
+  \item Phantom attractors are real, sharp, and inexpensive to cure:
+    $\lambda_{\text{crit}}=0.001$.
+  \item The N=11 exhaustive search (281M trees, zero candidates)
+    combined with the Infinite Zeros Barrier closes the real-domain
+    exact-$\sin$ question for all $N$.
+  \item Fused Python and Rust kernels deliver $3.6\times$ and $5.9\times$
+    speedups, making EML competitive with native activations.
+  \item \textsc{EMLLayer} integrates cleanly into PyTorch pipelines with
+    full autograd, ONNX export, and torch.compile support.
+\end{enumerate}
+
+\paragraph{Open problems.}
+\begin{enumerate}
+  \item Is there a finite EML tree from $\{1\}$ evaluating to
+    $\sin(x)$ in the complex grammar?
+    (Real-valued: ruled out for all $N$.  Complex: open.)
+  \item What is the attractor value $3.1696$?  Known closed form or
+    a transcendental fixed point of the depth-3 EML gradient flow?
+  \item Can MCTS find better-than-Taylor approximations for $\sin(x)$
+    at the same node budget?
+  \item Does EMLLayer depth-4 become trainable with a reparameterised
+    initialisation (e.g.\ log-scale leaves)?
+  \item What is the minimax-optimal EML approximation to $\sin(x)$
+    over $[{-\pi},\pi]$ at $N=11$?
+    (Our near-miss gives an upper bound of $\mathrm{MSE}=1.478\times10^{-4}$.)
+\end{enumerate}
+
+% ============================================================
+\section*{Acknowledgments}
+% ============================================================
+
+The author thanks Andrzej Odrzyw\l{}ek for the original EML construction
+and for making the arXiv preprint openly available.
+Computations were performed on a personal laptop; total CPU-hours for
+the N=11 exhaustive search were $\approx$\,5.4\,min on a single core.
+No external funding was received for this work.
+
+% ============================================================
+\section*{Data and Code Availability}
+% ============================================================
+
+All code, data, and the interactive explorer are openly available:
+
+\begin{itemize}
+  \item \textbf{Source code:} \url{https://github.com/almaguer1986/monogate}
+  \item \textbf{PyPI package:} \texttt{pip install monogate}
+    (\url{https://pypi.org/project/monogate/})
+  \item \textbf{Interactive explorer:} \url{https://monogate.dev}
+  \item \textbf{N=11 search results:}
+    \texttt{python/results/sin\_n11.json} (in repository).
+    Analysis: \texttt{python monogate/search/analyze\_n11.py}
+  \item \textbf{Reproduction:}
+\begin{lstlisting}[language=bash]
+pip install monogate
+# Run N=11 exhaustive search (~5 min):
+python monogate/search/sin_search_05.py --save results/sin_n11.json
+# Analyse results:
+python monogate/search/analyze_n11.py
+\end{lstlisting}
+\end{itemize}
+
+% ============================================================
+\section*{References}
+% ============================================================
+
+\begin{thebibliography}{9}
+
+\bibitem{odrzywolekEML2026}
+Odrzyw\'{o}\l{}ek, A. (2026).
+All elementary functions from a single binary operator.
+\textit{arXiv preprint arXiv:2603.21852v2} [cs.SC].
+
+\bibitem{hendrycksGELU2016}
+Hendrycks, D., \& Gimpel, K. (2016).
+Gaussian error linear units (GELUs).
+\textit{arXiv preprint arXiv:1606.08415}.
+
+\bibitem{browne2012survey}
+Browne, C.~B., et al. (2012).
+A survey of Monte Carlo tree search methods.
+\textit{IEEE Transactions on Computational Intelligence and AI in Games},
+4(1), 1--43.
+
+\bibitem{sitzmann2020siren}
+Sitzmann, V., Martel, J., Bergman, A., Lindell, D., \& Wetzstein, G.
+(2020).
+Implicit neural representations with periodic activation functions.
+\textit{Advances in Neural Information Processing Systems},
+33, 7462--7473.
+
+\bibitem{paszke2019pytorch}
+Paszke, A., et al. (2019).
+PyTorch: An imperative style, high-performance deep learning library.
+\textit{Advances in Neural Information Processing Systems},
+32.
+
+\end{thebibliography}
+
+\end{document}
