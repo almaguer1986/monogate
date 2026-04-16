@@ -6,6 +6,28 @@ All notable changes to `monogate` are documented here.
 
 ## [0.12.0-dev] — 2026-04-16
 
+### Session 2: Symbolic Regression Leaderboard
+
+**New module `monogate.leaderboard`** — standardized benchmark runner over
+Nguyen/Keijzer symbolic regression problems.
+
+- 10 benchmark problems: Nguyen-1 through Nguyen-8, Keijzer-6, Keijzer-11
+- Unified API: `run_leaderboard()`, `print_leaderboard()`, `markdown_leaderboard()`
+- Serialization: `save_leaderboard()`, `load_leaderboard()` (JSON round-trip)
+- CLI runner: `python/scripts/update_leaderboard.py` — generates `results/leaderboard.json`
+  and `LEADERBOARD.md` at repo root
+- Results scored by EML node count at MSE < threshold
+
+New exports: `BenchmarkProblem`, `LeaderboardEntry`, `PROBLEMS`,
+`run_leaderboard`, `print_leaderboard`, `markdown_leaderboard`,
+`save_leaderboard`, `load_leaderboard`.
+
+New files: `monogate/leaderboard.py`, `tests/test_leaderboard.py`,
+`notebooks/symbolic_regression_leaderboard.py`,
+`scripts/update_leaderboard.py`, `results/leaderboard.json`, `LEADERBOARD.md`.
+
+---
+
 ### Session 1: Special Functions Library
 
 **New module `monogate.special`** — 15 pre-computed short CBEST/BEST expressions

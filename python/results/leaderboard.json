@@ -1,0 +1,92 @@
+[
+  {
+    "problem": "nguyen-1",
+    "formula": "eml(x, eml(1.0, eml(x, 1.0)))",
+    "n_nodes": 3,
+    "best_mse": 0.052470353550311044,
+    "solved": false,
+    "method": "beam",
+    "elapsed_s": 0.02432029999908991
+  },
+  {
+    "problem": "nguyen-2",
+    "formula": "eml(eml(x, eml(1.0, 1.0)), eml(1.0, 1.0))",
+    "n_nodes": 4,
+    "best_mse": 0.019598536341263184,
+    "solved": false,
+    "method": "beam",
+    "elapsed_s": 0.021880899992538616
+  },
+  {
+    "problem": "nguyen-3",
+    "formula": "eml(eml(x, eml(1.0, 1.0)), eml(1.0, 1.0))",
+    "n_nodes": 4,
+    "best_mse": 0.03159569732646901,
+    "solved": false,
+    "method": "beam",
+    "elapsed_s": 0.044268300000112504
+  },
+  {
+    "problem": "nguyen-4",
+    "formula": "eml(eml(x, eml(1.0, 1.0)), eml(1.0, 1.0))",
+    "n_nodes": 4,
+    "best_mse": 0.11801974006192503,
+    "solved": false,
+    "method": "beam",
+    "elapsed_s": 0.020763600012287498
+  },
+  {
+    "problem": "nguyen-5",
+    "formula": "eml(x, eml(eml(x, 1.0), x))",
+    "n_nodes": 3,
+    "best_mse": 0.8685226524570074,
+    "solved": false,
+    "method": "beam",
+    "elapsed_s": 0.032717699999921024
+  },
+  {
+    "problem": "nguyen-6",
+    "formula": "eml(x, eml(1.0, eml(x, 1.0)))",
+    "n_nodes": 3,
+    "best_mse": 0.03127949952458596,
+    "solved": false,
+    "method": "beam",
+    "elapsed_s": 0.019883700006175786
+  },
+  {
+    "problem": "nguyen-7",
+    "formula": "eml(1.0, eml(eml(1.0, eml(x, 1.0)), x))",
+    "n_nodes": 4,
+    "best_mse": 0.12109297013725659,
+    "solved": false,
+    "method": "beam",
+    "elapsed_s": 0.032355899980757385
+  },
+  {
+    "problem": "nguyen-8",
+    "formula": "eml(1.0, eml(eml(1.0, eml(1.0, 1.0)), x))",
+    "n_nodes": 4,
+    "best_mse": 0.15541212491986078,
+    "solved": false,
+    "method": "beam",
+    "elapsed_s": 0.03173630000674166
+  },
+  {
+    "problem": "keijzer-6",
+    "formula": "eml(1.0, eml(eml(1.0, x), 1.0))",
+    "n_nodes": 3,
+    "best_mse": 0.33097662443665804,
+    "solved": false,
+    "method": "beam",
+    "elapsed_s": 0.02603330000420101
+  },
+  {
+    "problem": "keijzer-11",
+    "formula": "eml(eml(1.0, eml(1.0, x)), eml(x, 1.0))",
+    "n_nodes": 4,
+    "best_mse": 5.152805673860796,
+    "solved": false,
+    "method": "beam",
+    "elapsed_s": 0.03564550000010058
+  }
+]

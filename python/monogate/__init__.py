@@ -281,3 +281,25 @@ __all__ += [
     "lgamma_cb", "digamma_cb",
     "catalog_summary", "save_catalog",
 ]
+
+from .leaderboard import (  # noqa: F401
+    BenchmarkProblem,
+    LeaderboardEntry,
+    PROBLEMS,
+    run_leaderboard,
+    print_leaderboard,
+    markdown_leaderboard,
+    save_leaderboard,
+    load_leaderboard,
+)
+
+__all__ += [
+    "BenchmarkProblem",
+    "LeaderboardEntry",
+    "PROBLEMS",
+    "run_leaderboard",
+    "print_leaderboard",
+    "markdown_leaderboard",
+    "save_leaderboard",
+    "load_leaderboard",
+]
