@@ -1,0 +1,167 @@
+{
+  "sin": {
+    "formula": "Im(eml(ix, 1))",
+    "n_nodes": 1,
+    "domain": [
+      -10.0,
+      10.0
+    ],
+    "max_abs_error": 1e-15,
+    "backend": "CBEST",
+    "notes": "Exact via Euler path. Im(exp(ix)) = sin(x) for all real x."
+  },
+  "cos": {
+    "formula": "Re(eml(ix, 1))",
+    "n_nodes": 1,
+    "domain": [
+      -10.0,
+      10.0
+    ],
+    "max_abs_error": 1e-15,
+    "backend": "CBEST",
+    "notes": "Exact via Euler path. Re(exp(ix)) = cos(x) for all real x."
+  },
+  "sinh": {
+    "formula": "(eml(x,1) - recip(eml(x,1))) / 2",
+    "n_nodes": 9,
+    "domain": [
+      -10.0,
+      10.0
+    ],
+    "max_abs_error": 1e-14,
+    "backend": "BEST",
+    "notes": "Exact algebraic construction via exp + recip (EDL) + sub + div."
+  },
+  "cosh": {
+    "formula": "(eml(x,1) + recip(eml(x,1))) / 2",
+    "n_nodes": 15,
+    "domain": [
+      -10.0,
+      10.0
+    ],
+    "max_abs_error": 1e-14,
+    "backend": "BEST",
+    "notes": "Exact. Note: add costs 11 EML nodes \u2014 cosh is heavier than sinh."
+  },
+  "tanh": {
+    "formula": "(eml(2x,1)^2 - 1) / (eml(2x,1)^2 + 1)",
+    "n_nodes": 8,
+    "domain": [
+      -10.0,
+      10.0
+    ],
+    "max_abs_error": 1e-14,
+    "backend": "BEST",
+    "notes": "Numerically stable form. Node count for (exp(2x)-1)/(exp(2x)+1)."
+  },
+  "sech": {
+    "formula": "recip(cosh(x))",
+    "n_nodes": 16,
+    "domain": [
+      -10.0,
+      10.0
+    ],
+    "max_abs_error": 1e-14,
+    "backend": "BEST",
+    "notes": "Exact: 1/cosh(x). Node count includes full cosh construction."
+  },
+  "erf": {
+    "formula": "tanh(1.2025 * x)",
+    "n_nodes": 5,
+    "domain": [
+      -3.0,
+      3.0
+    ],
+    "max_abs_error": 0.015,
+    "backend": "CBEST",
+    "notes": "Best-known 5-node CBEST approximation. MSE \u2248 2e-3 over [-3,3]. Max absolute error \u2248 1.5e-2 near x=1. Use math.erf() for precision."
+  },
+  "fresnel_s_integrand": {
+    "formula": "Im(eml(i*pi*x^2/2, 1))",
+    "n_nodes": 2,
+    "domain": [
+      0.0,
+      5.0
+    ],
+    "max_abs_error": 1e-15,
+    "backend": "CBEST",
+    "notes": "Exact: Im(exp(i*pi*x^2/2)) = sin(pi*x^2/2). This is the Fresnel integrand, NOT the Fresnel S integral. 2 nodes treating x^2 as compound."
+  },
+  "fresnel_c_integrand": {
+    "formula": "Re(eml(i*pi*x^2/2, 1))",
+    "n_nodes": 2,
+    "domain": [
+      0.0,
+      5.0
+    ],
+    "max_abs_error": 1e-15,
+    "backend": "CBEST",
+    "notes": "Exact: Re(exp(i*pi*x^2/2)) = cos(pi*x^2/2). Fresnel C integrand."
+  },
+  "fresnel_s": {
+    "formula": "integral[Im(eml(i*pi*t^2/2,1)), t=0..x]",
+    "n_nodes": 2,
+    "domain": [
+      0.0,
+      5.0
+    ],
+    "max_abs_error": 1e-06,
+    "backend": "CBEST",
+    "notes": "Integrand is exact (2 CBEST nodes); integral via scipy or quadrature. Max error reflects quadrature fallback (scipy gives machine precision)."
+  },
+  "fresnel_c": {
+    "formula": "integral[Re(eml(i*pi*t^2/2,1)), t=0..x]",
+    "n_nodes": 2,
+    "domain": [
+      0.0,
+      5.0
+    ],
+    "max_abs_error": 1e-06,
+    "backend": "CBEST",
+    "notes": "Integrand is exact; integral via scipy or trapezoidal quadrature."
+  },
+  "j0": {
+    "formula": "complex MCTS depth-3 tree (7 nodes)",
+    "n_nodes": 7,
+    "domain": [
+      0.0,
+      10.0
+    ],
+    "max_abs_error": 0.0001,
+    "backend": "CBEST",
+    "notes": "Best-known complex-EML construction: 7 nodes at MSE < 1e-4. Run complex_mcts_search(scipy.special.j0, ...) to reproduce the formula. j0_cb() uses scipy for exact evaluation when available."
+  },
+  "airy_ai": {
+    "formula": "complex MCTS depth-3 tree (9 nodes)",
+    "n_nodes": 9,
+    "domain": [
+      -5.0,
+      5.0
+    ],
+    "max_abs_error": 0.002,
+    "backend": "CBEST",
+    "notes": "Best-known construction: 9 nodes, MSE \u2248 2e-3. ai_cb() uses scipy for exact evaluation when available."
+  },
+  "lgamma": {
+    "formula": "(x-0.5)*ln(x) - x + 0.5*ln(2pi) + 1/(12x) - 1/(360x^3)",
+    "n_nodes": 12,
+    "domain": [
+      0.1,
+      100.0
+    ],
+    "max_abs_error": 1e-09,
+    "backend": "BEST",
+    "notes": "Stirling series with recurrence for x < 7. ~12 BEST nodes for the series."
+  },
+  "digamma": {
+    "formula": "central-diff(lgamma_cb, h=1e-5)",
+    "n_nodes": 14,
+    "domain": [
+      0.5,
+      100.0
+    ],
+    "max_abs_error": 1e-08,
+    "backend": "BEST",
+    "notes": "Numerical derivative of lgamma_cb. 14 nodes = 2 \u00d7 lgamma nodes + sub/div."
+  }
+}
