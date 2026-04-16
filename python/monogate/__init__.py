@@ -55,7 +55,7 @@ from .core import (
     compare_op,
 )
 
-__version__ = "0.3.1"
+__version__ = "0.3.2"
 
 __all__ = [
     "op",
@@ -124,9 +124,11 @@ __all__ += [
     "optimize_siren", "optimize_nerf",
 ]
 
-from .torch_ops import edl_op_safe, EDL_SAFE_CONSTANT  # noqa: F401
-
-__all__ += ["edl_op_safe", "EDL_SAFE_CONSTANT"]
+try:
+    from .torch_ops import edl_op_safe, EDL_SAFE_CONSTANT  # noqa: F401
+    __all__ += ["edl_op_safe", "EDL_SAFE_CONSTANT"]
+except ImportError:
+    pass
 
 from .operators import (
     ALL_OPERATORS,

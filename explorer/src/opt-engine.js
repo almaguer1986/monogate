@@ -4,7 +4,7 @@
  * Pure functions and constants only — no React.
  */
 
-export const API_URL = "http://127.0.0.1:8787";
+export const API_URL = "https://monogate-api.fly.dev";
 
 export const C = {
   bg: "#07080f", surface: "#0d0e1c", border: "#191b2e",
