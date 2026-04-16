@@ -1,0 +1,57 @@
+name: Symbolic Regression Leaderboard
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - "python/monogate/leaderboard.py"
+      - "python/monogate/search/**"
+      - "python/scripts/update_leaderboard.py"
+  schedule:
+    - cron: "0 4 * * *"   # daily at 04:00 UTC
+  workflow_dispatch:
+    inputs:
+      n_sim:
+        description: "Simulations per problem"
+        required: false
+        default: "2000"
+      fast:
+        description: "Fast mode (beam only, n_sim=200)"
+        required: false
+        default: "false"
+
+jobs:
+  leaderboard:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install monogate
+        run: |
+          cd python
+          pip install -e ".[dev]" --quiet
+
+      - name: Run leaderboard
+        run: |
+          if [ "${{ github.event.inputs.fast }}" = "true" ]; then
+            python python/scripts/update_leaderboard.py --fast
+          else
+            N_SIM="${{ github.event.inputs.n_sim }}"
+            python python/scripts/update_leaderboard.py --n-sim "${N_SIM:-2000}"
+          fi
+
+      - name: Commit updated results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add LEADERBOARD.md python/results/leaderboard.json
+          git diff --cached --quiet || git commit -m "chore: update leaderboard results [skip ci]"
+          git push

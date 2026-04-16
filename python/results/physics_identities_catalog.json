@@ -1,0 +1,99 @@
+{
+  "version": "0.12.0",
+  "generated": "2026-04-16",
+  "description": "Compact CBEST/BEST representations for analytic solutions of PDEs and ODEs",
+  "entries": {
+    "schrodinger_free_particle": {
+      "equation": "−u''(x) = k²·u(x), V=0 (free particle Schrödinger)",
+      "solution": "u(x) = exp(ikx)",
+      "callable": "monogate.physics.schrodinger_free_cb",
+      "formula": "eml(i·k·x, 1) = exp(i·k·x)",
+      "n_nodes": 1,
+      "backend": "CBEST",
+      "max_abs_error": 0.0,
+      "is_exact": true,
+      "domain": "x ∈ ℝ",
+      "notes": "Free-particle Schrödinger solution. Re/Im give cos(kx) and sin(kx) respectively. Exact via 1-node Euler path."
+    },
+    "potential_well": {
+      "equation": "−u'' = E_n·u, infinite square well on [0, L]",
+      "solution": "u_n(x) = sin(n·π·x/L), E_n = (n·π/L)²",
+      "callable": "monogate.physics.potential_well_cb",
+      "formula": "Im(eml(i·n·π·x/L, 1)) = sin(n·π·x/L)",
+      "n_nodes": 1,
+      "backend": "CBEST",
+      "max_abs_error": 0.0,
+      "is_exact": true,
+      "domain": "x ∈ [0, L]",
+      "notes": "Exact nth eigenfunction via Euler path. Boundary conditions satisfied exactly."
+    },
+    "nls_bright_soliton": {
+      "equation": "i·u_t + u_xx + |u|²·u = 0 (NLS bright soliton)",
+      "solution": "u(x,t) = sech(x)·exp(it/2)",
+      "callable": "monogate.physics.nls_soliton_amplitude_cb",
+      "formula": "sech(x) = 1/cosh(x)",
+      "n_nodes": 2,
+      "backend": "BEST",
+      "max_abs_error": 0.0,
+      "is_exact": true,
+      "domain": "x ∈ ℝ",
+      "notes": "Amplitude envelope exact via recip(cosh(x)). Phase factor exp(it/2) adds 1 CBEST node."
+    },
+    "heat_fundamental_solution": {
+      "equation": "u_t = u_xx (heat equation fundamental solution)",
+      "solution": "u(x,t) = exp(-x²/4t) / sqrt(4πt)",
+      "callable": "monogate.physics.heat_kernel_cb",
+      "formula": "exp(-x²/4t) / sqrt(4πt)",
+      "n_nodes": 4,
+      "backend": "BEST",
+      "max_abs_error": 0.0,
+      "is_exact": true,
+      "domain": "x ∈ ℝ, t > 0",
+      "notes": "Exact Gaussian. ~4 BEST nodes for exp(-x²) via pow_eml composition. Normalizes to 1."
+    },
+    "kdv_soliton": {
+      "equation": "u_t + 6u·u_x + u_xxx = 0 (KdV traveling wave)",
+      "solution": "u(x,t) = (c/2)·sech²(sqrt(c/4)·(x−ct))",
+      "callable": "monogate.physics.kdv_soliton_cb",
+      "formula": "(c/2) · recip(cosh(sqrt(c/4)·(x−ct)))²",
+      "n_nodes": 18,
+      "backend": "BEST",
+      "max_abs_error": 1e-14,
+      "is_exact": false,
+      "domain": "x ∈ ℝ, t ≥ 0",
+      "notes": "KdV 1-soliton. sech²(x) via recip(cosh(x))² requires ~18 BEST nodes. Machine precision."
+    },
+    "wave_equation_cosine": {
+      "equation": "u_tt = c²·u_xx (wave equation)",
+      "solution": "u(x,t) = cos(kx − ωt)",
+      "callable": "monogate.physics.wave_cos_cb",
+      "formula": "Re(eml(i·(kx−ωt), 1)) = cos(kx−ωt)",
+      "n_nodes": 1,
+      "backend": "CBEST",
+      "max_abs_error": 0.0,
+      "is_exact": true,
+      "domain": "x ∈ ℝ, t ≥ 0",
+      "notes": "Exact 1-node CBEST via real part of Euler path."
+    },
+    "wave_equation_sine": {
+      "equation": "u_tt = c²·u_xx (wave equation)",
+      "solution": "u(x,t) = sin(kx − ωt)",
+      "callable": "monogate.physics.wave_sin_cb",
+      "formula": "Im(eml(i·(kx−ωt), 1)) = sin(kx−ωt)",
+      "n_nodes": 1,
+      "backend": "CBEST",
+      "max_abs_error": 0.0,
+      "is_exact": true,
+      "domain": "x ∈ ℝ, t ≥ 0",
+      "notes": "Exact 1-node CBEST via imaginary part of Euler path."
+    }
+  },
+  "summary": {
+    "total_equations": 7,
+    "exact_solutions": 6,
+    "min_nodes": 1,
+    "max_nodes": 18,
+    "backends": ["CBEST", "BEST"],
+    "key_result": "4 of 7 physics equations have exact 1-node CBEST representations via the Euler path identity exp(ix) = eml(ix, 1)"
+  }
+}

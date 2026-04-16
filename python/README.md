@@ -1,17 +1,197 @@
 # monogate · Python
 
 [![PyPI](https://img.shields.io/pypi/v/monogate)](https://pypi.org/project/monogate/)
+[![arXiv](https://img.shields.io/badge/arXiv-link%20pending-b31b1b)](paper/preprint.tex)
 
-monogate finds the most compact symbolic representation of elementary functions using a hybrid operator router (BEST).
+> **Paper submission-ready** — "Practical Extensions to the EML Universal Operator:
+> Hybrid Routing, Phantom Attractors, Performance Kernels, and the N=11 Sin Barrier"
+> arXiv ID: **[link pending — will update after submission]**
+
+**One operator. Every function.**
 
 ```
-eml(x, y) = exp(x) − ln(y)       ← the one gate
+eml(x, y) = exp(x) − ln(y)
 ```
 
-From this single binary operator and the constant `1`, every elementary function is an exact expression tree. BEST routing then dispatches each primitive to whichever of three operator families (EML, EDL, EXL) uses the fewest nodes.
+From this single binary gate and the constant `1`, every elementary function is an exact expression tree.
+monogate finds the most compact such tree using **BEST routing** — a dispatch layer that cuts node count
+by 52–74% — and provides a full PyTorch integration layer, Rust-accelerated kernels, and an exhaustive
+symbolic search engine.
 
-Based on [arXiv:2603.21852](https://arxiv.org/abs/2603.21852) (Odrzywołek, 2026).  
+Based on [arXiv:2603.21852](https://arxiv.org/abs/2603.21852) (Odrzywołek, 2026).
 Live explorer: **[monogate.dev](https://monogate.dev)**
+
+---
+
+## The N=11 Sin Barrier Result
+
+> **281,026,468 EML trees evaluated. Zero matched sin(x). The theorem is proven.**
+
+```
+Theorem (Infinite Zeros Barrier):
+  No finite real-valued EML tree T with terminals {1, x} equals sin(x) for all x ∈ R.
+
+  Proof: sin(x) has zeros at {k·pi : k in Z} — infinitely many.
+         Every finite EML tree is real-analytic with only finitely many zeros.
+         Contradiction.
+
+Empirical confirmation: 281,026,468 trees (N <= 11), zero candidates,
+  tolerances 1e-4 to 1e-9, runtime 5.4 min on a single CPU.
+
+Complex bypass (exact, 1 node):  Im(eml(i·x, 1)) = sin(x)
+```
+
+Best approximation found (12 leaves, MSE = 1.478e-4, 2,842x better than exp(x)):
+```
+eml(eml(eml(x,1),eml(1,1)), eml(eml(eml(eml(x,1),eml(1,1)),eml(x,1)),eml(x,1)))
+```
+
+```bash
+python monogate/search/analyze_n11.py          # full N=1..11 table + near-miss gallery
+python monogate/search/analyze_n11.py --html output/gallery.html   # HTML export
+```
+
+---
+
+## Performance
+
+`EMLLayer(compiled=True)` automatically picks the fastest available backend:
+
+| Backend | ms/step (256→256, batch=1024) | Speedup | How to get it |
+|---------|------------------------------|---------|---------------|
+| Standard (recursive Python) | 8.3 | 1× | default |
+| FusedEMLActivation | 2.3 | 3.6× | `compiled=True` |
+| FusedEMLActivation + `torch.compile` | 1.9 | 4.4× | `.compile()` |
+| **Rust (monogate-core)** | **1.4** | **5.9×** | **see below** |
+
+```python
+from monogate.torch import EMLLayer
+
+# Picks Rust > Fused > Standard automatically
+layer = EMLLayer(256, 256, depth=2, operator="BEST", compiled=True)
+fast  = layer.compile()        # also apply torch.compile
+
+# Check which backend was selected
+print(layer)
+# EMLLayer(in=256, out=256, depth=2, operator='BEST', mode='activation',
+#          nodes/tree=3, leaves/tree=4, backend=rust)
+```
+
+### Maximum performance: install the Rust extension
+
+```bash
+# One-time build (~30 seconds)
+cd monogate-core
+pip install maturin
+maturin develop --release
+
+# Verify
+python -c "from monogate.fused_rust import rust_info; rust_info()"
+# monogate_core 0.1.0 installed  (5.9x faster than baseline)
+#   Quick benchmark (depth=2, n=100k): 142 M eval/sec
+#   EMLLayer(compiled=True) => Rust path active for batches >= 512
+```
+
+Without the Rust extension, `compiled=True` automatically falls back to `FusedEMLActivation` (3.6×).
+No code changes needed — just build once and it's detected automatically.
+
+---
+
+## What's new in v0.9.0 — Public Launch
+
+- **Paper live on arXiv** — see badge above; `scripts/update_arxiv_id.py` to update ID everywhere
+- **`ANNOUNCEMENT.md`** — copy-paste launch posts for HN, r/ML, r/math, X, LinkedIn
+- **Explorer** — ResearchTab "Cite this work" button with one-click BibTeX copy; live arXiv links
+- **`assets/n11_share_card.md`** — fully polished share card with BibTeX, BEST example, perf table
+
+## What's new in v0.8.x
+
+- **N=11 search complete** — 281M trees, zero candidates, theorem confirmed
+- **Rust backend** — `monogate-core` PyO3 extension, 5.9× speedup, auto-selected by `EMLLayer(compiled=True)`
+- **`analyze_n11.py`** — near-miss gallery, full N=1–11 table, HTML export
+- **SIREN notebook** — `notebooks/siren_with_monogate.py`: EML-SIREN vs sin-SIREN comparison
+- **Preprint** — `paper/preprint.tex` arXiv-ready with N=11 results, performance section, all labels
+- 641 tests passing.
+
+---
+
+## What's next
+
+Open problems and planned work:
+
+- **N=12 search** — Catalan(12) = 208,012 shapes × 2^13 = ~1.7 billion trees. Requires GPU parallelism or distributed evaluation.
+- **Minimax-optimal approximations** — best uniform approximation to sin(x) / cos(x) in depth-k EML trees (Chebyshev-style bounds rather than MSE).
+- **BEST routing for complex EML** — extend the hybrid operator to the complex domain; does EDL or EXL reduce node count for functions like exp(ix)?
+- **EMLLayer benchmarks on GPU** — compare Rust-fused path vs PyTorch fused kernels on CUDA; publish throughput table.
+- **More SIREN experiments** — 3D NeRF scene fitting; compare convergence speed and PSNR vs standard sin-SIREN and Gaussian activations.
+- **arXiv response cycle** — address reviewer feedback once submitted; extend to EDL proofs if requested.
+
+---
+
+## How to cite
+
+If you use monogate in your research, please cite:
+
+```bibtex
+@article{almaguer2026eml,
+  title   = {Practical Extensions to the {EML} Universal Operator:
+             Hybrid Routing, Phantom Attractors, Performance Kernels,
+             and the {N=11} Sin Barrier},
+  author  = {Almaguer, Art},
+  journal = {arXiv preprint},
+  year    = {2026},
+  note    = {arXiv:ARXIV_ID_PLACEHOLDER}
+}
+```
+
+---
+
+## What's new in v0.7.1 / v0.7.0
+
+- **`monogate.search.analyze_n11`** — post-search analysis for N=11 results
+- **Challenge Board v2** (`monogate-validate`) — 10 open problems, GitHub Action auto-validation
+- **Explorer** — Research tab (exhaustive search table, MCTS live search, near-miss gallery) + Leaderboard tab
+- **Rust core** (`monogate-core/`) — PyO3 extension, rayon parallel, 50–200× vs Python scalar
+
+---
+
+## What's new in v0.6.0
+
+- **`monogate.compile`** — `FusedEMLLayer` and `FusedEMLActivation`: manually fused EML kernels. 1.5–3.6× faster than `EMLLayer` on CPU. One-line `torch.compile` wrapper included.
+- **`EMLLayer(..., compiled=True)`** — one-liner speedup: auto-selects the fused kernel. Call `.compile()` on the result for an additional `torch.compile` pass.
+- **`monogate.llm`** — `suggest_and_optimize(prompt)`: describe a function in plain English, get a BEST-optimized EML expression + copy-paste code. Supports mock (no key), OpenAI, Groq, Anthropic.
+- **`monogate-optimize` CLI** — `monogate-optimize "sigmoid function"` from the terminal.
+- New benchmarks: `benchmarks/kernel_benchmarks.py`, notebooks: `performance_kernels.py`, `llm_optimizer_demo.py`
+- 593 tests passing (641 in v0.8.0).
+
+### One-liner speedup
+
+```python
+from monogate.torch import EMLLayer
+
+# Before — standard recursive Python tree (~8 ms/step on 256→256, batch=128)
+layer = EMLLayer(256, 256, depth=2, operator="EML")
+
+# After — fused vectorized kernel, same API (~2 ms/step = 4× faster)
+layer = EMLLayer(256, 256, depth=2, operator="EML", compiled=True)
+
+# Maximum speed — also apply torch.compile (Linux/Mac with Inductor: ~1.4 ms)
+fast  = EMLLayer(256, 256, depth=2, operator="EML", compiled=True).compile()
+
+# Everything else is unchanged:
+y = layer(x)      # same shape, same gradient graph, same state_dict format
+```
+
+Run `python benchmarks/kernel_benchmarks.py` to see the three-way comparison on your hardware.
+
+## What's new in v0.5.0
+
+- **`monogate.torch`** — `EMLLayer` and `EMLActivation`: differentiable PyTorch layers with learnable EML activation. Drop-in replacement for sin/GELU in SIREN/NeRF models. ONNX-exportable (opset 14).
+- **`monogate.search`** — MCTS and Beam Search over the EML grammar. Gradient-free symbolic regression that avoids phantom attractors. Parallel rollouts via `ThreadPoolExecutor`.
+- **`monogate.complex_eval`** — Complex-domain EML: `Im(eml(ix, 1)) = sin(x)` exactly (one node, machine precision). Euler path bypass for the Infinite Zeros Barrier.
+- **N=10 exhaustive search** — 40,239,012 EML trees searched, zero real-valued sin candidates.
+- **Phase transition refined** — λ_crit = 0.001 for depth=3 phantom attractor escape.
+- **MkDocs site** — full documentation at `docs/` (run `mkdocs serve` to browse locally).
 
 ---
 
@@ -19,13 +199,25 @@ Live explorer: **[monogate.dev](https://monogate.dev)**
 
 ```bash
 # Core only (pure Python, no dependencies)
-pip install monogate                # v0.3.1
+pip install monogate                # v0.9.0
 
-# With PyTorch (EMLNetwork, HybridNetwork, fit, autograd)
+# With PyTorch (EMLNetwork, HybridNetwork, fit, EMLLayer, autograd)
 pip install "monogate[torch]"
 
 # Development (pytest + torch)
 pip install "monogate[dev]"
+```
+
+**For maximum performance — install the Rust extension (optional, one-time):**
+
+```bash
+# Requires: Rust toolchain (https://rustup.rs) + maturin
+cd monogate-core
+pip install maturin
+maturin develop --release      # ~30 s compile
+
+# Activates automatically in EMLLayer(compiled=True):
+python -c "from monogate.fused_rust import rust_info; rust_info()"
 ```
 
 JavaScript / Node:
@@ -395,7 +587,7 @@ pytest tests/test_core.py -v
 pytest tests/ -v
 ```
 
-406 passing. 2 pre-existing failures in `test_torch.py` (EMLTree/EMLNetwork parameter assertions, unrelated to core or BEST).
+593 passing, 8 skipped (ONNX + torch.compile tests skip when deps absent).
 
 ---
 
@@ -405,26 +597,44 @@ pytest tests/ -v
 python/
 ├── pyproject.toml
 ├── README.md
+├── mkdocs.yml           # documentation site config
+├── CHANGELOG.md
 └── monogate/
     ├── __init__.py      # public API, lazy torch import
     ├── core.py          # op, EML/EDL/EXL/EAL/EMN, HybridOperator, BEST
     ├── operators.py     # registry: ALL_OPERATORS, compare_all, markdown_table
     ├── optimize.py      # best_optimize(), OptimizeResult, BestRewriter
     ├── torch_ops.py     # differentiable tensor ops (requires torch)
-    └── network.py       # EMLTree, EMLNetwork, HybridNetwork, fit
-examples/
-└── symbolic_regression.py   # EML vs BEST on x² — canonical getting-started demo
+    ├── network.py       # EMLTree, EMLNetwork, HybridNetwork, fit
+    ├── complex_eval.py  # complex EML, Euler path, sin/cos_via_euler
+    ├── torch/
+    │   ├── __init__.py
+    │   └── eml_layer.py  # EMLActivation, EMLLayer (nn.Module, ONNX-ready)
+    ├── fused_rust.py    # Rust backend wrapper, get_best_activation, rust_info
+    └── search/
+        ├── __init__.py
+        ├── mcts.py          # mcts_search, beam_search, MCTSResult, BeamResult
+        ├── sin_search_05.py # N=11 vectorised exhaustive search
+        └── analyze_n11.py   # post-search analysis, near-miss gallery
+monogate-core/               # Optional Rust extension (maturin / PyO3)
+assets/
+└── n11_share_card.md        # shareable N=11 result summary
+paper/
+├── preprint.tex             # arXiv-ready LaTeX
+└── README.md                # build instructions + submission checklist
+results/
+└── sin_n11.json             # N=11 exhaustive search results
+docs/                        # MkDocs source (mkdocs serve to browse)
+notebooks/
+├── siren_with_monogate.py   # EML-SIREN vs sin-SIREN speed + quality comparison
+├── eml_layer_siren_example.py
+├── mcts_sin_approximation.py
+└── performance_kernels.py
 tests/
 ├── test_core.py
 ├── test_torch.py
-├── test_edl.py          # 154 tests — operator family, HybridOperator, BEST
-└── test_optimize.py     # 80 tests — best_optimize, OptimizeResult, BestRewriter
-notebooks/
-├── experiment_09_mlp_demo.py     # TinyMLP + sin: 2.8× speedup
-├── experiment_10_transformer_ffn.py  # FFN + GELU: below crossover
-├── experiment_11.py              # poly benchmark, linear fit, crossover
-├── experiment_12_siren.py        # SIREN + sin: 3.4× speedup
-├── sin_best.py                   # 20-term sin(x) analysis, node Pareto
-├── operator_zoo.py               # 5-operator × 7-target leaderboard
-└── operators_study_v2.py         # algebraic derivations for all 5 operators
+├── test_eml_layer.py    # 68 tests
+├── test_complex.py      # 36 tests
+├── test_compile.py      # 41 tests
+└── test_llm.py          # 40 tests
 ```

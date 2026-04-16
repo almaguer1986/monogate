@@ -1,0 +1,174 @@
+{
+  "version": "2.0",
+  "updated": "2026-04-16",
+  "description": "monogate Challenge Board — open problems for EML/BEST symbolic regression",
+  "scoring": {
+    "exact":       10,
+    "tight":       7,
+    "medium":      4,
+    "approximate": 2,
+    "near_miss":   1
+  },
+  "tolerances": {
+    "exact":       1e-12,
+    "tight":       1e-8,
+    "medium":      1e-5,
+    "approximate": 1e-3,
+    "near_miss":   0.05
+  },
+  "problems": [
+    {
+      "id":         "sin_x",
+      "name":       "sin(x)",
+      "category":   "barrier",
+      "status":     "open",
+      "difficulty": "impossible_real",
+      "description": "Express sin(x) as a finite real-valued EML tree with terminals {1, x}. The Infinite Zeros Barrier theorem rules this out for all finite N. Searching in the complex domain (terminals {1, x, ix, i}) is an open sub-problem.",
+      "probe_x":    [-3.0, -2.0, -1.5, -1.0, -0.5, 0.0, 0.5, 1.0, 1.5, 2.0, 3.0],
+      "target_y":   [-0.14112, -0.90930, -0.99749, -0.84147, -0.47943, 0.0,  0.47943, 0.84147, 0.99749, 0.90930, 0.14112],
+      "best_known": {
+        "formula":  "eml(x, 1.0)",
+        "node_description": "1-node EXL approximation — best real approximation by MCTS",
+        "mse":      0.42,
+        "submitter": "monogate-team",
+        "complex_exact": "Im(eml(i*x, 1)) — 1 node in complex EML domain"
+      },
+      "hint": "See complex_eval.sin_via_euler — exact in C, impossible in R. Proving impossibility for N≤11 is itself a publishable contribution.",
+      "points": 50
+    },
+    {
+      "id":         "cos_x",
+      "name":       "cos(x)",
+      "category":   "barrier",
+      "status":     "open",
+      "difficulty": "impossible_real",
+      "description": "Express cos(x) as a finite real-valued EML tree. Same barrier as sin(x).",
+      "probe_x":    [-3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0],
+      "target_y":   [-0.98999, -0.41615, 0.54030, 1.0, 0.54030, -0.41615, -0.98999],
+      "best_known": {
+        "formula":  "eml(0, eml(1, x))",
+        "mse":      0.39,
+        "submitter": "monogate-team"
+      },
+      "points": 30
+    },
+    {
+      "id":         "lambert_w",
+      "name":       "W₀(x)",
+      "category":   "special_functions",
+      "status":     "open",
+      "difficulty": "hard",
+      "description": "Express the principal branch of the Lambert W function in EML/BEST. W(x) satisfies W(x)·exp(W(x)) = x. Note: W(x) = x - x² + (3/2)x³ - ... The fixed-point iteration y → x·exp(-y) is directly EML-representable.",
+      "probe_x":    [0.1, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0],
+      "target_y":   [0.09127, 0.35173, 0.56714, 0.85260, 1.32672, 1.74553, 2.20521],
+      "best_known": {
+        "formula":  "eml(eml(1, eml(x, 1)), 1)",
+        "node_description": "3-node approximation via fixed-point unrolling",
+        "mse":      0.012,
+        "submitter": "monogate-team"
+      },
+      "hint": "W(x) is the fixed point of y = x·exp(-y) = exp(eml(ln(x), y)). Unrolling this recurrence gives nested EML trees.",
+      "points": 15
+    },
+    {
+      "id":         "erf_x",
+      "name":       "erf(x)",
+      "category":   "special_functions",
+      "status":     "open",
+      "difficulty": "hard",
+      "description": "Express the error function erf(x) = (2/√π)∫₀ˣ exp(-t²) dt. The Maclaurin series is erf(x) = (2/√π)(x - x³/3 + x⁵/10 - ...). BEST routing reduces the polynomial node count significantly.",
+      "probe_x":    [-2.0, -1.5, -1.0, -0.5, 0.0, 0.5, 1.0, 1.5, 2.0],
+      "target_y":   [-0.99532, -0.96611, -0.84270, -0.52050, 0.0, 0.52050, 0.84270, 0.96611, 0.99532],
+      "best_known": null,
+      "hint": "Start with the 4-term Maclaurin series, rewrite using BEST routing.",
+      "points": 12
+    },
+    {
+      "id":         "airy_ai",
+      "name":       "Ai(x)",
+      "category":   "special_functions",
+      "status":     "open",
+      "difficulty": "very_hard",
+      "description": "The Airy function Ai(x) = (1/π)∫₀^∞ cos(t³/3 + xt) dt. Power series: Ai(x) = c₁·f(x) - c₂·g(x) where f(x) = Σ(3^k·k!/(3k)!)·x^(3k) and g(x) = Σ(3^k·k!/(3k+1)!)·x^(3k+1).",
+      "probe_x":    [-4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0],
+      "target_y":   [0.56371, 0.37873, 0.22740, 0.53566, 0.35503, 0.13529, 0.03492, 0.00659],
+      "best_known": null,
+      "hint": "The oscillatory nature for x<0 suggests a complex-domain approach may be needed for exact representation.",
+      "points": 20
+    },
+    {
+      "id":         "bessel_j0",
+      "name":       "J₀(x)",
+      "category":   "special_functions",
+      "status":     "open",
+      "difficulty": "very_hard",
+      "description": "Bessel function of the first kind, order 0: J₀(x) = Σ (-1)^m/(m!)² · (x/2)^(2m). Like sin(x), J₀(x) has infinitely many real zeros, so the Infinite Zeros Barrier applies — exact representation in real EML is impossible. Best approximation challenge.",
+      "probe_x":    [0.5, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0],
+      "target_y":   [0.93847, 0.76520, 0.22389, -0.26005, -0.39715, -0.17760, 0.15065],
+      "best_known": null,
+      "points": 15
+    },
+    {
+      "id":         "pinn_loss_poisson",
+      "name":       "Poisson PINN residual",
+      "category":   "pinn",
+      "status":     "open",
+      "difficulty": "medium",
+      "description": "For the 1D Poisson equation u'' + f(x) = 0 with f(x) = π²·sin(πx), the PINN residual is L(u,x) = u_xx(x) + π²·sin(πx). Express the source term f(x) = π²·sin(πx) as a compact BEST tree for use as a PINN loss component.",
+      "probe_x":    [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
+      "target_y":   [0.30902, 0.58779, 0.80902, 0.95106, 1.00000, 0.95106, 0.80902, 0.58779, 0.30902],
+      "best_known": null,
+      "hint": "π²≈9.8696. Express π²·sin(πx) = mul(π², sin(πx)). Use sin MCTS approximation as starting point.",
+      "points": 8
+    },
+    {
+      "id":         "softplus_exact",
+      "name":       "softplus(x) = ln(1 + eˣ)",
+      "category":   "ml_activations",
+      "status":     "challenge",
+      "difficulty": "medium",
+      "description": "Express softplus(x) = ln(1+exp(x)) exactly in EML arithmetic. This is achievable! Find the minimal-node EML/BEST construction. Current best: 3 nodes with EML routing.",
+      "probe_x":    [-3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0],
+      "target_y":   [0.04858, 0.12693, 0.31326, 0.69315, 1.31326, 2.12693, 3.04858],
+      "best_known": {
+        "formula":  "eml(1, eml(eml(1, eml(x, 1)), eml(x, 1)))",
+        "node_description": "3-node EML exact construction (unverified)",
+        "mse":      null,
+        "submitter": null
+      },
+      "hint": "softplus(x) = ln(eˣ + 1) = eml(something useful...). Try working backwards from the EML gate.",
+      "points": 5
+    },
+    {
+      "id":         "swish",
+      "name":       "swish(x) = x·σ(x)",
+      "category":   "ml_activations",
+      "status":     "open",
+      "difficulty": "medium",
+      "description": "Express the Swish activation x·sigmoid(x) = x/(1+e^{-x}) in minimal BEST nodes. Related to the known sigmoid construction.",
+      "probe_x":    [-3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0],
+      "target_y":   [-0.19051, -0.23840, -0.26894, 0.0, 0.73106, 1.76160, 2.80949],
+      "best_known": null,
+      "hint": "swish(x) = x·sigmoid(x). Start with the sigmoid BEST construction, then add x multiplication.",
+      "points": 6
+    },
+    {
+      "id":         "exp_neg_x2",
+      "name":       "exp(-x²)",
+      "category":   "gaussian",
+      "status":     "challenge",
+      "difficulty": "easy",
+      "description": "Express exp(-x²) = e^(-x²). Note: eml(0, eml(x², 1)) = -ln(x²)... think about composition. Find the minimal-node exact BEST construction.",
+      "probe_x":    [-2.0, -1.5, -1.0, -0.5, 0.0, 0.5, 1.0, 1.5, 2.0],
+      "target_y":   [0.01832, 0.10540, 0.36788, 0.77880, 1.0, 0.77880, 0.36788, 0.10540, 0.01832],
+      "best_known": {
+        "formula":  "eml(eml(1, eml(eml(x, eml(1, x)), 1)), 1)",
+        "node_description": "4-node construction via nested EML",
+        "mse":      null,
+        "submitter": null
+      },
+      "hint": "exp(-x²) = exp(-x·x). x² in EML costs 3 nodes. Then exp() costs 1 more. Total ~4 EML or ~3 BEST.",
+      "points": 4
+    }
+  ]
+}

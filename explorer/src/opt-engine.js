@@ -33,6 +33,12 @@ export const RULES = [
   { id: "sqrt",    label: "sqrt",      re: /(?:math|torch|np|numpy)\.sqrt\s*\(/g,          eml: 15,  best: 3,  op: "EXL",     note: "pow(x, 0.5) via EXL: 3n",                          sub: s => s.replace(/(?:math|torch|np|numpy)\.sqrt/, "BEST.sqrt") },
   { id: "div_fn",  label: "torch.div", re: /(?:torch\.div|np\.divide)\s*\(/g,             eml: 15,  best: 1,  op: "EDL",     note: "EDL div: 1n vs EML's 15n",                         sub: s => s.replace(/(?:torch\.div|np\.divide)/, "BEST.div") },
   { id: "mul_fn",  label: "torch.mul", re: /(?:torch\.mul|np\.multiply)\s*\(/g,           eml: 13,  best: 7,  op: "EDL",     note: "EDL mul: 7n vs EML's 13n",                         sub: s => s.replace(/(?:torch\.mul|np\.multiply)/, "BEST.mul") },
+  // Bare calls without module prefix (e.g. from math import *)
+  { id: "sin_bare",    label: "sin (bare)",    re: /(?<![.\w])sin\s*\(/g,    eml: 245, best: 63, op: "EXL",     note: "8-term Taylor via EXL pow (63n vs 245n)",           sub: s => s.replace(/(?<![.\w])sin/, "BEST.sin") },
+  { id: "cos_bare",    label: "cos (bare)",    re: /(?<![.\w])cos\s*\(/g,    eml: 245, best: 63, op: "EXL",     note: "8-term Taylor via EXL pow (63n vs 245n)",           sub: s => s.replace(/(?<![.\w])cos/, "BEST.cos") },
+  { id: "sqrt_bare",   label: "sqrt (bare)",   re: /(?<![.\w])sqrt\s*\(/g,   eml: 15,  best: 3,  op: "EXL",     note: "pow(x, 0.5) via EXL: 3n",                          sub: s => s.replace(/(?<![.\w])sqrt/, "BEST.sqrt") },
+  { id: "exp_bare",    label: "exp (bare)",    re: /(?<![.\w])exp\s*\(/g,    eml: 1,   best: 1,  op: "EML",     note: "same cost across all operators",                    sub: null },
+  { id: "log_bare",    label: "log (bare)",    re: /(?<![.\w])log\s*\(/g,    eml: 3,   best: 1,  op: "EXL",     note: "EXL ln: 1n vs EML's 3n",                           sub: s => s.replace(/(?<![.\w])log/, "BEST.ln") },
 ];
 
 // Node-reduction threshold below which Python call overhead dominates speedup.

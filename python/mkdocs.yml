@@ -1,0 +1,90 @@
+site_name: monogate
+site_description: "EML arithmetic — all elementary functions from eml(x,y) = exp(x) - ln(y)"
+site_url: https://monogate.dev/docs
+repo_url: https://github.com/almaguer1986/monogate
+repo_name: monogate
+docs_dir: docs
+site_dir: site
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: teal
+      accent: deep orange
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: teal
+      accent: deep orange
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+    - content.code.annotate
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            show_source: true
+            show_signature_annotations: true
+            docstring_style: google
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - admonition
+  - pymdownx.details
+  - tables
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Getting Started: installation.md
+  - Core Concepts:
+    - EML Universal Operator: concepts/eml_universal_operator.md
+    - BEST Routing: concepts/best_routing.md
+    - Complex Bypass: concepts/complex_bypass.md
+  - Guide:
+    - Explorer: guide/explorer.md
+    - PyTorch Integration: guide/pytorch.md
+    - MCTS Search: guide/mcts.md
+    - Complex EML: guide/complex.md
+    - Special Functions: guide/special_functions.md
+    - PINN (Physics): guide/pinn.md
+    - Symbolic Regression: guide/symbolic_regression.md
+  - Research & Theory:
+    - Research Findings: research/findings.md
+    - Exhaustive Search: research/exhaustive_search.md
+    - Phantom Attractors: research/phantom_attractors.md
+    - "Sin Barrier (Phase 5)": research/sin_barrier_phase5.md
+    - EDL Completeness Proof: research/edl_completeness_proof.md
+    - Minimax Approximation: research/minimax_approximation.md
+  - Special Functions: special_functions.md
+  - API Reference:
+    - Core: api/core.md
+    - Optimize: api/optimize.md
+    - Network: api/network.md
+    - torch: api/torch.md
+    - search: api/search.md
+    - complex_eval: api/complex_eval.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/almaguer1986/monogate
+    - icon: fontawesome/solid/paper-plane
+      link: https://arxiv.org/abs/2603.21852

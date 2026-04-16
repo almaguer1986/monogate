@@ -273,11 +273,15 @@ class TestEMLTree:
         assert losses[-1] < losses[0] or losses[-1] < 1e-3
 
     def test_training_converges_to_e(self):
-        """depth=1 tree initialised to 1.0 should converge to e (already there)."""
+        """depth=1 tree with init=1.0 evaluates to exp(1) - ln(softplus(1))."""
+        import torch.nn.functional as F
         model = EMLTree(depth=1, init=1.0)
-        # At init: eml(1, 1) = e already
+        # _Node.forward applies softplus to the right child before computing eml.
+        # At init=1.0: eml(1, softplus(1)) = exp(1) - ln(softplus(1))
+        sp1 = F.softplus(torch.tensor(1.0)).item()
+        expected = math.exp(1.0) - math.log(sp1)
         out = model()
-        assert abs(out.item() - math.e) < 1e-5
+        assert abs(out.item() - expected) < 1e-5
 
     def test_fit_returns_loss_list(self):
         model = EMLTree(depth=1)
@@ -310,9 +314,9 @@ class TestEMLNetwork:
     def test_parameters_exist(self):
         model = EMLNetwork(in_features=2, depth=1)
         params = list(model.parameters())
-        # depth=1 → 2 leaves, each nn.Linear(2,1): weight(2) + bias(1) = 3 params per leaf
-        # 2 leaves × 3 params = 6 params total
-        assert len(params) == 6
+        # depth=1 → 2 leaves, each nn.Linear(2,1) has 2 parameter tensors (weight, bias)
+        # 2 leaves × 2 tensors = 4 parameter tensors total
+        assert len(params) == 4
 
     def test_training_identity(self):
         """EMLNetwork should be able to approximate the identity function y=x."""

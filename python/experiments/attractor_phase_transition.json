@@ -1,0 +1,194 @@
+{
+  "config": {
+    "depths": [
+      3,
+      4
+    ],
+    "lambdas": [
+      0.0,
+      0.001,
+      0.002,
+      0.003,
+      0.004,
+      0.005,
+      0.008,
+      0.01,
+      0.02,
+      0.05
+    ],
+    "seeds": 20,
+    "steps": 1000,
+    "lr": 0.005,
+    "target": 3.141592653589793
+  },
+  "attractors": {
+    "3": 3.169642,
+    "4": null
+  },
+  "results": {
+    "3": {
+      "0.0": {
+        "convergence_rate": 0.0,
+        "n_pi": 0,
+        "n_seeds": 20,
+        "mean_final": 3.17046,
+        "std_final": 0.0,
+        "attractor": 3.169642
+      },
+      "0.001": {
+        "convergence_rate": 1.0,
+        "n_pi": 20,
+        "n_seeds": 20,
+        "mean_final": 3.140832,
+        "std_final": 0.0,
+        "attractor": 3.169642
+      },
+      "0.002": {
+        "convergence_rate": 1.0,
+        "n_pi": 20,
+        "n_seeds": 20,
+        "mean_final": 3.13184,
+        "std_final": 0.0,
+        "attractor": 3.169642
+      },
+      "0.003": {
+        "convergence_rate": 1.0,
+        "n_pi": 20,
+        "n_seeds": 20,
+        "mean_final": 3.141534,
+        "std_final": 0.0,
+        "attractor": 3.169642
+      },
+      "0.004": {
+        "convergence_rate": 1.0,
+        "n_pi": 20,
+        "n_seeds": 20,
+        "mean_final": 3.141906,
+        "std_final": 0.0,
+        "attractor": 3.169642
+      },
+      "0.005": {
+        "convergence_rate": 1.0,
+        "n_pi": 20,
+        "n_seeds": 20,
+        "mean_final": 3.135407,
+        "std_final": 0.0,
+        "attractor": 3.169642
+      },
+      "0.008": {
+        "convergence_rate": 1.0,
+        "n_pi": 20,
+        "n_seeds": 20,
+        "mean_final": 3.143715,
+        "std_final": 0.0,
+        "attractor": 3.169642
+      },
+      "0.01": {
+        "convergence_rate": 1.0,
+        "n_pi": 20,
+        "n_seeds": 20,
+        "mean_final": 3.141814,
+        "std_final": 0.0,
+        "attractor": 3.169642
+      },
+      "0.02": {
+        "convergence_rate": 1.0,
+        "n_pi": 20,
+        "n_seeds": 20,
+        "mean_final": 3.143386,
+        "std_final": 0.0,
+        "attractor": 3.169642
+      },
+      "0.05": {
+        "convergence_rate": 1.0,
+        "n_pi": 20,
+        "n_seeds": 20,
+        "mean_final": 3.141778,
+        "std_final": 0.0,
+        "attractor": 3.169642
+      }
+    },
+    "4": {
+      "0.0": {
+        "convergence_rate": 0.0,
+        "n_pi": 0,
+        "n_seeds": 20,
+        "mean_final": null,
+        "std_final": 0.0,
+        "attractor": null
+      },
+      "0.001": {
+        "convergence_rate": 0.0,
+        "n_pi": 0,
+        "n_seeds": 20,
+        "mean_final": null,
+        "std_final": 0.0,
+        "attractor": null
+      },
+      "0.002": {
+        "convergence_rate": 0.0,
+        "n_pi": 0,
+        "n_seeds": 20,
+        "mean_final": null,
+        "std_final": 0.0,
+        "attractor": null
+      },
+      "0.003": {
+        "convergence_rate": 0.0,
+        "n_pi": 0,
+        "n_seeds": 20,
+        "mean_final": null,
+        "std_final": 0.0,
+        "attractor": null
+      },
+      "0.004": {
+        "convergence_rate": 0.0,
+        "n_pi": 0,
+        "n_seeds": 20,
+        "mean_final": null,
+        "std_final": 0.0,
+        "attractor": null
+      },
+      "0.005": {
+        "convergence_rate": 0.0,
+        "n_pi": 0,
+        "n_seeds": 20,
+        "mean_final": null,
+        "std_final": 0.0,
+        "attractor": null
+      },
+      "0.008": {
+        "convergence_rate": 0.0,
+        "n_pi": 0,
+        "n_seeds": 20,
+        "mean_final": null,
+        "std_final": 0.0,
+        "attractor": null
+      },
+      "0.01": {
+        "convergence_rate": 0.0,
+        "n_pi": 0,
+        "n_seeds": 20,
+        "mean_final": null,
+        "std_final": 0.0,
+        "attractor": null
+      },
+      "0.02": {
+        "convergence_rate": 0.0,
+        "n_pi": 0,
+        "n_seeds": 20,
+        "mean_final": null,
+        "std_final": 0.0,
+        "attractor": null
+      },
+      "0.05": {
+        "convergence_rate": 0.0,
+        "n_pi": 0,
+        "n_seeds": 20,
+        "mean_final": null,
+        "std_final": 0.0,
+        "attractor": null
+      }
+    }
+  }
+}

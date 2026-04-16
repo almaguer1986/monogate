@@ -1,0 +1,138 @@
+name: Challenge Board — Validate Submission
+
+on:
+  pull_request:
+    paths:
+      - "challenge/submissions/**/*.json"
+      - "challenge/submissions/**/*.py"
+  push:
+    branches: [main, master]
+    paths:
+      - "challenge/submissions/**"
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  validate:
+    name: Validate EML Submission
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install monogate (core only, no torch)
+        working-directory: python
+        run: pip install -e "." --quiet
+
+      - name: Find changed submission files
+        id: find_submissions
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            FILES=$(git diff --name-only origin/${{ github.base_ref }} HEAD \
+                    | grep -E '^challenge/submissions/.*\.json$' \
+                    | head -20 || true)
+          else
+            FILES=$(git diff --name-only HEAD~1 HEAD \
+                    | grep -E '^challenge/submissions/.*\.json$' \
+                    | head -20 || true)
+          fi
+          echo "files=$FILES" >> $GITHUB_OUTPUT
+          echo "Found submission files: $FILES"
+
+      - name: Validate submissions
+        id: validate
+        run: |
+          EXIT=0
+          REPORT=""
+          for F in ${{ steps.find_submissions.outputs.files }}; do
+            if [ -f "$F" ]; then
+              echo "Validating: $F"
+              OUT=$(python -m monogate.validate "$F" --json-out /tmp/result.json 2>&1) || true
+
+              # Parse the JSON result
+              if [ -f /tmp/result.json ]; then
+                TIER=$(python -c "import json; d=json.load(open('/tmp/result.json')); print(d.get('tier','none'))")
+                MAX_ERR=$(python -c "import json; d=json.load(open('/tmp/result.json')); print(f\"{d.get('max_error',999):.2e}\")")
+                MSE=$(python -c "import json; d=json.load(open('/tmp/result.json')); print(f\"{d.get('mse',999):.2e}\")")
+                EML_N=$(python -c "import json; d=json.load(open('/tmp/result.json')); print(d.get('eml_nodes',0))")
+                BEST_N=$(python -c "import json; d=json.load(open('/tmp/result.json')); print(d.get('best_nodes',0))")
+                BEATS=$(python -c "import json; d=json.load(open('/tmp/result.json')); print(d.get('beats_current','false'))")
+                VALID=$(python -c "import json; d=json.load(open('/tmp/result.json')); print(d.get('is_valid','false'))")
+                PID=$(python -c "import json; d=json.load(open('/tmp/result.json')); print(d.get('problem_id','?'))")
+
+                TIER_EMOJI="❌"
+                case $TIER in
+                  exact)       TIER_EMOJI="🏆" ;;
+                  tight)       TIER_EMOJI="🥇" ;;
+                  medium)      TIER_EMOJI="🥈" ;;
+                  approximate) TIER_EMOJI="🥉" ;;
+                  near_miss)   TIER_EMOJI="🎯" ;;
+                  none)        TIER_EMOJI="❌"; EXIT=1 ;;
+                esac
+
+                BEATS_STR=""
+                if [ "$BEATS" = "True" ]; then
+                  BEATS_STR=" 🌟 **New leaderboard best!**"
+                fi
+
+                REPORT="${REPORT}
+          ### ${TIER_EMOJI} \`${F}\` — Problem: \`${PID}\`
+          | Metric | Value |
+          |--------|-------|
+          | Tier | **${TIER}** |
+          | Max error | \`${MAX_ERR}\` |
+          | MSE | \`${MSE}\` |
+          | EML nodes | ${EML_N} |
+          | BEST nodes | ${BEST_N} |
+          ${BEATS_STR}
+          "
+              else
+                REPORT="${REPORT}
+
+          ### ❓ \`${F}\` — Could not parse result
+          "
+                EXIT=1
+              fi
+            fi
+          done
+
+          echo "exit_code=$EXIT" >> $GITHUB_OUTPUT
+          {
+            echo 'report<<EOF'
+            echo "$REPORT"
+            echo 'EOF'
+          } >> $GITHUB_OUTPUT
+
+      - name: Post PR comment
+        if: github.event_name == 'pull_request' && steps.find_submissions.outputs.files != ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const report = `## monogate Challenge Board — Submission Validation
+
+            ${{ steps.validate.outputs.report }}
+
+            ---
+            *Validated by [monogate-validate](https://github.com/${{ github.repository }})*
+            `;
+
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: report,
+            });
+
+      - name: Fail if any submission invalid
+        if: steps.validate.outputs.exit_code != '0'
+        run: |
+          echo "One or more submissions failed validation."
+          exit 1

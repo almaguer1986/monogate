@@ -55,7 +55,7 @@ from .core import (
     compare_op,
 )
 
-__version__ = "0.3.3"
+__version__ = "1.0.0"
 
 __all__ = [
     "op",
@@ -113,6 +113,9 @@ from .optimize import (  # noqa: F401
     best_optimize_model,
     optimize_siren,
     optimize_nerf,
+    context_aware_best_optimize,
+    ContextAwareResult,
+    StabilityWarning,
 )
 
 __all__ += [
@@ -122,6 +125,7 @@ __all__ += [
     "gelu_eml_approx", "gelu_best_approx",
     "LayerOptimizeResult", "ModelOptimizeReport", "best_optimize_model",
     "optimize_siren", "optimize_nerf",
+    "context_aware_best_optimize", "ContextAwareResult", "StabilityWarning",
 ]
 
 try:
@@ -152,3 +156,220 @@ try:
     __all__ += ["EMLTree", "EMLNetwork", "HybridNetwork", "fit"]
 except ImportError:
     pass  # torch not installed — network classes unavailable
+
+try:
+    from .torch import EMLActivation, EMLLayer  # noqa: F401
+
+    __all__ += ["EMLActivation", "EMLLayer"]
+except ImportError:
+    pass  # torch not installed
+
+from .complex_eval import (  # noqa: F401
+    eml_complex,
+    eval_complex,
+    euler_path_node,
+    sin_via_euler,
+    cos_via_euler,
+    score_complex_projection,
+    formula_complex,
+    COMPLEX_TERMINALS,
+)
+
+__all__ += [
+    "eml_complex",
+    "eval_complex",
+    "euler_path_node",
+    "sin_via_euler",
+    "cos_via_euler",
+    "score_complex_projection",
+    "formula_complex",
+    "COMPLEX_TERMINALS",
+]
+
+try:
+    from .compile import (  # noqa: F401
+        FusedEMLActivation, FusedEMLLayer,
+        compile_eml_layer, to_torchscript,
+        benchmark_layer, BenchmarkTable,
+    )
+    __all__ += [
+        "FusedEMLActivation", "FusedEMLLayer",
+        "compile_eml_layer", "to_torchscript",
+        "benchmark_layer", "BenchmarkTable",
+    ]
+except ImportError:
+    pass  # torch not installed
+
+from .llm import suggest_and_optimize, LLMOptimizeResult  # noqa: F401
+
+__all__ += ["suggest_and_optimize", "LLMOptimizeResult"]
+
+from .validate import validate_submission, ValidationResult, load_problems, list_problems  # noqa: F401
+
+__all__ += ["validate_submission", "ValidationResult", "load_problems", "list_problems"]
+
+from .complex_best import (  # noqa: F401
+    ComplexHybridOperator,
+    CBEST,
+    ComplexOptimizeResult,
+    complex_best_optimize,
+    im,
+    re,
+    SIN_NODE_COUNT,
+    COS_NODE_COUNT,
+    J0_NODE_COUNT,
+    AI_NODE_COUNT,
+    ERF_NODE_COUNT,
+)
+
+__all__ += [
+    "ComplexHybridOperator",
+    "CBEST",
+    "ComplexOptimizeResult",
+    "complex_best_optimize",
+    "im",
+    "re",
+    "SIN_NODE_COUNT",
+    "COS_NODE_COUNT",
+    "J0_NODE_COUNT",
+    "AI_NODE_COUNT",
+    "ERF_NODE_COUNT",
+]
+
+from .complex_search import (  # noqa: F401
+    complex_mcts_search,
+    complex_beam_search,
+    ComplexMCTSResult,
+    ComplexBeamResult,
+)
+
+__all__ += [
+    "complex_mcts_search",
+    "complex_beam_search",
+    "ComplexMCTSResult",
+    "ComplexBeamResult",
+]
+
+try:
+    from .pinn import EMLPINN, PINNResult, fit_pinn  # noqa: F401
+    __all__ += ["EMLPINN", "PINNResult", "fit_pinn"]
+except ImportError:
+    pass  # torch not installed
+
+from .special import (  # noqa: F401
+    SpecialFnEntry,
+    CATALOG as SPECIAL_CATALOG,
+    sin_cb, cos_cb,
+    sinh_cb, cosh_cb, tanh_cb, sech_cb,
+    erf_cb,
+    fresnel_s_integrand_cb, fresnel_c_integrand_cb,
+    fresnel_s_cb, fresnel_c_cb,
+    j0_cb, ai_cb,
+    lgamma_cb, digamma_cb,
+    catalog_summary, save_catalog,
+)
+
+__all__ += [
+    "SpecialFnEntry",
+    "SPECIAL_CATALOG",
+    "sin_cb", "cos_cb",
+    "sinh_cb", "cosh_cb", "tanh_cb", "sech_cb",
+    "erf_cb",
+    "fresnel_s_integrand_cb", "fresnel_c_integrand_cb",
+    "fresnel_s_cb", "fresnel_c_cb",
+    "j0_cb", "ai_cb",
+    "lgamma_cb", "digamma_cb",
+    "catalog_summary", "save_catalog",
+]
+
+from .interval import (  # noqa: F401
+    Interval,
+    eml_interval,
+    eval_interval,
+    bound_expression,
+)
+
+__all__ += [
+    "Interval",
+    "eml_interval",
+    "eval_interval",
+    "bound_expression",
+]
+
+try:
+    from .sympy_bridge import (  # noqa: F401
+        to_sympy,
+        from_sympy,
+        simplify_eml,
+        latex_eml,
+        verify_identity,
+    )
+    __all__ += [
+        "to_sympy",
+        "from_sympy",
+        "simplify_eml",
+        "latex_eml",
+        "verify_identity",
+    ]
+except ImportError:
+    pass  # sympy not installed — bridge unavailable
+
+from .leaderboard import (  # noqa: F401
+    BenchmarkProblem,
+    LeaderboardEntry,
+    PROBLEMS,
+    run_leaderboard,
+    print_leaderboard,
+    markdown_leaderboard,
+    save_leaderboard,
+    load_leaderboard,
+)
+
+__all__ += [
+    "BenchmarkProblem",
+    "LeaderboardEntry",
+    "PROBLEMS",
+    "run_leaderboard",
+    "print_leaderboard",
+    "markdown_leaderboard",
+    "save_leaderboard",
+    "load_leaderboard",
+]
+
+from .minimax import (  # noqa: F401
+    MinimaxResult,
+    minimax_eml,
+    minimax_survey,
+)
+
+__all__ += [
+    "MinimaxResult",
+    "minimax_eml",
+    "minimax_survey",
+]
+
+from .physics import (  # noqa: F401
+    schrodinger_free_cb,
+    potential_well_cb,
+    nls_soliton_amplitude_cb,
+    heat_kernel_cb,
+    kdv_soliton_cb,
+    wave_cos_cb,
+    wave_sin_cb,
+    PHYSICS_CATALOG,
+)
+
+__all__ += [
+    "schrodinger_free_cb",
+    "potential_well_cb",
+    "nls_soliton_amplitude_cb",
+    "heat_kernel_cb",
+    "kdv_soliton_cb",
+    "wave_cos_cb",
+    "wave_sin_cb",
+    "PHYSICS_CATALOG",
+]
+
+from .sklearn_wrapper import EMLRegressor  # noqa: F401
+
+__all__ += ["EMLRegressor"]

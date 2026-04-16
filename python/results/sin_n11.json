@@ -1,0 +1,417 @@
+{
+  "search_type": "exhaustive_hybrid",
+  "n_max": 11,
+  "probe_x": [
+    0.1,
+    0.3,
+    0.5,
+    0.8,
+    1.0,
+    1.3,
+    1.5,
+    2.0
+  ],
+  "results": {
+    "0.0001": {
+      "tol": 0.0001,
+      "n": 11,
+      "total_trees_after_parity": 208901719,
+      "p_parity": 240744873,
+      "p_allones": 1263,
+      "n_shapes": 58786,
+      "elapsed_s": 323.15,
+      "candidates": [],
+      "near_misses": [
+        {
+          "formula": "eml(eml(eml(x,1),eml(1,1)),eml(eml(eml(eml(x,1),eml(1,1)),eml(x,1)),eml(x,1)))",
+          "bits": 1297,
+          "n_leaves": 12,
+          "mse": 0.00014780932419342863
+        },
+        {
+          "formula": "eml(eml(1,1),eml(eml(eml(1,1),eml(x,1)),eml(eml(eml(eml(x,1),eml(1,1)),1),1)))",
+          "bits": 80,
+          "n_leaves": 12,
+          "mse": 0.00014821602779941948
+        },
+        {
+          "formula": "eml(x,eml(1,eml(x,eml(eml(eml(x,eml(x,1)),eml(eml(1,eml(x,1)),eml(x,1))),1))))",
+          "bits": 669,
+          "n_leaves": 12,
+          "mse": 0.000250518224955694
+        },
+        {
+          "formula": "eml(1,eml(eml(1,eml(x,1)),eml(1,eml(eml(x,1),eml(eml(x,eml(eml(1,1),1)),1)))))",
+          "bits": 164,
+          "n_leaves": 12,
+          "mse": 0.000316935129120843
+        },
+        {
+          "formula": "eml(1,eml(eml(1,eml(x,1)),eml(1,eml(1,eml(eml(x,eml(eml(eml(x,1),1),1)),1)))))",
+          "bits": 196,
+          "n_leaves": 12,
+          "mse": 0.000316935129120843
+        },
+        {
+          "formula": "eml(1,eml(eml(1,eml(x,1)),eml(1,eml(eml(1,eml(1,eml(eml(x,eml(1,1)),1))),1))))",
+          "bits": 132,
+          "n_leaves": 12,
+          "mse": 0.000537017988013658
+        },
+        {
+          "formula": "eml(x,eml(1,eml(eml(x,eml(x,1)),eml(eml(eml(x,eml(1,eml(1,1))),eml(x,1)),1))))",
+          "bits": 557,
+          "n_leaves": 12,
+          "mse": 0.0005396642868989075
+        },
+        {
+          "formula": "eml(1,eml(eml(1,eml(x,1)),eml(eml(1,eml(eml(1,1),eml(1,1))),eml(x,eml(x,1)))))",
+          "bits": 1540,
+          "n_leaves": 12,
+          "mse": 0.0006985984535147579
+        },
+        {
+          "formula": "eml(1,eml(eml(1,eml(x,1)),eml(x,eml(eml(eml(x,eml(eml(1,eml(1,1)),1)),1),1))))",
+          "bits": 52,
+          "n_leaves": 12,
+          "mse": 0.0007326996824883602
+        },
+        {
+          "formula": "eml(1,eml(eml(1,eml(x,1)),eml(1,eml(eml(eml(x,eml(1,1)),eml(x,eml(x,1))),1))))",
+          "bits": 804,
+          "n_leaves": 12,
+          "mse": 0.000821059123559502
+        },
+        {
+          "formula": "eml(1,eml(eml(eml(x,eml(eml(x,eml(1,eml(x,1))),1)),1),eml(1,eml(eml(x,1),1))))",
+          "bits": 534,
+          "n_leaves": 12,
+          "mse": 0.0008479700283713631
+        },
+        {
+          "formula": "eml(1,eml(eml(1,eml(x,1)),eml(1,eml(eml(x,1),eml(1,eml(eml(1,eml(1,1)),1))))))",
+          "bits": 36,
+          "n_leaves": 12,
+          "mse": 0.000847970028371371
+        },
+        {
+          "formula": "eml(1,eml(eml(1,eml(x,1)),eml(1,eml(eml(x,eml(eml(1,eml(eml(1,1),1)),1)),1))))",
+          "bits": 36,
+          "n_leaves": 12,
+          "mse": 0.000847970028371371
+        },
+        {
+          "formula": "eml(1,eml(eml(1,eml(x,1)),eml(eml(1,eml(eml(1,eml(1,eml(eml(x,1),1))),1)),1)))",
+          "bits": 132,
+          "n_leaves": 12,
+          "mse": 0.000847970028371371
+        },
+        {
+          "formula": "eml(1,eml(1,eml(eml(1,eml(eml(eml(1,eml(x,1)),eml(1,eml(eml(x,1),1))),1)),1)))",
+          "bits": 144,
+          "n_leaves": 12,
+          "mse": 0.000847970028371371
+        },
+        {
+          "formula": "eml(1,eml(eml(1,eml(x,1)),eml(eml(1,eml(eml(1,eml(1,1)),1)),eml(eml(x,1),1))))",
+          "bits": 516,
+          "n_leaves": 12,
+          "mse": 0.000847970028371371
+        },
+        {
+          "formula": "eml(1,eml(eml(1,eml(x,1)),eml(eml(eml(1,eml(eml(1,1),1)),1),eml(eml(x,1),1))))",
+          "bits": 516,
+          "n_leaves": 12,
+          "mse": 0.000847970028371371
+        },
+        {
+          "formula": "eml(1,eml(eml(1,eml(x,eml(1,eml(eml(1,eml(1,1)),1)))),eml(1,eml(eml(x,1),1))))",
+          "bits": 516,
+          "n_leaves": 12,
+          "mse": 0.000847970028371371
+        },
+        {
+          "formula": "eml(1,eml(eml(1,eml(eml(1,eml(eml(1,eml(x,1)),1)),1)),eml(1,eml(eml(x,1),1))))",
+          "bits": 528,
+          "n_leaves": 12,
+          "mse": 0.000847970028371371
+        },
+        {
+          "formula": "eml(1,eml(eml(1,eml(x,eml(eml(1,eml(eml(1,1),1)),1))),eml(1,eml(eml(x,1),1))))",
+          "bits": 516,
+          "n_leaves": 12,
+          "mse": 0.000847970028371371
+        }
+      ],
+      "result": "NO_CANDIDATE"
+    },
+    "1e-06": {
+      "tol": 1e-06,
+      "n": 11,
+      "total_trees_after_parity": 208901719,
+      "p_parity": 240744873,
+      "p_allones": 1263,
+      "n_shapes": 58786,
+      "elapsed_s": 276.56,
+      "candidates": [],
+      "near_misses": [
+        {
+          "formula": "eml(eml(eml(x,1),eml(1,1)),eml(eml(eml(eml(x,1),eml(1,1)),eml(x,1)),eml(x,1)))",
+          "bits": 1297,
+          "n_leaves": 12,
+          "mse": 0.00014780932419342863
+        },
+        {
+          "formula": "eml(eml(1,1),eml(eml(eml(1,1),eml(x,1)),eml(eml(eml(eml(x,1),eml(1,1)),1),1)))",
+          "bits": 80,
+          "n_leaves": 12,
+          "mse": 0.00014821602779941948
+        },
+        {
+          "formula": "eml(x,eml(1,eml(x,eml(eml(eml(x,eml(x,1)),eml(eml(1,eml(x,1)),eml(x,1))),1))))",
+          "bits": 669,
+          "n_leaves": 12,
+          "mse": 0.000250518224955694
+        },
+        {
+          "formula": "eml(1,eml(eml(1,eml(x,1)),eml(1,eml(1,eml(eml(x,eml(eml(eml(x,1),1),1)),1)))))",
+          "bits": 196,
+          "n_leaves": 12,
+          "mse": 0.000316935129120843
+        },
+        {
+          "formula": "eml(1,eml(eml(1,eml(x,1)),eml(1,eml(eml(x,1),eml(eml(x,eml(eml(1,1),1)),1)))))",
+          "bits": 164,
+          "n_leaves": 12,
+          "mse": 0.000316935129120843
+        },
+        {
+          "formula": "eml(1,eml(eml(1,eml(x,1)),eml(1,eml(eml(1,eml(1,eml(eml(x,eml(1,1)),1))),1))))",
+          "bits": 132,
+          "n_leaves": 12,
+          "mse": 0.000537017988013658
+        },
+        {
+          "formula": "eml(x,eml(1,eml(eml(x,eml(x,1)),eml(eml(eml(x,eml(1,eml(1,1))),eml(x,1)),1))))",
+          "bits": 557,
+          "n_leaves": 12,
+          "mse": 0.0005396642868989075
+        },
+        {
+          "formula": "eml(1,eml(eml(1,eml(x,1)),eml(eml(1,eml(eml(1,1),eml(1,1))),eml(x,eml(x,1)))))",
+          "bits": 1540,
+          "n_leaves": 12,
+          "mse": 0.0006985984535147579
+        },
+        {
+          "formula": "eml(1,eml(eml(1,eml(x,1)),eml(x,eml(eml(eml(x,eml(eml(1,eml(1,1)),1)),1),1))))",
+          "bits": 52,
+          "n_leaves": 12,
+          "mse": 0.0007326996824883602
+        },
+        {
+          "formula": "eml(1,eml(eml(1,eml(x,1)),eml(1,eml(eml(eml(x,eml(1,1)),eml(x,eml(x,1))),1))))",
+          "bits": 804,
+          "n_leaves": 12,
+          "mse": 0.000821059123559502
+        },
+        {
+          "formula": "eml(1,eml(eml(eml(x,eml(eml(x,eml(1,eml(x,1))),1)),1),eml(1,eml(eml(x,1),1))))",
+          "bits": 534,
+          "n_leaves": 12,
+          "mse": 0.0008479700283713631
+        },
+        {
+          "formula": "eml(1,eml(eml(1,eml(x,1)),eml(1,eml(eml(x,1),eml(1,eml(eml(1,eml(1,1)),1))))))",
+          "bits": 36,
+          "n_leaves": 12,
+          "mse": 0.000847970028371371
+        },
+        {
+          "formula": "eml(1,eml(eml(1,eml(x,eml(1,eml(eml(1,eml(1,1)),1)))),eml(1,eml(eml(x,1),1))))",
+          "bits": 516,
+          "n_leaves": 12,
+          "mse": 0.000847970028371371
+        },
+        {
+          "formula": "eml(1,eml(eml(1,eml(x,1)),eml(eml(eml(1,eml(eml(1,1),1)),1),eml(eml(x,1),1))))",
+          "bits": 516,
+          "n_leaves": 12,
+          "mse": 0.000847970028371371
+        },
+        {
+          "formula": "eml(1,eml(eml(1,eml(x,1)),eml(eml(1,eml(eml(1,eml(1,1)),1)),eml(eml(x,1),1))))",
+          "bits": 516,
+          "n_leaves": 12,
+          "mse": 0.000847970028371371
+        },
+        {
+          "formula": "eml(1,eml(eml(eml(1,eml(eml(1,eml(1,1)),1)),eml(x,1)),eml(1,eml(eml(x,1),1))))",
+          "bits": 576,
+          "n_leaves": 12,
+          "mse": 0.000847970028371371
+        },
+        {
+          "formula": "eml(1,eml(eml(1,eml(x,1)),eml(1,eml(eml(x,eml(eml(1,eml(eml(1,1),1)),1)),1))))",
+          "bits": 36,
+          "n_leaves": 12,
+          "mse": 0.000847970028371371
+        },
+        {
+          "formula": "eml(1,eml(1,eml(eml(1,eml(eml(eml(1,eml(x,1)),eml(1,eml(eml(x,1),1))),1)),1)))",
+          "bits": 144,
+          "n_leaves": 12,
+          "mse": 0.000847970028371371
+        },
+        {
+          "formula": "eml(1,eml(eml(1,eml(x,eml(eml(1,eml(eml(1,1),1)),1))),eml(1,eml(eml(x,1),1))))",
+          "bits": 516,
+          "n_leaves": 12,
+          "mse": 0.000847970028371371
+        },
+        {
+          "formula": "eml(1,eml(eml(eml(eml(1,eml(eml(1,1),1)),1),eml(x,1)),eml(1,eml(eml(x,1),1))))",
+          "bits": 576,
+          "n_leaves": 12,
+          "mse": 0.000847970028371371
+        }
+      ],
+      "result": "NO_CANDIDATE"
+    },
+    "1e-09": {
+      "tol": 1e-09,
+      "n": 11,
+      "total_trees_after_parity": 208901719,
+      "p_parity": 240744873,
+      "p_allones": 1263,
+      "n_shapes": 58786,
+      "elapsed_s": 292.65,
+      "candidates": [],
+      "near_misses": [
+        {
+          "formula": "eml(eml(eml(x,1),eml(1,1)),eml(eml(eml(eml(x,1),eml(1,1)),eml(x,1)),eml(x,1)))",
+          "bits": 1297,
+          "n_leaves": 12,
+          "mse": 0.00014780932419342863
+        },
+        {
+          "formula": "eml(eml(1,1),eml(eml(eml(1,1),eml(x,1)),eml(eml(eml(eml(x,1),eml(1,1)),1),1)))",
+          "bits": 80,
+          "n_leaves": 12,
+          "mse": 0.00014821602779941948
+        },
+        {
+          "formula": "eml(x,eml(1,eml(x,eml(eml(eml(x,eml(x,1)),eml(eml(1,eml(x,1)),eml(x,1))),1))))",
+          "bits": 669,
+          "n_leaves": 12,
+          "mse": 0.000250518224955694
+        },
+        {
+          "formula": "eml(1,eml(eml(1,eml(x,1)),eml(1,eml(eml(x,1),eml(eml(x,eml(eml(1,1),1)),1)))))",
+          "bits": 164,
+          "n_leaves": 12,
+          "mse": 0.000316935129120843
+        },
+        {
+          "formula": "eml(1,eml(eml(1,eml(x,1)),eml(1,eml(1,eml(eml(x,eml(eml(eml(x,1),1),1)),1)))))",
+          "bits": 196,
+          "n_leaves": 12,
+          "mse": 0.000316935129120843
+        },
+        {
+          "formula": "eml(1,eml(eml(1,eml(x,1)),eml(1,eml(eml(1,eml(1,eml(eml(x,eml(1,1)),1))),1))))",
+          "bits": 132,
+          "n_leaves": 12,
+          "mse": 0.000537017988013658
+        },
+        {
+          "formula": "eml(x,eml(1,eml(eml(x,eml(x,1)),eml(eml(eml(x,eml(1,eml(1,1))),eml(x,1)),1))))",
+          "bits": 557,
+          "n_leaves": 12,
+          "mse": 0.0005396642868989075
+        },
+        {
+          "formula": "eml(1,eml(eml(1,eml(x,1)),eml(eml(1,eml(eml(1,1),eml(1,1))),eml(x,eml(x,1)))))",
+          "bits": 1540,
+          "n_leaves": 12,
+          "mse": 0.0006985984535147579
+        },
+        {
+          "formula": "eml(1,eml(eml(1,eml(x,1)),eml(x,eml(eml(eml(x,eml(eml(1,eml(1,1)),1)),1),1))))",
+          "bits": 52,
+          "n_leaves": 12,
+          "mse": 0.0007326996824883602
+        },
+        {
+          "formula": "eml(1,eml(eml(1,eml(x,1)),eml(1,eml(eml(eml(x,eml(1,1)),eml(x,eml(x,1))),1))))",
+          "bits": 804,
+          "n_leaves": 12,
+          "mse": 0.000821059123559502
+        },
+        {
+          "formula": "eml(1,eml(eml(eml(x,eml(eml(x,eml(1,eml(x,1))),1)),1),eml(1,eml(eml(x,1),1))))",
+          "bits": 534,
+          "n_leaves": 12,
+          "mse": 0.0008479700283713631
+        },
+        {
+          "formula": "eml(1,eml(eml(eml(eml(1,eml(eml(1,1),1)),1),eml(x,1)),eml(1,eml(eml(x,1),1))))",
+          "bits": 576,
+          "n_leaves": 12,
+          "mse": 0.000847970028371371
+        },
+        {
+          "formula": "eml(1,eml(1,eml(eml(1,eml(eml(eml(1,eml(x,1)),eml(1,eml(eml(x,1),1))),1)),1)))",
+          "bits": 144,
+          "n_leaves": 12,
+          "mse": 0.000847970028371371
+        },
+        {
+          "formula": "eml(1,eml(eml(1,eml(x,1)),eml(eml(1,eml(eml(1,eml(1,eml(eml(x,1),1))),1)),1)))",
+          "bits": 132,
+          "n_leaves": 12,
+          "mse": 0.000847970028371371
+        },
+        {
+          "formula": "eml(1,eml(eml(1,eml(x,1)),eml(eml(1,eml(eml(1,eml(1,1)),1)),eml(eml(x,1),1))))",
+          "bits": 516,
+          "n_leaves": 12,
+          "mse": 0.000847970028371371
+        },
+        {
+          "formula": "eml(1,eml(eml(1,eml(x,eml(eml(1,eml(eml(1,1),1)),1))),eml(1,eml(eml(x,1),1))))",
+          "bits": 516,
+          "n_leaves": 12,
+          "mse": 0.000847970028371371
+        },
+        {
+          "formula": "eml(1,eml(eml(1,eml(x,1)),eml(1,eml(eml(x,1),eml(1,eml(eml(1,eml(1,1)),1))))))",
+          "bits": 36,
+          "n_leaves": 12,
+          "mse": 0.000847970028371371
+        },
+        {
+          "formula": "eml(1,eml(eml(1,eml(x,eml(1,eml(eml(1,eml(1,1)),1)))),eml(1,eml(eml(x,1),1))))",
+          "bits": 516,
+          "n_leaves": 12,
+          "mse": 0.000847970028371371
+        },
+        {
+          "formula": "eml(1,eml(eml(1,eml(eml(1,eml(eml(1,eml(x,1)),1)),1)),eml(1,eml(eml(x,1),1))))",
+          "bits": 528,
+          "n_leaves": 12,
+          "mse": 0.000847970028371371
+        },
+        {
+          "formula": "eml(1,eml(eml(1,eml(x,1)),eml(eml(eml(1,eml(eml(1,1),1)),1),eml(eml(x,1),1))))",
+          "bits": 516,
+          "n_leaves": 12,
+          "mse": 0.000847970028371371
+        }
+      ],
+      "result": "NO_CANDIDATE"
+    }
+  },
+  "mcts": null,
+  "timestamp": "2026-04-16 03:29:31"
+}

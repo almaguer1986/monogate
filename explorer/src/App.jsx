@@ -1,12 +1,14 @@
 import { useState, useMemo } from "react";
 import BestCalc from "./components/BestCalc.jsx";
 import OptimizeTab from "./components/OptimizeTab.jsx";
-import ChallengeBoard from "./components/ChallengeBoard.jsx";
 import ExprTreeTab from "./components/ExprTreeTab.jsx";
 import SinExplorer from "./components/SinExplorer.jsx";
 import TransformerDemo from "./components/TransformerDemo.jsx";
 import NeRFOptimizerTab from "./components/NeRFOptimizerTab.jsx";
 import LandingPage from "./components/LandingPage.jsx";
+import AttractorViz from "./components/AttractorViz.jsx";
+import ResearchTab from "./components/ResearchTab.jsx";
+import LeaderboardTab from "./components/LeaderboardTab.jsx";
 import { op, exp, ln, E, ZERO, sub, neg, add, mul, div, pow, recip,
          BEST, sin_best, cos_best, pow_exl, div_edl, ln_exl } from "./eml.js";
 import {
@@ -279,15 +281,32 @@ export default function App() {
               eml(x,y) = exp(x) − ln(y) · Odrzywołek 2026 · arXiv:2603.21852
             </div>
           </div>
-          <div style={{ display:"flex", gap:4, flexWrap:"wrap" }}>
-            {["verify","table","sandbox","tree","best","calc","opt","board","viz","sinex","demo","nerf"].map(t => {
+          <div style={{ display:"flex", gap:4, flexWrap:"wrap", alignItems:"center" }}>
+            <a
+              href="https://challenge.monogate.dev"
+              target="_blank"
+              rel="noreferrer"
+              style={{
+                padding:"5px 10px", fontSize:10, borderRadius:4,
+                border:`1px solid ${C.border}`, color:C.muted,
+                textDecoration:"none", fontFamily:"'Space Mono',monospace",
+                letterSpacing:"0.04em", whiteSpace:"nowrap",
+              }}
+              onMouseEnter={e => { e.currentTarget.style.color = C.text; e.currentTarget.style.borderColor = C.muted; }}
+              onMouseLeave={e => { e.currentTarget.style.color = C.muted; e.currentTarget.style.borderColor = C.border; }}
+            >
+              ⊞ Challenges ↗
+            </a>
+            {["verify","table","sandbox","tree","best","calc","opt","viz","sinex","demo","nerf","attractor","research","leaderboard"].map(t => {
               const isCalc  = t === "calc";
               const isOpt   = t === "opt";
-              const isHighlit = isCalc || isOpt || t === "viz" || t === "sinex" || t === "demo" || t === "nerf";
+              const isHighlit = isCalc || isOpt || t === "viz" || t === "sinex" || t === "demo"
+                || t === "nerf" || t === "attractor" || t === "research" || t === "leaderboard";
               const isActive = tab === t;
               const LABELS = {
-                calc: "✦ calc", opt: "⚙ opt", board: "⊞ board",
+                calc: "✦ calc", opt: "⚙ opt",
                 viz: "✦ viz", sinex: "sin↗", demo: "⚡ demo", nerf: "⬡ nerf",
+                attractor: "⊛ attractor", research: "🔬 research", leaderboard: "🏆 board",
               };
               return (
                 <button key={t} onClick={() => setTab(t)} style={{
@@ -869,9 +888,6 @@ export default function App() {
       {/* ── TAB: OPT ── */}
       {tab === "opt" && <OptimizeTab />}
 
-      {/* ── TAB: BOARD ── */}
-      {tab === "board" && <ChallengeBoard />}
-
       {/* ── TAB: VIZ ── */}
       {tab === "viz" && <ExprTreeTab />}
 
@@ -891,6 +907,11 @@ export default function App() {
 
       {/* ── TAB: NERF ── */}
       {tab === "nerf" && <NeRFOptimizerTab />}
+
+      {/* ── TAB: ATTRACTOR ── */}
+      {tab === "attractor"    && <AttractorViz />}
+      {tab === "research"     && <ResearchTab />}
+      {tab === "leaderboard"  && <LeaderboardTab />}
 
       {/* ── FEATURED DEMOS ── */}
       <div style={{ marginTop:28, borderTop:`1px solid ${C.border}`, paddingTop:20 }}>

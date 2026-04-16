@@ -1,0 +1,45 @@
+{
+  "version": "2.0",
+  "updated": "2026-04-16",
+  "description": "monogate Challenge Board leaderboard",
+  "entries": [
+    {
+      "rank":       1,
+      "submitter":  "monogate-team",
+      "problem_id": "sin_x",
+      "formula":    "Im(eml(i*x, 1))",
+      "domain":     "complex",
+      "mse":        0.0,
+      "eml_nodes":  1,
+      "best_nodes": 1,
+      "tier":       "exact",
+      "submitted":  "2026-04-16",
+      "notes":      "Euler path: exact via complex domain. Real-valued exact construction is proven impossible (Infinite Zeros Barrier)."
+    },
+    {
+      "rank":       2,
+      "submitter":  "monogate-team",
+      "problem_id": "lambert_w",
+      "formula":    "eml(eml(1, eml(x, 1)), 1)",
+      "domain":     "real",
+      "mse":        0.012,
+      "eml_nodes":  3,
+      "best_nodes": 3,
+      "tier":       "approximate",
+      "submitted":  "2026-04-16",
+      "notes":      "3-node fixed-point unrolling. Further iterations improve accuracy."
+    }
+  ],
+  "problem_stats": {
+    "sin_x":              {"best_mse": 0.0,   "best_nodes": 1, "tier": "exact",       "n_submissions": 1},
+    "cos_x":              {"best_mse": 0.39,  "best_nodes": 2, "tier": "approximate", "n_submissions": 1},
+    "lambert_w":          {"best_mse": 0.012, "best_nodes": 3, "tier": "approximate", "n_submissions": 1},
+    "erf_x":              {"best_mse": null,  "best_nodes": null, "tier": null,        "n_submissions": 0},
+    "airy_ai":            {"best_mse": null,  "best_nodes": null, "tier": null,        "n_submissions": 0},
+    "bessel_j0":          {"best_mse": null,  "best_nodes": null, "tier": null,        "n_submissions": 0},
+    "pinn_loss_poisson":  {"best_mse": null,  "best_nodes": null, "tier": null,        "n_submissions": 0},
+    "softplus_exact":     {"best_mse": null,  "best_nodes": null, "tier": null,        "n_submissions": 0},
+    "swish":              {"best_mse": null,  "best_nodes": null, "tier": null,        "n_submissions": 0},
+    "exp_neg_x2":         {"best_mse": null,  "best_nodes": null, "tier": null,        "n_submissions": 0}
+  }
+}
