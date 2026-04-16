@@ -137,3 +137,105 @@ for x in [0.0, 0.5, 1.0, math.pi, -2.7]:
     s, c = sin_via_euler(x), cos_via_euler(x)
     assert abs(s*s + c*c - 1.0) < 1e-13
 ```
+
+---
+
+## Complex BEST Routing (CBEST)
+
+`CBEST` is the complex-domain analogue of the real `BEST` operator.  It applies
+the same routing rules (EXL for ln/pow, EDL for mul/div, EML for add/sub) but
+dispatches to `cmath` throughout, allowing complex intermediates.
+
+The key gain: `sin(x)` and `cos(x)` cost **1 node each** instead of 63:
+
+```python
+from monogate import CBEST, im, re
+import math
+
+# sin(x) — 1 complex EML node via Euler path
+z = CBEST.sin(math.pi / 6)
+print(im(z))    # 0.5  (Im(exp(i·π/6)) = sin(π/6))
+
+# cos(x) — same 1 node
+z = CBEST.cos(0.0)
+print(re(z))    # 1.0  (Re(exp(0)) = cos(0))
+
+# Euler identity
+z = CBEST.exp(1j * math.pi)
+print(z.real)   # -1.0  (cos(π))
+print(z.imag)   #  0.0  (sin(π))
+```
+
+### Node-count comparison
+
+| Operation | Real BEST | CBEST | Saving |
+|-----------|-----------|-------|--------|
+| exp, ln   | 1         | 1     | —      |
+| pow, sqrt | 3         | 3     | —      |
+| div       | 1         | 1     | —      |
+| mul       | 7         | 7     | —      |
+| **sin(x)**| **63**    | **1** | **−62** |
+| **cos(x)**| **63**    | **1** | **−62** |
+
+### complex_best_optimize
+
+Analyse a complex-domain expression for CBEST routing savings:
+
+```python
+from monogate import complex_best_optimize
+
+result = complex_best_optimize("sin(x) + cos(x)")
+print(result)
+# ComplexOptimizeResult: 2 ops detected
+#   sin  C-EML(Euler)   1 node  (real BEST: 63 nodes)  −98% saving
+#   cos  C-EML(Euler)   1 node  (real BEST: 63 nodes)  −98% saving
+# Total: 2 CBEST nodes vs 126 real-BEST nodes  (98% saving)
+```
+
+---
+
+## Complex MCTS / Beam Search
+
+Use `complex_mcts_search` or `complex_beam_search` to discover symbolic
+approximations for functions that are hard in the real grammar:
+
+```python
+import math
+from monogate import complex_mcts_search
+
+# Search for sin(x) — should find Im(eml(ix,1)) = sin(x) exactly
+result = complex_mcts_search(
+    math.sin,
+    projection="imag",      # score Im(tree(x)) against target
+    depth=3,
+    n_simulations=500,
+    seed=42,
+)
+print(result.complex_formula)   # eml(ix, 1.0)
+print(f"MSE = {result.best_mse:.2e}")   # ≈ 0
+
+# Also works for less familiar functions
+from monogate import complex_beam_search
+
+try:
+    from scipy.special import j0
+except ImportError:
+    j0 = None   # need scipy for Bessel
+
+if j0:
+    result = complex_beam_search(
+        j0,
+        projection="real",
+        depth=4,
+        width=30,
+    )
+    print(result.complex_formula)
+    print(f"MSE = {result.best_mse:.4e}")
+```
+
+### Projection parameter
+
+| `projection` | Scores against | Example target |
+|-------------|----------------|----------------|
+| `"imag"`    | Im(tree(x))    | sin, Airy Ai   |
+| `"real"`    | Re(tree(x))    | cos, Bessel J₀ |

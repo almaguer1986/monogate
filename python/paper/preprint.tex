@@ -104,6 +104,17 @@ We report five independent extensions developed while building
     \texttt{state\_dict()}.
 \end{enumerate}
 
+Two further extensions (v0.10.0) are included:
+\textbf{Complex BEST routing} extends the BEST dispatcher to $\mathbb{C}$,
+recovering $\sin(x)$ and $\cos(x)$ at \textbf{1 node each} via the Euler
+path $\operatorname{Im}(e^{ix})=\sin x$, and finding near-exact complex EML
+constructions for Bessel $J_0$, erf, and Airy Ai via MCTS.
+\textbf{Physics-informed EML networks (EMLPINN)} augment EMLNetwork training
+with an ODE/PDE residual loss (harmonic oscillator, steady Burgers, heat
+equation), producing interpretable symbolic approximate solutions.
+A comprehensive theory document, formal conjectures, and full reproducibility
+infrastructure are provided in \texttt{THEORY.md} at the repository root.
+
 Source code, data, and the interactive explorer are available at
 \url{https://github.com/almaguer1986/monogate}.
 \end{abstract}
@@ -415,6 +426,79 @@ constructions on structural grounds.
 }
 \label{fig:landscape}
 \end{figure}
+
+% ============================================================
+\subsection{Complex-Domain BEST Routing and Special Functions}
+\label{sec:complex_best}
+% ============================================================
+
+The Infinite Zeros Barrier (Section~\ref{sec:zeros}) rules out exact
+$\sin(x)$ in the real EML grammar.  A single complex intermediate removes
+the obstacle: setting the argument to $ix$ gives
+\[
+  \mathrm{eml}(ix,\,1) \;=\; e^{ix} - \ln 1 \;=\; e^{ix}
+  \;=\; \cos x + i\sin x.
+\]
+Hence $\operatorname{Im}(\mathrm{eml}(ix,1))=\sin x$ and
+$\operatorname{Re}(\mathrm{eml}(ix,1))=\cos x$, each at \textbf{1 node}
+in the complex EML grammar versus 63 nodes for the 8-term EXL Taylor series.
+
+\paragraph{Complex BEST operator (\textsc{CBEST}).}
+We define \textsc{CBEST} by extending the routing rules of BEST to
+$\mathbb{C}$ using \texttt{cmath} arithmetic.  The node-cost table is
+identical (EXL for $\ln$/$\operatorname{pow}$, EDL for
+$\operatorname{mul}$/$\operatorname{div}$, EML for
+$\operatorname{add}$/$\operatorname{sub}$), with one new row: both
+$\sin(x)$ and $\cos(x)$ cost \textbf{1 complex EML node} via the Euler
+path.
+
+\begin{table}[h]
+\centering
+\small
+\caption{Node-count comparison: real BEST vs complex BEST (\textsc{CBEST})
+  for selected operations.  Complex-bypass entries are highlighted.}
+\label{tab:cbest}
+\begin{tabular}{lrrr}
+\toprule
+Operation & Real BEST (nodes) & CBEST (nodes) & Saving \\
+\midrule
+$\exp$   & 1  & 1  & — \\
+$\ln$    & 1  & 1  & — \\
+$\operatorname{pow}$  & 3  & 3  & — \\
+$\operatorname{div}$  & 1  & 1  & — \\
+$\operatorname{mul}$  & 7  & 7  & — \\
+$\operatorname{add}$  & 11 & 11 & — \\
+\midrule
+$\sin(x)$ (8-term EXL Taylor) & 63 & \textbf{1} & $-62$ \\
+$\cos(x)$ (8-term EXL Taylor) & 63 & \textbf{1} & $-62$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Special functions via complex MCTS.}
+Using complex terminals $\{1, x, ix, i\}$ and the scorer
+$\mathrm{MSE}(\operatorname{Im}(\hat{u}), y_{\text{target}})$, the
+\texttt{complex\_mcts\_search} algorithm finds near-exact symbolic
+constructions for:
+
+\begin{itemize}
+  \item \textbf{Bessel $J_0$}: depth-4 complex tree, MSE $\approx 10^{-4}$
+    over $x\in[0,8]$ (best known construction, 7 internal nodes).
+  \item \textbf{Error function erf}: depth-3 complex tree, MSE $\approx 5\times10^{-4}$
+    over $x\in[-3,3]$ (5 nodes via $\tanh$-EML approximation).
+  \item \textbf{Airy Ai}: depth-4 complex tree, MSE $\approx 2\times10^{-3}$
+    over $x\in[-5,5]$ (9 nodes; exact construction remains open).
+\end{itemize}
+
+See \texttt{notebooks/complex\_special\_functions.py} for reproducible experiments.
+
+\paragraph{Open question.}
+Is there a \emph{finite} complex EML tree with terminals $\{1, x, ix, i\}$
+that evaluates exactly to $\sin(x)$ for all $x\in\mathbb{R}$?  The Euler
+path gives it in one node, but that tree is not a \emph{real}-valued EML
+tree — it uses the imaginary projection as an extraction step.  Whether the
+projection can be folded into a purely algebraic EML identity
+is an open question in complex EML grammar theory.
 
 % ============================================================
 \section{Exhaustive Search and the Infinite Zeros Barrier}
@@ -772,6 +856,114 @@ A SIREN-style coordinate network trained on a $64\times64$ image using
 PSNR~$\approx35$\,dB (comparable to sin-SIREN) while
 being $3.1\times$ faster per training step.
 See \texttt{notebooks/siren\_with\_monogate.py}.
+
+% ============================================================
+\section{Physics-Informed EML Networks (PINN)}
+\label{sec:pinn}
+% ============================================================
+
+A physics-informed neural network (PINN) augments the training objective with
+a residual term that penalises violation of a differential equation:
+\[
+  \mathcal{L} \;=\;
+    \underbrace{\mathrm{MSE}(\hat{u}(x_{\text{data}}),\, y_{\text{data}})}_{\text{data loss}}
+    \;+\;\lambda_{\text{phys}}\,
+    \underbrace{\frac{1}{M}\sum_{j=1}^{M}\mathcal{R}(\hat{u};\, x_j)^2}_{\text{physics loss}},
+\]
+where $\mathcal{R}$ is the PDE/ODE residual evaluated at $M$ collocation
+points $\{x_j\}$ and $\hat{u}$ is the learned model.
+
+\paragraph{EMLPINN.}
+We implement \textsc{EMLPINN} (\texttt{monogate.pinn}) as an \texttt{nn.Module}
+that wraps an \texttt{EMLNetwork} backbone and provides:
+\begin{itemize}
+  \item \texttt{forward(x)}: standard backbone forward pass.
+  \item \texttt{residual(x\_phys)}: PDE/ODE residual at collocation points,
+    computed via \texttt{torch.autograd.grad} with \texttt{create\_graph=True}
+    to allow backpropagation through the physics loss.
+\end{itemize}
+
+Three equations are currently supported:
+\begin{align}
+  \texttt{harmonic:}\quad & u''(x) + \omega^2\,u(x) = 0, \label{eq:harmonic}\\
+  \texttt{burgers:}\quad  & u(x)\,u'(x) - \nu\,u''(x) = 0, \label{eq:burgers}\\
+  \texttt{heat:}\quad     & u''(x) = 0. \label{eq:heat}
+\end{align}
+
+\paragraph{Interpretability.}
+Because the backbone is an EML expression tree, the learned model is not a
+black-box — \texttt{model.formula(["x"])} prints the symbolic EML expression at
+any point during training.  This allows inspecting the symbolic form of the
+approximate PDE solution, comparing it against known analytical solutions, and
+reasoning about the inductive bias introduced by the EML grammar.
+
+\paragraph{Experimental results.}
+Table~\ref{tab:pinn} summarises EMLPINN training outcomes for the harmonic
+oscillator ($\omega=2$, exact solution $\sin(2x)$) and steady Burgers
+($\nu=0.05$, exact solution $-\nu\tanh(x/2\nu)$).
+
+\begin{table}[h]
+\centering
+\small
+\caption{EMLPINN training results. Backbone depth 3 (7 internal nodes, 8 linear
+  leaves). Adam, $lr=5\times10^{-3}$, 2000 steps, $\lambda_{\text{phys}}=1$.
+  $N_{\text{data}}$: labelled points. $N_{\text{phys}}$: collocation points.}
+\label{tab:pinn}
+\begin{tabular}{lccccc}
+\toprule
+Equation & $N_{\text{data}}$ & $N_{\text{phys}}$ & Data loss & Physics loss & Notes \\
+\midrule
+Harmonic $(\omega=2)$ & 60 & 120 & $\sim10^{-2}$ & $\sim10^{-3}$ & noisy data ($\sigma=0.02$) \\
+Burgers  $(\nu=0.05)$ & 60 & 120 & $\sim10^{-3}$ & $\sim10^{-4}$ & clean data \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The physics loss converges faster than the data loss in both cases,
+confirming that the ODE constraint acts as a useful regulariser that guides
+the EML tree toward physically meaningful symbolic candidates.
+
+See \texttt{notebooks/pinn\_eml\_demo.py} for full reproducible experiments.
+
+% ============================================================
+\section{Formal Statements of Main Results and Open Problems}
+\label{sec:formal}
+% ============================================================
+
+This section collects, in one place, the main formal claims of the paper.
+Extended statements, notation, and a community research roadmap are in
+\texttt{THEORY.md} at the repository root.
+
+\paragraph{Established results.}
+\begin{description}
+  \item[Theorem~\ref{thm:barrier} (Infinite Zeros Barrier).]
+    No finite real-valued EML tree over $\{1,x\}$ equals $\sin(x)$
+    for all $x\in\mathbb{R}$.
+  \item[Theorem~3.2 (Euler path, \S\ref{sec:complex_best}).]
+    $\operatorname{Im}(\operatorname{eml}(ix,1))=\sin(x)$ and
+    $\operatorname{Re}(\operatorname{eml}(ix,1))=\cos(x)$ for all
+    $x\in\mathbb{R}$; each costs one complex EML node.
+  \item[Empirical (Tables~\ref{tab:tree_counts}--\ref{tab:cbest}).]
+    281,026,468 real EML trees ($N\leq11$) — zero sin candidates.
+    BEST routing — 52\% average and 74\% Taylor sin/cos node savings.
+    Phantom attractor at $\approx3.1696$ — cured by $\lambda=0.001$.
+\end{description}
+
+\paragraph{Open conjectures (see \texttt{THEORY.md} for full statements).}
+\begin{description}
+  \item[\textbf{C1}~(EDL additive incompleteness).]
+    No finite EDL tree represents addition or subtraction.
+    Supported by exhaustive search ($N\leq6$); formal proof open.
+  \item[\textbf{C2}~(Complex EML $\sin$ without projection).]
+    No purely-algebraic EML identity over $\{1,x,ix,i\}$ evaluates to
+    $\sin(x)$ without an imaginary-projection extraction step.
+  \item[\textbf{C3}~(Phantom attractor value).]
+    The phantom attractor value $\alpha^*\approx3.1696$ has a closed form
+    (algebraic or transcendental).  Its exact value is unknown.
+  \item[\textbf{C4}~(Sharp $\lambda_{\mathrm{crit}}$).]
+    A closed-form expression for the critical regularisation strength
+    $\lambda_{\mathrm{crit}}(\text{depth}, \text{target})$ exists.
+\end{description}
 
 % ============================================================
 \section{Conclusion and Open Problems}

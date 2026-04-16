@@ -149,3 +149,19 @@ Best near-miss (#1) is 2,842Ã— closer to sin(x) than the trivial baseline exp(x)
 
 **Analysis script:** `python monogate/search/analyze_n11.py`
 **HTML gallery:** `python monogate/search/analyze_n11.py --html output/n11_gallery.html`
+
+## N=11 Verification — 2026-04-16 14:30 UTC
+
+- **Status:** FAILED
+- **Total trees:** 208,901,719
+- **Candidates at tol=1e-4:** 0
+- **Best near-miss MSE:** 1.4781e-04
+- **Script:** `scripts/reproduce_n11.py`
+
+## N=11 Verification — 2026-04-16 14:31 UTC
+
+- **Status:** VERIFIED
+- **Total trees:** 208,901,719
+- **Candidates at tol=1e-4:** 0
+- **Best near-miss MSE:** 1.4781e-04
+- **Script:** `scripts/reproduce_n11.py`

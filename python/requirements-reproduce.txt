@@ -1,0 +1,29 @@
+# monogate — Reproducibility requirements
+#
+# Exact pins for full result reproduction.
+# Install with: pip install -r requirements-reproduce.txt
+#
+# Note: torch is listed separately with CPU-only wheel index in Dockerfile.
+# For GPU: pip install torch==2.3.0 (with your platform's CUDA wheel URL).
+#
+# Python 3.12+ required.
+
+# ── Core scientific stack ──────────────────────────────────────────────────────
+numpy>=1.26,<2.1
+scipy>=1.12,<1.15
+matplotlib>=3.8,<3.10
+
+# ── Testing ────────────────────────────────────────────────────────────────────
+pytest>=7.4,<9.0
+pytest-cov>=4.1
+
+# ── Linting (optional, for CI) ─────────────────────────────────────────────────
+ruff>=0.4
+
+# ── monogate package itself (editable install via Makefile / Dockerfile) ───────
+# Install separately: pip install -e "python/[torch,dev]"
+
+# ── Optional: documentation build ─────────────────────────────────────────────
+# mkdocs>=1.5
+# mkdocs-material>=9.0
+# mkdocstrings[python]>=0.20

@@ -13,6 +13,85 @@ Live explorer: **[monogate.dev](https://monogate.dev)**
 
 ---
 
+## What's new in v0.11.0-dev (Phase 11)
+
+- **THEORY.md** — canonical expert-level theory reference: formal theorem/conjecture statements, open problems index (C1–C7), research roadmap for the community. See [`THEORY.md`](THEORY.md).
+- **Reproducibility infrastructure** — `Makefile`, `Dockerfile`, `requirements-reproduce.txt`, `scripts/reproduce_n11.py`. Run `make reproduce-all` to verify all paper claims from a clean clone.
+- **Formal paper section** — §"Formal Statements of Main Results and Open Problems" added to `preprint.tex` with precise theorem/conjecture index.
+
+```bash
+# Verify all N=11 claims in one command
+cd python && python scripts/reproduce_n11.py
+
+# Run all reproducibility checks
+make reproduce-all
+
+# Full test suite (662 tests)
+make test
+```
+
+---
+
+## For Researchers
+
+**Theory and open problems:** [`THEORY.md`](THEORY.md) — formal definitions, theorems, conjectures (C1–C7), and a structured research roadmap. Start here if you want to build on the EML framework.
+
+**Reproduce the paper results:**
+```bash
+git clone https://github.com/almaguer1986/monogate
+cd monogate
+make reproduce-n11    # verify the N=11 exhaustive search (~30s from cached)
+make reproduce-all    # full v0.10.0 readiness check
+make paper            # compile preprint.tex (requires TeX Live)
+```
+
+**Docker (fully isolated environment):**
+```bash
+make docker-build
+make docker-run       # runs reproduce-all inside container
+```
+
+**Crack an open problem:**  
+See `THEORY.md §6` for the open conjecture index. The most tractable entry points:
+- **C1** (EDL additive incompleteness) — a clean structural proof is missing
+- **C3** (phantom attractor value) — what is 3.1696 in closed form?
+- **C5** (N=12 sin search) — GPU-accelerated MCTS is already implemented
+
+Pull requests solving any open problem are welcome.
+
+---
+
+## What's new in v0.10.0
+
+- **Complex BEST routing** — `CBEST.sin(x)` and `CBEST.cos(x)` cost **1 node each** via the Euler path `Im(eml(ix,1)) = sin x` (vs 63 nodes in real BEST). Complex MCTS/Beam search finds near-exact symbolic constructions for Bessel J₀, erf, and Airy Ai.
+
+- **Physics-Informed EML Networks (EMLPINN)** — interpretable neural networks that simultaneously fit data and satisfy a differential equation. Equations: harmonic oscillator, steady Burgers, heat. The learned EML formula is a symbolic approximate solution.
+
+- **Minimax search objective** — `mcts_search(..., objective='minimax')` and `beam_search(..., objective='minimax')` for Chebyshev-style uniform error bounds instead of MSE.
+
+- **GPU-accelerated search** — `gpu_mcts_search(device='cuda', batch_size=512)` amortises rollout overhead over large batches. Graceful CPU fallback when CUDA unavailable.
+
+```python
+from monogate import CBEST, im
+import math
+
+# sin(x) — 1 complex EML node
+z = CBEST.sin(math.pi / 6)
+print(im(z))    # 0.5  (= sin(π/6))
+
+# PINN — harmonic oscillator with physics constraint
+import torch
+from monogate import EMLPINN, fit_pinn
+
+model = EMLPINN(equation='harmonic', omega=2.0)
+x = torch.linspace(0, math.pi, 50).unsqueeze(1)
+y = torch.sin(2.0 * x.squeeze(1))
+result = fit_pinn(model, x, y, x_phys=x, steps=500)
+print(result.formula)   # interpretable EML expression
+```
+
+---
+
 ## What's new in v0.9.0
 
 - **Phantom attractor landscape visualization** — `plot_attractor_landscape.py` generates a 2D MSE loss-surface slice showing the wide false basin (~3.1696) and the narrow π basin, with three L1-penalty contour overlays. Run `python python/experiments/plot_attractor_landscape.py` to reproduce the paper figure.

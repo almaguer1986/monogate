@@ -4,6 +4,80 @@ All notable changes to `monogate` are documented here.
 
 ---
 
+## [0.11.0-dev] — 2026-04-16
+
+### Phase 11: Formal Theory, Conjectures, and Full Reproducibility
+
+**THEORY.md** — new canonical theory reference at the repository root.
+  Expert-level document covering: formal definitions (EML operator, BEST routing,
+  phantom attractors, EMLPINN), proven theorems (Infinite Zeros Barrier, Euler
+  path identity), open conjectures C1–C7 (EDL incompleteness, attractor value,
+  minimax-optimal approximation, CBEST completeness, PINN symbolic convergence),
+  and a structured research roadmap for the community.
+
+**Formal paper section** — §"Formal Statements of Main Results and Open Problems"
+  added to `paper/preprint.tex` with precise theorem/conjecture index and pointers
+  to THEORY.md.  Abstract updated to reference the theory document.
+
+**Reproducibility infrastructure:**
+  - `Makefile` (root) — targets: `make test`, `make reproduce-n11`, `make reproduce-all`,
+    `make paper`, `make theory`, `make docker-build`, `make docker-run`
+  - `Dockerfile` (root) — Python 3.12, PyTorch 2.3 CPU, TeX Live, Rust toolchain;
+    reproduces all paper results from a clean clone
+  - `python/requirements-reproduce.txt` — pinned dependency list
+  - `python/scripts/reproduce_n11.py` — verifies all N=11 paper claims against
+    cached `results/sin_n11.json` (12/12 claims verified); supports `--rerun` for
+    full re-computation (~5 min)
+
+**Version:** bumped to `0.11.0-dev` in `monogate/__init__.py` and `pyproject.toml`.
+
+---
+
+## [0.10.0] — 2026-04-16
+
+### Complex BEST, PINN, Minimax Search, GPU Search
+
+**New modules:**
+
+- **`monogate.complex_best`** — `ComplexHybridOperator` (`CBEST`): extends BEST
+  routing to ℂ using `cmath`.  `CBEST.sin(x)` and `CBEST.cos(x)` cost **1 node each**
+  via the Euler path `Im(eml(ix,1)) = sin x` (vs 63 nodes in real BEST).
+  Exports `complex_best_optimize()`, `ComplexOptimizeResult`, `im()`, `re()`,
+  and node-count constants (`SIN_NODE_COUNT=1`, `J0_NODE_COUNT=7`, etc.).
+
+- **`monogate.complex_search`** — `complex_mcts_search()` and
+  `complex_beam_search()` over the complex terminal set `{1, x, ix, i}`.
+  Returns `ComplexMCTSResult`/`ComplexBeamResult` with `projection` and
+  `complex_formula` fields.  Finds near-exact constructions for Bessel J₀,
+  erf, and Airy Ai.
+
+- **`monogate.pinn`** — `EMLPINN(equation, backbone_depth, omega, nu, lam_physics)`:
+  physics-informed EML network.  Equations: `'harmonic'` (u''+ω²u=0),
+  `'burgers'` (u·u'−ν·u''=0), `'heat'` (u''=0).  Residual via
+  `torch.autograd.grad` with `create_graph=True`.  `fit_pinn()` returns
+  `PINNResult(data_loss, physics_loss, history, formula, elapsed_s)`.
+
+- **`monogate.search.gpu_search`** — `gpu_mcts_search(device='cuda', batch_size=512)`:
+  GPU-accelerated MCTS with batched rollouts.  Graceful CPU fallback when CUDA
+  unavailable.  Also exports `GPUTreeEvaluator` for standalone batch evaluation.
+
+**Extended:**
+
+- **`mcts_search` / `beam_search`** — new `objective` parameter: `'mse'`
+  (default, unchanged) or `'minimax'` (Chebyshev/L∞ approximation — minimises
+  max absolute error).  `MCTSResult` and `BeamResult` gain `objective` field.
+
+**New tests:** 69 new tests (`test_complex_best.py`, `test_pinn.py`).
+Total: 662 passing.
+
+**New notebooks:** `complex_special_functions.py`, `pinn_eml_demo.py`,
+`minimax_approximation.py`.
+
+**Paper:** Added §4.6 Complex-Domain BEST Routing and Special Functions;
+§9 Physics-Informed EML Networks; abstract updated.
+
+---
+
 ## [0.9.0] — 2026-04-16
 
 ### Public Launch — arXiv Submission Live

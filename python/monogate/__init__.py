@@ -55,7 +55,7 @@ from .core import (
     compare_op,
 )
 
-__version__ = "0.9.0"
+__version__ = "0.11.0-dev"
 
 __all__ = [
     "op",
@@ -207,3 +207,51 @@ __all__ += ["suggest_and_optimize", "LLMOptimizeResult"]
 from .validate import validate_submission, ValidationResult, load_problems, list_problems  # noqa: F401
 
 __all__ += ["validate_submission", "ValidationResult", "load_problems", "list_problems"]
+
+from .complex_best import (  # noqa: F401
+    ComplexHybridOperator,
+    CBEST,
+    ComplexOptimizeResult,
+    complex_best_optimize,
+    im,
+    re,
+    SIN_NODE_COUNT,
+    COS_NODE_COUNT,
+    J0_NODE_COUNT,
+    AI_NODE_COUNT,
+    ERF_NODE_COUNT,
+)
+
+__all__ += [
+    "ComplexHybridOperator",
+    "CBEST",
+    "ComplexOptimizeResult",
+    "complex_best_optimize",
+    "im",
+    "re",
+    "SIN_NODE_COUNT",
+    "COS_NODE_COUNT",
+    "J0_NODE_COUNT",
+    "AI_NODE_COUNT",
+    "ERF_NODE_COUNT",
+]
+
+from .complex_search import (  # noqa: F401
+    complex_mcts_search,
+    complex_beam_search,
+    ComplexMCTSResult,
+    ComplexBeamResult,
+)
+
+__all__ += [
+    "complex_mcts_search",
+    "complex_beam_search",
+    "ComplexMCTSResult",
+    "ComplexBeamResult",
+]
+
+try:
+    from .pinn import EMLPINN, PINNResult, fit_pinn  # noqa: F401
+    __all__ += ["EMLPINN", "PINNResult", "fit_pinn"]
+except ImportError:
+    pass  # torch not installed

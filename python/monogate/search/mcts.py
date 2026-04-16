@@ -135,6 +135,28 @@ def _score(node: Node, probe_x: list[float], probe_y: list[float]) -> float:
     return total / len(probe_x)
 
 
+def _score_minimax(node: Node, probe_x: list[float], probe_y: list[float]) -> float:
+    """Max absolute error against probe points (minimax / Chebyshev objective).
+
+    Returns INF on any domain error.  Using this as the search objective
+    produces trees with *uniform* error bounds rather than minimising the
+    average — a Chebyshev-style approximation.
+    """
+    if not _is_complete(node):
+        return INF
+    max_err = 0.0
+    try:
+        for xi, yi in zip(probe_x, probe_y):
+            err = abs(_eval_tree(node, xi) - yi)
+            if err > max_err:
+                max_err = err
+    except (ValueError, OverflowError, ZeroDivisionError):
+        return INF
+    if not math.isfinite(max_err):
+        return INF
+    return max_err
+
+
 # ── Placeholder navigation ────────────────────────────────────────────────────
 
 def _first_placeholder_path(node: Node) -> list[str] | None:
@@ -215,11 +237,13 @@ class MCTSResult:
     best_formula: str
     n_simulations: int
     elapsed_s:    float
+    objective:    str                         = "mse"   # 'mse' or 'minimax'
     history:      list[tuple[int, float]] = field(default_factory=list)
 
     def __repr__(self) -> str:
         return (
             f"MCTSResult(mse={self.best_mse:.4e}, "
+            f"objective={self.objective!r}, "
             f"formula={self.best_formula!r}, "
             f"n_sim={self.n_simulations}, "
             f"elapsed={self.elapsed_s:.2f}s)"
@@ -234,11 +258,13 @@ class BeamResult:
     best_formula: str
     n_levels:     int
     elapsed_s:    float
+    objective:    str                         = "mse"   # 'mse' or 'minimax'
     history:      list[tuple[int, float]] = field(default_factory=list)
 
     def __repr__(self) -> str:
         return (
             f"BeamResult(mse={self.best_mse:.4e}, "
+            f"objective={self.objective!r}, "
             f"formula={self.best_formula!r}, "
             f"n_levels={self.n_levels}, "
             f"elapsed={self.elapsed_s:.2f}s)"
@@ -289,12 +315,13 @@ def mcts_search(
     seed:          int = 42,
     log_every:     int = 0,
     n_rollouts:    int = 1,
+    objective:     str = "mse",
 ) -> MCTSResult:
     """Monte-Carlo Tree Search over the EML grammar.
 
-    Finds the EML tree that minimises MSE against ``target_fn`` on
-    ``probe_points``.  Unlike gradient descent, MCTS does not get trapped
-    in phantom attractors.
+    Finds the EML tree that minimises MSE (or max absolute error) against
+    ``target_fn`` on ``probe_points``.  Unlike gradient descent, MCTS does
+    not get trapped in phantom attractors.
 
     Args:
         target_fn:     Target function, callable: x -> y.
@@ -308,9 +335,12 @@ def mcts_search(
                        score among the batch is used for backpropagation.
                        Values > 1 improve exploration at the cost of speed.
                        Uses ThreadPoolExecutor when n_rollouts > 1.
+        objective:     Scoring objective.  ``'mse'`` (default) minimises
+                       mean-squared error.  ``'minimax'`` minimises the max
+                       absolute error (Chebyshev / uniform approximation).
 
     Returns:
-        MCTSResult with best_tree, best_mse, best_formula, history.
+        MCTSResult with best_tree, best_mse, best_formula, objective, history.
 
     Example::
 
@@ -321,9 +351,18 @@ def mcts_search(
         print(result.best_formula)
         print(f"MSE = {result.best_mse:.4e}")
 
+        # Minimax (Chebyshev) objective:
+        result = mcts_search(math.exp, n_simulations=2000, objective='minimax')
+        print(f"max-err = {result.best_mse:.4e}")  # best_mse stores the objective value
+
         # Parallel rollouts — more thorough per simulation:
         result = mcts_search(math.sin, n_simulations=2000, n_rollouts=8)
     """
+    if objective not in ("mse", "minimax"):
+        raise ValueError(f"objective must be 'mse' or 'minimax', got {objective!r}")
+
+    _score_fn = _score if objective == "mse" else _score_minimax
+
     if probe_points is None:
         probe_points = [-3.0 + 6.0 * i / 49 for i in range(50)]
     probe_y = [target_fn(x) for x in probe_points]
@@ -342,7 +381,7 @@ def mcts_search(
 
     def _do_rollout(partial: Node, rng_: random.Random) -> tuple[Node, float]:
         completed = _random_complete(partial, depth, rng_)
-        return completed, _score(completed, probe_points, probe_y)
+        return completed, _score_fn(completed, probe_points, probe_y)
 
     for sim in range(1, n_simulations + 1):
         # ── Selection ──────────────────────────────────────────────────────
@@ -362,10 +401,10 @@ def mcts_search(
         # ── Simulation (rollout, possibly parallel) ────────────────────────
         if node.is_terminal:
             completed = node.partial
-            mse       = _score(completed, probe_points, probe_y)
+            mse       = _score_fn(completed, probe_points, probe_y)
         elif n_rollouts <= 1:
             completed = _random_complete(node.partial, depth, rng)
-            mse       = _score(completed, probe_points, probe_y)
+            mse       = _score_fn(completed, probe_points, probe_y)
         else:
             # Parallel rollouts: run n_rollouts random completions, pick best.
             with ThreadPoolExecutor(max_workers=n_rollouts) as exe:
@@ -402,6 +441,7 @@ def mcts_search(
         best_formula=_formula(best_node),
         n_simulations=n_simulations,
         elapsed_s=time.perf_counter() - t0,
+        objective=objective,
         history=history,
     )
 
@@ -414,6 +454,7 @@ def beam_search(
     depth:        int = 6,
     width:        int = 50,
     log_every:    int = 0,
+    objective:    str = "mse",
 ) -> BeamResult:
     """Beam Search over the EML grammar.
 
@@ -427,9 +468,12 @@ def beam_search(
         depth:        Maximum tree depth.
         width:        Beam width (number of candidates to keep per level).
         log_every:    Print per-level progress (0 = silent).
+        objective:    ``'mse'`` (default) or ``'minimax'``.  When
+                      ``'minimax'``, candidates are ranked by max absolute
+                      error instead of MSE for Chebyshev-style search.
 
     Returns:
-        BeamResult with best_tree, best_mse, best_formula, history.
+        BeamResult with best_tree, best_mse, best_formula, objective, history.
 
     Example::
 
@@ -438,7 +482,15 @@ def beam_search(
 
         result = beam_search(math.sin, depth=5, width=30)
         print(result.best_formula)
+
+        # Minimax beam search:
+        result = beam_search(math.exp, depth=4, width=20, objective='minimax')
     """
+    if objective not in ("mse", "minimax"):
+        raise ValueError(f"objective must be 'mse' or 'minimax', got {objective!r}")
+
+    _score_fn = _score if objective == "mse" else _score_minimax
+
     if probe_points is None:
         probe_points = [-3.0 + 6.0 * i / 49 for i in range(50)]
     probe_y = [target_fn(x) for x in probe_points]
@@ -448,7 +500,7 @@ def beam_search(
     best_mse:  float = INF
     history:   list[tuple[int, float]] = []
 
-    # Each entry: (mse_or_INF, partial_node)
+    # Each entry: (score_or_INF, partial_node)
     beam: list[tuple[float, Node]] = [(INF, _placeholder())]
     level = 0
 
@@ -459,7 +511,7 @@ def beam_search(
         for _, partial in beam:
             for expanded in _expand_options(partial, depth):
                 if _is_complete(expanded):
-                    mse = _score(expanded, probe_points, probe_y)
+                    mse = _score_fn(expanded, probe_points, probe_y)
                     candidates.append((mse, expanded))
                     if mse < best_mse:
                         best_mse  = mse
@@ -488,5 +540,6 @@ def beam_search(
         best_formula=_formula(best_node),
         n_levels=level,
         elapsed_s=time.perf_counter() - t0,
+        objective=objective,
         history=history,
     )
