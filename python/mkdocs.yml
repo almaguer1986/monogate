@@ -53,17 +53,27 @@ markdown_extensions:
 
 nav:
   - Home: index.md
-  - Installation: installation.md
+  - Getting Started: installation.md
+  - Core Concepts:
+    - EML Universal Operator: concepts/eml_universal_operator.md
+    - BEST Routing: concepts/best_routing.md
+    - Complex Bypass: concepts/complex_bypass.md
   - Guide:
     - Explorer: guide/explorer.md
     - PyTorch Integration: guide/pytorch.md
     - MCTS Search: guide/mcts.md
     - Complex EML: guide/complex.md
-  - Research:
+    - Special Functions: guide/special_functions.md
+    - PINN (Physics): guide/pinn.md
+    - Symbolic Regression: guide/symbolic_regression.md
+  - Research & Theory:
     - Research Findings: research/findings.md
     - Exhaustive Search: research/exhaustive_search.md
     - Phantom Attractors: research/phantom_attractors.md
-    - "Phase 5: Sin Barrier Deep Search": research/sin_barrier_phase5.md
+    - "Sin Barrier (Phase 5)": research/sin_barrier_phase5.md
+    - EDL Completeness Proof: research/edl_completeness_proof.md
+    - Minimax Approximation: research/minimax_approximation.md
+  - Special Functions: special_functions.md
   - API Reference:
     - Core: api/core.md
     - Optimize: api/optimize.md
