@@ -1,0 +1,214 @@
+{
+  "session": 50,
+  "taxonomy": {
+    "pure_tone": {
+      "formula": "A*sin(2*pi*nu*t)",
+      "eml_depth": 3,
+      "n_atoms": 1,
+      "synthesis_type": "additive",
+      "verdict": "EML-3: one atom, one EML gate (exp \u2192 sin)"
+    },
+    "chord": {
+      "formula": "sum_k A_k*sin(2*pi*nu_k*t)",
+      "eml_depth": 3,
+      "n_atoms": "K (number of partials)",
+      "synthesis_type": "additive",
+      "verdict": "EML-3: K atoms in parallel, depth stays 3"
+    },
+    "vibrato": {
+      "formula": "A*sin(2*pi*(nu + delta*sin(2*pi*fm*t))*t)",
+      "eml_depth": 6,
+      "n_atoms": 1,
+      "synthesis_type": "FM (frequency modulation)",
+      "verdict": "EML-6: two nested sinusoids, depth doubles"
+    },
+    "am_synthesis": {
+      "formula": "(1 + m*cos(2*pi*fm*t)) * sin(2*pi*fc*t)",
+      "eml_depth": 4,
+      "n_atoms": 2,
+      "synthesis_type": "AM (amplitude modulation)",
+      "verdict": "EML-4: product of two EML-3 signals adds one depth level"
+    },
+    "fm_synthesis": {
+      "formula": "sin(2*pi*fc*t + beta*sin(2*pi*fm*t))",
+      "eml_depth": 5,
+      "n_atoms": 1,
+      "synthesis_type": "FM (phase modulation)",
+      "verdict": "EML-5: phase argument composes two branches at depth 4 + outer sin"
+    },
+    "harmonic_series": {
+      "formula": "sum_{k=1}^K decay^(k-1) * sin(2*pi*k*f0*t)",
+      "eml_depth": 3,
+      "n_atoms": "K",
+      "synthesis_type": "additive (harmonic)",
+      "verdict": "EML-3: K harmonic atoms, same depth as pure tone \u2014 only breadth grows"
+    },
+    "wavetable": {
+      "formula": "W[phase(t)] where W is a lookup table",
+      "eml_depth": "inf",
+      "n_atoms": "inf",
+      "synthesis_type": "wavetable",
+      "verdict": "EML-inf: arbitrary wavetable is not real-analytic (piecewise interpolation)"
+    },
+    "noise": {
+      "formula": "random process",
+      "eml_depth": "inf",
+      "n_atoms": "inf",
+      "synthesis_type": "stochastic",
+      "verdict": "EML-inf: white noise has infinitely many sign changes on every interval"
+    }
+  },
+  "numerical": {
+    "sample_rate": 44100.0,
+    "duration_s": 0.05,
+    "n_samples": 2205,
+    "tones": {
+      "pure_440hz": {
+        "eml_depth": 3,
+        "n_samples": 2205,
+        "zero_crossings": 44,
+        "rms": 0.7071067811865476,
+        "spectral_centroid_hz": 440.00000000143086,
+        "theory_zero_crossings": 44
+      },
+      "major_chord_CEG": {
+        "eml_depth": 3,
+        "n_atoms": 3,
+        "zero_crossings": 33,
+        "rms": 0.41628437060434426,
+        "spectral_centroid_hz": 563.7704841475025
+      },
+      "vibrato_440hz": {
+        "eml_depth": 6,
+        "zero_crossings": 45,
+        "rms": 0.7071062083878606,
+        "spectral_centroid_hz": 680.0939865679686
+      },
+      "am_440hz": {
+        "eml_depth": 4,
+        "zero_crossings": 44,
+        "rms": 1.0115521473807352,
+        "spectral_centroid_hz": 491.1964066719915
+      },
+      "fm_440hz_beta3": {
+        "eml_depth": 5,
+        "zero_crossings": 44,
+        "rms": 0.686828948526319,
+        "spectral_centroid_hz": 628.1196786935774
+      },
+      "harmonic_piano_C4": {
+        "eml_depth": 3,
+        "n_atoms": 8,
+        "zero_crossings": 27,
+        "rms": 0.8857176229496646,
+        "spectral_centroid_hz": 2696.480267972633
+      }
+    },
+    "taxonomy": {
+      "pure_tone": {
+        "formula": "A*sin(2*pi*nu*t)",
+        "eml_depth": 3,
+        "n_atoms": 1,
+        "synthesis_type": "additive",
+        "verdict": "EML-3: one atom, one EML gate (exp \u2192 sin)"
+      },
+      "chord": {
+        "formula": "sum_k A_k*sin(2*pi*nu_k*t)",
+        "eml_depth": 3,
+        "n_atoms": "K (number of partials)",
+        "synthesis_type": "additive",
+        "verdict": "EML-3: K atoms in parallel, depth stays 3"
+      },
+      "vibrato": {
+        "formula": "A*sin(2*pi*(nu + delta*sin(2*pi*fm*t))*t)",
+        "eml_depth": 6,
+        "n_atoms": 1,
+        "synthesis_type": "FM (frequency modulation)",
+        "verdict": "EML-6: two nested sinusoids, depth doubles"
+      },
+      "am_synthesis": {
+        "formula": "(1 + m*cos(2*pi*fm*t)) * sin(2*pi*fc*t)",
+        "eml_depth": 4,
+        "n_atoms": 2,
+        "synthesis_type": "AM (amplitude modulation)",
+        "verdict": "EML-4: product of two EML-3 signals adds one depth level"
+      },
+      "fm_synthesis": {
+        "formula": "sin(2*pi*fc*t + beta*sin(2*pi*fm*t))",
+        "eml_depth": 5,
+        "n_atoms": 1,
+        "synthesis_type": "FM (phase modulation)",
+        "verdict": "EML-5: phase argument composes two branches at depth 4 + outer sin"
+      },
+      "harmonic_series": {
+        "formula": "sum_{k=1}^K decay^(k-1) * sin(2*pi*k*f0*t)",
+        "eml_depth": 3,
+        "n_atoms": "K",
+        "synthesis_type": "additive (harmonic)",
+        "verdict": "EML-3: K harmonic atoms, same depth as pure tone \u2014 only breadth grows"
+      },
+      "wavetable": {
+        "formula": "W[phase(t)] where W is a lookup table",
+        "eml_depth": "inf",
+        "n_atoms": "inf",
+        "synthesis_type": "wavetable",
+        "verdict": "EML-inf: arbitrary wavetable is not real-analytic (piecewise interpolation)"
+      },
+      "noise": {
+        "formula": "random process",
+        "eml_depth": "inf",
+        "n_atoms": "inf",
+        "synthesis_type": "stochastic",
+        "verdict": "EML-inf: white noise has infinitely many sign changes on every interval"
+      }
+    },
+    "key_insight": "ALL standard synthesized audio is finite-depth EML. The EML tree for a sound IS its synthesis formula. Depth hierarchy: pure tone (3) < AM (4) < FM (5) < vibrato (6). Chord/harmonic series stay at depth 3 regardless of how many partials \u2014 depth = tree height, not number of atoms. Only non-analytic signals (wavetable, noise) are EML-inf."
+  },
+  "summary": {
+    "session": 50,
+    "title": "Music & Signal Processing \u2014 EML Tones and Spectra",
+    "findings": [
+      {
+        "id": "F50.1",
+        "name": "Pure Tone = EML-3",
+        "content": "A*sin(2*pi*nu*t) is exactly depth 3: linear arg + exp (sin) + scale.",
+        "status": "EXACT"
+      },
+      {
+        "id": "F50.2",
+        "name": "Chord Depth Invariance",
+        "content": "A chord of K tones is EML-3 regardless of K. Number of atoms grows but tree height stays 3. This shows EML depth measures COMPOSITION not ADDITION.",
+        "status": "STRUCTURAL INSIGHT"
+      },
+      {
+        "id": "F50.3",
+        "name": "FM Synthesis Hierarchy",
+        "content": "AM (depth 4) < FM/vibrato (depth 5-6). Each frequency modulation layer adds 2-3 depth levels. Doubly-nested FM would reach depth 8-9.",
+        "status": "EXACT"
+      },
+      {
+        "id": "F50.4",
+        "name": "Noise = EML-inf",
+        "content": "White noise has infinite zero crossings on compact intervals. This is the audio instance of the Infinite Zeros Barrier. The EML complexity boundary in audio = analytic vs stochastic.",
+        "status": "STRUCTURAL CONNECTION"
+      },
+      {
+        "id": "F50.5",
+        "name": "Synthesis = EML Tree Construction",
+        "content": "Every synthesized audio algorithm IS an EML tree construction. The synthesis formula and the EML tree are the same object. Audio synthesis = EML programming.",
+        "status": "UNIFYING INSIGHT"
+      }
+    ],
+    "next_session": {
+      "id": 51,
+      "title": "Chaos Taxonomy \u2014 Full EML-k Classification",
+      "priorities": [
+        "R\u00f6ssler system: EML-2 per step (degree-2 polynomial RHS)",
+        "Chua circuit: EML-inf (piecewise-linear characteristic)",
+        "Double pendulum: EML-2 per step (rational trig)",
+        "Henon map: EML-2 per step, EML-O(n) for horizon",
+        "Full classification table: smooth vs piecewise vs transcendental"
+      ]
+    }
+  }
+}
