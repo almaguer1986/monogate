@@ -1,0 +1,389 @@
+{
+  "eml_results": [
+    {
+      "name": "Boltzmann weight",
+      "category": "thermodynamics",
+      "mse": 0.0,
+      "formula": "eml(x, 1.0)",
+      "native": true,
+      "operator": "EML"
+    },
+    {
+      "name": "Exponential decay",
+      "category": "statistical",
+      "mse": 0.5494535143580943,
+      "formula": "1.0",
+      "native": false,
+      "operator": "EML"
+    },
+    {
+      "name": "Arrhenius rate",
+      "category": "chemistry",
+      "mse": 0.16847386270821701,
+      "formula": "1.0",
+      "native": false,
+      "operator": "EML"
+    },
+    {
+      "name": "RC discharge",
+      "category": "electromagnetism",
+      "mse": 0.1313997646527639,
+      "formula": "1.0",
+      "native": false,
+      "operator": "EML"
+    },
+    {
+      "name": "Planck / Bose-Einstein",
+      "category": "quantum",
+      "mse": 0.6332386243448151,
+      "formula": "eml(1.0, eml(x, x))",
+      "native": false,
+      "operator": "EML"
+    },
+    {
+      "name": "Fermi-Dirac",
+      "category": "quantum",
+      "mse": 0.3509148644817221,
+      "formula": "1.0",
+      "native": false,
+      "operator": "EML"
+    },
+    {
+      "name": "Maxwell-Boltzmann speed",
+      "category": "statistical",
+      "mse": 0.5477974099086198,
+      "formula": "1.0",
+      "native": false,
+      "operator": "EML"
+    },
+    {
+      "name": "Entropy (information)",
+      "category": "information",
+      "mse": 0.19236590108993346,
+      "formula": "x",
+      "native": false,
+      "operator": "EML"
+    },
+    {
+      "name": "Kepler 3rd law",
+      "category": "mechanics",
+      "mse": 1.0320427989404548,
+      "formula": "x",
+      "native": false,
+      "operator": "EML"
+    },
+    {
+      "name": "Newtonian gravity",
+      "category": "mechanics",
+      "mse": 0.35458614901569036,
+      "formula": "eml(1.0, eml(x, 1.0))",
+      "native": false,
+      "operator": "EML"
+    },
+    {
+      "name": "Kinetic energy",
+      "category": "mechanics",
+      "mse": 0.31417367403678076,
+      "formula": "x",
+      "native": false,
+      "operator": "EML"
+    },
+    {
+      "name": "Wien's law",
+      "category": "thermodynamics",
+      "mse": 0.38486679374730315,
+      "formula": "1.0",
+      "native": false,
+      "operator": "EML"
+    },
+    {
+      "name": "Stefan-Boltzmann",
+      "category": "thermodynamics",
+      "mse": 8.92859675051508,
+      "formula": "eml(x, 1.0)",
+      "native": false,
+      "operator": "EML"
+    },
+    {
+      "name": "Lorentz factor",
+      "category": "relativity",
+      "mse": 0.030559276904628563,
+      "formula": "eml(x, eml(x, 1.0))",
+      "native": false,
+      "operator": "EML"
+    },
+    {
+      "name": "Gaussian wavefunction",
+      "category": "quantum",
+      "mse": 0.4401289810075211,
+      "formula": "1.0",
+      "native": false,
+      "operator": "EML"
+    }
+  ],
+  "deml_results": [
+    {
+      "name": "Boltzmann weight",
+      "category": "thermodynamics",
+      "mse": 40.90662142438395,
+      "formula": "eml(1.0, eml(x, 1.0))",
+      "native": false,
+      "operator": "DEML"
+    },
+    {
+      "name": "Exponential decay",
+      "category": "statistical",
+      "mse": 0.0,
+      "formula": "eml(x, 1.0)",
+      "native": true,
+      "operator": "DEML"
+    },
+    {
+      "name": "Arrhenius rate",
+      "category": "chemistry",
+      "mse": 0.036158743485489905,
+      "formula": "eml(eml(1.0, 1.0), 1.0)",
+      "native": false,
+      "operator": "DEML"
+    },
+    {
+      "name": "RC discharge",
+      "category": "electromagnetism",
+      "mse": 0.01055672092636788,
+      "formula": "eml(eml(x, 1.0), 1.0)",
+      "native": false,
+      "operator": "DEML"
+    },
+    {
+      "name": "Planck / Bose-Einstein",
+      "category": "quantum",
+      "mse": 0.038974242112330776,
+      "formula": "eml(eml(x, 1.0), x)",
+      "native": false,
+      "operator": "DEML"
+    },
+    {
+      "name": "Fermi-Dirac",
+      "category": "quantum",
+      "mse": 0.11837070654689245,
+      "formula": "eml(1.0, 1.0)",
+      "native": false,
+      "operator": "DEML"
+    },
+    {
+      "name": "Maxwell-Boltzmann speed",
+      "category": "statistical",
+      "mse": 0.07226606480321525,
+      "formula": "eml(1.0, 1.0)",
+      "native": false,
+      "operator": "DEML"
+    },
+    {
+      "name": "Entropy (information)",
+      "category": "information",
+      "mse": 0.026193691725878005,
+      "formula": "eml(1.0, 1.0)",
+      "native": false,
+      "operator": "DEML"
+    },
+    {
+      "name": "Kepler 3rd law",
+      "category": "mechanics",
+      "mse": 0.6368156550132329,
+      "formula": "eml(1.0, eml(x, 1.0))",
+      "native": false,
+      "operator": "DEML"
+    },
+    {
+      "name": "Newtonian gravity",
+      "category": "mechanics",
+      "mse": 0.39715657910138635,
+      "formula": "eml(eml(x, 1.0), x)",
+      "native": false,
+      "operator": "DEML"
+    },
+    {
+      "name": "Kinetic energy",
+      "category": "mechanics",
+      "mse": 0.31417367403678076,
+      "formula": "x",
+      "native": false,
+      "operator": "DEML"
+    },
+    {
+      "name": "Wien's law",
+      "category": "thermodynamics",
+      "mse": 0.18002131536066288,
+      "formula": "eml(1.0, 1.0)",
+      "native": false,
+      "operator": "DEML"
+    },
+    {
+      "name": "Stefan-Boltzmann",
+      "category": "thermodynamics",
+      "mse": 24.570134565381345,
+      "formula": "eml(1.0, eml(x, 1.0))",
+      "native": false,
+      "operator": "DEML"
+    },
+    {
+      "name": "Lorentz factor",
+      "category": "relativity",
+      "mse": 0.07033571047945958,
+      "formula": "eml(x, eml(x, 1.0))",
+      "native": false,
+      "operator": "DEML"
+    },
+    {
+      "name": "Gaussian wavefunction",
+      "category": "quantum",
+      "mse": 0.12412150978638145,
+      "formula": "eml(1.0, 1.0)",
+      "native": false,
+      "operator": "DEML"
+    }
+  ],
+  "combined_results": [
+    {
+      "name": "Boltzmann weight",
+      "category": "thermodynamics",
+      "native": true,
+      "best_mse": 0.0,
+      "best_operator": "EML",
+      "eml_mse": 0.0,
+      "deml_mse": 40.90662142438395
+    },
+    {
+      "name": "Exponential decay",
+      "category": "statistical",
+      "native": true,
+      "best_mse": 0.0,
+      "best_operator": "DEML",
+      "eml_mse": 0.5494535143580943,
+      "deml_mse": 0.0
+    },
+    {
+      "name": "Arrhenius rate",
+      "category": "chemistry",
+      "native": false,
+      "best_mse": 0.036158743485489905,
+      "best_operator": "DEML",
+      "eml_mse": 0.16847386270821701,
+      "deml_mse": 0.036158743485489905
+    },
+    {
+      "name": "RC discharge",
+      "category": "electromagnetism",
+      "native": false,
+      "best_mse": 0.01055672092636788,
+      "best_operator": "DEML",
+      "eml_mse": 0.1313997646527639,
+      "deml_mse": 0.01055672092636788
+    },
+    {
+      "name": "Planck / Bose-Einstein",
+      "category": "quantum",
+      "native": false,
+      "best_mse": 0.038974242112330776,
+      "best_operator": "DEML",
+      "eml_mse": 0.6332386243448151,
+      "deml_mse": 0.038974242112330776
+    },
+    {
+      "name": "Fermi-Dirac",
+      "category": "quantum",
+      "native": false,
+      "best_mse": 0.11837070654689245,
+      "best_operator": "DEML",
+      "eml_mse": 0.3509148644817221,
+      "deml_mse": 0.11837070654689245
+    },
+    {
+      "name": "Maxwell-Boltzmann speed",
+      "category": "statistical",
+      "native": false,
+      "best_mse": 0.07226606480321525,
+      "best_operator": "DEML",
+      "eml_mse": 0.5477974099086198,
+      "deml_mse": 0.07226606480321525
+    },
+    {
+      "name": "Entropy (information)",
+      "category": "information",
+      "native": false,
+      "best_mse": 0.026193691725878005,
+      "best_operator": "DEML",
+      "eml_mse": 0.19236590108993346,
+      "deml_mse": 0.026193691725878005
+    },
+    {
+      "name": "Kepler 3rd law",
+      "category": "mechanics",
+      "native": false,
+      "best_mse": 0.6368156550132329,
+      "best_operator": "DEML",
+      "eml_mse": 1.0320427989404548,
+      "deml_mse": 0.6368156550132329
+    },
+    {
+      "name": "Newtonian gravity",
+      "category": "mechanics",
+      "native": false,
+      "best_mse": 0.35458614901569036,
+      "best_operator": "EML",
+      "eml_mse": 0.35458614901569036,
+      "deml_mse": 0.39715657910138635
+    },
+    {
+      "name": "Kinetic energy",
+      "category": "mechanics",
+      "native": false,
+      "best_mse": 0.31417367403678076,
+      "best_operator": "EML",
+      "eml_mse": 0.31417367403678076,
+      "deml_mse": 0.31417367403678076
+    },
+    {
+      "name": "Wien's law",
+      "category": "thermodynamics",
+      "native": false,
+      "best_mse": 0.18002131536066288,
+      "best_operator": "DEML",
+      "eml_mse": 0.38486679374730315,
+      "deml_mse": 0.18002131536066288
+    },
+    {
+      "name": "Stefan-Boltzmann",
+      "category": "thermodynamics",
+      "native": false,
+      "best_mse": 8.92859675051508,
+      "best_operator": "EML",
+      "eml_mse": 8.92859675051508,
+      "deml_mse": 24.570134565381345
+    },
+    {
+      "name": "Lorentz factor",
+      "category": "relativity",
+      "native": false,
+      "best_mse": 0.030559276904628563,
+      "best_operator": "EML",
+      "eml_mse": 0.030559276904628563,
+      "deml_mse": 0.07033571047945958
+    },
+    {
+      "name": "Gaussian wavefunction",
+      "category": "quantum",
+      "native": false,
+      "best_mse": 0.12412150978638145,
+      "best_operator": "DEML",
+      "eml_mse": 0.4401289810075211,
+      "deml_mse": 0.12412150978638145
+    }
+  ],
+  "n_eml_native": 1,
+  "n_deml_native": 1,
+  "n_combined_native": 2,
+  "n_total": 15,
+  "elapsed_s": 2.8266815000097267,
+  "summary_table": "| Law | EML MSE | DEML MSE | Combined | Best gate |\n|-----|---------|----------|----------|-----------|\n| Boltzmann weight | NATIVE | 40.907 | **NATIVE** | EML |\n| Exponential decay | 0.549 | NATIVE | **NATIVE** | DEML |\n| Arrhenius rate | 0.168 | 0.036 | blocked | DEML |\n| RC discharge | 0.131 | 0.011 | blocked | DEML |\n| Planck / Bose-Einstein | 0.633 | 0.039 | blocked | DEML |\n| Fermi-Dirac | 0.351 | 0.118 | blocked | DEML |\n| Maxwell-Boltzmann speed | 0.548 | 0.072 | blocked | DEML |\n| Entropy (information) | 0.192 | 0.026 | blocked | DEML |\n| Kepler 3rd law | 1.032 | 0.637 | blocked | DEML |\n| Newtonian gravity | 0.355 | 0.397 | blocked | EML |\n| Kinetic energy | 0.314 | 0.314 | blocked | EML |\n| Wien's law | 0.385 | 0.180 | blocked | DEML |\n| Stefan-Boltzmann | 8.929 | 24.570 | blocked | EML |\n| Lorentz factor | 0.031 | 0.070 | blocked | EML |\n| Gaussian wavefunction | 0.440 | 0.124 | blocked | DEML |"
+}

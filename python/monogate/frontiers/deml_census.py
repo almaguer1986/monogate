@@ -119,7 +119,7 @@ def _safe(fn: Callable, x: float) -> bool:
 # ── Public API ────────────────────────────────────────────────────────────────
 
 def run_deml_census(
-    n_simulations: int = 1500,
+    n_simulations: int = 5000,
     depth: int = 2,
     verbose: bool = True,
 ) -> dict:
@@ -308,22 +308,61 @@ def plot_deml_census(results: dict) -> "Any":
 # ── CLI ───────────────────────────────────────────────────────────────────────
 
 def _cli() -> None:
+    import json
+    from pathlib import Path
+
     parser = argparse.ArgumentParser(description="DEML dual gate census")
-    parser.add_argument("--n-simulations", type=int, default=1500)
+    parser.add_argument("--n-simulations", type=int, default=5000)
     parser.add_argument("--depth",         type=int, default=2)
     parser.add_argument("--quick",         action="store_true",
                         help="Run with n_simulations=300 and depth=2 for a fast smoke test")
+    parser.add_argument("--full",          action="store_true",
+                        help="Run with n_simulations=10000 for overnight quality")
     parser.add_argument("--plot",          action="store_true",
                         help="Show matplotlib figure after census")
+    parser.add_argument("--output",        type=str, default="results/deml_census_full.json",
+                        help="Path to write JSON results (default: results/deml_census_full.json)")
     args = parser.parse_args()
 
-    n_sim = 300 if args.quick else args.n_simulations
+    if args.quick:
+        n_sim = 300
+    elif args.full:
+        n_sim = 10000
+    else:
+        n_sim = args.n_simulations
+
     results = run_deml_census(n_simulations=n_sim, depth=args.depth, verbose=True)
+
+    # Serialise results (convert inf/nan to string for JSON)
+    def _serialise(obj):
+        if isinstance(obj, float):
+            if obj == float("inf"):
+                return "inf"
+            if obj != obj:  # NaN
+                return "nan"
+        return obj
+
+    def _clean(d):
+        if isinstance(d, dict):
+            return {k: _clean(v) for k, v in d.items()}
+        if isinstance(d, list):
+            return [_clean(v) for v in d]
+        return _serialise(d)
+
+    out_path = Path(args.output)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    # Build JSON-safe copy (exclude non-serialisable keys)
+    json_results = {k: _clean(v) for k, v in results.items() if k != "summary_table"}
+    json_results["summary_table"] = results["summary_table"]
+    with open(out_path, "w", encoding="utf-8") as fh:
+        json.dump(json_results, fh, indent=2)
+    print(f"\n  Results saved: {out_path}")
 
     if args.plot:
         fig = plot_deml_census(results)
-        fig.savefig("results/deml_census.png", dpi=150, bbox_inches="tight")
-        print("  Saved: results/deml_census.png")
+        plot_path = out_path.with_suffix(".png")
+        fig.savefig(str(plot_path), dpi=150, bbox_inches="tight")
+        print(f"  Plot saved:    {plot_path}")
         try:
             import matplotlib.pyplot as plt
             plt.show()

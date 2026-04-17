@@ -1,0 +1,19 @@
+{
+  "finding": "phantom_attractor_is_float32_only",
+  "description": "The phantom attractor at depth=3 exists exclusively in float32 precision. In float64, all initializations converge directly to pi (the true minimum). The attractor is a floating-point precision artifact.",
+  "depth_3": {
+    "float32_attractor": 3.0778,
+    "float64_behavior": "converges to pi directly",
+    "lambda_crit_float32": 0.01,
+    "note": "At lam~0.010, float32 dynamics shift to near-pi convergence"
+  },
+  "depth_4_5": {
+    "note": "Overflow in nested exp() even with log-space clamping; attractor characterization requires specialized initialization"
+  },
+  "hessian_at_attractor": {
+    "nature": "saddle point (4+ / 4-)",
+    "eigenvalues_positive": 4,
+    "eigenvalues_negative": 4,
+    "interpretation": "Gradient descent in float32 finds this saddle due to precision-limited gradient computation; float64 escapes it"
+  }
+}

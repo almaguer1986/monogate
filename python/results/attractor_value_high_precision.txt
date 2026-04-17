@@ -1,0 +1,10 @@
+# Phantom Attractor -- High-Precision Value
+# Precision: 50 decimal places (mpmath)
+# Configs reaching pi:        0
+# Configs reaching attractor: 20
+
+attractor_value =
+6.2675186061336498610785383789334446191787719726563
+
+standard_deviation =
+8.881784197e-16

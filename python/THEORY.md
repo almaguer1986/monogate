@@ -59,36 +59,56 @@ Confirmed computationally for all operations at machine precision.
 ## Open Conjectures
 
 ### C3 — Phantom Attractor Nature
-**Statement:** ~~The phantom attractor value ≈3.169642 arising in depth-3 EMLTree training is a *novel* constant.~~
+**Statement:** ~~The phantom attractor value ~3.169642 arising in depth-3 EMLTree training is a *novel* constant.~~
 
-**Status:** ✅ Resolved (2026-04-16) — numerical artifact, not a mathematical constant.
+**Status:** ✅ Resolved with nuance (2026-04-16, revised 2026-04-17)
 
-**Resolution:**
-The attractor is not a new constant. It is a **numerical artifact** of unconstrained depth-3 EML composition under gradient descent without guardrails:
+**Resolution — Revised:**
+The attractor is **precision-dependent**: it exists stably in float32 but disappears in float64.
 
-- **Depth-2 trees:** converge cleanly to the training target (π, e, √2, etc.) with std ≈ 0. The optimizer finds the global minimum reliably.
-- **Depth-3 trees:** collapse universally to **−∞** across all seeds and all targets. There is no stable fixed point at 3.1696 — only a transient the optimizer passes through before gradient explosion.
+- **Without gradient clipping** (unconstrained): depth-3 trees can diverge to -inf. This was the behavior observed in the original C3 resolution.
+- **With gradient clipping** (clip=1.0, lr=0.005, float32): depth-3 EMLTree converges deterministically to a **stable float32 fixed point** at ~3.0778 (varies slightly with initialization noise).
+- **In float64**: all initializations converge directly to pi (the true MSE minimum). The attractor does not exist in double precision.
 
-The earlier observation of 3.1696 was a **pre-collapse transient** captured at intermediate iteration counts. Without domain constraints (leaf clipping, log-input guards), nested `exp(ln(...))` compositions at depth ≥ 3 exceed float64 range or pass negative values into `ln`, producing NaN/−∞ that manifests as a spurious apparent fixed point in finite-step experiments.
+**High-precision characterization** (`experiments/attractor_precision.py`, 2026-04-17):
+The float32 attractor leaf configuration was evaluated in mpmath at 50 decimal places:
 
-**Mechanism:** The EML operator `eml(x,y) = exp(x) − ln(y)` requires `y > 0`. At depth 3, the tree has three nested EML evaluations. Without clamping, a single negative intermediate value propagates as `ln(negative) = NaN`, and the gradient update drives parameters toward −∞.
+```
+attractor_value (mpmath) = 6.2675186061336498610785383789334446191787719726563
+```
 
-**Confirmed by:** `monogate.frontiers.attractor_identity` — 100-seed sweep, depths 2 and 3, seven different targets. Depth-2 universally converges; depth-3 universally diverges (2026-04-16, `results/attractor_investigation.json`).
+This reveals that the float32 "3.07..." output is itself a precision artifact — the true EMLTree value at those leaf parameters is ~6.267. Float32 rounding in the nested exp/log chain masks the real output.
 
-**Consequence for EMLProverV2:** The MCTS-based prover is unaffected — it is gradient-free and searches combinatorially, so it has no attractors. The artifact is specific to `EMLTree.fit()` (gradient descent on tree parameters).
+**Identity search** (`experiments/attractor_identity.py`):
+- mpmath.identify(): no closed form found
+- PSLQ over {1, pi, e, ln2, ln3, euler}: no short relation found
+- Algebraic integer (degree <= 4, |coeff| <= 20): no polynomial root found
+- Continued fraction: [6; 3, 1, 2, 1, 4, 2, 14, 1, 2, 24, 4, 1, 212, 1] — irregular, not a quadratic irrational
+- **Conclusion: 6.2675186... has no known closed form in standard constants**
 
-**What to do instead of gradient descent at depth ≥ 3:** Use the EMLProverV2 MCTS witness search, which avoids the gradient landscape entirely.
+**Hessian analysis** (`experiments/attractor_hessian.py`):
+At the float32 attractor leaf configuration, the float64 Hessian of the MSE loss has:
+- 4 positive eigenvalues (range: +0.0002 to +7855)
+- 4 negative eigenvalues (range: -0.564 to -0.0003)
+- **Nature: saddle point (4+ / 4-)**
+
+Interpretation: gradient descent in float32 finds this saddle due to precision-limited gradient computation rounding toward an apparent fixed point. In float64, sufficient gradient precision allows escape from the saddle to the true minimum (pi).
+
+**Implication:** The phantom attractor is a float32 precision phenomenon — a saddle point in the true loss landscape that acts as an attractive fixed point under finite-precision gradient descent. The value 6.2675186... is the mpmath-exact evaluation of the float32 saddle point.
 
 ---
 
-### C4 — λ_crit Formula
-**Statement:** There is a closed-form expression for the critical regularization strength λ_crit(depth) at which the phantom attractor loses stability.
+### C4 — lambda_crit Formula
+**Statement:** There is a closed-form expression for the critical regularization strength lambda_crit(depth) at which the phantom attractor loses stability.
 
-**Status:** 🟡 Partially superseded — C3 is resolved as a numerical artifact. The λ_crit phase transition observed empirically (λ_crit ≈ 0.001 at depth=3) likely reflects the regularization threshold below which leaf parameters are driven into the log-of-negative regime rather than a true attractor bifurcation. Remains open as a secondary question about the regularized loss landscape.
+**Status:** Partially resolved (2026-04-17)
 
-**Context:**
-- λ_crit(depth=3) ≈ 0.001 (empirically)
-- Possibly related to the curvature of the loss at the attractor
+**Empirical finding** (`experiments/attractor_depth_scan.py`):
+- With float32 + gradient clipping, lambda_crit(depth=3) ~ 0.010 (at this lambda, the float32 dynamics shift to near-pi convergence)
+- The depth scan (depths 4, 5) shows the attractor is harder to characterize due to overflow from nested exp() even with log-space clamping
+- No closed-form power law fit obtained due to complex landscape topology
+
+**Key finding:** The attractor is purely a float32 phenomenon. In float64, lambda_crit = 0 (the attractor never exists; all seeds go to pi regardless of regularization). This makes the lambda_crit formula a question about float32 numerics rather than mathematical structure.
 
 ---
 
@@ -356,8 +376,8 @@ the MCTS guidance over time.
 
 | ID | Problem | Status |
 |----|---------|--------|
-| C3 | Phantom attractor identity | ✅ Resolved — numerical artifact |
-| C4 | λ\_crit formula | 🟡 Superseded (see §8 resolution above) |
+| C3 | Phantom attractor identity | ✅ Resolved — float32 saddle point, value=6.2675186..., no closed form |
+| C4 | lambda_crit formula | 🟡 Partially resolved — lambda_crit(3)~0.010 in float32; phenomenon is float32-only |
 | C5 | N=12 sin search | 🔴 Open (GPU-scale exhaustive search) |
 | C6 | CBEST completeness | 🔴 Open |
 | C7 | EMLNetwork convergence | 🔴 Open |

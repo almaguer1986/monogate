@@ -292,7 +292,7 @@ export default function App() {
               <span style={{ fontSize:10, color:C.muted }}>EML Explorer</span>
             </div>
             <div style={{ fontSize:10, color:C.muted, marginTop:3 }}>
-              eml(x,y) = exp(x) − ln(y) · Odrzywołek 2026 · arXiv:2603.21852 · v1.2.0
+              eml(x,y) = exp(x) − ln(y) · Odrzywołek 2026 · arXiv:2603.21852 · v1.3.0
             </div>
           </div>
           <div style={{ display:"flex", gap:4, flexWrap:"wrap", alignItems:"center" }}>
@@ -311,18 +311,19 @@ export default function App() {
             >
               ⊞ Challenges ↗
             </a>
-            {["verify","table","sandbox","tree","best","calc","opt","viz","sinex","demo","nerf","attractor","research","leaderboard","deml","frontiers","explorer"].map(t => {
+            {["verify","table","sandbox","tree","best","calc","opt","viz","sinex","demo","nerf","attractor","research","leaderboard","deml","frontiers","explorer","quantum"].map(t => {
               const isCalc  = t === "calc";
               const isOpt   = t === "opt";
               const isHighlit = isCalc || isOpt || t === "viz" || t === "sinex" || t === "demo"
                 || t === "nerf" || t === "attractor" || t === "research" || t === "leaderboard"
-                || t === "deml" || t === "frontiers" || t === "explorer";
+                || t === "deml" || t === "frontiers" || t === "explorer" || t === "quantum";
               const isActive = tab === t;
               const LABELS = {
                 calc: "✦ calc", opt: "⚙ opt",
                 viz: "✦ viz", sinex: "sin↗", demo: "⚡ demo", nerf: "⬡ nerf",
                 attractor: "⊛ attractor", research: "🔬 research", leaderboard: "🏆 board",
                 deml: "⊖ DEML", frontiers: "📊 frontiers", explorer: "🔭 explorer",
+                quantum: "⚛ quantum",
               };
               return (
                 <button key={t} onClick={() => setTab(t)} style={{
@@ -1241,7 +1242,7 @@ export default function App() {
           <div style={{ background:C.surface, border:`1px solid ${C.border}`,
             borderRadius:8, padding:16 }}>
             <div style={{ fontSize:11, fontWeight:700, color:C.text, marginBottom:8 }}>
-              Python API (v1.2.0)
+              Python API (v1.3.0)
             </div>
             <pre style={{ fontSize:10, color:C.blue, background:C.bg,
               padding:"10px 14px", borderRadius:6, margin:0, overflowX:"auto" }}>
@@ -1424,7 +1425,7 @@ results = run_deml_census(n_simulations=500)`}
           <div style={{ background:C.surface, border:`1px solid ${C.border}`,
             borderRadius:8, padding:16 }}>
             <div style={{ fontSize:11, fontWeight:700, color:C.text, marginBottom:8 }}>
-              Python API (v1.2.0)
+              Python API (v1.3.0)
             </div>
             <pre style={{ fontSize:10, color:C.blue, background:C.bg,
               padding:"10px 14px", borderRadius:6, margin:0, overflowX:"auto" }}>
@@ -1441,6 +1442,114 @@ for row in prover.mutation_stats():
 # Access catalog
 catalog = prover.catalog  # list of verified identities`}
             </pre>
+          </div>
+        </div>
+      )}
+
+      {/* ── TAB: QUANTUM ── */}
+      {tab === "quantum" && (
+        <div>
+          <div style={{ fontSize:12, fontWeight:700, color:C.accent, marginBottom:4 }}>
+            Quantum EML — Matrix Gates and Thermodynamics
+          </div>
+          <div style={{ fontSize:10, color:C.muted, marginBottom:16 }}>
+            Quantum thermodynamics is EML arithmetic on density matrices.
+            meml(A,B) = expm(A) - logm(B)
+          </div>
+
+          {/* Core identities */}
+          <div style={{ background:C.surface, border:`1px solid ${C.border}`,
+            borderRadius:8, padding:16, marginBottom:12 }}>
+            <div style={{ fontSize:11, fontWeight:700, color:C.text, marginBottom:10 }}>
+              Core EML Identities in Quantum Mechanics
+            </div>
+            {[
+              { name:"Partition function",  expr:"Z = Tr(mdeml(beta*H, I))",        desc:"Z = Tr(expm(-beta*H))  —  1-node DEML expression" },
+              { name:"Von Neumann entropy", expr:"S(rho) = Tr(rho * meml(0, rho)) - 1", desc:"S = -Tr(rho * ln rho)  —  1-node EML expression" },
+              { name:"Free energy",         expr:"F = -kT * ln(Tr(mdeml(beta*H, I)))",  desc:"F = -kT * ln(Z)  —  scalar EML over partition fn" },
+              { name:"Mutual information",  expr:"I(A:B) = S(rhoA) + S(rhoB) - S(rhoAB)", desc:"Bell state: I(A:B) = 2*ln(2)  (maximal)" },
+            ].map((row, i) => (
+              <div key={i} style={{ padding:"8px 0", borderBottom:`1px solid ${C.border}`,
+                fontSize:10 }}>
+                <div style={{ display:"flex", justifyContent:"space-between",
+                  alignItems:"center", marginBottom:3 }}>
+                  <span style={{ color:C.blue, fontWeight:700 }}>{row.name}</span>
+                </div>
+                <code style={{ color:C.accent, display:"block", marginBottom:3 }}>{row.expr}</code>
+                <div style={{ color:C.muted }}>{row.desc}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Matrix gates */}
+          <div style={{ background:C.surface, border:`1px solid ${C.border}`,
+            borderRadius:8, padding:16, marginBottom:12 }}>
+            <div style={{ fontSize:11, fontWeight:700, color:C.text, marginBottom:10 }}>
+              Matrix EML Gates (Python API)
+            </div>
+            <pre style={{ fontSize:10, color:C.blue, background:C.bg,
+              padding:"10px 14px", borderRadius:6, margin:0, overflowX:"auto" }}>
+{`from monogate.quantum import (
+    meml, mdeml,                    # matrix EML/DEML gates
+    von_neumann_entropy,            # S(rho) = -Tr(rho ln rho)
+    partition_function,             # Z = Tr(mdeml(beta*H, I))
+    quantum_free_energy,            # F = -kT * ln(Z)
+    thermal_state,                  # rho = expm(-beta*H) / Z
+    quantum_mutual_info,            # I(A:B) = S_A + S_B - S_AB
+    bell_state, partial_trace,      # test systems
+)
+
+import numpy as np
+H = np.diag([0.5, -0.5])           # spin-1/2 Hamiltonian
+beta = 1.0                          # inverse temperature
+
+Z = partition_function(H, beta)    # = 2*cosh(0.5)
+F = quantum_free_energy(H, beta)   # = -kT * ln(Z)
+
+rho_bell = bell_state(0)           # |Phi+> density matrix
+I_AB = quantum_mutual_info(rho_bell, 2, 2)  # = 2*ln(2)`}
+            </pre>
+          </div>
+
+          {/* Verification results */}
+          <div style={{ background:C.surface, border:`1px solid ${C.border}`,
+            borderRadius:8, padding:16, marginBottom:12 }}>
+            <div style={{ fontSize:11, fontWeight:700, color:C.text, marginBottom:10 }}>
+              Verified Results (19 tests passing)
+            </div>
+            {[
+              { test:"Partition function",       result:"Z = 2·cosh(0.5) at beta=1, omega=1", pass:true },
+              { test:"Von Neumann entropy",      result:"S(I/n) = ln(n) for n=2,3,4", pass:true },
+              { test:"Entropy via meml gate",    result:"matches eigenvalue method to 1e-10", pass:true },
+              { test:"Bell state mutual info",   result:"I(A:B) = 2·ln(2) = 1.386...", pass:true },
+              { test:"Product state",            result:"I(A:B) = 0 (no entanglement)", pass:true },
+              { test:"Free energy consistency",  result:"F = E - T*S at thermal equilibrium", pass:true },
+              { test:"High-T thermal state",     result:"rho -> I/n as beta -> 0", pass:true },
+              { test:"Harmonic oscillator Z",    result:"< 1% error at 20 levels", pass:true },
+            ].map((row, i) => (
+              <div key={i} style={{ display:"flex", alignItems:"center", gap:10,
+                padding:"5px 0", borderBottom:`1px solid ${C.border}`, fontSize:10 }}>
+                <span style={{ color: row.pass ? C.green : C.red, minWidth:12 }}>
+                  {row.pass ? "✓" : "✗"}
+                </span>
+                <span style={{ color:C.text, minWidth:180 }}>{row.test}</span>
+                <span style={{ color:C.muted }}>{row.result}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Key theorem */}
+          <div style={{ background:`rgba(106,176,245,0.05)`, border:`1px solid rgba(106,176,245,0.2)`,
+            borderRadius:8, padding:16 }}>
+            <div style={{ fontSize:11, fontWeight:700, color:C.blue, marginBottom:8 }}>
+              Theorem: Quantum Thermodynamics is EML Arithmetic on Density Matrices
+            </div>
+            <div style={{ fontSize:10, color:C.muted, lineHeight:1.6 }}>
+              The partition function Z = Tr(mdeml(beta*H, I)) is a 1-node DEML expression.<br/>
+              The von Neumann entropy S(rho) = Tr(rho * meml(0, rho)) - 1 is a 1-node EML expression.<br/>
+              The free energy F = -kT * ln(Z) is a scalar EML composition over the partition function.<br/>
+              EML and DEML gates are the natural language for quantum statistical mechanics.
+            </div>
           </div>
         </div>
       )}

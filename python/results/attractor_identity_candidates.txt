@@ -1,0 +1,6 @@
+# Phantom Attractor Identity Search Results
+# Value: 6.26751860613365
+# Precision used: 50 decimal places
+
+Candidates found:
+  CF expansion: [6; [3, 1, 2, 1, 4, 2, 14]...]

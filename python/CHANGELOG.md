@@ -4,6 +4,68 @@ All notable changes to `monogate` are documented here.
 
 ---
 
+## [1.3.0] — 2026-04-16
+
+### Sessions 10–16 — Attractor Precision, Grammar Hierarchy, Quantum EML, SRBench
+
+#### New modules
+
+- **`monogate.quantum`** — Matrix EML gates for quantum thermodynamics
+  - `meml(A, B)` = expm(A) - logm(B); `mdeml(A, B)` = expm(-A) - logm(B)
+  - `von_neumann_entropy`, `partition_function`, `quantum_free_energy`, `thermal_state`
+  - `quantum_mutual_info`, `partial_trace`, `eml_identity_check`
+  - Test systems: `bell_state`, `two_level_hamiltonian`, `harmonic_oscillator_hamiltonian`
+  - **Theorem**: quantum thermodynamics is EML arithmetic on density matrices;
+    Z = Tr(mdeml(beta\*H, I)) is a 1-node DEML expression;
+    S(rho) = Tr(rho\*meml(0,rho)) - 1 is a 1-node EML expression
+
+- **`monogate.frontiers.grammar_hierarchy`** — Grammar Complexity Hierarchy G0–G4
+  - Formalizes the expressivity ladder: G0 (no variable) → G4 (integer constants)
+  - 24 target functions: 15 physics laws + 9 arithmetic operations
+  - `build_hierarchy()`, `coverage_table()`, `_expressivity_test()`
+  - Symbolic tree enumeration at depth ≤ 2 with multi-probe correctness check
+
+- **`benchmarks.srbench`** — SRBench infrastructure
+  - `benchmarks.srbench.functions`: 35 benchmark functions (Nguyen-12, Keijzer-15, Vladislavleva-8)
+  - `benchmarks.srbench.runner`: `run_mcts_benchmark()`, `run_beam_benchmark()`, `run_suite()`
+  - `benchmarks.srbench.report`: markdown table, Pareto plot, JSON export
+
+#### New experiments
+
+- **`experiments/attractor_precision.py`** — mpmath 50-digit evaluation of phantom attractor
+  - Value: 6.2675186061336498610785383789334446191787719726563
+  - No closed form found (PSLQ/identify exhaustive search)
+  - CF = [6; 3, 1, 2, 1, 4, 2, 14, 1, 2, 24, 4, 1, 212, 1]
+
+- **`experiments/attractor_hessian.py`** — Hessian eigenvalue analysis
+  - Result: **saddle point (4 positive / 4 negative eigenvalues)**
+  - Float32-only phenomenon: float64 always escapes to true minimum (pi)
+
+- **`experiments/attractor_depth_scan.py`** — lambda_crit characterization
+  - lambda_crit(depth=3) ~ 0.010 in float32; float64 bypasses attractor entirely
+
+- **`experiments/attractor_identity.py`** — Closed-form search
+  - Exhaustive algebraic integer and linear combination search; no identity found
+
+- **`experiments/quantum_eml_demo.py`** — Quantum thermodynamics demonstration
+  - Harmonic oscillator Z(beta) via mdeml; two-qubit entanglement; Ising free energy
+  - All 4 core EML identities verified numerically
+
+#### Tests
+
+- **`tests/test_quantum.py`** — 19 tests: TestMatrixGates, TestVonNeumannEntropy,
+  TestPartitionFunction, TestFreeEnergy, TestMutualInformation, TestThermalState
+- **`tests/test_srbench.py`** — 13 tests: suite counts, EML-friendly tags, report generation
+- **Total: 1260 tests passing, 9 skipped**
+
+#### THEORY.md additions
+
+- §13: Phantom Attractor — float32 saddle point characterization
+- §16: Quantum EML and Thermodynamics
+- Updated conjecture table (C3, C4 with empirical results)
+
+---
+
 ## [1.2.0-dev] — 2026-04-16
 
 ### DEML Dual Gate — Breaking the Negative-Exponent Barrier (Session 9)

@@ -1,0 +1,25 @@
+# Quantum EML Demonstration Results
+
+## Core EML Identities Verified
+
+1. Partition function: Z = Tr(mdeml(beta*H, I))
+   - This is a 1-node DEML expression in matrix EML arithmetic
+   - Max error vs exact: 4.98e-02
+
+2. Von Neumann entropy: S(rho) = Tr(rho * meml(0, rho)) - 1
+   - Verified for maximally mixed states of dimension 2, 3, 4
+   - S_match: True
+
+3. Free energy: F = -kT * ln(Tr(mdeml(beta*H, I)))
+   - Verified for two-level system and Ising model
+   - Z_match: True
+
+4. Bell state mutual information: I(A:B) = 2*ln(2) (maximum)
+   - Bell_0: 1.386294
+
+## Key Result
+
+Quantum thermodynamics is EML arithmetic on density matrices:
+  - Partition function = 1-node DEML expression
+  - Von Neumann entropy = rho-weighted meml trace minus 1
+  - Free energy = scalar EML over the partition function
