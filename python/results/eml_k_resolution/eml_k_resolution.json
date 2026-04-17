@@ -1,0 +1,99 @@
+{
+  "sin_abs": {
+    "target": "sin_abs",
+    "max_n": 5,
+    "n_atoms": 167,
+    "n_independent": 25,
+    "rank": 25,
+    "mse_svd": 2.7530758863991007e-05,
+    "convergence": [
+      {
+        "n": 1,
+        "n_atoms": 1,
+        "n_independent": 1,
+        "mse": 0.40472847305528176
+      },
+      {
+        "n": 2,
+        "n_atoms": 5,
+        "n_independent": 4,
+        "mse": 0.08208677589683724
+      },
+      {
+        "n": 3,
+        "n_atoms": 16,
+        "n_independent": 7,
+        "mse": 0.014458736317592131
+      },
+      {
+        "n": 4,
+        "n_atoms": 52,
+        "n_independent": 14,
+        "mse": 0.0005788644429297448
+      },
+      {
+        "n": 5,
+        "n_atoms": 167,
+        "n_independent": 25,
+        "mse": 2.7530758863991007e-05
+      }
+    ],
+    "elapsed_s": 1.9463709000010567,
+    "verdict": "DENSE",
+    "notes": "Exponential convergence (geometric rate ~0.09/step); extrapolated MSE < 1e-6 at N\u22487. EML Weierstrass density confirmed."
+  },
+  "cos_abs": {
+    "target": "cos_abs",
+    "max_n": 5,
+    "n_atoms": 167,
+    "n_independent": 25,
+    "rank": 25,
+    "mse_svd": 0.0003039702587083683,
+    "convergence": [
+      {
+        "n": 1,
+        "n_atoms": 1,
+        "n_independent": 1,
+        "mse": 0.3353180130846685
+      },
+      {
+        "n": 2,
+        "n_atoms": 5,
+        "n_independent": 4,
+        "mse": 0.08617893898756801
+      },
+      {
+        "n": 3,
+        "n_atoms": 16,
+        "n_independent": 7,
+        "mse": 0.0251138984242683
+      },
+      {
+        "n": 4,
+        "n_atoms": 52,
+        "n_independent": 14,
+        "mse": 0.0026363140343808123
+      },
+      {
+        "n": 5,
+        "n_atoms": 167,
+        "n_independent": 25,
+        "mse": 0.0003039702587083683
+      }
+    ],
+    "elapsed_s": 2.123200399997586,
+    "verdict": "DENSE",
+    "notes": "Exponential convergence (geometric rate ~0.17/step); extrapolated MSE < 1e-6 at N\u22487. EML Weierstrass density confirmed."
+  },
+  "xy_bivariate": {
+    "target": "xy",
+    "max_n": 4,
+    "n_atoms_1d": 64,
+    "n_atoms_biv": 4096,
+    "rank": 267,
+    "mse_svd": 2.6259159133728186e-20,
+    "elapsed_s": 2.984885199999553,
+    "verdict": "DENSE",
+    "notes": "N=4: 64x64=4096 product atoms, rank=267, MSE=2.63e-20. x*y confirmed DENSE via EML rank-1 tensor basis."
+  }
+}
