@@ -1,4 +1,4 @@
-monogate==0.3.3
+monogate>=2.1.6
 fastapi>=0.110.0
 uvicorn>=0.29.0
 slowapi>=0.1.9
