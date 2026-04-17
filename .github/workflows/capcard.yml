@@ -1,0 +1,38 @@
+name: CapCard Verify
+
+on:
+  push:
+    paths:
+      - "capability_card.json"
+  pull_request:
+    paths:
+      - "capability_card.json"
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install capcard-ai
+        run: pip install capcard-ai
+
+      - name: Verify capability card
+        run: capcard verify capability_card.json
+
+      - name: Print report
+        run: capcard verify capability_card.json | python3 -c "
+import json, sys
+r = json.load(sys.stdin)
+print(f'Card: {r[\"card_name\"]} v{r[\"version\"]}')
+print(f'Capabilities: {r[\"capabilities_count\"]}')
+print(f'Benchmarks:   {r[\"benchmarks_count\"]}')
+print(f'Proofs:       {r[\"proofs_count\"]}')
+print(f'Trust score:  {r[\"trust_score\"]}')
+print(f'Valid:        {r[\"valid\"]}')
+"
