@@ -29,6 +29,11 @@ extension-module = ["pyo3/extension-module"]
 name = "bench_eval"
 harness = false
 
+[[bin]]
+name = "n12_search"
+path = "src/bin/n12_search.rs"
+required-features = []
+
 [profile.release]
 opt-level = 3
 lto = true

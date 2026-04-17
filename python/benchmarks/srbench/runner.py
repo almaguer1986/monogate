@@ -49,10 +49,11 @@ def _r2(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     return float(1.0 - ss_res / ss_tot)
 
 
-def _eval_formula(formula_fn, X: np.ndarray) -> np.ndarray | None:
-    """Evaluate a formula callable over X; return None if it diverges."""
+def _eval_tree(best_tree, X: np.ndarray) -> np.ndarray | None:
+    """Evaluate an EML tree node over an array X."""
+    from monogate.search.mcts import _eval_tree as _mcts_eval
     try:
-        y = formula_fn(X)
+        y = np.array([_mcts_eval(best_tree, x) for x in X], dtype=float)
         if not np.all(np.isfinite(y)):
             return None
         return y
@@ -60,44 +61,45 @@ def _eval_formula(formula_fn, X: np.ndarray) -> np.ndarray | None:
         return None
 
 
+def _make_probe_points(fn: BenchmarkFn, n: int = 50, seed: int = 0) -> list[float]:
+    rng = np.random.default_rng(seed)
+    pts = rng.uniform(fn.domain[0] + 1e-6, fn.domain[1], size=n)
+    return pts.tolist()
+
+
 def run_mcts_benchmark(
     fn: BenchmarkFn,
     n_simulations: int = 3000,
     depth: int = 4,
-    n_train: int = 20,
     n_test: int = 100,
 ) -> BenchmarkResult:
     """Run monogate MCTS symbolic regression on a benchmark function."""
-    from monogate import mcts_search
+    from monogate.search.mcts import mcts_search
 
-    X_tr, y_tr = fn.sample(n=n_train, seed=0)
+    probe_pts = _make_probe_points(fn, n=50, seed=0)
     X_te, y_te = fn.test_sample(n=n_test, seed=42)
-
-    data = list(zip(X_tr.tolist(), y_tr.tolist()))
 
     t0 = time.time()
     try:
-        result = mcts_search(data, n_simulations=n_simulations, max_depth=depth)
+        result = mcts_search(
+            target_fn=fn.func,
+            probe_points=probe_pts,
+            depth=depth,
+            n_simulations=n_simulations,
+            seed=42,
+        )
         elapsed = time.time() - t0
 
-        best_formula = str(result.formula) if hasattr(result, "formula") else str(result)
-        best_mse = float(result.mse) if hasattr(result, "mse") else math.nan
+        best_formula = result.best_formula
+        best_mse = float(result.best_mse) if math.isfinite(result.best_mse) else math.nan
 
-        # Evaluate formula on train and test
-        try:
-            formula_fn = result.to_callable() if hasattr(result, "to_callable") else None
-        except Exception:
-            formula_fn = None
+        y_pred_te = _eval_tree(result.best_tree, X_te)
+        y_pred_tr = _eval_tree(result.best_tree, np.array(probe_pts))
+        y_tr = fn.func(np.array(probe_pts))
 
-        if formula_fn is not None:
-            y_pred_tr = _eval_formula(formula_fn, X_tr)
-            y_pred_te = _eval_formula(formula_fn, X_te)
-            train_r2 = _r2(y_tr, y_pred_tr) if y_pred_tr is not None else -999.0
-            test_r2 = _r2(y_te, y_pred_te) if y_pred_te is not None else -999.0
-            n_nodes = result.n_nodes if hasattr(result, "n_nodes") else -1
-        else:
-            train_r2 = test_r2 = -999.0
-            n_nodes = -1
+        train_r2 = _r2(y_tr, y_pred_tr) if y_pred_tr is not None else -999.0
+        test_r2 = _r2(y_te, y_pred_te) if y_pred_te is not None else -999.0
+        n_nodes = -1
 
     except Exception as exc:
         elapsed = time.time() - t0
@@ -132,39 +134,34 @@ def run_beam_benchmark(
     fn: BenchmarkFn,
     width: int = 50,
     depth: int = 4,
-    n_train: int = 20,
     n_test: int = 100,
 ) -> BenchmarkResult:
     """Run monogate beam search on a benchmark function."""
-    from monogate import beam_search
+    from monogate.search.mcts import beam_search
 
-    X_tr, y_tr = fn.sample(n=n_train, seed=0)
+    probe_pts = _make_probe_points(fn, n=50, seed=0)
     X_te, y_te = fn.test_sample(n=n_test, seed=42)
-
-    data = list(zip(X_tr.tolist(), y_tr.tolist()))
 
     t0 = time.time()
     try:
-        result = beam_search(data, width=width, max_depth=depth)
+        result = beam_search(
+            target_fn=fn.func,
+            probe_points=probe_pts,
+            depth=depth,
+            width=width,
+        )
         elapsed = time.time() - t0
 
-        best_formula = str(result.formula) if hasattr(result, "formula") else str(result)
-        best_mse = float(result.mse) if hasattr(result, "mse") else math.nan
+        best_formula = result.best_formula
+        best_mse = float(result.best_mse) if math.isfinite(result.best_mse) else math.nan
 
-        try:
-            formula_fn = result.to_callable() if hasattr(result, "to_callable") else None
-        except Exception:
-            formula_fn = None
+        y_pred_te = _eval_tree(result.best_tree, X_te)
+        y_pred_tr = _eval_tree(result.best_tree, np.array(probe_pts))
+        y_tr = fn.func(np.array(probe_pts))
 
-        if formula_fn is not None:
-            y_pred_tr = _eval_formula(formula_fn, X_tr)
-            y_pred_te = _eval_formula(formula_fn, X_te)
-            train_r2 = _r2(y_tr, y_pred_tr) if y_pred_tr is not None else -999.0
-            test_r2 = _r2(y_te, y_pred_te) if y_pred_te is not None else -999.0
-            n_nodes = result.n_nodes if hasattr(result, "n_nodes") else -1
-        else:
-            train_r2 = test_r2 = -999.0
-            n_nodes = -1
+        train_r2 = _r2(y_tr, y_pred_tr) if y_pred_tr is not None else -999.0
+        test_r2 = _r2(y_te, y_pred_te) if y_pred_te is not None else -999.0
+        n_nodes = -1
 
     except Exception as exc:
         elapsed = time.time() - t0
@@ -200,7 +197,7 @@ def run_suite(
     n_simulations: int = 3000,
     width: int = 50,
     depth: int = 4,
-    use_beam: bool = True,
+    use_beam: bool = False,
 ) -> list[BenchmarkResult]:
     """Run MCTS (and optionally beam) on a list of benchmark functions."""
     results = []

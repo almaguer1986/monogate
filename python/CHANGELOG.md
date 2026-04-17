@@ -4,6 +4,47 @@ All notable changes to `monogate` are documented here.
 
 ---
 
+## [2.0.0] — 2026-04-16
+
+### Sessions 23–30 — Theoretical Foundations, Complexity Theory, Information Geometry
+
+#### New modules
+
+- **`monogate.information_geometry`** — Information geometry via EML trees (Session 28)
+  - Log-partition functions for Poisson, Bernoulli, Gaussian, Exponential families
+  - Fisher metric computation (1D and matrix forms)
+  - `bregman_divergence` / `kl_divergence_*` — KL = Bregman of EML log-partition
+  - `geodesic_exponential_family` — e-geodesics as linear paths in natural parameters
+  - **Theorem**: KL divergence = Bregman divergence of EML log-partition function
+
+- **`monogate.frontiers.eml_complexity`** — EML Complexity Theory (Session 26)
+  - `EMLComplexityClass` dataclass: EML-1, EML-2, EML-3, EML-∞
+  - Pumping Lemma: depth(f) ≥ ⌈log₂(zero_order(f))⌉
+  - `complexity_certificate`, `zero_order_lower_bound`, `classify_function`
+  - `complexity_table()` — full classification of known functions
+
+#### New experiments
+
+- **`monogate.quantum`** extended — Rényi/Tsallis/Lindblad entropy family (Session 24)
+  - `renyi_entropy`, `tsallis_entropy`, `matrix_power_eml`
+  - `quantum_relative_entropy`, `quantum_conditional_entropy`
+  - `lindblad_dissipator`, `sandwiched_renyi_divergence`
+
+- **`experiments/float32_topology.py`** — Float32 attractor topology (Session 25)
+- **`experiments/schanuel_probe.py`** — EL numbers & Schanuel probe (Session 27)
+- **`experiments/el_number_census.py`** — Grammar target EL classification (Session 27)
+- **`experiments/sin_search_n12_launcher.py`** — N=12 sin(x) barrier search (Session 29)
+- **`monogate-core/src/bin/n12_search.rs`** — Rust N=12 exhaustive search binary
+
+#### Test coverage
+
+- **49** tests for information geometry
+- **28** tests for EML complexity theory
+- **44** tests for quantum entropy family
+- **2.0.0 total**: 1400+ tests across all modules
+
+---
+
 ## [1.4.0] — 2026-04-16
 
 ### Sessions 18–22 — Analog Renaissance, Finance Crack, Cross-Domain EML Unification

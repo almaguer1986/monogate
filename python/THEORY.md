@@ -770,3 +770,52 @@ strictly more expressive for physics laws than any single-operator grammar.
 3. Formal completeness theorem for the {EML, DEML} two-gate system
 4. Connection to sinh/cosh: `eml(x,1) + exp_neg_deml(x) = 2·cosh(x)` — the
    two-gate system naturally expresses hyperbolic functions
+
+## §21 Information Geometry via EML Trees (Session 28, April 2026)
+
+### Theorem: KL Divergence = Bregman Divergence of EML Log-Partition
+
+For any exponential family distribution, the KL divergence between two members equals
+the Bregman divergence of the EML log-partition function:
+
+    D_KL(p_η || p_θ) = D_A(η||θ) = A(θ) - A(η) - ∇A(η)·(θ - η)
+
+Since A is EML-expressible, KL divergence **inherits the EML tree structure**.
+
+### Log-Partition EML Forms
+
+| Distribution | Natural param η | A(η) | EML nodes |
+|-------------|-----------------|------|-----------|
+| Poisson     | log(mean)       | exp(η) | 1 |
+| Bernoulli   | log-odds        | ln(1 + exp(η)) | ~3 |
+| Gaussian    | (−1/2σ², μ/σ²) | −η₂²/(4η₁) − ln(−2η₁)/2 | ~5 |
+| Exponential | −lambda         | −ln(−η) | 3 |
+
+### Fisher Metric
+
+g_ij = ∂²A/∂η_i ∂η_j is also EML-expressible as a second derivative of the tree.
+For Poisson: g = exp(η) = A(η) (Fisher metric equals log-partition).
+For Bernoulli: g = sigmoid(η)·(1−sigmoid(η)) = variance.
+
+### Geodesics
+
+The e-geodesic (exponential) in the statistical manifold is linear in η-coordinates:
+    η(t) = (1−t)·η₁ + t·η₂
+This is a straight line in EML natural-parameter space — the simplest possible path.
+
+### Implementation
+
+```python
+from monogate.information_geometry import (
+    kl_divergence_poisson, kl_divergence_bernoulli, kl_divergence_exponential,
+    fisher_metric_gaussian_1d, geodesic_exponential_family, bregman_divergence,
+)
+
+# KL divergence as Bregman divergence
+kl = kl_divergence_poisson(eta_p=0.0, eta_q=1.0)  # = e - 2
+
+# Fisher metric
+g = fisher_metric_gaussian_1d(eta1=-0.5, eta2=0.0)  # 2x2 PD matrix
+```
+
+49 tests, all passing.
