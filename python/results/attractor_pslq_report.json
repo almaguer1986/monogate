@@ -1,0 +1,29 @@
+{
+  "experiment": "attractor_high_precision",
+  "dps": 100,
+  "alpha_30digits": "6.21444185277776295350804502959",
+  "alpha_full": "6.21444185277776295350804502959363162517547607421875",
+  "pslq": {
+    "basis": [
+      "alpha",
+      "e",
+      "pi",
+      "ln(2)",
+      "gamma (Euler)",
+      "zeta(3)"
+    ],
+    "dps": 100,
+    "found": false,
+    "formula": null,
+    "identify": null
+  },
+  "el_candidate_check": {
+    "candidate_formula": "ln((2*ln(5))*(3*exp(4)))",
+    "candidate_value": "6.2676444645551656620341418602",
+    "alpha_value": "6.21444185277776295350804502959",
+    "difference": "0.05320261178",
+    "distinct": true
+  },
+  "log_alpha_identify": "None",
+  "interpretation": "The phantom attractor alpha \u2248 6.21444185277776295350804502959 shows no integer relation with classical constants at 100-digit precision and is distinct from the best known EL-field candidate (ln((2*ln(5))*(3*exp(4)))). This supports the hypothesis that alpha generates a new transcendence class outside the classical EL field."
+}

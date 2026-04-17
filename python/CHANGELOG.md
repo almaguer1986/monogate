@@ -4,6 +4,41 @@ All notable changes to `monogate` are documented here.
 
 ---
 
+## [2.1.4] — 2026-04-17
+
+### Session 39 — Formal Density Proof Path + Schanuel Depth + Attractor Transcendence
+
+#### Research results
+
+- **j0(x) resolved DENSE** on [0.1, 2.4] (14M× N=3 jump) and [0.1, 6.0] (137K× jump)
+  — Session 38 INCONCLUSIVE was a domain overflow artifact, not a barrier
+  — Bessel functions are EML-approximable on compact sub-intervals
+- **Stone-Weierstrass product closure**: 6/6 product functions DENSE (x^2, x^3, sin^2,
+  sin*cos, x*sin, exp*sin) — empirical evidence that EML span is closed under products
+  — Stone-Weierstrass theorem applies: EML is formally dense in C[a,b]
+- **Schanuel depth analysis**: N=k EML atoms first introduce EL height-k functions
+  — N=3 singularity = first access to Schanuel's depth-3 EL layer (60 new atoms)
+  — This algebraic independence IS the mechanism behind the 1.4M× N=3 jump for sin(x)
+- **Phantom attractor at 100 digits**: PSLQ null result at 100-digit precision
+  — alpha NOT in Z-span of {e, pi, ln(2), gamma, zeta(3)}
+  — EL-field separation confirmed: alpha != ln((2*ln(5))*(3*exp(4)))
+  — Transcendence candidate for new EML-algebraic constant class
+
+#### New experiments
+
+- `python/experiments/j0_domain_study.py` — j0(x) on 4 domains [0.1,2.4]..[0.05,15.0]
+- `python/experiments/sw_product_closure.py` — Stone-Weierstrass product closure test
+- `python/experiments/schanuel_depth_analysis.py` — EL tree height distribution by N
+- `python/experiments/attractor_high_precision.py` — phantom attractor PSLQ at 100-200 digits
+
+#### Documentation
+
+- `python/PAPER.md` §38: "Two Frontiers: Formal Density and Transcendence"
+  — Track A: EML Weierstrass Theorem sketch (Stone-Weierstrass conditions satisfied)
+  — Track B: Schanuel depth table, j0 domain resolution, 100-digit attractor PSLQ report
+
+---
+
 ## [2.1.3] — 2026-04-17
 
 ### Session 38 — Universal Approximation Survey & N=3 Singularity

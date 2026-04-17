@@ -1,0 +1,226 @@
+{
+  "experiment": "sw_product_closure",
+  "max_N": 4,
+  "n_functions": 6,
+  "dense_count": 6,
+  "separation_count": 0,
+  "sw_condition_3_supported": true,
+  "results": [
+    {
+      "function": "x^2",
+      "product_of": "x \u00b7 x",
+      "domain": [
+        0.1,
+        3.0
+      ],
+      "verdict": "DENSE",
+      "n3_jump_factor": 196731452.38353252,
+      "rows": [
+        {
+          "N": 1,
+          "rank": 3,
+          "mse_test": 0.06002730004494469,
+          "elapsed": 0.0
+        },
+        {
+          "N": 2,
+          "rank": 9,
+          "mse_test": 5.431059869486879e-06,
+          "elapsed": 0.02
+        },
+        {
+          "N": 3,
+          "rank": 18,
+          "mse_test": 2.760646456723606e-14,
+          "elapsed": 0.09
+        },
+        {
+          "N": 4,
+          "rank": 23,
+          "mse_test": 2.8313804880086064e-15,
+          "elapsed": 0.72
+        }
+      ]
+    },
+    {
+      "function": "x^3",
+      "product_of": "x \u00b7 x^2",
+      "domain": [
+        0.1,
+        3.0
+      ],
+      "verdict": "DENSE",
+      "n3_jump_factor": 545997.1850143702,
+      "rows": [
+        {
+          "N": 1,
+          "rank": 3,
+          "mse_test": 0.03497884760757306,
+          "elapsed": 0.0
+        },
+        {
+          "N": 2,
+          "rank": 9,
+          "mse_test": 5.37935602565666e-05,
+          "elapsed": 0.01
+        },
+        {
+          "N": 3,
+          "rank": 18,
+          "mse_test": 9.852351208578262e-11,
+          "elapsed": 0.11
+        },
+        {
+          "N": 4,
+          "rank": 23,
+          "mse_test": 1.274929397459141e-13,
+          "elapsed": 0.71
+        }
+      ]
+    },
+    {
+      "function": "sin^2(x)",
+      "product_of": "sin(x) \u00b7 sin(x)",
+      "domain": [
+        0.05,
+        6.28
+      ],
+      "verdict": "DENSE",
+      "n3_jump_factor": 446.56404078504505,
+      "rows": [
+        {
+          "N": 1,
+          "rank": 3,
+          "mse_test": 0.10734688581619807,
+          "elapsed": 0.0
+        },
+        {
+          "N": 2,
+          "rank": 7,
+          "mse_test": 0.03573269884226713,
+          "elapsed": 0.01
+        },
+        {
+          "N": 3,
+          "rank": 17,
+          "mse_test": 8.001696415020388e-05,
+          "elapsed": 0.08
+        },
+        {
+          "N": 4,
+          "rank": 26,
+          "mse_test": 3.300852637698278e-07,
+          "elapsed": 0.65
+        }
+      ]
+    },
+    {
+      "function": "sin(x)*cos(x)",
+      "product_of": "sin(x) \u00b7 cos(x)",
+      "domain": [
+        0.05,
+        6.28
+      ],
+      "verdict": "DENSE",
+      "n3_jump_factor": 28767.62728420088,
+      "rows": [
+        {
+          "N": 1,
+          "rank": 3,
+          "mse_test": 0.10228077536433217,
+          "elapsed": 0.0
+        },
+        {
+          "N": 2,
+          "rank": 7,
+          "mse_test": 0.06299687046290331,
+          "elapsed": 0.03
+        },
+        {
+          "N": 3,
+          "rank": 17,
+          "mse_test": 2.1898528453718203e-06,
+          "elapsed": 0.21
+        },
+        {
+          "N": 4,
+          "rank": 26,
+          "mse_test": 8.574235492337892e-07,
+          "elapsed": 1.11
+        }
+      ]
+    },
+    {
+      "function": "x*sin(x)",
+      "product_of": "x \u00b7 sin(x)",
+      "domain": [
+        0.1,
+        6.28
+      ],
+      "verdict": "DENSE",
+      "n3_jump_factor": 30981.728540091208,
+      "rows": [
+        {
+          "N": 1,
+          "rank": 3,
+          "mse_test": 3.3648358945231127,
+          "elapsed": 0.0
+        },
+        {
+          "N": 2,
+          "rank": 7,
+          "mse_test": 0.0345402475635743,
+          "elapsed": 0.02
+        },
+        {
+          "N": 3,
+          "rank": 16,
+          "mse_test": 1.1148586341423227e-06,
+          "elapsed": 0.1
+        },
+        {
+          "N": 4,
+          "rank": 25,
+          "mse_test": 8.113036785859688e-09,
+          "elapsed": 0.93
+        }
+      ]
+    },
+    {
+      "function": "exp(x)*sin(x)",
+      "product_of": "exp(x) \u00b7 sin(x)",
+      "domain": [
+        0.05,
+        3.0
+      ],
+      "verdict": "DENSE",
+      "n3_jump_factor": 7243605.993521883,
+      "rows": [
+        {
+          "N": 1,
+          "rank": 3,
+          "mse_test": 1.6245637242578452,
+          "elapsed": 0.0
+        },
+        {
+          "N": 2,
+          "rank": 9,
+          "mse_test": 0.003096372024583676,
+          "elapsed": 0.02
+        },
+        {
+          "N": 3,
+          "rank": 18,
+          "mse_test": 4.274627895764664e-10,
+          "elapsed": 0.13
+        },
+        {
+          "N": 4,
+          "rank": 24,
+          "mse_test": 1.1659748399707977e-12,
+          "elapsed": 1.03
+        }
+      ]
+    }
+  ]
+}

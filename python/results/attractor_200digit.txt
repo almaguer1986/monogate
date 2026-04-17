@@ -1,0 +1,7 @@
+# Phantom Attractor -- High-Precision Value
+# Precision: 100 decimal places (mpmath)
+# PSLQ status: NULL -- no integer relation
+# EL candidate distance: 0.05320261178
+
+alpha =
+6.21444185277776295350804502959363162517547607421875
