@@ -1,0 +1,162 @@
+{
+  "experiment": "eml_fourier_basis_sin",
+  "target": "sin(x)",
+  "domain": "[0.05, 6.28]",
+  "n_atoms": 75,
+  "rank": 17,
+  "basis": [
+    {
+      "rank": 1,
+      "atom_index": 20,
+      "formula": "eml(1,eml(x,eml(x,1)))",
+      "importance": 2.0965673721315308,
+      "coef_actual": -547.7383830489981
+    },
+    {
+      "rank": 2,
+      "atom_index": 66,
+      "formula": "eml(eml(1,eml(x,x)),x)",
+      "importance": 2.0920083963065896,
+      "coef_actual": -12.138365833995064
+    },
+    {
+      "rank": 3,
+      "atom_index": 8,
+      "formula": "eml(1,eml(x,x))",
+      "importance": 2.054328091944012,
+      "coef_actual": 540.611791087958
+    },
+    {
+      "rank": 4,
+      "atom_index": 58,
+      "formula": "eml(eml(1,eml(x,x)),1)",
+      "importance": 2.030859416082933,
+      "coef_actual": 11.897819884702999
+    },
+    {
+      "rank": 5,
+      "atom_index": 4,
+      "formula": "eml(1,eml(x,1))",
+      "importance": 2.0234413316199067,
+      "coef_actual": -116.3202604829228
+    },
+    {
+      "rank": 6,
+      "atom_index": 18,
+      "formula": "eml(1,eml(x,eml(1,1)))",
+      "importance": 1.980791989445589,
+      "coef_actual": -19.789149625289486
+    },
+    {
+      "rank": 7,
+      "atom_index": 33,
+      "formula": "eml(x,eml(eml(x,1),x))",
+      "importance": 1.9646477409747736,
+      "coef_actual": 1.2682150756101203
+    },
+    {
+      "rank": 8,
+      "atom_index": 72,
+      "formula": "eml(eml(eml(1,x),1),x)",
+      "importance": 1.9645938668467453,
+      "coef_actual": -5.829559606009397e-135
+    },
+    {
+      "rank": 9,
+      "atom_index": 70,
+      "formula": "eml(eml(eml(1,x),x),1)",
+      "importance": 1.9645938668467449,
+      "coef_actual": -2.910846890432045e-136
+    },
+    {
+      "rank": 10,
+      "atom_index": 68,
+      "formula": "eml(eml(eml(1,x),1),1)",
+      "importance": 1.9645938668467449,
+      "coef_actual": -5.821693780864045e-135
+    },
+    {
+      "rank": 11,
+      "atom_index": 74,
+      "formula": "eml(eml(eml(1,x),x),x)",
+      "importance": 1.9645938668467449,
+      "coef_actual": -2.9165399241986175e-136
+    },
+    {
+      "rank": 12,
+      "atom_index": 49,
+      "formula": "eml(eml(1,1),eml(x,x))",
+      "importance": 1.925274785874309,
+      "coef_actual": 12.446759163972729
+    },
+    {
+      "rank": 13,
+      "atom_index": 41,
+      "formula": "eml(eml(1,1),eml(x,1))",
+      "importance": 1.911459574434286,
+      "coef_actual": -2.1252015765944012
+    },
+    {
+      "rank": 14,
+      "atom_index": 22,
+      "formula": "eml(1,eml(1,eml(1,x)))",
+      "importance": 1.8557725922233457,
+      "coef_actual": 717.9372732944258
+    },
+    {
+      "rank": 15,
+      "atom_index": 71,
+      "formula": "eml(eml(eml(1,1),1),x)",
+      "importance": 1.8494202310213488,
+      "coef_actual": 1.8879652185348613e-06
+    },
+    {
+      "rank": 16,
+      "atom_index": 45,
+      "formula": "eml(eml(1,1),eml(1,x))",
+      "importance": 1.8460900076299636,
+      "coef_actual": -11.9206436241103
+    },
+    {
+      "rank": 17,
+      "atom_index": 13,
+      "formula": "eml(eml(1,1),x)",
+      "importance": 1.8430742522806172,
+      "coef_actual": -0.5498356269110747
+    }
+  ],
+  "progressive_mse": [
+    {
+      "K": 1,
+      "mse_test": 1142187.9753122113
+    },
+    {
+      "K": 2,
+      "mse_test": 1210602.5320342935
+    },
+    {
+      "K": 3,
+      "mse_test": 49539.657192539686
+    },
+    {
+      "K": 5,
+      "mse_test": 130869.65534920523
+    },
+    {
+      "K": 8,
+      "mse_test": 161883.105922096
+    },
+    {
+      "K": 10,
+      "mse_test": 161883.105922096
+    },
+    {
+      "K": 13,
+      "mse_test": 154246.0257439738
+    },
+    {
+      "K": 17,
+      "mse_test": 1752822.9642358173
+    }
+  ]
+}

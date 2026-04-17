@@ -4,6 +4,40 @@ All notable changes to `monogate` are documented here.
 
 ---
 
+## [2.1.3] — 2026-04-17
+
+### Session 38 — Universal Approximation Survey & N=3 Singularity
+
+#### Research results
+
+- **Universal survey**: 5/8 functions DENSE (sin, cos, sinh, erf, lgamma), 0 SEPARATION
+  - N=3 singularity is universal for smooth algebraically-natural functions
+  - sinh(x): 10 billion× improvement at N=3 (most EML-native smooth function)
+  - |sin(x)| and j0(x): inconclusive (non-smooth / wide-domain overflow)
+- **N=3 singularity explained**: top new directions are `eml(eml(eml(1,x),·),·)` family —
+  triple-nested log compositions that span oscillatory curvature transitions
+- **EML-k complexity classes**: EML-2 contains lgamma, sinh; EML-3 contains sin, cos, erf
+
+#### New modules
+
+- **`monogate.frontiers.eml_depth_hierarchy`** — EML-k complexity class API
+  - `EMLComplexityResult` dataclass: floor_by_N, rank_by_N, n3_jump_factor, verdict
+  - `eml_complexity_class(fn, name, max_N)`: computes complexity class via SVD floor sweep
+  - `KNOWN_COMPLEXITY`: precomputed lookup table for 8 surveyed functions
+
+#### New experiments
+
+- **`experiments/n3_singularity_analysis.py`** — identifies top-10 new N=3 directions
+- **`experiments/eml_fourier_basis.py`** — extracts ranked EML Fourier series of sin(x)
+- **`experiments/universal_approx_survey.py`** — 8-function DENSE/SEPARATION sweep
+
+#### Documentation
+
+- `PAPER.md §37`: Universal Approximation Survey, N=3 singularity characterization,
+  EML-k hierarchy table, 4 open questions for future research
+
+---
+
 ## [2.1.2] — 2026-04-16
 
 ### Session 37 — EML Fourier Density Theorem

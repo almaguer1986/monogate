@@ -1,0 +1,78 @@
+{
+  "experiment": "n3_singularity_analysis",
+  "n2_rank": 7,
+  "n3_exclusive_atoms": 58,
+  "sin_n2_residual_norm": 1.3622205749933374,
+  "top_10_new_directions": [
+    {
+      "rank": 1,
+      "formula": "eml(eml(eml(1,x),x),x)",
+      "residual_norm": 0.431036771344188,
+      "sin_correlation": 0.658033056539063,
+      "combined_score": 0.2836364441283452
+    },
+    {
+      "rank": 2,
+      "formula": "eml(eml(eml(1,x),1),x)",
+      "residual_norm": 0.431036771344188,
+      "sin_correlation": 0.6580330565390629,
+      "combined_score": 0.28363644412834516
+    },
+    {
+      "rank": 3,
+      "formula": "eml(eml(eml(1,x),1),1)",
+      "residual_norm": 0.431036771344188,
+      "sin_correlation": 0.6580330565390629,
+      "combined_score": 0.28363644412834516
+    },
+    {
+      "rank": 4,
+      "formula": "eml(eml(eml(1,x),x),1)",
+      "residual_norm": 0.431036771344188,
+      "sin_correlation": 0.6580330565390629,
+      "combined_score": 0.28363644412834516
+    },
+    {
+      "rank": 5,
+      "formula": "eml(x,eml(eml(x,1),x))",
+      "residual_norm": 0.04088503122480042,
+      "sin_correlation": 0.27073613515951855,
+      "combined_score": 0.011069055339678701
+    },
+    {
+      "rank": 6,
+      "formula": "eml(eml(1,eml(x,x)),1)",
+      "residual_norm": 0.02438250716600445,
+      "sin_correlation": 0.41283578102208685,
+      "combined_score": 0.010065971389154077
+    },
+    {
+      "rank": 7,
+      "formula": "eml(eml(1,eml(x,x)),x)",
+      "residual_norm": 0.021963682091148108,
+      "sin_correlation": 0.41283578102208707,
+      "combined_score": 0.009067393850219955
+    },
+    {
+      "rank": 8,
+      "formula": "eml(eml(1,eml(x,1)),1)",
+      "residual_norm": 0.004519154295292596,
+      "sin_correlation": 0.8440356515387352,
+      "combined_score": 0.00381432734003136
+    },
+    {
+      "rank": 9,
+      "formula": "eml(eml(1,eml(x,1)),x)",
+      "residual_norm": 0.004103589511192951,
+      "sin_correlation": 0.8440356515387377,
+      "combined_score": 0.003463575846727273
+    },
+    {
+      "rank": 10,
+      "formula": "eml(x,eml(eml(x,x),x))",
+      "residual_norm": 0.002696291115897955,
+      "sin_correlation": 1.068411514033124,
+      "combined_score": 0.0028807484734105957
+    }
+  ]
+}
