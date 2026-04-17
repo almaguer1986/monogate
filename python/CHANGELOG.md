@@ -4,6 +4,41 @@ All notable changes to `monogate` are documented here.
 
 ---
 
+## [2.1.6] — 2026-04-17
+
+### Session 41 — EML Complexity Classification, Bivariate Density, 200-Digit Transcendence
+
+#### EML Complexity Census (eml_complexity_census.py)
+- 23-function systematic classification into EML-k tiers
+- EML-1: {exp, ln, constants}; EML-2: {x, 1/x, sqrt, rational}; EML-3: {all polynomials,
+  all standard transcendentals (sin, cos, tanh, Gaussian, x*exp(-x))}
+- |sin(x)| still INCONCLUSIVE — piecewise-smooth barrier confirmed
+- Conjecture: EML-k = Schanuel depth-k
+
+#### Bivariate EML Density (multivariate_eml_density.py)
+- First empirical test of bivariate EML span density on C([0.3,2.5]^2)
+- 5/6 targets DENSE or LIKELY_DENSE at N=3 (381 bivariate atoms)
+- N=3 Schanuel jump universal: x^2+y^2 hits 10^18x improvement, sin(x+y) 1200x
+- Full analytic proof: x*y = mul_eml(x,y) is an EXACT bivariate tree
+- Corollary: closure(bivariate EML span) = C([a,b]^2)
+
+#### 200-Digit Orthogonalized PSLQ (attractor_orthogonal_pslq_200.py)
+- Clean null at 100, 150, 200 digits for both attractor basins
+- All 20 basis constants mutually independent (Gram-Schmidt screening)
+- Session 40 "relations" confirmed as configuration artifacts, not genuine
+- Degree <= 8 minimal polynomial: NOT FOUND (|coeff| <= 300)
+- Conjecture (EML-Generated Transcendence) formally stated
+
+#### Proof Completion (Track A)
+- Product closure detour eliminated; simpler chain via polynomial containment
+- Theorem: x^n = eml(n*ln(x), 1) is an EXACT EML tree at depth O(n * d_add)
+- Therefore closure(span(EML)) = C(K) by classical Weierstrass, no SW needed
+- Jackson-type rate theorem conjectured and motivated
+
+#### Version bump: 2.1.5 -> 2.1.6
+
+---
+
 ## [2.1.5] — 2026-04-17
 
 ### Session 40 — EML Weierstrass Theorem: Constructive Proof

@@ -1,0 +1,152 @@
+[
+  {
+    "target": "x*y",
+    "rows": [
+      {
+        "N": 1,
+        "n_atoms": 9,
+        "mse": 0.04018855300402359,
+        "ratio_vs_prev": null
+      },
+      {
+        "N": 2,
+        "n_atoms": 63,
+        "mse": 0.0030394020714528537,
+        "ratio_vs_prev": 13.222519449298527
+      },
+      {
+        "N": 3,
+        "n_atoms": 381,
+        "mse": 5.255041772854927e-07,
+        "ratio_vs_prev": 5783.782894273029
+      }
+    ],
+    "verdict": "LIKELY_DENSE",
+    "final_mse": 5.255041772854927e-07
+  },
+  {
+    "target": "x^2+y^2",
+    "rows": [
+      {
+        "N": 1,
+        "n_atoms": 9,
+        "mse": 0.0008906866228382149,
+        "ratio_vs_prev": null
+      },
+      {
+        "N": 2,
+        "n_atoms": 63,
+        "mse": 8.121297205551467e-12,
+        "ratio_vs_prev": 109672950.05893506
+      },
+      {
+        "N": 3,
+        "n_atoms": 381,
+        "mse": 1.4707078140087007e-30,
+        "ratio_vs_prev": 5.522033083794727e+18
+      }
+    ],
+    "verdict": "DENSE",
+    "final_mse": 1.4707078140087007e-30
+  },
+  {
+    "target": "sin(x+y)",
+    "rows": [
+      {
+        "N": 1,
+        "n_atoms": 9,
+        "mse": 0.09478037784720941,
+        "ratio_vs_prev": null
+      },
+      {
+        "N": 2,
+        "n_atoms": 63,
+        "mse": 0.02133133468667322,
+        "ratio_vs_prev": 4.44324648407601
+      },
+      {
+        "N": 3,
+        "n_atoms": 381,
+        "mse": 1.777668144700508e-05,
+        "ratio_vs_prev": 1199.9615760829763
+      }
+    ],
+    "verdict": "DENSE",
+    "final_mse": 1.777668144700508e-05
+  },
+  {
+    "target": "x^2*y",
+    "rows": [
+      {
+        "N": 1,
+        "n_atoms": 9,
+        "mse": 0.07960181476429316,
+        "ratio_vs_prev": null
+      },
+      {
+        "N": 2,
+        "n_atoms": 63,
+        "mse": 0.012562910238643667,
+        "ratio_vs_prev": 6.336255951223547
+      },
+      {
+        "N": 3,
+        "n_atoms": 381,
+        "mse": 3.129964662195027e-06,
+        "ratio_vs_prev": 4013.75465684439
+      }
+    ],
+    "verdict": "LIKELY_DENSE",
+    "final_mse": 3.129964662195027e-06
+  },
+  {
+    "target": "exp(x)*exp(y)",
+    "rows": [
+      {
+        "N": 1,
+        "n_atoms": 9,
+        "mse": 0.09179304021967045,
+        "ratio_vs_prev": null
+      },
+      {
+        "N": 2,
+        "n_atoms": 63,
+        "mse": 0.030842446709117535,
+        "ratio_vs_prev": 2.976191904792525
+      },
+      {
+        "N": 3,
+        "n_atoms": 381,
+        "mse": 2.6118378916866376e-05,
+        "ratio_vs_prev": 1180.8714012185692
+      }
+    ],
+    "verdict": "DENSE",
+    "final_mse": 2.6118378916866376e-05
+  },
+  {
+    "target": "ln(x)+ln(y)",
+    "rows": [
+      {
+        "N": 1,
+        "n_atoms": 9,
+        "mse": 1.9649298024171507e-30,
+        "ratio_vs_prev": null
+      },
+      {
+        "N": 2,
+        "n_atoms": 63,
+        "mse": 1.9340454280809343e-30,
+        "ratio_vs_prev": 1.015968794676587
+      },
+      {
+        "N": 3,
+        "n_atoms": 381,
+        "mse": 2.74648868954512e-30,
+        "ratio_vs_prev": 0.7041883825857864
+      }
+    ],
+    "verdict": "DENSE",
+    "final_mse": 2.74648868954512e-30
+  }
+]

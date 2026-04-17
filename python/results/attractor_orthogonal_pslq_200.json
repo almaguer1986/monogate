@@ -1,0 +1,168 @@
+[
+  {
+    "basin": "dominant (6.2144)",
+    "alpha": "6.21444185277776295350804502959363162517547607421875",
+    "pslq_orthogonalized": {
+      "100": {
+        "found": false,
+        "alpha_coeff": null,
+        "verdict": "NULL",
+        "relation": null,
+        "residual": null
+      },
+      "150": {
+        "found": false,
+        "alpha_coeff": null,
+        "verdict": "NULL",
+        "relation": null,
+        "residual": null
+      },
+      "200": {
+        "found": false,
+        "alpha_coeff": null,
+        "verdict": "NULL",
+        "relation": null,
+        "residual": null
+      }
+    },
+    "minimal_polynomial": {
+      "search": [
+        {
+          "degree": 1,
+          "found": false
+        },
+        {
+          "degree": 2,
+          "found": false
+        },
+        {
+          "degree": 3,
+          "found": false
+        },
+        {
+          "degree": 4,
+          "found": false
+        },
+        {
+          "degree": 5,
+          "found": false
+        },
+        {
+          "degree": 6,
+          "found": false
+        },
+        {
+          "degree": 7,
+          "found": false
+        },
+        {
+          "degree": 8,
+          "found": false
+        }
+      ],
+      "minimal_degree": null,
+      "minimal_poly": null
+    },
+    "fixed_point_equations": {
+      "alpha": "6.214441852777762953508045",
+      "exp(alpha)": "499.916884086806308151057",
+      "ln(alpha)": "1.826875914458031787074497",
+      "exp(alpha)-ln(alpha)": "498.0900081723482763639825",
+      "alpha - eml(a,a)": "-491.8755663195705134104745",
+      "e - ln(alpha)": "0.8914059140010134482857906",
+      "exp(alpha) - e": "497.1986022583472629156967",
+      "ln(ln(alpha))": "0.6026073574418696269038318",
+      "exp(e - ln(alpha))": "2.438555641920687481783278",
+      "alpha / exp(alpha)": "0.0124309501250985515150921",
+      "ln(alpha)/alpha": "0.2939726459330286374563136",
+      "eml(eml(a,1),a) = exp(exp(a))-ln(a)": "1.291647980210044875752925e+217",
+      "eml(1,eml(1,a)) = e-(e-ln(a)) = ln(a)": "1.826875914458031787074497",
+      "eml(eml(1,a),1) = exp(e-ln(a)) = e^e/a": "2.438555641920687481783278"
+    },
+    "basis_independent_count": 20,
+    "basis_skipped": []
+  },
+  {
+    "basin": "minority (6.2675)",
+    "alpha": "6.26751862654762970095134733128361403942108154296875",
+    "pslq_orthogonalized": {
+      "100": {
+        "found": false,
+        "alpha_coeff": null,
+        "verdict": "NULL",
+        "relation": null,
+        "residual": null
+      },
+      "150": {
+        "found": false,
+        "alpha_coeff": null,
+        "verdict": "NULL",
+        "relation": null,
+        "residual": null
+      },
+      "200": {
+        "found": false,
+        "alpha_coeff": null,
+        "verdict": "NULL",
+        "relation": null,
+        "residual": null
+      }
+    },
+    "minimal_polynomial": {
+      "search": [
+        {
+          "degree": 1,
+          "found": false
+        },
+        {
+          "degree": 2,
+          "found": false
+        },
+        {
+          "degree": 3,
+          "found": false
+        },
+        {
+          "degree": 4,
+          "found": false
+        },
+        {
+          "degree": 5,
+          "found": false
+        },
+        {
+          "degree": 6,
+          "found": false
+        },
+        {
+          "degree": 7,
+          "found": false
+        },
+        {
+          "degree": 8,
+          "found": false
+        }
+      ],
+      "minimal_degree": null,
+      "minimal_poly": null
+    },
+    "fixed_point_equations": {
+      "alpha": "6.267518626547629700951347",
+      "exp(alpha)": "527.1676537713780665256023",
+      "ln(alpha)": "1.835380522972122555981337",
+      "exp(alpha)-ln(alpha)": "525.332273248405943969621",
+      "alpha - eml(a,a)": "-519.0647546218583142686697",
+      "e - ln(alpha)": "0.8829013054869226793789509",
+      "exp(alpha) - e": "524.4493719429190212902421",
+      "ln(ln(alpha))": "0.6072518294755543912725047",
+      "exp(e - ln(alpha))": "2.417904619746900741945965",
+      "alpha / exp(alpha)": "0.01188904247388768199820315",
+      "ln(alpha)/alpha": "0.2928400587750809569221955",
+      "eml(eml(a,1),a) = exp(exp(a))-ln(a)": "8.830861444895740477636733e+228",
+      "eml(1,eml(1,a)) = e-(e-ln(a)) = ln(a)": "1.835380522972122555981337",
+      "eml(eml(1,a),1) = exp(e-ln(a)) = e^e/a": "2.417904619746900741945965"
+    },
+    "basis_independent_count": 20,
+    "basis_skipped": []
+  }
+]
