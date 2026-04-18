@@ -1,0 +1,43 @@
+{
+  "session": 866,
+  "title": "Lightning as Natural Depth-inf Eruption",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "LightningEML",
+    "analysis": {
+      "object": "T587: Lightning as Natural Depth-inf Eruption depth analysis",
+      "domains": {
+        "charge_separation": {
+          "description": "Charge separation: EML-1 exponential field buildup in cumulonimbus",
+          "depth": "EML-1",
+          "reason": "Triboelectric charging is EML-1: exponential charge separation in ice crystals"
+        },
+        "stepped_leader": {
+          "description": "Stepped leader: EML-3 oscillatory branching; each step is discrete advance + pause",
+          "depth": "EML-3",
+          "reason": "Leader propagation is EML-3: oscillatory stepped branching with random walk component"
+        },
+        "return_stroke": {
+          "description": "Return stroke: EML-inf; 30,000 amps in microseconds; unpredictable path",
+          "depth": "EML-inf",
+          "reason": "Return stroke is EML-inf: categorification of EML-3 stepped leader into EML-inf discharge"
+        },
+        "thunder_shadow": {
+          "description": "Thunder is EML-3 shadow of EML-inf discharge; sound wave from expansion",
+          "depth": "EML-3",
+          "reason": "Thunder = EML-3 acoustic shadow of EML-inf lightning; shadow depth theorem in sky"
+        }
+      }
+    },
+    "distribution": {
+      "EML-1": 1,
+      "EML-3": 2,
+      "EML-inf": 1
+    },
+    "theorem": "T587: Lightning as Natural Depth-inf Eruption (S866)."
+  },
+  "key_theorem": "T587: Lightning as Natural Depth-inf Eruption (S866).",
+  "rabbit_hole_log": [
+    "T587: charge_separation depth confirmed"
+  ]
+}
