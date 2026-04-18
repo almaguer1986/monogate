@@ -1,0 +1,272 @@
+{
+  "session": 61,
+  "title": "Quantum Field Theory EML Complexity",
+  "section1_path_integral": {
+    "eml_depth": 1,
+    "note": "Path integral kernel exp(-S[phi]) is EML-1 atom",
+    "unification": [
+      "stat_mech_Z = sum exp(-beta*E): EML-1",
+      "max_entropy p* prop exp(theta*T): EML-1",
+      "QFT Z = integral exp(-S/hbar): EML-1"
+    ]
+  },
+  "section2_free_propagator": {
+    "normalization_check": [
+      {
+        "dtau": 0.1,
+        "norm": 0.9999999999999597,
+        "error": 4.030109579389318e-14
+      },
+      {
+        "dtau": 0.5,
+        "norm": 1.0000000000000144,
+        "error": 1.4432899320127035e-14
+      },
+      {
+        "dtau": 1.0,
+        "norm": 0.9999999999999899,
+        "error": 1.0103029524088925e-14
+      },
+      {
+        "dtau": 2.0,
+        "norm": 1.0000000000000144,
+        "error": 1.4432899320127035e-14
+      }
+    ],
+    "all_normalized": true,
+    "eml_depth": 2
+  },
+  "section3_harmonic_oscillator": {
+    "energies": {
+      "0": 0.5,
+      "1": 1.5,
+      "2": 2.5,
+      "3": 3.5,
+      "4": 4.5
+    },
+    "partition_function": {
+      "beta_0.5": 1.9793175816510002,
+      "beta_1.0": 0.9595173756674719,
+      "beta_2.0": 0.4254590641196608,
+      "beta_5.0": 0.08264183492754779
+    },
+    "kernel_x0_x0_tau1": 0.3680051987075608,
+    "eml_depth": 2
+  },
+  "section4_instantons": {
+    "instanton_action": 0.942809032152087,
+    "amplitude_table": [
+      {
+        "g": 1.0,
+        "instanton_amp": 0.3895320889234957,
+        "g_to_10": 1.0,
+        "amp_smaller_than_g10": true
+      },
+      {
+        "g": 0.5,
+        "instanton_amp": 0.1517352483011022,
+        "g_to_10": 0.0009765625,
+        "amp_smaller_than_g10": false
+      },
+      {
+        "g": 0.2,
+        "instanton_amp": 0.008968425384316563,
+        "g_to_10": 1.0240000000000006e-07,
+        "amp_smaller_than_g10": false
+      },
+      {
+        "g": 0.1,
+        "instanton_amp": 8.043265387405369e-05,
+        "g_to_10": 1.0000000000000006e-10,
+        "amp_smaller_than_g10": false
+      },
+      {
+        "g": 0.05,
+        "instanton_amp": 6.469411809223325e-09,
+        "g_to_10": 9.765625000000005e-14,
+        "amp_smaller_than_g10": false
+      },
+      {
+        "g": 0.02,
+        "instanton_amp": 3.36637112028126e-21,
+        "g_to_10": 1.0240000000000003e-17,
+        "amp_smaller_than_g10": true
+      },
+      {
+        "g": 0.01,
+        "instanton_amp": 1.1332454519463705e-41,
+        "g_to_10": 1.0000000000000002e-20,
+        "amp_smaller_than_g10": true
+      }
+    ],
+    "eml_depth_in_g": "inf",
+    "note": "Essential singularity at g=0: non-perturbative, EML-inf"
+  },
+  "section5_rg_beta": {
+    "beta_table": [
+      {
+        "g": 0.1,
+        "beta_1loop": 1.8997721932938338e-05,
+        "beta_2loop": 1.8995449514991338e-05
+      },
+      {
+        "g": 0.2,
+        "beta_1loop": 0.0001519817754635067,
+        "beta_2loop": 0.00015190905808920268
+      },
+      {
+        "g": 0.5,
+        "beta_1loop": 0.0023747152416172916,
+        "beta_2loop": 0.002367613935532915
+      },
+      {
+        "g": 1.0,
+        "beta_1loop": 0.018997721932938333,
+        "beta_2loop": 0.018770480138238288
+      },
+      {
+        "g": 2.0,
+        "beta_1loop": 0.15198177546350666,
+        "beta_2loop": 0.14471003803310525
+      }
+    ],
+    "running_coupling": {
+      "mu_1.0": 0.1,
+      "mu_2.0": 0.1000131708163925,
+      "mu_5.0": 0.10003058967009787,
+      "mu_10.0": 0.10004377256640709
+    },
+    "eml_depth_in_g": 1,
+    "fixed_points": [
+      0.0
+    ]
+  },
+  "section6_tqft": {
+    "jones_table": [
+      {
+        "q": 0.5,
+        "jones_trefoil": -6.0,
+        "jones_unknot": 1.0
+      },
+      {
+        "q": 1.0,
+        "jones_trefoil": 1.0,
+        "jones_unknot": 1.0
+      },
+      {
+        "q": 1.5,
+        "jones_trefoil": 0.7654320987654321,
+        "jones_unknot": 1.0
+      },
+      {
+        "q": 2.0,
+        "jones_trefoil": 0.5625,
+        "jones_unknot": 1.0
+      }
+    ],
+    "chern_simons": [
+      {
+        "k": 2,
+        "n": 2,
+        "Z": 0.5000000000000001,
+        "eml_note": "sin(\u03c0\u00b7rational) is algebraic \u2192 EML-0 at rational level, EML-2 at generic"
+      },
+      {
+        "k": 3,
+        "n": 2,
+        "Z": 0.3717480344601845,
+        "eml_note": "sin(\u03c0\u00b7rational) is algebraic \u2192 EML-0 at rational level, EML-2 at generic"
+      },
+      {
+        "k": 4,
+        "n": 2,
+        "Z": 0.2886751345948128,
+        "eml_note": "sin(\u03c0\u00b7rational) is algebraic \u2192 EML-0 at rational level, EML-2 at generic"
+      },
+      {
+        "k": 5,
+        "n": 2,
+        "Z": 0.23192061392432986,
+        "eml_note": "sin(\u03c0\u00b7rational) is algebraic \u2192 EML-0 at rational level, EML-2 at generic"
+      },
+      {
+        "k": 10,
+        "n": 2,
+        "Z": 0.10566243270259355,
+        "eml_note": "sin(\u03c0\u00b7rational) is algebraic \u2192 EML-0 at rational level, EML-2 at generic"
+      }
+    ],
+    "eml_depth": 0
+  },
+  "section7_feynman_rules": {
+    "propagator_at_k2": 0.3333333333333333,
+    "loop_1d_numerical": 3.1215953200836113,
+    "loop_1d_exact": 3.141592653589793,
+    "loop_match": true,
+    "eml_propagator": 2,
+    "eml_vertex": 0,
+    "eml_loop_finite": 2,
+    "eml_loop_divergent": "inf"
+  },
+  "taxonomy": {
+    "path_integral": {
+      "formula": "Z = \u222bexp(-S[\u03c6]/\u0127)\ud835\udc9f\u03c6",
+      "eml_depth": 1,
+      "reason": "Each field configuration contributes exp(-S): EML-1 atom. The path integral is an infinite-dimensional Boltzmann sum. Same EML-1 structure as stat mech (Session 57) and info theory (Session 60)."
+    },
+    "free_scalar_propagator": {
+      "formula": "\u0394(x,t;x',t') = exp(-(x-x')\u00b2/(4D(t-t')))/\u221a(4\u03c0D(t-t'))",
+      "eml_depth": 2,
+      "reason": "Gaussian kernel: exp(-r\u00b2/t)/\u221at. EML-2 in x (Gaussian), EML-2 in t."
+    },
+    "harmonic_oscillator_pi": {
+      "formula": "\u27e8x|e^{-Ht}|x'\u27e9 = (m\u03c9/2\u03c0sinh(\u03c9t))^{1/2}\u00b7exp(-m\u03c9\u00b7cosh/sinh\u00b7stuff)",
+      "eml_depth": 2,
+      "reason": "Exact Gaussian in x,x'. Involves sinh/cosh (EML-3), but coherent state \u2192 EML-2."
+    },
+    "instanton": {
+      "formula": "A_instanton \u221d exp(-S_inst/g) = exp(-C/g)",
+      "eml_depth": "inf",
+      "reason": "exp(-1/g) is an essential singularity at g=0. Non-perturbative: no finite EML tree can represent exp(-1/g). EML-inf in coupling constant g."
+    },
+    "rg_beta_function": {
+      "formula": "\u03b2(g) = \u03bc\u00b7dg/d\u03bc = b\u00b7g\u00b3 + O(g\u2075) for \u03c6\u2074",
+      "eml_depth": 1,
+      "reason": "\u03b2(g) is a power series in g. Each g^n is EML-1 (exp(n\u00b7log g)). Perturbative \u03b2-function is EML-1 in the coupling."
+    },
+    "tqft_partition": {
+      "formula": "Z_TQFT = topological invariant (integer or polynomial)",
+      "eml_depth": 0,
+      "reason": "TQFT partition functions are topological invariants: integers (Z_CS = knot invariant) or integer polynomials (Jones). EML-0 (discrete/algebraic)."
+    },
+    "feynman_propagator": {
+      "formula": "\u0394(k) = i/(k\u00b2-m\u00b2+i\u03b5)",
+      "eml_depth": 2,
+      "reason": "Rational in momentum k: EML-2."
+    },
+    "feynman_vertex": {
+      "formula": "i\u03bb (coupling constant)",
+      "eml_depth": 0,
+      "reason": "Constant factor: EML-0."
+    },
+    "loop_integral": {
+      "formula": "\u222bd^4k/(k\u00b2-m\u00b2)^n",
+      "eml_depth": "2_or_inf",
+      "reason": "UV-finite loops: EML-2 (rational result after regularization). UV-divergent loops: require renormalization \u2192 EML-inf before renorm."
+    }
+  },
+  "summary": {
+    "key_insight": "Path integrals are infinite-dimensional EML-1 sums (Boltzmann factors). Propagators are EML-2 (Gaussian/rational). Instantons exp(-1/g) are EML-inf (essential singularities). TQFT invariants are EML-0 (topological = discrete). The EML hierarchy mirrors the perturbative vs non-perturbative divide in QFT.",
+    "eml_depths": {
+      "path_integral": 1,
+      "free_scalar_propagator": 2,
+      "harmonic_oscillator_pi": 2,
+      "instanton": "inf",
+      "rg_beta_function": 1,
+      "tqft_partition": 0,
+      "feynman_propagator": 2,
+      "feynman_vertex": 0,
+      "loop_integral": "2_or_inf"
+    }
+  }
+}
