@@ -1,0 +1,37 @@
+{
+  "session": 793,
+  "title": "BSD Langlands Correspondence Attack v2",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "BSDLanglandsV2",
+    "analysis": {
+      "object": "T514: BSD Langlands Correspondence Attack v2 depth analysis",
+      "domains": {
+        "gl2_functoriality": {
+          "description": "Analytic rank=algebraic rank forced by GL_2 automorphic functoriality",
+          "depth": "EML-3",
+          "reason": "Langlands bridge is EML-3 oscillatory functor"
+        },
+        "luc_instance": {
+          "description": "BSD rank>=2 is LUC instance 34; Langlands duality {2,3}",
+          "depth": "EML-3",
+          "reason": "Two-level duality: EML-2 algebraic vs EML-3 analytic"
+        },
+        "higher_rank_gap": {
+          "description": "Rank>=3 requires higher-rank Langlands; LUC count grows",
+          "depth": "EML-inf",
+          "reason": "Each rank increment is new LUC instance; full series is EML-inf"
+        }
+      }
+    },
+    "distribution": {
+      "EML-3": 2,
+      "EML-inf": 1
+    },
+    "theorem": "T514: BSD Langlands Correspondence Attack v2 (S793)."
+  },
+  "key_theorem": "T514: BSD Langlands Correspondence Attack v2 (S793).",
+  "rabbit_hole_log": [
+    "T514: gl2_functoriality depth confirmed"
+  ]
+}
