@@ -1,0 +1,137 @@
+{
+  "session": 144,
+  "title": "Graph Theory Deep III: Higher-Order Interactions, Temporal Networks & Resilience",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "hypergraph_dynamics": {
+    "model": "HypergraphDynamics",
+    "euler_characteristic_example": 1,
+    "hodge_laplacian_eigenvalues": {
+      "1": 0.5125,
+      "2": 1.05,
+      "3": 1.6125,
+      "4": 2.2,
+      "5": 2.8125
+    },
+    "higher_order_contagion_threshold": {
+      "k2": {
+        "0.1": 0.5439,
+        "0.3": 0.1609,
+        "0.5": 0.0476,
+        "1.0": 0.0023
+      },
+      "k3": {
+        "0.1": 0.4012,
+        "0.3": 0.0646,
+        "0.5": 0.0104,
+        "1.0": 0.0001
+      },
+      "k4": {
+        "0.1": 0.2959,
+        "0.3": 0.0259,
+        "0.5": 0.0023,
+        "1.0": 0.0
+      }
+    },
+    "simplicial_sync_order_parameter": {
+      "0.1": 0.6321,
+      "0.5": 0.9933,
+      "1.0": 1.0,
+      "2.0": 1.0
+    },
+    "eml_depth": {
+      "euler_chi": 0,
+      "hodge_laplacian": 2,
+      "contagion_threshold": 1,
+      "sync_order": 1,
+      "collective_transition": "\u221e"
+    },
+    "key_insight": "Higher-order Hodge Laplacian = EML-2; contagion threshold = EML-1"
+  },
+  "temporal_networks": {
+    "model": "TemporalNetworks",
+    "activity_driven_degree": {
+      "1": 0.1903,
+      "5": 0.7869,
+      "10": 1.2642,
+      "20": 1.7293,
+      "50": 1.9865
+    },
+    "temporal_reachability": {
+      "1": 0.9817,
+      "5": 1.0,
+      "10": 1.0,
+      "20": 1.0,
+      "50": 1.0
+    },
+    "burstiness_vs_cv": {
+      "0.5": -0.3333,
+      "1.0": 0.0,
+      "2.0": 0.3333,
+      "5.0": 0.6667
+    },
+    "causal_cone_size": {
+      "0.5": 1.6,
+      "1.0": 2.7,
+      "2.0": 7.4,
+      "3.0": 20.1,
+      "4.0": 54.6
+    },
+    "eml_depth": {
+      "activity_degree": 1,
+      "reachability": 1,
+      "burstiness": 0,
+      "causal_cone": 1
+    },
+    "key_insight": "Temporal network spreading = EML-1; burstiness = EML-0 correction"
+  },
+  "network_resilience": {
+    "model": "NetworkResilience",
+    "cascading_failure_fraction": {
+      "0.0": 0.0,
+      "0.1": 0.3935,
+      "0.2": 0.6321,
+      "0.3": 0.7769,
+      "0.5": 0.9179,
+      "0.7": 0.9698,
+      "1.0": 0.9933
+    },
+    "interdependent_critical_p": {
+      "0.1": 2.0,
+      "0.2": 1.0,
+      "0.5": 0.4,
+      "1.0": 0.2
+    },
+    "recovery_vs_damage": {
+      "0.0": 1.0,
+      "0.5": 0.8607,
+      "1.0": 0.7408,
+      "2.0": 0.5488
+    },
+    "eml_depth": {
+      "cascade_fraction": 1,
+      "critical_p": 2,
+      "recovery": 1,
+      "catastrophic_collapse": "\u221e"
+    },
+    "key_insight": "Network recovery = EML-1; interdependent collapse threshold = EML-2; catastrophe = EML-\u221e"
+  },
+  "eml_depth_summary": {
+    "EML-0": "Euler characteristic \u03c7=V-E+F, burstiness B",
+    "EML-1": "Contagion thresholds, reachability, causal cones, recovery",
+    "EML-2": "Hodge Laplacian, epidemic threshold, interdependency critical p",
+    "EML-3": "Oscillations on simplicial complexes",
+    "EML-\u221e": "Collective transitions, cascading network collapse"
+  },
+  "key_theorem": "The EML Higher-Order Depth Theorem: k-body interactions add EML depth proportionally to k (for k \u2264 3). Higher-order contagion thresholds are EML-1 (exponential in k). Hodge Laplacians are EML-2 (quadratic structure). Collective phase transitions on hypergraphs remain EML-\u221e.",
+  "rabbit_hole_log": [
+    "Hodge Laplacian k-th order = EML-2: generalizes pairwise graph Laplacian",
+    "Contagion threshold exp(-k*\u03c1*log N) = EML-1: k-body = deeper than pairwise",
+    "Temporal reachability = EML-1: exponential growth of causal cone",
+    "Burstiness B = (CV-1)/(CV+1): EML-0 ratio but indicates heavy-tail = EML-2 correction"
+  ],
+  "connections": {
+    "S134_graph_v2": "Extends S134; pairwise \u2192 higher-order hypergraph",
+    "S113_epidemiology": "Higher-order SIS = EML-2 threshold vs pairwise EML-2",
+    "S124_graph_deep": "Simplicial complex extends graph Laplacian (EML-3 \u2192 EML-2)"
+  }
+}
