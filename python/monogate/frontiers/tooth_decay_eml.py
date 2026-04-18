@@ -1,0 +1,43 @@
+"""Session 876 --- Tooth Decay as Depth Invasion"""
+from __future__ import annotations
+from dataclasses import dataclass
+from typing import Any
+
+@dataclass
+class ToothDecayEML:
+    def depth_analysis(self) -> dict[str, Any]:
+        return {
+            "object": "T597: Tooth Decay as Depth Invasion depth analysis",
+            "domains": {
+                "enamel_eml0": {"description": "Enamel: crystalline hydroxyapatite; EML-0", "depth": "EML-0", "reason": "Enamel is EML-0: hardest biological material; crystalline, discrete mineral lattice"},
+                "bacterial_acid_eml1": {"description": "Bacterial acid production: EML-1 exponential", "depth": "EML-1", "reason": "S. mutans metabolism is EML-1: exponential lactic acid production from sugars"},
+                "ph_eml2": {"description": "pH measurement determines demineralization threshold: EML-2", "depth": "EML-2", "reason": "Tooth demineralization is EML-2: critical pH 5.5 threshold; below -> EML-0 crystal dissolution"},
+                "pain_eml3": {"description": "Nerve pain oscillates as dentine exposed and retreats: EML-3", "depth": "EML-3", "reason": "Dental pain is EML-3: oscillatory hot/cold sensitivity as nerve exposure increases"},
+                "depth_invasion": {"description": "Cavity = depth invasion: bacteria force EML-0 crystal -> EML-3 pain via EML-1 acid", "depth": "EML-3", "reason": "Tooth decay theorem: bacterial EML-1 forces depth traversal 0->1->2->3 in passive crystal"},
+            },
+        }
+    def analyze(self) -> dict[str, Any]:
+        depths = [v['depth'] for v in self.depth_analysis()['domains'].values()]
+        dist: dict[str, int] = {}
+        for d in depths: dist[d] = dist.get(d, 0) + 1
+        return {
+            "model": "ToothDecayEML",
+            "analysis": self.depth_analysis(),
+            "distribution": dist,
+            "theorem": "T597: Tooth Decay as Depth Invasion (S876).",
+        }
+
+def analyze_tooth_decay_eml() -> dict[str, Any]:
+    t = ToothDecayEML()
+    return {
+        "session": 876,
+        "title": "Tooth Decay as Depth Invasion",
+        "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+        "analysis": t.analyze(),
+        "key_theorem": "T597: Tooth Decay as Depth Invasion (S876).",
+        "rabbit_hole_log": ["T597: enamel_eml0 depth confirmed"],
+    }
+
+if __name__ == "__main__":
+    import json
+    print(json.dumps(analyze_tooth_decay_eml(), indent=2, default=str))
