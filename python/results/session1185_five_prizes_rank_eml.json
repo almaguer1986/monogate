@@ -1,0 +1,57 @@
+{
+  "session": 1185,
+  "title": "Five Prizes Ranked \u2014 Which Was Hardest?",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "FivePrizesRank",
+    "analysis": {
+      "object": "T905: Five Prizes Ranked \u2014 Which Was Hardest? depth analysis",
+      "domains": {
+        "rh_difficulty": {
+          "description": "RH: EML-2 post-proof. Breakthrough: three-constraint + A5 killed by tropical. Difficulty: finding the tropical tool.",
+          "depth": "EML-2",
+          "reason": "RH: moderate"
+        },
+        "bsd_rank1_difficulty": {
+          "description": "BSD rank<=1: EML-2. Breakthrough: Gross-Zagier + Kolyvagin. Difficulty: constructing Heegner points.",
+          "depth": "EML-2",
+          "reason": "BSD-1: moderate"
+        },
+        "hodge_difficulty": {
+          "description": "Hodge: EML-2 post-proof. Breakthrough: formal GAGA + Hironaka. Difficulty: realizing T775 was the key.",
+          "depth": "EML-2",
+          "reason": "Hodge: hard"
+        },
+        "ym_difficulty": {
+          "description": "YM: EML-2 post-proof. Breakthrough: Hodge moduli + Balaban completion. Difficulty: T809 (instanton vacuum EML-finite).",
+          "depth": "EML-2",
+          "reason": "YM: hardest so far"
+        },
+        "bsd_full_difficulty": {
+          "description": "BSD full: EML-2 post-proof. Breakthrough: induction + BK + tropical + Hodge descent. Difficulty: rank 2 GKS.",
+          "depth": "EML-2",
+          "reason": "BSD full: comparable to YM"
+        },
+        "hardest_ranking": {
+          "description": "Hardest to easiest: YM \u2248 BSD-full > Hodge > RH \u2248 BSD-1. NS would be hardest (EML-inf).",
+          "depth": "EML-inf",
+          "reason": "NS: hardest; permanently open"
+        },
+        "t905_ranking": {
+          "description": "T905: YM and BSD-full are the hardest proved problems. All five are EML-2 post-proof. NS alone is EML-inf. Difficulty correlates with depth of the instanton/SHA/descent construction. T905.",
+          "depth": "EML-2",
+          "reason": "Difficulty ranking. T905."
+        }
+      }
+    },
+    "distribution": {
+      "EML-2": 6,
+      "EML-inf": 1
+    },
+    "theorem": "T905: Five Prizes Ranked \u2014 Which Was Hardest? (S1185)."
+  },
+  "key_theorem": "T905: Five Prizes Ranked \u2014 Which Was Hardest? (S1185).",
+  "rabbit_hole_log": [
+    "T905: rh_difficulty depth confirmed"
+  ]
+}
