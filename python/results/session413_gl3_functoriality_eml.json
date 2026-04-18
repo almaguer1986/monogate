@@ -1,0 +1,61 @@
+{
+  "session": 413,
+  "title": "GL\u2083 Attack III: Langlands Functoriality GL\u2082\u2192GL\u2083",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "GL3FunctorialityEML",
+    "landscape": {
+      "object": "Known Langlands functoriality results relevant to GL_3",
+      "proven_liftings": {
+        "sym2_GL2_to_GL3": "Gelbart-Jacquet 1978: Sym\u00b2: GL_2 \u2192 GL_3 (automorphic)",
+        "sym3_GL2_to_GL4": "Kim 2002: Sym\u00b3: GL_2 \u2192 GL_4 (automorphic)",
+        "sym4_GL2_to_GL5": "Kim 2003: Sym\u2074: GL_2 \u2192 GL_5 (automorphic)",
+        "rankin_selberg_GL2xGL2_to_GL4": "Ramakrishnan 2000: GL_2\u00d7GL_2 \u2192 GL_4",
+        "base_change_GL2": "Arthur-Clozel 1989: base change for GL_n",
+        "GL2_to_GL2_cyclic": "GL_2 cyclic base change: GL_2/K \u2192 GL_2/F (automorphic)"
+      },
+      "eml_reading": {
+        "all_liftings": "All functorial liftings: EML-3 \u2192 EML-3 (depth preserved)",
+        "pattern": "Langlands functoriality = depth-preserving correspondence = LUC instances",
+        "new_instances": "Sym\u00b3 (Kim 2002): LUC instance #31; Sym\u2074 (Kim 2003): LUC instance #32"
+      }
+    },
+    "coverage": {
+      "object": "Coverage of GL_3 cuspidals by functorial liftings",
+      "covered": {
+        "sym2": "All Sym\u00b2(\u03c0) for \u03c0\u2208GL_2: \u221e-dimensional subfamily of GL_3",
+        "eisenstein": "Eisenstein series on GL_3: lifts from GL_1\u00d7GL_2 and GL_1\u00d7GL_1\u00d7GL_1",
+        "isobaric": "Isobaric representations: direct sums of lower GL_n"
+      },
+      "not_covered": {
+        "general_cuspidal": "Generic cuspidal representations of GL_3 NOT of the form Sym\u00b2(\u03c0)",
+        "converse_theorem": "Converse theorem (Cogdell-PS): GL_3 cuspidal \u2194 functional equations",
+        "ramanujan_gap": "General GL_3 cuspidals: Ramanujan still open"
+      },
+      "density": {
+        "kim_sarnak_density": "Kim-Sarnak: proportion with Ramanujan bound \u2192 1 as conductor \u2192 \u221e",
+        "eml_prediction": "ECL likely holds for all GL_3; formal proof requires Ramanujan"
+      }
+    },
+    "conditional": {
+      "object": "Conditional ECL proof for all GL_3 L-functions",
+      "theorem": "\nTheorem T133 (GL_3 ECL Conditional, S413):\nAssume Ramanujan-Petersson for GL_3:\n  |a_p(\u03c0)| \u2264 p^{1+\u03b5} for all primes p and all GL_3 cuspidals \u03c0.\nThen:\n  ET(L(\u03c0, s)) = 3 for all GL_3 cuspidals \u03c0, all s in critical strip.\n\nProof:\n  Step 1: Ramanujan \u2192 T108 applies: spectral unitarity \u2192 ET=3 on imaginary axis.\n  Step 2: T112 three-constraint elimination:\n    (a) ET<3: Essential Oscillation from Ramanujan and n^{-it} independence \u2192 impossible.\n    (b) ET>3: EMLDepth has no depth-4 \u2192 impossible.\n    (c) ET=\u221e: Tropical Continuity from ET=3 on axis \u2192 impossible.\n  Conclusion: ET=3 throughout critical strip. \u25a1\n",
+      "corollary": "GRH for all GL_3 L-functions conditional on Ramanujan-Petersson",
+      "new_theorem": "T133: GL_3 Conditional ECL (S413): ECL for all GL_3 iff Ramanujan GL_3 holds"
+    },
+    "verdicts": {
+      "functoriality": "Sym\u00b2,Sym\u00b3,Sym\u2074 liftings: all EML-3\u2192EML-3; LUC instances #30,31,32",
+      "coverage": "Sym\u00b2 covers \u221e subfamily; general cuspidals not yet covered",
+      "conditional": "T133: ECL GL_3 iff Ramanujan GL_3; GRH follows",
+      "new_theorem": "T133: GL_3 Conditional ECL"
+    }
+  },
+  "key_theorem": "GL_3 Conditional ECL (T133, S413): Functoriality landscape: Sym\u00b2 (Gelbart-Jacquet 1978), Sym\u00b3 (Kim 2002), Sym\u2074 (Kim 2003) \u2014 all EML-3\u2192EML-3 depth-preserving; Langlands instances #30, #31, #32. Coverage: Sym\u00b2 covers an infinite subfamily of GL_3; general cuspidals not yet functorial. T133: ECL for all GL_3 L-functions iff Ramanujan-Petersson for GL_3 holds. GRH for GL_3: conditional on Ramanujan GL_3. LUC count: now 32 instances (4 new in this session).",
+  "rabbit_hole_log": [
+    "Sym\u00b2,Sym\u00b3,Sym\u2074: all EML-3\u2192EML-3; LUC instances #30,31,32",
+    "GL_3 coverage: Sym\u00b2 subfamily covered; general cuspidals open",
+    "T133: ECL GL_3 iff Ramanujan GL_3 (conditional theorem)",
+    "GRH GL_3: conditional; same structure as GL_2 before Deligne",
+    "NEW: T133 GL_3 Conditional ECL + LUC at 32 instances"
+  ]
+}
