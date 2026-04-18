@@ -1,0 +1,63 @@
+{
+  "session": 488,
+  "title": "Financial Derivatives & Volatility Surfaces",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "FinancialDerivativesVolEML",
+    "analysis": {
+      "object": "T209: EML depth analysis of financial derivatives",
+      "domains": {
+        "black_scholes": {
+          "description": "BS price: C = S\u00b7N(d\u2081) - K\u00b7e^{-rT}\u00b7N(d\u2082)",
+          "depth": "EML-3",
+          "reason": "d\u2081,d\u2082 involve log(S/K)/\u03c3\u221aT + \u03c3\u221aT/2 \u2014 logarithm inside normal CDF which itself is an error function (oscillatory integral). EML-3 structure."
+        },
+        "local_volatility": {
+          "description": "Dupire: \u03c3_loc\u00b2(K,T) = \u2202C/\u2202T / (K\u00b2/2 \u00b7 \u2202\u00b2C/\u2202K\u00b2)",
+          "depth": "EML-2",
+          "reason": "Rational combination of partial derivatives of the price \u2014 algebraic in K,T"
+        },
+        "heston_model": {
+          "description": "Heston: stochastic vol dv = \u03ba(\u03b8-v)dt + \u03be\u221av dW",
+          "depth": "EML-3",
+          "reason": "Characteristic function \u03c6 = exp(C(\u03c4,u) + D(\u03c4,u)v\u2080) \u2014 exponential of complex oscillatory argument"
+        },
+        "vol_smile": {
+          "description": "Implied vol surface \u03ba(K,T) \u2014 the smile",
+          "depth": "EML-2",
+          "reason": "Inversion of BS price (log-linear in K) \u2014 algebraic-logarithmic"
+        },
+        "variance_swap": {
+          "description": "Var swap payoff = realized var - strike",
+          "depth": "EML-2",
+          "reason": "\u222b\u2080\u1d40 \u03c3\u00b2(t)dt \u2014 integral of squared vol = EML-2 (power)"
+        },
+        "sabr_model": {
+          "description": "SABR: \u03b1,\u03b2,\u03c1,\u03bd parametrization of smile",
+          "depth": "EML-3",
+          "reason": "SABR implied vol formula involves exp terms and log(F/K) combined oscillatorily"
+        },
+        "jump_diffusion": {
+          "description": "Merton jump diffusion: Poisson jumps + Brownian motion",
+          "depth": "EML-\u221e",
+          "reason": "Poisson sum over jump sizes \u2014 infinite convolution, no finite EML closure"
+        }
+      }
+    },
+    "distribution": {
+      "EML-2": 3,
+      "EML-3": 3,
+      "EML-\u221e": 1
+    },
+    "verdict": "Options: EML-3 (BS/Heston/SABR). Surfaces: EML-2. Jump processes: EML-\u221e.",
+    "theorem": "T209: Derivatives Depth Map \u2014 pricing models EML-3, surfaces EML-2"
+  },
+  "key_theorem": "T209: Derivatives Depth Map (S488). Black-Scholes: EML-3 (log inside normal CDF = oscillatory integral). Local vol / smile: EML-2 (algebraic inversion). Stochastic vol (Heston, SABR): EML-3 (complex characteristic function). Jump diffusion: EML-\u221e (infinite Poisson convolution).",
+  "rabbit_hole_log": [
+    "BS formula: d\u2081 = ln(S/K)/\u03c3\u221aT + \u03c3\u221aT/2 inside N(\u00b7) = EML-3",
+    "Heston char function: exp(C+Dv\u2080) with oscillatory C,D \u2192 EML-3",
+    "Local vol (Dupire): rational derivative of price \u2192 EML-2",
+    "Jump diffusion: infinite Poisson sum \u2192 EML-\u221e",
+    "T209: Derivatives form a {2,3,\u221e} sub-catalog"
+  ]
+}
