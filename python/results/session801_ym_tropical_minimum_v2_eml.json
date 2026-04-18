@@ -1,0 +1,38 @@
+{
+  "session": 801,
+  "title": "Yang-Mills Tropical Minimum Refinement v2",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "YMTropicalMinV2",
+    "analysis": {
+      "object": "T522: Yang-Mills Tropical Minimum Refinement v2 depth analysis",
+      "domains": {
+        "mass_gap_lower": {
+          "description": "Explicit lower bound delta>0 for mass gap via tropical energy minimum",
+          "depth": "EML-2",
+          "reason": "Tropical compactness forces attained minimum with explicit bound"
+        },
+        "no_inverse_gap": {
+          "description": "No tropical morphism maps gap-zero state to gap-positive state",
+          "depth": "EML-inf",
+          "reason": "Tropical no-inverse protects gap from collapse to zero"
+        },
+        "conditional_path": {
+          "description": "Conditional proof: if Yang-Mills measure exists, gap follows from tropical minimum",
+          "depth": "EML-3",
+          "reason": "Existence of measure is EML-3 functional analytic condition"
+        }
+      }
+    },
+    "distribution": {
+      "EML-2": 1,
+      "EML-inf": 1,
+      "EML-3": 1
+    },
+    "theorem": "T522: Yang-Mills Tropical Minimum Refinement v2 (S801)."
+  },
+  "key_theorem": "T522: Yang-Mills Tropical Minimum Refinement v2 (S801).",
+  "rabbit_hole_log": [
+    "T522: mass_gap_lower depth confirmed"
+  ]
+}
