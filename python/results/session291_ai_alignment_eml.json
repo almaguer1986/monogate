@@ -1,0 +1,127 @@
+{
+  "session": 291,
+  "title": "AI Alignment & Value Learning",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "AIAlignmentEML",
+    "utility": {
+      "object": "Utility function (von Neumann-Morgenstern expected utility)",
+      "eml_depth": 2,
+      "why": "E[U] = \u03a3 p_i \u00b7 U(x_i): expectation = EML-2 (probability \u00d7 reward)",
+      "semiring_test": {
+        "reward_signal": {
+          "formula": "R(s,a): real-valued reward = EML-2",
+          "depth": 2
+        },
+        "expected_utility": {
+          "formula": "E[U] = \u222b U(x)\u00b7dP(x): EML-2",
+          "depth": 2
+        },
+        "tensor_test": {
+          "operation": "Reward(EML-2) \u2297 Prob(EML-2) = max(2,2) = 2",
+          "result": "Expected utility: 2\u22972=2 \u2713"
+        }
+      }
+    },
+    "rlhf": {
+      "object": "RLHF (Reinforcement Learning from Human Feedback)",
+      "eml_depth": 2,
+      "why": "Reward model: r_\u03b8(x,y) = EML-2; Bradley-Terry: P(y_1>y_2) = \u03c3(r(y_1)-r(y_2)) = EML-2",
+      "semiring_test": {
+        "bradley_terry": {
+          "formula": "P(y\u2081>y\u2082) = exp(r\u2081)/(exp(r\u2081)+exp(r\u2082)): EML-2",
+          "depth": 2
+        },
+        "kl_regularization": {
+          "formula": "max_\u03c0 E_\u03c0[r(x,y)] - \u03b2\u00b7KL(\u03c0||\u03c0_ref): EML-2",
+          "depth": 2,
+          "why": "KL divergence = EML-2; reward = EML-2"
+        },
+        "tensor_test": {
+          "operation": "RewardModel(EML-2) \u2297 KL(EML-2) = max(2,2) = 2",
+          "result": "RLHF: 2\u22972=2 \u2713"
+        }
+      }
+    },
+    "mesa": {
+      "object": "Mesa-optimization and inner alignment",
+      "eml_depth": "\u221e",
+      "shadow": 2,
+      "semiring_test": {
+        "base_optimizer": {
+          "depth": 2,
+          "why": "Base training loop: gradient descent = EML-2"
+        },
+        "mesa_optimizer": {
+          "depth": "\u221e",
+          "shadow": 2,
+          "type": "TYPE 3 Categorification",
+          "why": "Mesa-optimizer = optimizer within optimizer: categorification. Inner objective \u2260 outer objective: TYPE 3 depth jump. Shadow=2: mesa-objective still real-valued."
+        },
+        "deceptive_alignment": {
+          "depth": "\u221e",
+          "shadow": 2,
+          "why": "Deceptive behavior = mesa-objective diverges at deployment: EML-\u221e (non-constructive)"
+        }
+      }
+    },
+    "extrapolation": {
+      "object": "Value extrapolation (out-of-distribution alignment)",
+      "eml_depth": "\u221e",
+      "shadow": 2,
+      "semiring_test": {
+        "in_distribution": {
+          "depth": 2,
+          "behavior": "Value learning in-distribution: EML-2 (regression)"
+        },
+        "out_of_distribution": {
+          "depth": "\u221e",
+          "shadow": 2,
+          "type": "TYPE 2 Horizon (distribution shift)",
+          "why": "OOD extrapolation = non-constructive: EML-\u221e; shadow=2 (utility real-valued)"
+        },
+        "goodharts_law": {
+          "depth": "\u221e",
+          "shadow": 2,
+          "why": "Measure becomes target: proxy diverges = TYPE 2 Horizon"
+        }
+      }
+    },
+    "corrigibility": {
+      "object": "Corrigibility and shutdown problem",
+      "eml_depth": "\u221e",
+      "shadow": 2,
+      "semiring_test": {
+        "shutdown_problem": {
+          "depth": "\u221e",
+          "shadow": 2,
+          "why": "Corrigible agent: U(shutdown) = U(no_shutdown) requires utility-indifference. Indifference condition = non-constructive (fixed point of utility under shutdown): EML-\u221e"
+        },
+        "impact_measures": {
+          "depth": 2,
+          "why": "Attainable utility preservation: AUP = EML-2 (reachable utility set)"
+        },
+        "tensor_test": {
+          "operation": "Corrigibility(EML-\u221e) \u2297 ImpactMeasure(EML-2) = EML-\u221e",
+          "result": "Full corrigibility formalization: EML-\u221e \u2713"
+        }
+      }
+    },
+    "semiring_verdicts": {
+      "expected_utility": "2\u22972=2 \u2713 (reward \u00d7 probability both EML-2)",
+      "RLHF": "2\u22972=2 \u2713 (Bradley-Terry + KL both EML-2)",
+      "mesa_optimization": "TYPE 3 Horizon; shadow=2 (optimizer within optimizer)",
+      "value_extrapolation": "TYPE 2 Horizon; shadow=2 (OOD = distribution shift)",
+      "corrigibility": "EML-\u221e (non-constructive; indifference condition)",
+      "new_finding": "Mesa-optimization = TYPE 3 categorification: inner objective categorifies outer"
+    }
+  },
+  "key_theorem": "AI Alignment Semiring Theorem (S291): Alignment objectives split across EML strata with sharp boundaries. Utility functions and RLHF: EML-2 (expected utility, Bradley-Terry, KL \u2014 all real exp). Value extrapolation (OOD): TYPE 2 Horizon, shadow=2 (Goodhart's Law). NEW FINDING: Mesa-optimization = TYPE 3 CATEGORIFICATION: inner optimizer is a 'categorification' of the outer training loop \u2014 the mesa-objective is an enriched structure over the base objective. This is the first alignment phenomenon with TYPE 3 structure. Corrigibility: EML-\u221e (shutdown indifference = non-constructive fixed point). ALIGNMENT DEPTH LADDER: Utility(EML-2) \u2192 RLHF(EML-2) \u2192 OOD(EML-\u221e,shadow=2) \u2192 Mesa(TYPE3) \u2192 Corrigibility(EML-\u221e).",
+  "rabbit_hole_log": [
+    "Utility + RLHF: EML-2 closed subring (expected utility framework)",
+    "Goodhart's Law: TYPE 2 Horizon (proxy diverges from goal = distribution shift)",
+    "NEW: mesa-optimization = TYPE 3 categorification (inner/outer objective divergence)",
+    "Corrigibility: EML-\u221e (indifference condition non-constructive)",
+    "Alignment has its first TYPE 3 structure: mesa-optimizer = categorification"
+  ]
+}
