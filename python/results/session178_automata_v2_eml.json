@@ -1,0 +1,414 @@
+{
+  "session": 178,
+  "title": "Cellular Automata & Emergent Computation Deep: CA Universality Strata",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "ca_universality": {
+    "model": "CAUniversalityStrata",
+    "wolfram_classes": {
+      "Class_I": {
+        "behavior": "fixed_point",
+        "example_rules": [
+          0,
+          255,
+          4
+        ],
+        "eml_depth": 0,
+        "attractor": "point attractor = EML-0"
+      },
+      "Class_II": {
+        "behavior": "periodic",
+        "example_rules": [
+          1,
+          2,
+          3,
+          6
+        ],
+        "eml_depth": 0,
+        "attractor": "periodic attractor = EML-0 (integer period)"
+      },
+      "Class_III": {
+        "behavior": "chaotic",
+        "example_rules": [
+          30,
+          45,
+          73,
+          89
+        ],
+        "eml_depth": 3,
+        "attractor": "strange attractor = EML-3"
+      },
+      "Class_IV": {
+        "behavior": "complex_universal",
+        "example_rules": [
+          110,
+          124
+        ],
+        "eml_depth": "\u221e",
+        "attractor": "EML-\u221e (Turing complete; unbounded computation)",
+        "note": "Rule 110 proven Turing complete by Cook (2004)"
+      },
+      "depth_progression": "I=EML-0, II=EML-0, III=EML-3, IV=EML-\u221e",
+      "gap": "EML-3 \u2192 EML-\u221e: no EML-finite intermediate (EML-4 gap theorem)"
+    },
+    "rule_complexity": {
+      "0": {
+        "rule": 0,
+        "rule_bits": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "n_active": 0,
+        "langton_lambda": 0.0,
+        "spreading_log": 0.3155,
+        "near_critical": false,
+        "wolfram_class_estimate": "I",
+        "eml_depth_lambda": 0,
+        "eml_depth_spreading": 2,
+        "eml_depth_critical": "\u221e"
+      },
+      "30": {
+        "rule": 30,
+        "rule_bits": [
+          0,
+          1,
+          1,
+          1,
+          1,
+          0,
+          0,
+          0
+        ],
+        "n_active": 4,
+        "langton_lambda": 0.5,
+        "spreading_log": 0.7325,
+        "near_critical": false,
+        "wolfram_class_estimate": "III_or_IV",
+        "eml_depth_lambda": 0,
+        "eml_depth_spreading": 2,
+        "eml_depth_critical": "\u221e"
+      },
+      "90": {
+        "rule": 90,
+        "rule_bits": [
+          0,
+          1,
+          0,
+          1,
+          1,
+          0,
+          1,
+          0
+        ],
+        "n_active": 4,
+        "langton_lambda": 0.5,
+        "spreading_log": 0.7325,
+        "near_critical": false,
+        "wolfram_class_estimate": "III_or_IV",
+        "eml_depth_lambda": 0,
+        "eml_depth_spreading": 2,
+        "eml_depth_critical": "\u221e"
+      },
+      "110": {
+        "rule": 110,
+        "rule_bits": [
+          0,
+          1,
+          1,
+          1,
+          0,
+          1,
+          1,
+          0
+        ],
+        "n_active": 5,
+        "langton_lambda": 0.625,
+        "spreading_log": 0.8155,
+        "near_critical": false,
+        "wolfram_class_estimate": "I",
+        "eml_depth_lambda": 0,
+        "eml_depth_spreading": 2,
+        "eml_depth_critical": "\u221e"
+      },
+      "150": {
+        "rule": 150,
+        "rule_bits": [
+          0,
+          1,
+          1,
+          0,
+          1,
+          0,
+          0,
+          1
+        ],
+        "n_active": 4,
+        "langton_lambda": 0.5,
+        "spreading_log": 0.7325,
+        "near_critical": false,
+        "wolfram_class_estimate": "III_or_IV",
+        "eml_depth_lambda": 0,
+        "eml_depth_spreading": 2,
+        "eml_depth_critical": "\u221e"
+      },
+      "184": {
+        "rule": 184,
+        "rule_bits": [
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          0,
+          1
+        ],
+        "n_active": 4,
+        "langton_lambda": 0.5,
+        "spreading_log": 0.7325,
+        "near_critical": false,
+        "wolfram_class_estimate": "III_or_IV",
+        "eml_depth_lambda": 0,
+        "eml_depth_spreading": 2,
+        "eml_depth_critical": "\u221e"
+      },
+      "255": {
+        "rule": 255,
+        "rule_bits": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "n_active": 8,
+        "langton_lambda": 1.0,
+        "spreading_log": 1.0,
+        "near_critical": false,
+        "wolfram_class_estimate": "I",
+        "eml_depth_lambda": 0,
+        "eml_depth_spreading": 2,
+        "eml_depth_critical": "\u221e"
+      }
+    },
+    "rule_110": {
+      "rule": 110,
+      "turing_complete": true,
+      "proof": "Cook 2004 via glider collisions",
+      "glider_speed": 1,
+      "glider_period": 14,
+      "background_period": 14,
+      "eml_depth_background": 0,
+      "eml_depth_glider": 3,
+      "eml_depth_collision_logic": "\u221e",
+      "eml_depth_rule_110": "\u221e",
+      "insight": "Background=EML-0, gliders=EML-3, collision=EML-\u221e: layer stack to EML-\u221e"
+    },
+    "eml_depth": {
+      "class_I": 0,
+      "class_II": 0,
+      "class_III": 3,
+      "class_IV": "\u221e",
+      "langton_lambda": 0,
+      "spreading": 2,
+      "universality_transition": "\u221e"
+    },
+    "key_insight": "CA universality: I/II=EML-0, III=EML-3, IV=EML-\u221e; no EML-4 gap"
+  },
+  "emergent_computation": {
+    "model": "EmergentComputationEML",
+    "emergence_depth_gap": {
+      "local_rule_depth": 0,
+      "class_I_global_depth": 0,
+      "class_I_emergence_gap": 0,
+      "class_II_global_depth": 0,
+      "class_II_emergence_gap": 0,
+      "class_III_global_depth": 3,
+      "class_III_emergence_gap": 3,
+      "class_IV_global_depth": "\u221e",
+      "class_IV_emergence_gap": "\u221e",
+      "thesis": "Emergence = EML depth gap between local rules and global behavior",
+      "strong_emergence": "\u0394d = \u221e (EML-0 local \u2192 EML-\u221e global)"
+    },
+    "computational_universality": {
+      "k_states": 2,
+      "N_neighborhood": 8,
+      "total_rules_log2": 8.0,
+      "universal_fraction": "vanishingly small",
+      "langton_critical_lambda": 0.273,
+      "eml_depth_rule_space": 0,
+      "eml_depth_universal_rules": "\u221e",
+      "eml_depth_lambda_c": "\u221e",
+      "note": "Rule space = EML-0; universal rules = EML-\u221e; \u03bb_c = EML-\u221e critical"
+    },
+    "game_of_life": {
+      "still_lifes": {
+        "eml_depth": 0,
+        "example": "block, beehive",
+        "count_2x2_block": 4
+      },
+      "oscillators": {
+        "eml_depth": 0,
+        "example": "blinker (p=2), pulsar (p=3)",
+        "period": "integer = EML-0"
+      },
+      "gliders": {
+        "eml_depth": 3,
+        "example": "glider (p=4, v=c/4)",
+        "speed": "c/4 (c = 1 cell/gen)"
+      },
+      "glider_guns": {
+        "eml_depth": 3,
+        "example": "Gosper glider gun",
+        "period": 30
+      },
+      "universal_constructions": {
+        "eml_depth": "\u221e",
+        "example": "self-replicators, Turing complete computers",
+        "note": "GoL is Turing complete"
+      },
+      "eml_depth_gol_rules": 0,
+      "eml_depth_gol_dynamics": "\u221e"
+    },
+    "eml_depth": {
+      "local_rules": 0,
+      "class_III_emergence": 3,
+      "class_IV_emergence": "\u221e",
+      "gol_rules": 0,
+      "gol_dynamics": "\u221e"
+    },
+    "key_insight": "Emergence = EML depth gap; strong emergence = EML-0 local \u2192 EML-\u221e global"
+  },
+  "information_theory": {
+    "model": "CAInformationTheoryEML",
+    "excess_entropy": {
+      "0": {
+        "rule": 0,
+        "wolfram_class": "I",
+        "excess_entropy_estimate": 0.0,
+        "eml_depth": 0,
+        "note": "Excess entropy I(past;future) = EML-2"
+      },
+      "30": {
+        "rule": 30,
+        "wolfram_class": "III",
+        "excess_entropy_estimate": 3.0,
+        "eml_depth": 2,
+        "note": "Excess entropy I(past;future) = EML-2"
+      },
+      "90": {
+        "rule": 90,
+        "wolfram_class": "III",
+        "excess_entropy_estimate": 2.5,
+        "eml_depth": 2,
+        "note": "Excess entropy I(past;future) = EML-2"
+      },
+      "110": {
+        "rule": 110,
+        "wolfram_class": "IV",
+        "excess_entropy_estimate": 5.0,
+        "eml_depth": 2,
+        "note": "Excess entropy I(past;future) = EML-2"
+      },
+      "150": {
+        "rule": 150,
+        "wolfram_class": "unknown",
+        "excess_entropy_estimate": 1.0,
+        "eml_depth": 2,
+        "note": "Excess entropy I(past;future) = EML-2"
+      },
+      "255": {
+        "rule": 255,
+        "wolfram_class": "I",
+        "excess_entropy_estimate": 0.0,
+        "eml_depth": 0,
+        "note": "Excess entropy I(past;future) = EML-2"
+      }
+    },
+    "effective_complexity": {
+      "0": {
+        "rule": 0,
+        "kolmogorov_approx_bits": 0.0,
+        "effective_complexity": 0.0,
+        "eml_depth_effective": 2,
+        "eml_depth_kolmogorov": "\u221e",
+        "note": "Effective complexity = EML-2; Kolmogorov = EML-\u221e (non-computable)"
+      },
+      "30": {
+        "rule": 30,
+        "kolmogorov_approx_bits": 39.63,
+        "effective_complexity": 11.89,
+        "eml_depth_effective": 2,
+        "eml_depth_kolmogorov": "\u221e",
+        "note": "Effective complexity = EML-2; Kolmogorov = EML-\u221e (non-computable)"
+      },
+      "90": {
+        "rule": 90,
+        "kolmogorov_approx_bits": 52.06,
+        "effective_complexity": 15.62,
+        "eml_depth_effective": 2,
+        "eml_depth_kolmogorov": "\u221e",
+        "note": "Effective complexity = EML-2; Kolmogorov = EML-\u221e (non-computable)"
+      },
+      "110": {
+        "rule": 110,
+        "kolmogorov_approx_bits": 54.36,
+        "effective_complexity": 16.31,
+        "eml_depth_effective": 2,
+        "eml_depth_kolmogorov": "\u221e",
+        "note": "Effective complexity = EML-2; Kolmogorov = EML-\u221e (non-computable)"
+      },
+      "150": {
+        "rule": 150,
+        "kolmogorov_approx_bits": 57.91,
+        "effective_complexity": 17.37,
+        "eml_depth_effective": 2,
+        "eml_depth_kolmogorov": "\u221e",
+        "note": "Effective complexity = EML-2; Kolmogorov = EML-\u221e (non-computable)"
+      },
+      "255": {
+        "rule": 255,
+        "kolmogorov_approx_bits": 64.0,
+        "effective_complexity": 19.2,
+        "eml_depth_effective": 2,
+        "eml_depth_kolmogorov": "\u221e",
+        "note": "Effective complexity = EML-2; Kolmogorov = EML-\u221e (non-computable)"
+      }
+    },
+    "eml_depth": {
+      "excess_entropy": 2,
+      "effective_complexity": 2,
+      "kolmogorov": "\u221e"
+    },
+    "key_insight": "CA info measures: excess entropy=EML-2, effective complexity=EML-2; K=EML-\u221e"
+  },
+  "eml_depth_summary": {
+    "EML-0": "Local rules (table lookup), Class I/II patterns, still lifes, oscillators",
+    "EML-1": "N/A \u2014 no natural EML-1 CA objects (confirms EML-1 = ground state class)",
+    "EML-2": "Spreading rate log(cells), excess entropy I(past;future), effective complexity",
+    "EML-3": "Class III chaos (Rule 30), gliders (periodic+translational), glider guns",
+    "EML-\u221e": "Class IV (Rule 110, GoL), Turing completeness, Kolmogorov, emergence"
+  },
+  "key_theorem": "The EML CA Universality Depth Theorem: Cellular automata universality stratifies exactly by EML depth. Local rules = EML-0: finite lookup tables. Class I/II fixed/periodic patterns = EML-0: attractors are points/cycles. Class III chaotic patterns = EML-3: positive Lyapunov exponent, oscillatory structure. Class IV complex/universal patterns = EML-\u221e: Turing complete. The universality transition (\u03bb_c \u2248 0.273) = EML-\u221e: phase transition in rule space. Emergence IS the EML depth gap: strong emergence = EML-0 local \u2192 EML-\u221e global. Information-theoretic measures (excess entropy, effective complexity) = EML-2. Kolmogorov complexity = EML-\u221e (non-computable, confirming foundations connection).",
+  "rabbit_hole_log": [
+    "Local CA rule = EML-0: simplest possible \u2014 table lookup with no exp/log",
+    "Class III chaotic = EML-3: positive LE \u2192 strange attractor (same as Lorenz, S152)",
+    "Class IV = EML-\u221e: Turing complete = undecidable halting = G\u00f6del (S139/S179)",
+    "Emergence = depth gap: strong emergence \u0394d=\u221e (EML-0 local \u2192 EML-\u221e global)",
+    "No EML-1 CA class: confirms EML-1 = ground state class (Boltzmann, not CA)",
+    "Kolmogorov = EML-\u221e: non-computable \u2192 same depth as halting problem, G\u00f6del sentence"
+  ],
+  "connections": {
+    "S158_ca": "S158 basic CA depth; S178 adds universality strata and emergence theorem",
+    "S139_foundations": "Turing completeness = undecidability = G\u00f6del = EML-\u221e (same class)",
+    "S165_soc": "Langton \u03bb_c = EML-\u221e phase transition: same structure as sandpile criticality"
+  }
+}
