@@ -1,0 +1,132 @@
+{
+  "session": 155,
+  "title": "QFT Non-Perturbative: Instantons, Confinement & Dualities",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "instanton_physics": {
+    "model": "InstantonPhysics",
+    "coupling_g": 0.3,
+    "dilute_gas": {
+      "instanton_action": 877.2982,
+      "amplitude_exp_minus_S": "0.0000e+00",
+      "instanton_density": "0.0000e+00",
+      "multi_instanton_corrections": [
+        "0.0000e+00",
+        "0.0000e+00",
+        "0.0000e+00",
+        "0.0000e+00",
+        "0.0000e+00"
+      ],
+      "eml_depth_amplitude": 1,
+      "note": "exp(-8\u03c0\u00b2/g\u00b2) = EML-1: non-perturbative, but EML-1 not EML-\u221e"
+    },
+    "theta_vacuum_energy": {
+      "theta=0": "(-0-0j)",
+      "theta=0.7854": "(-0-0j)",
+      "theta=1.5708": "(-0-0j)",
+      "theta=3.1416": "-0j"
+    },
+    "eml_depth": {
+      "instanton_action": 0,
+      "tunneling_amplitude": 1,
+      "theta_vacuum": 3,
+      "vacuum_structure": "\u221e"
+    },
+    "key_insight": "Instanton amplitude exp(-8\u03c0\u00b2/g\u00b2) = EML-1: non-perturbative physics is EML-1, not EML-\u221e"
+  },
+  "qcd_confinement": {
+    "model": "QCDConfinement",
+    "Lambda_QCD_GeV": 0.2,
+    "running_coupling_alpha_s": {
+      "0.5": 0.7619,
+      "1.0": 0.4338,
+      "2.0": 0.3032,
+      "5.0": 0.2169,
+      "10.0": 0.1785,
+      "100.0": 0.1123
+    },
+    "string_tension": 0.04,
+    "wilson_loop": {
+      "(1.0, 1.0)": 0.960789,
+      "(2.0, 1.0)": 0.923116,
+      "(1.0, 2.0)": 0.923116,
+      "(3.0, 3.0)": 0.697676
+    },
+    "deconfinement_Tc": 0.2,
+    "eml_depth": {
+      "running_coupling": 2,
+      "string_tension": 0,
+      "wilson_loop": 1,
+      "deconfinement": "\u221e"
+    },
+    "key_insight": "\u03b1_s(Q) = EML-2 (log running); Wilson loop = EML-1 (area law); confinement = EML-\u221e"
+  },
+  "field_theory_dualities": {
+    "model": "FieldTheoryDualities",
+    "s_duality_g_to_1g": {
+      "0.1": 10.0,
+      "0.3": 3.3333,
+      "0.5": 2.0,
+      "1.0": 1.0,
+      "2.0": 0.5,
+      "5.0": 0.2
+    },
+    "t_duality_R_to_alphaR": {
+      "0.1": 10.0,
+      "0.5": 2.0,
+      "1.0": 1.0,
+      "2.0": 0.5,
+      "10.0": 0.1
+    },
+    "mirror_symmetry_K3": {
+      "original": {
+        "h11": 11,
+        "h21": 491,
+        "chi": -960
+      },
+      "mirror": {
+        "h11": 491,
+        "h21": 11,
+        "chi": 960
+      },
+      "eml_depth_chi": 0,
+      "eml_depth_mirror_map": "0 \u2192 0 (swap of integers)",
+      "depth_reduction": "Mirror symmetry: EML-\u221e (quantum geometry) \u2192 EML-0 (Hodge numbers)"
+    },
+    "montonen_olive": {
+      "electric_charge": 0.3,
+      "magnetic_charge": 3.333333,
+      "electric_eml": 2,
+      "magnetic_eml": "\u221e",
+      "duality_reduction": "\u221e \u2192 2",
+      "note": "Montonen-Olive = another EML \u221e\u21922 depth reduction (like AdS/CFT)"
+    },
+    "eml_depth": {
+      "s_duality_map": 0,
+      "t_duality": 0,
+      "mirror_map": 0,
+      "duality_reductions": "\u221e \u2192 2"
+    },
+    "key_insight": "Dualities = EML-0 maps (inversion, swap) that achieve EML-\u221e\u21922 depth reductions"
+  },
+  "eml_depth_summary": {
+    "EML-0": "String tension \u03c3~\u039b\u00b2, Euler characteristic \u03c7, duality maps (g\u21921/g)",
+    "EML-1": "Instanton amplitude exp(-8\u03c0\u00b2/g\u00b2), Wilson loop exp(-\u03c3RT)",
+    "EML-2": "Running coupling \u03b1_s(Q)=EML-2 (log Q/\u039b), electric particles",
+    "EML-3": "Theta vacuum cos(\u03b8)*exp(-S) (trig \u00d7 EML-1)",
+    "EML-\u221e": "Confinement, quark-gluon plasma transition, magnetic monopoles (before duality)"
+  },
+  "key_theorem": "The EML Non-Perturbative Depth Theorem: Non-perturbative effects (instantons) are EML-1 \u2014 exp(-1/g\u00b2) is an EML-1 function. This reveals that the non-perturbative sector is accessible at EML-1, not EML-\u221e, despite being invisible to perturbation theory. Confinement itself is EML-\u221e (the phenomenon cannot be described EML-finitely). Dualities (S, T, mirror, Montonen-Olive) are EML-0 maps that achieve EML-\u221e\u21922 reductions \u2014 the same class as AdS/CFT and Shor's algorithm.",
+  "rabbit_hole_log": [
+    "Instanton exp(-8\u03c0\u00b2/g\u00b2) = EML-1: same class as BCS gap, Kondo T_K!",
+    "Wilson area law exp(-\u03c3RT) = EML-1: confinement signal is EML-1, confinement itself = EML-\u221e",
+    "Running coupling \u03b1_s = EML-2: logarithm of scale (asymptotic freedom)",
+    "S-duality g\u21921/g = EML-0 map: achieves EML-\u221e\u2192EML-2 reduction",
+    "Mirror symmetry \u03c7\u2192-\u03c7 = EML-0 map: same! All dualities are EML-0",
+    "AdS/CFT, Shor, S-duality, L=EML-2: a universal pattern of \u221e\u2192finite reductions"
+  ],
+  "connections": {
+    "S143_cosmology_holography": "AdS/CFT = EML-\u221e\u21922; S-duality here = EML-\u221e\u21922: same depth reduction class",
+    "S148_materials_kondo": "Instanton exp(-8\u03c0\u00b2/g\u00b2) \u2261 Kondo T_K exp(-1/JN\u2080): same EML-1 structure",
+    "S135_crypto_shor": "Shor QFT period-finding = EML-3; duality reductions here = EML-0 maps"
+  }
+}
