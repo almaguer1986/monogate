@@ -1,0 +1,63 @@
+{
+  "session": 534,
+  "title": "Financial Risk Local Volatility EML Crash",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "FinancialRiskVolatilitySurfaceEML",
+    "analysis": {
+      "object": "T255: Financial Risk Local Volatility EML Crash depth analysis",
+      "domains": {
+        "implied_vol_surface": {
+          "description": "IV surface sigma(K,T)",
+          "depth": "EML-3",
+          "reason": "volatility surface = EML-3 oscillatory"
+        },
+        "local_volatility": {
+          "description": "sigma_loc Dupire formula",
+          "depth": "EML-2",
+          "reason": "Dupire derivation = EML-2"
+        },
+        "fat_tails": {
+          "description": "returns kurtosis >> 3 Levy stable",
+          "depth": "EML-3",
+          "reason": "heavy tails = EML-3"
+        },
+        "crash_dynamics": {
+          "description": "flash crash bid-ask spread explodes",
+          "depth": "EML-inf",
+          "reason": "cross-type EML-3 x EML-2 = EML-inf"
+        },
+        "var_measurement": {
+          "description": "VaR quantile of loss",
+          "depth": "EML-2",
+          "reason": "log-quantile = EML-2"
+        },
+        "rough_volatility": {
+          "description": "H~0.1 fractional Brownian",
+          "depth": "EML-3",
+          "reason": "fBm rougher than Brownian = EML-3"
+        },
+        "smile_arbitrage": {
+          "description": "calendar spread butterfly bounds",
+          "depth": "EML-2",
+          "reason": "no-arbitrage = EML-2 constraints"
+        },
+        "tropical_risk": {
+          "description": "risk = tropical MAX of scenarios",
+          "depth": "EML-2",
+          "reason": "tropical MAX of losses = EML-2 robust risk"
+        }
+      }
+    },
+    "distribution": {
+      "EML-3": 3,
+      "EML-2": 4,
+      "EML-inf": 1
+    },
+    "theorem": "T255: Financial Risk Local Volatility EML Crash"
+  },
+  "key_theorem": "T255: Financial Risk Local Volatility EML Crash (S534).",
+  "rabbit_hole_log": [
+    "T255: Financial Risk Local Volatility EML Crash"
+  ]
+}
