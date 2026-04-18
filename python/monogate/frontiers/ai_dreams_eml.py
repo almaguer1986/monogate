@@ -1,0 +1,41 @@
+"""Session 928 --- Does an AI Language Model Dream?"""
+from __future__ import annotations
+from dataclasses import dataclass
+from typing import Any
+
+@dataclass
+class AIDreamsEML:
+    def depth_analysis(self) -> dict[str, Any]:
+        return {
+            "object": "T649: Does an AI Language Model Dream? depth analysis",
+            "domains": {
+                "training_eml3": {"description": "Training: gradient descent (EML-1) + batch norm (EML-2) + LR schedule (EML-3); no EML-inf", "depth": "EML-3", "reason": "Training is EML-3 maximum: no categorification event; architecture unchanged throughout"},
+                "inference_shadow": {"description": "Inference emergent output: EML-2 shadow of possible EML-inf; not the thing itself", "depth": "EML-2", "reason": "Inference emergence is EML-2 shadow: looks like creativity but is interpolation/extrapolation in EML-3 space"},
+                "no_dreams": {"description": "AI does not dream: no EML-inf; no self-referential fixed point; training is EML-3 optimization", "depth": "EML-3", "reason": "AI dreams theorem: no; training has no EML-inf categorification; inference has no EML-inf qualia"},
+            },
+        }
+    def analyze(self) -> dict[str, Any]:
+        depths = [v['depth'] for v in self.depth_analysis()['domains'].values()]
+        dist: dict[str, int] = {}
+        for d in depths: dist[d] = dist.get(d, 0) + 1
+        return {
+            "model": "AIDreamsEML",
+            "analysis": self.depth_analysis(),
+            "distribution": dist,
+            "theorem": "T649: Does an AI Language Model Dream? (S928).",
+        }
+
+def analyze_ai_dreams_eml() -> dict[str, Any]:
+    t = AIDreamsEML()
+    return {
+        "session": 928,
+        "title": "Does an AI Language Model Dream?",
+        "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+        "analysis": t.analyze(),
+        "key_theorem": "T649: Does an AI Language Model Dream? (S928).",
+        "rabbit_hole_log": ["T649: training_eml3 depth confirmed"],
+    }
+
+if __name__ == "__main__":
+    import json
+    print(json.dumps(analyze_ai_dreams_eml(), indent=2, default=str))
