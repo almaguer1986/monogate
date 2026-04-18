@@ -1,0 +1,308 @@
+{
+  "session": 184,
+  "title": "Consciousness & Cognition Deep III: Qualia, Binding & The Hard Problem",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "explanatory_gap": {
+    "model": "ExplanatoryGapEML",
+    "gap_structure": {
+      "ncc_depth": 3,
+      "qualia_depth": "\u221e",
+      "gap": "EML-3 \u2192 EML-\u221e (stratum 4)",
+      "identity_theory": {
+        "claim": "EML-3 = EML-\u221e",
+        "status": "false (different strata)"
+      },
+      "elimination": {
+        "claim": "no EML-\u221e",
+        "status": "implausible (denies data)"
+      },
+      "emergence": {
+        "claim": "EML-3 \u2192 EML-\u221e",
+        "mechanism": "unknown = EML-\u221e itself"
+      },
+      "eml_verdict": "Gap = stratum boundary EML-3/EML-\u221e stratum 4: irreducible",
+      "analogues": {
+        "music": "NCC=EML-3 \u2192 felt qualia=EML-\u221e (from S183)",
+        "computation": "Class IV rules=EML-0 \u2192 dynamics=EML-\u221e (from S178)",
+        "sync": "mechanics=EML-3 \u2192 frisson=EML-\u221e (from S183)"
+      }
+    },
+    "ncc_taxonomy": {
+      "gamma_oscillation_40hz": {
+        "eml": 3,
+        "freq_Hz": 40,
+        "sample": -0.809
+      },
+      "global_workspace_broadcast": {
+        "eml": 1,
+        "spread": 0.3935
+      },
+      "dmn_correlation": {
+        "eml": 2,
+        "log_corr": 0.4055
+      },
+      "prefrontal_ignition": {
+        "eml": "\u221e",
+        "threshold": 0.3
+      },
+      "highest_ncc_depth": 3,
+      "qualia_depth": "\u221e",
+      "gap_confirmed": true
+    },
+    "eml_depth": {
+      "gamma_ncc": 3,
+      "gwt": 1,
+      "dmn": 2,
+      "ignition": "\u221e",
+      "qualia": "\u221e",
+      "gap": "3 \u2192 \u221e stratum 4"
+    },
+    "key_insight": "Gap = EML-3 \u2192 EML-\u221e: all NCCs < EML-\u221e; qualia at EML-\u221e stratum 4"
+  },
+  "insight_aha": {
+    "model": "InsightAhaMomentEML",
+    "insight_model": {
+      "0.1": {
+        "problem_depth": "\u221e",
+        "preparation_eml": 1,
+        "incubation_eml": "\u221e",
+        "insight_eml": 2,
+        "verification_eml": 0,
+        "preparation_effort": 0.8187,
+        "incubation_breadth": 0.0952,
+        "insight_info_bits": 0.6931,
+        "depth_collapse": "EML-\u221e \u2192 EML-2 (sharper than sync: \u221e\u21923)",
+        "note": "Aha = EML-\u221e\u2192EML-2 collapse: problem space reorganizes into accessible form"
+      },
+      "0.3": {
+        "problem_depth": "\u221e",
+        "preparation_eml": 1,
+        "incubation_eml": "\u221e",
+        "insight_eml": 2,
+        "verification_eml": 0,
+        "preparation_effort": 0.5488,
+        "incubation_breadth": 0.2592,
+        "insight_info_bits": 1.3863,
+        "depth_collapse": "EML-\u221e \u2192 EML-2 (sharper than sync: \u221e\u21923)",
+        "note": "Aha = EML-\u221e\u2192EML-2 collapse: problem space reorganizes into accessible form"
+      },
+      "0.5": {
+        "problem_depth": "\u221e",
+        "preparation_eml": 1,
+        "incubation_eml": "\u221e",
+        "insight_eml": 2,
+        "verification_eml": 0,
+        "preparation_effort": 0.3679,
+        "incubation_breadth": 0.3935,
+        "insight_info_bits": 1.7918,
+        "depth_collapse": "EML-\u221e \u2192 EML-2 (sharper than sync: \u221e\u21923)",
+        "note": "Aha = EML-\u221e\u2192EML-2 collapse: problem space reorganizes into accessible form"
+      },
+      "1.0": {
+        "problem_depth": "\u221e",
+        "preparation_eml": 1,
+        "incubation_eml": "\u221e",
+        "insight_eml": 2,
+        "verification_eml": 0,
+        "preparation_effort": 0.1353,
+        "incubation_breadth": 0.6321,
+        "insight_info_bits": 2.3979,
+        "depth_collapse": "EML-\u221e \u2192 EML-2 (sharper than sync: \u221e\u21923)",
+        "note": "Aha = EML-\u221e\u2192EML-2 collapse: problem space reorganizes into accessible form"
+      }
+    },
+    "wallas_stages": {
+      "preparation": {
+        "eml": 1,
+        "process": "deliberate search = EML-1",
+        "example": 0.6065
+      },
+      "incubation": {
+        "eml": "\u221e",
+        "process": "unconscious = EML-\u221e",
+        "accessible": false
+      },
+      "illumination": {
+        "eml_before": "\u221e",
+        "eml_after": 2,
+        "collapse": "EML-\u221e \u2192 EML-2",
+        "duration": "milliseconds (subjectively instantaneous)"
+      },
+      "verification": {
+        "eml": 0,
+        "process": "logical check = EML-0",
+        "result": "accept or reject"
+      },
+      "depth_sequence": [
+        1,
+        "\u221e",
+        "\u221e\u21922",
+        0
+      ],
+      "uniqueness": "EML-\u221e\u2192EML-2 collapse: sharper than EML-\u221e\u2192EML-3 (sync, frisson)"
+    },
+    "remote_associates": {
+      "3": {
+        "n_clue_words": 3,
+        "search_space_log": 8.6995,
+        "association_strength": 0.6065,
+        "semantic_priming": 1.3863,
+        "eml_depth_search_space": "\u221e",
+        "eml_depth_association": 1,
+        "eml_depth_solution": 0,
+        "eml_depth_priming": 2,
+        "aha_structure": "EML-\u221e (search) compressed to EML-0 (solution word)"
+      },
+      "5": {
+        "n_clue_words": 5,
+        "search_space_log": 11.6952,
+        "association_strength": 0.6065,
+        "semantic_priming": 1.7918,
+        "eml_depth_search_space": "\u221e",
+        "eml_depth_association": 1,
+        "eml_depth_solution": 0,
+        "eml_depth_priming": 2,
+        "aha_structure": "EML-\u221e (search) compressed to EML-0 (solution word)"
+      },
+      "7": {
+        "n_clue_words": 7,
+        "search_space_log": 15.4329,
+        "association_strength": 0.6065,
+        "semantic_priming": 2.0794,
+        "eml_depth_search_space": "\u221e",
+        "eml_depth_association": 1,
+        "eml_depth_solution": 0,
+        "eml_depth_priming": 2,
+        "aha_structure": "EML-\u221e (search) compressed to EML-0 (solution word)"
+      }
+    },
+    "eml_depth": {
+      "preparation": 1,
+      "incubation": "\u221e",
+      "illumination_before": "\u221e",
+      "illumination_after": 2,
+      "verification": 0
+    },
+    "key_insight": "Aha = EML-\u221e\u2192EML-2 collapse: steeper than sync (\u221e\u21923), shallower than invention"
+  },
+  "binding_problem": {
+    "model": "BindingProblemDeepEML",
+    "synchrony_binding": {
+      "0.005": {
+        "t_ms": 5.0,
+        "gamma_40hz": 0.309,
+        "coherence": 0.9995,
+        "eml_depth_gamma": 3,
+        "eml_depth_coherence": 1,
+        "eml_depth_bound_percept": "\u221e",
+        "gap": "gamma=EML-3 correlates with but doesn't explain unity=EML-\u221e"
+      },
+      "0.01": {
+        "t_ms": 10.0,
+        "gamma_40hz": -0.809,
+        "coherence": 0.999,
+        "eml_depth_gamma": 3,
+        "eml_depth_coherence": 1,
+        "eml_depth_bound_percept": "\u221e",
+        "gap": "gamma=EML-3 correlates with but doesn't explain unity=EML-\u221e"
+      },
+      "0.025": {
+        "t_ms": 25.0,
+        "gamma_40hz": 1.0,
+        "coherence": 0.9975,
+        "eml_depth_gamma": 3,
+        "eml_depth_coherence": 1,
+        "eml_depth_bound_percept": "\u221e",
+        "gap": "gamma=EML-3 correlates with but doesn't explain unity=EML-\u221e"
+      },
+      "0.05": {
+        "t_ms": 50.0,
+        "gamma_40hz": 1.0,
+        "coherence": 0.995,
+        "eml_depth_gamma": 3,
+        "eml_depth_coherence": 1,
+        "eml_depth_bound_percept": "\u221e",
+        "gap": "gamma=EML-3 correlates with but doesn't explain unity=EML-\u221e"
+      }
+    },
+    "phi_binding": {
+      "2": {
+        "n_modules": 2,
+        "connectivity": 0.6,
+        "phi_estimate": 0.8318,
+        "phi_normalized": 0.2079,
+        "eml_depth_phi": 2,
+        "eml_depth_phenomenal_unity": "\u221e",
+        "horizon_theorem_iii": "\u03a6 = EML-2 shadow of EML-\u221e binding"
+      },
+      "4": {
+        "n_modules": 4,
+        "connectivity": 0.6,
+        "phi_estimate": 3.3271,
+        "phi_normalized": 0.2079,
+        "eml_depth_phi": 2,
+        "eml_depth_phenomenal_unity": "\u221e",
+        "horizon_theorem_iii": "\u03a6 = EML-2 shadow of EML-\u221e binding"
+      },
+      "8": {
+        "n_modules": 8,
+        "connectivity": 0.6,
+        "phi_estimate": 9.9813,
+        "phi_normalized": 0.156,
+        "eml_depth_phi": 2,
+        "eml_depth_phenomenal_unity": "\u221e",
+        "horizon_theorem_iii": "\u03a6 = EML-2 shadow of EML-\u221e binding"
+      },
+      "16": {
+        "n_modules": 16,
+        "connectivity": 0.6,
+        "phi_estimate": 26.6169,
+        "phi_normalized": 0.104,
+        "eml_depth_phi": 2,
+        "eml_depth_phenomenal_unity": "\u221e",
+        "horizon_theorem_iii": "\u03a6 = EML-2 shadow of EML-\u221e binding"
+      }
+    },
+    "mereological_gap": {
+      "phi_per_part_count": {
+        "2": 0.3466,
+        "4": 0.6931,
+        "8": 1.0397,
+        "16": 1.3863
+      },
+      "combination_eml": "\u221e",
+      "panpsychist_combination": "EML-\u221e + EML-\u221e \u2192 EML-\u221e (no reduction)",
+      "emergentist_combination": "EML-3 \u2192 EML-\u221e (vertical gap)",
+      "eml_verdict": "Combination problem = EML-\u221e; no finite resolution known"
+    },
+    "eml_depth": {
+      "gamma_mechanism": 3,
+      "coherence": 1,
+      "phi": 2,
+      "unity": "\u221e",
+      "combination": "\u221e"
+    },
+    "key_insight": "Binding: gamma=EML-3, \u03a6=EML-2; both are shadows of EML-\u221e unity"
+  },
+  "eml_depth_summary": {
+    "EML-0": "Verification of insight, solution word (RAT), logical check",
+    "EML-1": "Preparation effort exp(-t), global workspace broadcast, gamma coherence",
+    "EML-2": "\u03a6 (IIT), incubation EML-2 shadow, semantic priming log(n), DMN correlation",
+    "EML-3": "Gamma 40Hz NCC, GWT broadcast oscillation, thalamo-cortical binding",
+    "EML-\u221e": "All qualia, Hard Problem, binding unity, incubation, search space"
+  },
+  "key_theorem": "The EML Consciousness Depth III Theorem: Three EML-\u221e collapses in cognition: 1. Insight/Aha: EML-\u221e (unsearchable problem space) \u2192 EML-2 (new representation). Steeper than synchronization (\u221e\u21923) \u2014 insight compresses more. 2. Frisson (from S183): EML-\u221e (peak) \u2192 EML-3 (resolution oscillation). 3. NCC binding: EML-3 (gamma) correlates with but cannot produce EML-\u221e (qualia). The Horizon Theorem III applies: \u03a6 = EML-2 shadow of EML-\u221e binding; gamma coherence = EML-1 shadow of EML-\u221e qualia. The Hard Problem is thus the statement that EML-\u221e stratum 4 has no EML-finite causal basis \u2014 only EML-finite correlates (shadows).",
+  "rabbit_hole_log": [
+    "Aha = EML-\u221e\u2192EML-2: sharper than sync (\u221e\u21923)! Two depths compressed in one instant",
+    "Wallas incubation = EML-\u221e: unconscious = inaccessible = EML-\u221e (same depth as qualia)",
+    "Solution word = EML-0: the answer is just a word \u2014 simplest possible output from EML-\u221e collapse",
+    "Gamma 40Hz = EML-3: confirms NCC = EML-3; qualia = EML-\u221e stratum 4 (unbridgeable)",
+    "\u03a6 = EML-2 shadow (Horizon III): IIT gives the shadow, not the thing",
+    "Mereological combination: EML-\u221e + EML-\u221e \u2192 EML-\u221e \u2014 no depth gain from combining qualia"
+  ],
+  "connections": {
+    "S174_cognition": "S174 established qualia strata; S184 adds insight collapses and gap structure",
+    "S183_music": "Frisson EML-\u221e\u2192EML-3 and Aha EML-\u221e\u2192EML-2: two collapse types in one session arc",
+    "S180_grand": "Horizon III: \u03a6=EML-2 shadow of binding \u2014 instance of universal EML-2 skeleton theorem"
+  }
+}
