@@ -1,0 +1,163 @@
+{
+  "session": 142,
+  "title": "Evolutionary Biology Deep III: Multi-Level Selection & Major Transitions",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "multi_level_selection": {
+    "model": "MultiLevelSelection",
+    "price_equation_examples": [
+      {
+        "selection": 0.1,
+        "transmission": 0.05,
+        "total": 0.15
+      },
+      {
+        "selection": 0.05,
+        "transmission": 0.1,
+        "total": 0.15
+      },
+      {
+        "selection": 0.0,
+        "transmission": 0.15,
+        "total": 0.15
+      }
+    ],
+    "group_selection_coefficient": {
+      "alpha0.8_beta0.2": 0.2,
+      "alpha0.5_beta0.5": 0.5,
+      "alpha0.2_beta0.8": 0.8
+    },
+    "hamilton_rule_rb_minus_c": {
+      "0.0": -1.0,
+      "0.125": -0.75,
+      "0.25": -0.5,
+      "0.5": 0.0,
+      "1.0": 1.0
+    },
+    "eml_depth": {
+      "price_equation_covariance": 2,
+      "group_coefficient": 2,
+      "hamilton_rule": 0
+    },
+    "key_insight": "Price equation = EML-2 (covariance); Hamilton's rule = EML-0 (linear)"
+  },
+  "major_transitions": {
+    "model": "MajorTransitions",
+    "transitions_eml": [
+      {
+        "from": "Replicating molecules",
+        "to": "Chromosomes",
+        "depth": "EML-\u221e"
+      },
+      {
+        "from": "Chromosomes",
+        "to": "Eukaryotes",
+        "depth": "EML-\u221e"
+      },
+      {
+        "from": "Solitary individuals",
+        "to": "Colonies",
+        "depth": "EML-\u221e"
+      },
+      {
+        "from": "Primate societies",
+        "to": "Human language",
+        "depth": "EML-\u221e"
+      }
+    ],
+    "information_gain_per_transition": [
+      7,
+      14,
+      28,
+      56
+    ],
+    "cooperation_stability_vs_n": {
+      "2": 0.6667,
+      "5": 0.6667,
+      "10": 0.6667,
+      "20": 0.6667,
+      "50": 0.6667
+    },
+    "evolvability_vs_mutation_effect": {
+      "0.0": 1.0,
+      "0.5": 0.8825,
+      "1.0": 0.6065,
+      "2.0": 0.1353
+    },
+    "eml_depth": {
+      "information_gain": 2,
+      "cooperation_equilibrium": 2,
+      "evolvability": 1,
+      "major_transition_event": "\u221e"
+    },
+    "key_insight": "All major transitions in individuality are EML-\u221e (irreversible emergence)"
+  },
+  "evolutionary_game_theory": {
+    "model": "EvolutionaryGameTheory",
+    "hawk_dove": {
+      "V": 4.0,
+      "C": 6.0,
+      "ESS_hawk_fraction": 0.6667
+    },
+    "replicator_dx_at_50_50": [
+      0.125,
+      -0.125
+    ],
+    "rps_cycles": {
+      "0": {
+        "x1": 0.4333,
+        "x2": 0.2833,
+        "x3": 0.2833
+      },
+      "1": {
+        "x1": 0.4211,
+        "x2": 0.2479,
+        "x3": 0.331
+      },
+      "2": {
+        "x1": 0.3874,
+        "x2": 0.2334,
+        "x3": 0.3792
+      },
+      "4": {
+        "x1": 0.2917,
+        "x2": 0.2754,
+        "x3": 0.4329
+      },
+      "6": {
+        "x1": 0.2343,
+        "x2": 0.3706,
+        "x3": 0.3951
+      },
+      "10": {
+        "x1": 0.3617,
+        "x2": 0.4022,
+        "x3": 0.2361
+      }
+    },
+    "eml_depth": {
+      "payoff_matrix": 0,
+      "replicator_fixed_point": 2,
+      "rps_oscillation": 3
+    },
+    "key_insight": "ESS = EML-0 (linear condition); RPS cycling = EML-3 (oscillatory)"
+  },
+  "eml_depth_summary": {
+    "EML-0": "Hamilton's rule rb-c, ESS condition, payoff matrices",
+    "EML-1": "Evolvability landscape exp(-g\u00b2/2\u03c3\u00b2)",
+    "EML-2": "Price equation covariance, group selection coefficient, replicator equilibrium",
+    "EML-3": "RPS oscillations, predator-prey limit cycles",
+    "EML-\u221e": "All major evolutionary transitions (irreversible individuality emergence)"
+  },
+  "key_theorem": "The EML Multi-Level Selection Theorem: All components of the Price equation are EML-2 (covariance/regression). ESS conditions are EML-0 (linear). Major evolutionary transitions \u2014 the emergence of new levels of individuality \u2014 are EML-\u221e: once crossed, the transition is irreversible and the prior level cannot recover its independence.",
+  "rabbit_hole_log": [
+    "Price equation Cov(W,z)/W\u0304 = EML-2: regression = EML-2 geometric structure",
+    "Hamilton's rule rb-c = EML-0: it's a linear threshold condition",
+    "Major transitions: each one = EML-\u221e (same class as Penrose singularities, tipping)",
+    "RPS cycling = EML-3: same class as Milankovitch, gamma waves, Airy"
+  ],
+  "connections": {
+    "S132_evolution_v2": "Extends S132; adds multi-level selection + major transitions",
+    "S60_info_theory": "Price equation = covariance = EML-2 (Fisher geometry)",
+    "S137_climate_v2": "Major transitions \u2194 tipping points: both EML-\u221e irreversible"
+  }
+}
