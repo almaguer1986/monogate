@@ -1,0 +1,64 @@
+{
+  "session": 201,
+  "title": "Fluid Dynamics: Navier-Stokes, Turbulence & Kolmogorov",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "turbulence": {
+    "model": "TurbulenceEML",
+    "kolmogorov": {
+      "energy_spectrum_depth": 2,
+      "spectrum_exponent": -1.6666666666666667,
+      "spectrum_values": {
+        "1": 1.0,
+        "10": 0.021544,
+        "100": 0.000464,
+        "1000": 1e-05
+      },
+      "kolmogorov_scale": 0.001,
+      "reynolds_number": 1000.0,
+      "inertial_range_depth": 2,
+      "dissipation_depth": 1,
+      "note": "Kolmogorov -5/3: EML-2 (power law = log-scale); dissipation exp(-k\u00b2\u03bd): EML-1"
+    },
+    "velocity": {
+      "velocity_field_depth": 3,
+      "fourier_modes": {
+        "1": 0.7071,
+        "2": 0.0,
+        "5": -0.7071
+      },
+      "reynolds_decomposition": "u = U + u': mean (EML-1) + fluctuation (EML-3)",
+      "mean_depth": 1,
+      "fluctuation_depth": 3,
+      "note": "Turbulent field: EML-3 (oscillatory modes); mean: EML-1 (exp-decay boundary)"
+    },
+    "ns_regularity": {
+      "ns_regularity_depth": "\u221e",
+      "smooth_solution_depth": 3,
+      "blow_up_question_depth": "\u221e",
+      "viscosity": 0.01,
+      "transition_exp": 0.0,
+      "transition_depth": 1,
+      "fourth_millennium_prize": "NS regularity = EML-\u221e (joins RH, confinement as Horizon problems)",
+      "note": "NS: smooth solution=EML-3; regularity proof=EML-\u221e (Millennium Prize)"
+    },
+    "depth_ladder": {
+      "laminar": 1,
+      "kolmogorov": 2,
+      "turbulent_field": 3,
+      "ns_proof": "\u221e"
+    },
+    "key_insight": "Turbulence: EML-1\u21922\u21923\u2192\u221e ladder; Kolmogorov=EML-2; NS regularity=EML-\u221e"
+  },
+  "eml_depth_summary": {
+    "EML-1": "Laminar flow (Stokes), boundary layer exp decay, viscous dissipation",
+    "EML-2": "Kolmogorov -5/3 energy spectrum, turbulent viscosity log(Re)",
+    "EML-3": "Turbulent velocity field (oscillatory Fourier modes)",
+    "EML-\u221e": "NS regularity proof (Millennium Prize), turbulence full solution"
+  },
+  "key_theorem": "The EML Fluid Dynamics Theorem (S201): Fluid dynamics traverses the EML ladder: Laminar flow = EML-1 (exponential decay to steady state). Kolmogorov energy spectrum E(k) ~ k^{-5/3} = EML-2 (power law = log-scale). Turbulent velocity field = EML-3 (multi-scale oscillatory). NS regularity proof = EML-\u221e (fourth Millennium Prize problem in the EML framework, joining RH (S181), confinement (S185), and BSD (S205)). ",
+  "rabbit_hole_log": [
+    "Kolmogorov -5/3 = EML-2: power law = log-scale, universal EML-2 signature",
+    "NS regularity = EML-\u221e: fourth Millennium Prize in the EML framework",
+    "Turbulent cascade: EML-2 at each scale; full field = EML-3"
+  ]
+}
