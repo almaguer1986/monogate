@@ -1,0 +1,344 @@
+{
+  "session": 74,
+  "title": "Information Theory: Algorithmic & Geometric Deep Dive",
+  "key_theorem": {
+    "theorem": "EML Legendre Duality Theorem",
+    "statement": "EML Legendre Duality Theorem: The Legendre duality of information geometry is the EML-1/EML-2 duality. The exponential family density p(x;\u03b8) is EML-1 in \u03b8. The log-partition function A(\u03b8) is EML-2. The mean parameterization \u03b7 = \u2202A/\u2202\u03b8 and its inverse A*(\u03b7) are EML-2. The Legendre transform maps EML-2 to EML-2, preserving depth.",
+    "gaussian_verification": {
+      "family": "Gaussian N(\u03bc,1), \u03b8=\u03bc",
+      "A_formula": "A(\u03b8) = \u03b8\u00b2/2 [EML-2]",
+      "A_star_formula": "A*(\u03b7) = \u03b7\u00b2/2 [EML-2]",
+      "verification": [
+        {
+          "theta": -2.0,
+          "A_theta": 2.0,
+          "eta": -2.0,
+          "A_star_eta": 2.0,
+          "legendre_check": 2.0,
+          "match": true
+        },
+        {
+          "theta": -1.0,
+          "A_theta": 0.5,
+          "eta": -1.0,
+          "A_star_eta": 0.5,
+          "legendre_check": 0.5,
+          "match": true
+        },
+        {
+          "theta": 0.0,
+          "A_theta": 0.0,
+          "eta": 0.0,
+          "A_star_eta": 0.0,
+          "legendre_check": 0.0,
+          "match": true
+        },
+        {
+          "theta": 1.0,
+          "A_theta": 0.5,
+          "eta": 1.0,
+          "A_star_eta": 0.5,
+          "legendre_check": 0.5,
+          "match": true
+        },
+        {
+          "theta": 2.0,
+          "A_theta": 2.0,
+          "eta": 2.0,
+          "A_star_eta": 2.0,
+          "legendre_check": 2.0,
+          "match": true
+        }
+      ],
+      "eml_A": "EML-2",
+      "eml_A_star": "EML-2",
+      "insight": "Legendre duality maps EML-2 to EML-2 (self-dual for Gaussian)"
+    },
+    "duality_table": [
+      {
+        "structure": "Density p(x;\u03b8)",
+        "parameterization": "natural \u03b8",
+        "eml_depth": 1
+      },
+      {
+        "structure": "Log-partition A(\u03b8)",
+        "parameterization": "\u03b8",
+        "eml_depth": 2
+      },
+      {
+        "structure": "Mean parameter \u03b7=\u2202A/\u2202\u03b8",
+        "parameterization": "\u03b8\u2192\u03b7",
+        "eml_depth": 2
+      },
+      {
+        "structure": "Dual A*(\u03b7)",
+        "parameterization": "\u03b7",
+        "eml_depth": 2
+      },
+      {
+        "structure": "Fisher metric g_{ij}",
+        "parameterization": "\u03b8",
+        "eml_depth": 2
+      },
+      {
+        "structure": "e-geodesic",
+        "parameterization": "\u03b8-space",
+        "eml_depth": 1
+      },
+      {
+        "structure": "m-geodesic",
+        "parameterization": "\u03b7-space",
+        "eml_depth": 2
+      }
+    ]
+  },
+  "exponential_families": [
+    {
+      "name": "Gaussian N(\u03bc,1.0\u00b2)",
+      "eml_density_depth": 1,
+      "eml_log_partition_depth": 2,
+      "eml_fisher_info_depth": 2,
+      "theta_values": [
+        -3.0,
+        -1.5,
+        0.0,
+        1.5,
+        3.0
+      ],
+      "mean_parameters": [
+        -3.0,
+        -1.5,
+        0.0,
+        1.5,
+        3.0
+      ],
+      "fisher_information": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "entropy_values": [
+        -4.5,
+        -1.125,
+        0.0,
+        -1.125,
+        -4.5
+      ],
+      "kl_example": 4.5
+    },
+    {
+      "name": "Bernoulli(p)",
+      "eml_density_depth": 1,
+      "eml_log_partition_depth": 2,
+      "eml_fisher_info_depth": 2,
+      "theta_values": [
+        -3.0,
+        -1.5,
+        0.0,
+        1.5,
+        3.0
+      ],
+      "mean_parameters": [
+        0.047426,
+        0.182426,
+        0.5,
+        0.817574,
+        0.952574
+      ],
+      "fisher_information": [
+        0.045177,
+        0.149146,
+        0.25,
+        0.149146,
+        0.045177
+      ],
+      "entropy_values": [
+        0.190865,
+        0.475052,
+        0.693147,
+        0.475052,
+        0.190865
+      ],
+      "kl_example": 0.952723
+    },
+    {
+      "name": "Exponential(\u03bb)",
+      "eml_density_depth": 1,
+      "eml_log_partition_depth": 2,
+      "eml_fisher_info_depth": 2,
+      "theta_values": [
+        -5.0,
+        -3.775,
+        -2.55,
+        -1.325,
+        -0.1
+      ],
+      "mean_parameters": [
+        0.2,
+        0.264901,
+        0.392157,
+        0.754717,
+        10.0
+      ],
+      "fisher_information": [
+        0.04,
+        0.070172,
+        0.153787,
+        0.569598,
+        100.0
+      ],
+      "entropy_values": [
+        -0.609438,
+        -0.3284,
+        0.063907,
+        0.718588,
+        3.302585
+      ],
+      "kl_example": 0.397981
+    }
+  ],
+  "amari_connections": [
+    {
+      "alpha": -1.0,
+      "geodesic": "m-geodesic: mixture of mean parameters \u03b7 \u2192 EML-2 structure (linear in \u03b7)",
+      "eml_class": "EML-1: \u03b1=-1.0 connection",
+      "connection_coefficients_gaussian": {
+        "-1.0": -0.0,
+        "0.0": 0.0,
+        "1.0": 0.0
+      }
+    },
+    {
+      "alpha": -0.5,
+      "geodesic": "\u03b1=-0.5: interpolation between e and m connections",
+      "eml_class": "EML-2: \u03b1=-0.5 connection",
+      "connection_coefficients_gaussian": {
+        "-1.0": -1.4e-05,
+        "0.0": 0.0,
+        "1.0": 1.4e-05
+      }
+    },
+    {
+      "alpha": 0.0,
+      "geodesic": "\u03b1=0.0: interpolation between e and m connections",
+      "eml_class": "EML-2: \u03b1=0.0 connection",
+      "connection_coefficients_gaussian": {
+        "-1.0": -2.8e-05,
+        "0.0": 0.0,
+        "1.0": 2.8e-05
+      }
+    },
+    {
+      "alpha": 0.5,
+      "geodesic": "\u03b1=0.5: interpolation between e and m connections",
+      "eml_class": "EML-2: \u03b1=0.5 connection",
+      "connection_coefficients_gaussian": {
+        "-1.0": -4.2e-05,
+        "0.0": 0.0,
+        "1.0": 4.2e-05
+      }
+    },
+    {
+      "alpha": 1.0,
+      "geodesic": "e-geodesic: mixture of canonical parameters \u03b8 \u2192 EML-1 structure (exp family)",
+      "eml_class": "EML-1: \u03b1=1.0 connection",
+      "connection_coefficients_gaussian": {
+        "-1.0": -5.6e-05,
+        "0.0": 0.0,
+        "1.0": 5.6e-05
+      }
+    }
+  ],
+  "natural_gradient": {
+    "natural_gradient": [
+      {
+        "step": 10,
+        "theta": -0.3618,
+        "loss": 0.041902
+      },
+      {
+        "step": 11,
+        "theta": -0.2171,
+        "loss": 0.032274
+      },
+      {
+        "step": 12,
+        "theta": -0.0901,
+        "loss": 0.024754
+      },
+      {
+        "step": 13,
+        "theta": 0.0212,
+        "loss": 0.018955
+      },
+      {
+        "step": 14,
+        "theta": 0.1185,
+        "loss": 0.014518
+      }
+    ],
+    "standard_gradient": [
+      {
+        "step": 10,
+        "theta": -2.7298,
+        "loss": 0.204007
+      },
+      {
+        "step": 11,
+        "theta": -2.7114,
+        "loss": 0.203328
+      },
+      {
+        "step": 12,
+        "theta": -2.6928,
+        "loss": 0.202629
+      },
+      {
+        "step": 13,
+        "theta": -2.6739,
+        "loss": 0.201909
+      },
+      {
+        "step": 14,
+        "theta": -2.6547,
+        "loss": 0.201168
+      }
+    ],
+    "ng_final_loss": 0.014518,
+    "sg_final_loss": 0.201168,
+    "eml_natural_gradient": "EML-2 (Fisher inverse \u00d7 gradient = EML-2)"
+  },
+  "mdl_eml_connection": {
+    "principle": "MDL: best model minimizes code_length(data|model) + code_length(model)",
+    "eml_analogy": {
+      "EML-0": "Constant model: 0 parameter bits; describes only constant functions",
+      "EML-1": "Exponential model: O(log n) bits for \u03b8; describes exp family",
+      "EML-2": "Log-polynomial: O(2 log n) bits; describes algebraic/log-linear models",
+      "EML-3": "Fourier/erf: O(3 log n) bits; describes oscillatory/Gaussian models",
+      "EML-\u221e": "Non-analytic: requires K(x) bits; MDL cannot compress"
+    },
+    "key_insight": "EML depth is a computable proxy for Kolmogorov complexity: EML-k \u2248 K(x) = O(k\u00b7polylog) for k < \u221e; EML-\u221e \u2194 K(x) = \u0398(n) (incompressible)."
+  },
+  "information_geometry_eml": {
+    "statistical_manifold": "Riemannian manifold with Fisher metric (EML-2)",
+    "tangent_vectors": "Score functions \u2202_i log p \u2014 EML-2 (derivative of log density)",
+    "e_geodesics": "Straight lines in \u03b8-space = EML-1 interpolations",
+    "m_geodesics": "Straight lines in \u03b7-space = EML-2 interpolations",
+    "divergence_Bregman": "B_A(\u03b8||\u03b8') = A(\u03b8') - A(\u03b8) - (\u03b8'-\u03b8)\u00b7\u2202A/\u2202\u03b8 \u2014 EML-2",
+    "pythagorean_theorem": "B_A(\u03b8||\u03b8') = B_A(\u03b8||\u03b8_proj) + B_A(\u03b8_proj||\u03b8') \u2014 EML-2"
+  },
+  "eml_depth_summary": {
+    "EML-1": "Exponential family density p(x;\u03b8) = h(x)exp(\u03b8T(x)-A(\u03b8)); e-geodesics in \u03b8-space",
+    "EML-2": "Log-partition A(\u03b8), Fisher information F(\u03b8), mean parameters \u03b7, Legendre dual A*(\u03b7), KL divergence, m-geodesics in \u03b7-space",
+    "EML-3": "Entropy of Gaussian = H = \u00bdln(2\u03c0e\u03c3\u00b2) \u2014 involves \u03c0 \u2192 EML-3",
+    "EML-\u221e": "Kolmogorov complexity K(x); incompressible sources; generic non-parametric models"
+  },
+  "connections": {
+    "to_session_60": "Session 60: Shannon entropy EML-2, max-entropy=EML-1. Session 74 extends to geometry.",
+    "to_session_63": "Fisher metric on stat manifold = Riemannian geometry (EML-2 curvature) \u2014 connects to Session 63 GR",
+    "to_session_69": "MDL depth \u2194 EML depth \u2194 Kolmogorov complexity K(x) (Session 69)",
+    "to_session_57": "Boltzmann/Gibbs distribution = exponential family = EML-1 (stat mech connection)"
+  }
+}
