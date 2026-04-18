@@ -1,0 +1,58 @@
+{
+  "session": 730,
+  "title": "Hodge Shadow Bijection Gap Decomposition v2",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "HodgeGapDecompositionV2EML",
+    "analysis": {
+      "object": "T451: Hodge Shadow Bijection Gap Decomposition v2 depth analysis",
+      "domains": {
+        "algebraic_classes_v2": {
+          "description": "Algebraic cycle classes: EML-0 discrete objects",
+          "depth": "EML-0",
+          "reason": "algebraic cycles = EML-0"
+        },
+        "hodge_classes_v2": {
+          "description": "Hodge (p,p) classes: EML-3 oscillatory cohomology",
+          "depth": "EML-3",
+          "reason": "Hodge position = EML-3"
+        },
+        "gap_components": {
+          "description": "Gap = three sub-problems: finiteness, surjectivity, naturality",
+          "depth": "EML-inf",
+          "reason": "each sub-problem lives at different depth"
+        },
+        "finiteness_gap": {
+          "description": "Algebraic cycles: finitely generated? EML-0 question",
+          "depth": "EML-0",
+          "reason": "discrete finiteness = EML-0"
+        },
+        "surjectivity_gap": {
+          "description": "Surjectivity: every Hodge class algebraic? EML-inf",
+          "depth": "EML-inf",
+          "reason": "surjectivity claim = EML-inf"
+        },
+        "gap_decomp_law": {
+          "description": "T451: Hodge gap decomposes into EML-0 finiteness + EML-inf surjectivity + EML-3 naturality",
+          "depth": "EML-inf",
+          "reason": ""
+        }
+      }
+    },
+    "distribution": {
+      "EML-0": 2,
+      "EML-3": 1,
+      "EML-inf": 3
+    },
+    "theorem": "T451: Hodge Shadow Bijection Gap Decomposition v2 (S730)."
+  },
+  "key_theorem": "T451: Hodge Shadow Bijection Gap Decomposition v2 (S730).",
+  "rabbit_hole_log": [
+    "T451: algebraic_classes_v2 depth=EML-0 confirmed",
+    "T451: hodge_classes_v2 depth=EML-3 confirmed",
+    "T451: gap_components depth=EML-inf confirmed",
+    "T451: finiteness_gap depth=EML-0 confirmed",
+    "T451: surjectivity_gap depth=EML-inf confirmed",
+    "T451: gap_decomp_law depth=EML-inf confirmed"
+  ]
+}
