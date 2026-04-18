@@ -1,0 +1,37 @@
+{
+  "session": 833,
+  "title": "Tropical Vorticity Analysis",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "NSTropicalVorticityEML",
+    "analysis": {
+      "object": "T554: Tropical Vorticity Analysis depth analysis",
+      "domains": {
+        "tropical_stretching": {
+          "description": "Tropical stretching: omega*grad(u) -> MAX(omega, grad(u)) in tropical limit",
+          "depth": "EML-3",
+          "reason": "Tropical stretching is bounded by MAX; cannot grow to EML-inf"
+        },
+        "max_ceiling": {
+          "description": "Tropical vorticity MAX ceiling prevents tropical blow-up",
+          "depth": "EML-2",
+          "reason": "Tropical no-inverse prevents vorticity from exceeding tropical maximum"
+        },
+        "tropical_bkm": {
+          "description": "Tropical BKM: vorticity stays bounded in tropical NS; structural regularity",
+          "depth": "EML-2",
+          "reason": "Tropical BKM result: tropical shadow of NS is always regular"
+        }
+      }
+    },
+    "distribution": {
+      "EML-3": 1,
+      "EML-2": 2
+    },
+    "theorem": "T554: Tropical Vorticity Analysis (S833)."
+  },
+  "key_theorem": "T554: Tropical Vorticity Analysis (S833).",
+  "rabbit_hole_log": [
+    "T554: tropical_stretching depth confirmed"
+  ]
+}
