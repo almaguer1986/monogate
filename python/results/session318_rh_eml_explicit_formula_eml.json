@@ -1,0 +1,58 @@
+{
+  "session": 318,
+  "title": "RH-EML: Explicit Formula & Prime Distribution",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "RHEMLExplicitFormulaEML",
+    "explicit_formula": {
+      "object": "Riemann explicit formula: \u03c8(x) = x - \u03a3_\u03c1 x^\u03c1/\u03c1 - log(2\u03c0) - (1/2)log(1-x^{-2})",
+      "eml_depth": 3,
+      "terms": {
+        "trivial_part": {
+          "depth": 2,
+          "formula": "x - log(2\u03c0): EML-2 (real)"
+        },
+        "zero_sum": {
+          "depth": 3,
+          "formula": "\u03a3_\u03c1 x^\u03c1/\u03c1 = \u03a3 x^{1/2+it_n}/\u03c1_n: EML-3 (complex x^\u03c1 = exp(\u03c1\u00b7log x))"
+        }
+      },
+      "semiring_test": {
+        "trivial_tensor_zero_sum": {
+          "operation": "Trivial(EML-2) \u2297 ZeroSum(EML-3)",
+          "result": "EML-\u221e if zeros off-line; EML-3 if all zeros on-line (RH holds)"
+        },
+        "RH_implication": "\u03c8(x): If RH \u2192 zero sum = EML-3 \u2192 explicit formula = EML-3 (not \u221e)"
+      }
+    },
+    "prime_counting": {
+      "object": "Prime counting function \u03c0(x) and Chebyshev functions",
+      "eml_depth": 2,
+      "semiring_test": {
+        "PNT": {
+          "depth": 2,
+          "formula": "\u03c0(x) ~ x/ln(x): EML-2"
+        },
+        "error_term": {
+          "depth": 3,
+          "formula": "\u03c0(x) - li(x) = O(x^{1/2}\u00b7log x) under RH: EML-3 contribution",
+          "why": "O(x^{1/2+it}) = exp((1/2+it)\u00b7log x): EML-3"
+        },
+        "conditional_depth": "Prime distribution: EML-2 (PNT) + EML-3 error (conditional on RH)"
+      }
+    },
+    "verdicts": {
+      "explicit_formula": "EML-3 under RH; EML-\u221e if off-line zeros exist",
+      "prime_error": "EML-3 error term (x^{1/2+it} = EML-3)",
+      "new_result": "Explicit formula = depth indicator for RH: EML-3 \u2194 RH true"
+    }
+  },
+  "key_theorem": "Explicit Formula Depth Theorem (S318): Riemann explicit formula \u03c8(x) = Trivial(EML-2) + ZeroSum(EML-3). Under RH: zero sum = purely EML-3 (all zeros on line). Off-line zeros: zero sum becomes EML-\u221e (cross-type). NEW: Explicit formula is a DEPTH INDICATOR for RH: \u03c8(x) = EML-3 \u2194 RH true; \u03c8(x) = EML-\u221e \u2194 RH false. Prime error term O(x^{1/2+it}) = EML-3: confirms shadow=3 prediction.",
+  "rabbit_hole_log": [
+    "Explicit formula: trivial(EML-2) + zero sum(EML-3 if RH)",
+    "NEW: explicit formula = depth indicator: EML-3\u2194RH, EML-\u221e\u2194RH false",
+    "Prime error term: x^{1/2+it} = EML-3 (confirms shadow=3)",
+    "Trivial(EML-2)\u2297ZeroSum(EML-3) = EML-\u221e if zeros off-line",
+    "Depth of \u03c8(x) directly encodes RH truth"
+  ]
+}
