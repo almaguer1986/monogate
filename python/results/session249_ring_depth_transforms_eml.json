@@ -1,0 +1,95 @@
+{
+  "session": 249,
+  "title": "Ring of Depth: \u0394d Multiplication in Transforms",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "transform_ring": {
+    "model": "TransformRingTestEML",
+    "fourier": {
+      "F_1D": {
+        "delta_d": 2,
+        "maps": "L\u00b9(R) \u2192 L^\u221e(R); \u222bf(x)e^{-i\u03bex}dx"
+      },
+      "F_2D": {
+        "construction": "F_x \u2297 F_y: Fourier in x AND y",
+        "expression": "\u222b\u222b f(x,y) e^{-i\u03bex-i\u03b7y} dx dy",
+        "delta_d": 2,
+        "why": "Still adds one exp+log pair (the 2D measure dx dy vs 1D dx): \u0394d=+2",
+        "key": "Dimensionality does not change \u0394d; it adds one integration measure regardless"
+      },
+      "F_nD": {
+        "delta_d": 2,
+        "why": "n-D Fourier = tensor product of 1D Fouriers; still \u0394d=+2",
+        "formula": "2 \u2297 2 \u2297 ... \u2297 2 (n times) = 2  (idempotent)"
+      },
+      "verdict": {
+        "delta_d_F_tensor_F": 2,
+        "NOT_4": "EML-4 does not appear even for simultaneous 2D Fourier",
+        "reason": "The measure dxdy is still ONE pairing: exp(i(\u03bex+\u03b7y)) + log(dxdy)",
+        "ring_implication": "Depth multiplication saturates: Fourier\u2297Fourier=\u0394d=2, not 4"
+      }
+    },
+    "laplace": {
+      "laplace_1D": {
+        "delta_d": 2,
+        "expression": "\u222bf(x)e^{-sx}dx: real exp + measure"
+      },
+      "laplace_2D": {
+        "delta_d": 2,
+        "why": "Double real-exp transform; still one measure pairing"
+      },
+      "laplace_x_fourier": {
+        "expression": "\u222b\u222b f(x,y) e^{-sx} e^{-i\u03b7y} dx dy",
+        "delta_d": "\u221e?",
+        "why": "Mixed real (Laplace, \u0394d=+2, EML-1 exponential) and complex (Fourier, \u0394d=+2, EML-3) in same integral. The tensor product mixes EML-1 exponential type with EML-3 oscillatory type. EML-1 \u2297 EML-3: from the multiplication table (1\u22973=\u221e). But wait: both have \u0394d=+2. Are they in the same ring element or different?",
+        "resolution": "The depth of the RESULT (not the \u0394d) matters. Laplace result: EML-2 function of s. Fourier result: EML-3 function of \u03b7. Mixed: EML-2 \u00d7 EML-3 = EML-\u221e (product of strata). Verdict: Laplace\u2297Fourier yields EML-\u221e output."
+      }
+    },
+    "hilbert_wavelet": {
+      "hilbert_1D": {
+        "delta_d": 0,
+        "maps": "L\u00b2\u2192L\u00b2, H\u00b2=-I"
+      },
+      "hilbert_2D": {
+        "delta_d": 0,
+        "why": "2D Hilbert = still self-map on L\u00b2(R\u00b2), \u0394d=0",
+        "formula": "0 \u2297 0 = 0 \u2713"
+      },
+      "wavelet_1D": {
+        "delta_d": 2,
+        "maps": "f \u21a6 W_\u03c8[f](a,b): adds measure"
+      },
+      "hilbert_x_wavelet_simultaneous": {
+        "delta_d": "max(0,2) = 2",
+        "note": "Simultaneous means output is in EML-2 \u00d7 EML-2 = EML-2 (idempotent)",
+        "verdict": "0 \u2297 2 = 2 in the saturation table \u2713"
+      },
+      "riesz_transform": {
+        "delta_d": 0,
+        "description": "n-D generalization of Hilbert; 0\u22970\u2297...=0 \u2713"
+      }
+    },
+    "fubini": {
+      "sequential_composition": {
+        "operation": "\u222b_y (\u222b_x f dx) dy",
+        "naive_delta_d": "2+2=4 (sequential \u0394d addition)",
+        "actual_delta_d": 2,
+        "resolution": "The inner \u222bf dx produces a function of y (EML-2). The outer \u222b...dy takes this EML-2 function and applies ONE more \u0394d=+2. But Fubini says the result = \u222b\u222b f dxdy: ONE double integral = \u0394d=+2. The iterated integral is NOT two \u0394d=+2 steps: it's one."
+      },
+      "why_not_additive": {
+        "reason": "When you write \u222b\u222b f dxdy, the outer integral 'absorbs' the inner. The combined measure dxdy is ONE measure on R\u00b2 \u2014 not two separate measures. So Fubini gives \u0394d=+2, not +4: the integration primitive counts once, regardless of dimension. This is exactly the IDEMPOTENCY of depth multiplication: applying the same primitive type twice doesn't double the depth."
+      },
+      "ring_conclusion": {
+        "fubini": "\u222b\u222b = \u0394d=+2 (not +4): confirms 2\u22972=2 in the depth semiring",
+        "significance": "Fubini is the canonical proof that EML-2 is idempotent under \u2297"
+      }
+    },
+    "key_insight": "All transform tests confirm: 2\u22972=2 (Fourier 2D = Fourier 1D in terms of \u0394d; Fubini iterated \u2260 double \u0394d). 0\u2297d=d (Hilbert is identity in multiplication). Mixed real/complex exponential types \u2192 EML-\u221e (Laplace\u2297Fourier). The integration primitive is idempotent: counting measures doesn't stack depth."
+  },
+  "key_theorem": "The Transform Ring Test (S249): All transform tests confirm the semiring saturation pattern. Fourier 2D (F_x\u2297F_y): \u0394d=+2, NOT +4 \u2014 dimensionality does not multiply depth. Fubini (\u222b\u222b = (\u222b)(\u222b)): \u0394d=+2 total, NOT +4 \u2014 the integration primitive is idempotent. Hilbert (\u0394d=0) is the multiplicative identity in the ring: 0\u2297d=d for all d. Mixed Laplace\u2297Fourier (real\u2297complex exponential): output lives in EML-\u221e. CRITICAL FINDING: Fubini's theorem is the canonical proof of EML-2 idempotency. \u222b\u222b f dxdy = \u222b(\u222bf dx)dy: the iterated integral uses ONE measure on R\u00b2, so \u0394d=+2 regardless of dimension. This is not a coincidence \u2014 it is the algebraic statement that the integration primitive counts once, period.",
+  "rabbit_hole_log": [
+    "Fourier nD: always \u0394d=+2 (not +2n) \u2014 dimensionality doesn't stack depth",
+    "Fubini: \u222b\u222b=\u0394d+2 (not +4): canonical proof of EML-2 idempotency",
+    "Hilbert transform \u0394d=0: the multiplicative identity in the depth semiring",
+    "Laplace\u2297Fourier (real\u2297complex): EML-\u221e output \u2014 cross-type saturation confirmed"
+  ]
+}
