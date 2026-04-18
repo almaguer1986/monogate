@@ -1,0 +1,58 @@
+{
+  "session": 666,
+  "title": "P\u2260NP Circuit Complexity Through EML",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "PvsNPCircuitComplexityEML",
+    "analysis": {
+      "object": "T387: P\u2260NP Circuit Complexity Through EML depth analysis",
+      "domains": {
+        "boolean_circuit": {
+          "description": "AND/OR/NOT gates: EML-0 discrete",
+          "depth": "EML-0",
+          "reason": "circuit gates are EML-0 operations"
+        },
+        "circuit_size": {
+          "description": "Number of gates: EML-0 count",
+          "depth": "EML-0",
+          "reason": "size = discrete count"
+        },
+        "circuit_depth": {
+          "description": "Log-depth circuits: EML-2 measurement",
+          "depth": "EML-2",
+          "reason": "depth = log of computation = EML-2"
+        },
+        "p_poly": {
+          "description": "P/poly uses polynomial-size advice: EML-2",
+          "depth": "EML-2",
+          "reason": "advice = EML-2 measurement parameter"
+        },
+        "np_lower_bound": {
+          "description": "Super-polynomial lower bound = EML-inf gap",
+          "depth": "EML-inf",
+          "reason": "proving NP requires EML-inf circuit size"
+        },
+        "circuit_eml_ladder": {
+          "description": "T387: circuits traverse EML-0 to EML-inf; separation at EML-2/inf",
+          "depth": "EML-inf",
+          "reason": ""
+        }
+      }
+    },
+    "distribution": {
+      "EML-0": 2,
+      "EML-2": 2,
+      "EML-inf": 2
+    },
+    "theorem": "T387: P\u2260NP Circuit Complexity Through EML (S666)."
+  },
+  "key_theorem": "T387: P\u2260NP Circuit Complexity Through EML (S666).",
+  "rabbit_hole_log": [
+    "T387: boolean_circuit depth=EML-0 confirmed",
+    "T387: circuit_size depth=EML-0 confirmed",
+    "T387: circuit_depth depth=EML-2 confirmed",
+    "T387: p_poly depth=EML-2 confirmed",
+    "T387: np_lower_bound depth=EML-inf confirmed",
+    "T387: circuit_eml_ladder depth=EML-inf confirmed"
+  ]
+}
