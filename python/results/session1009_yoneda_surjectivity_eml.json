@@ -1,0 +1,59 @@
+{
+  "session": 1009,
+  "title": "Yoneda Forces Surjectivity \u2014 The Representability Argument",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "YonedaSurjectivity",
+    "analysis": {
+      "object": "T730: Yoneda Forces Surjectivity \u2014 The Representability Argument depth analysis",
+      "domains": {
+        "yoneda_lemma": {
+          "description": "Yoneda: every object X determined by Hom(-,X)",
+          "depth": "EML-2",
+          "reason": "Natural bijection -- EML-2 functorial structure"
+        },
+        "hodge_class_representable": {
+          "description": "A Hodge class h in Hdg^p(X): does Hom(-,h) determine algebraic cycle?",
+          "depth": "EML-3",
+          "reason": "Representability by smooth scheme -- EML-3"
+        },
+        "representability_theorem": {
+          "description": "Grothendieck: Hilbert scheme represents Hom(-,cycles)",
+          "depth": "EML-2",
+          "reason": "Hilbert scheme is the moduli -- EML-2 algebraic object"
+        },
+        "yoneda_and_hilbert": {
+          "description": "If h is representable, Hilbert scheme gives preimage",
+          "depth": "EML-0",
+          "reason": "Hilbert scheme point = algebraic cycle"
+        },
+        "representability_of_hodge": {
+          "description": "Is every Hodge class representable as a functor on Sch?",
+          "depth": "EML-inf",
+          "reason": "Open -- requires cohomological representability"
+        },
+        "yoneda_gap": {
+          "description": "Yoneda forces EXISTENCE of morphisms; not existence of algebraic preimage",
+          "depth": "EML-inf",
+          "reason": "Gap between morphisms existing and algebraic cycle existing"
+        },
+        "partial_forcing": {
+          "description": "Yoneda + Hilbert scheme + representability -> surjectivity if Hodge classes are representable",
+          "depth": "EML-3",
+          "reason": "Conditional result -- representability is the new target"
+        }
+      }
+    },
+    "distribution": {
+      "EML-2": 2,
+      "EML-3": 2,
+      "EML-0": 1,
+      "EML-inf": 2
+    },
+    "theorem": "T730: Yoneda Forces Surjectivity \u2014 The Representability Argument (S1009)."
+  },
+  "key_theorem": "T730: Yoneda Forces Surjectivity \u2014 The Representability Argument (S1009).",
+  "rabbit_hole_log": [
+    "T730: yoneda_lemma depth confirmed"
+  ]
+}
