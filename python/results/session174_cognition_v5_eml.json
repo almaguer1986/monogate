@@ -1,0 +1,245 @@
+{
+  "session": 174,
+  "title": "Consciousness & Cognition Deep: IIT, Hard Problem & Qualia Strata",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "iit_phi": {
+    "model": "IntegratedInformationIIT",
+    "n_elements": 4,
+    "phi_vs_connectivity": {
+      "0.1": {
+        "n_elements": 4,
+        "connectivity": 0.1,
+        "phi_single_element": 0.1386,
+        "phi_full_system": 0.0555,
+        "Phi_minimum": 0.0555,
+        "exponential_scaling": 1.1052,
+        "eml_depth_phi": 2,
+        "eml_depth_Phi_at_critical": 3,
+        "eml_depth_transition": "\u221e",
+        "note": "\u03a6 = EML-2 (MI differences); critical \u03a6 transition = EML-\u221e"
+      },
+      "0.3": {
+        "n_elements": 4,
+        "connectivity": 0.3,
+        "phi_single_element": 0.4159,
+        "phi_full_system": 0.4991,
+        "Phi_minimum": 0.4159,
+        "exponential_scaling": 1.3499,
+        "eml_depth_phi": 2,
+        "eml_depth_Phi_at_critical": 3,
+        "eml_depth_transition": "\u221e",
+        "note": "\u03a6 = EML-2 (MI differences); critical \u03a6 transition = EML-\u221e"
+      },
+      "0.5": {
+        "n_elements": 4,
+        "connectivity": 0.5,
+        "phi_single_element": 0.6931,
+        "phi_full_system": 1.3863,
+        "Phi_minimum": 0.6931,
+        "exponential_scaling": 1.6487,
+        "eml_depth_phi": 2,
+        "eml_depth_Phi_at_critical": 3,
+        "eml_depth_transition": "\u221e",
+        "note": "\u03a6 = EML-2 (MI differences); critical \u03a6 transition = EML-\u221e"
+      },
+      "0.7": {
+        "n_elements": 4,
+        "connectivity": 0.7,
+        "phi_single_element": 0.9704,
+        "phi_full_system": 2.7171,
+        "Phi_minimum": 0.9704,
+        "exponential_scaling": 2.0138,
+        "eml_depth_phi": 2,
+        "eml_depth_Phi_at_critical": 3,
+        "eml_depth_transition": "\u221e",
+        "note": "\u03a6 = EML-2 (MI differences); critical \u03a6 transition = EML-\u221e"
+      },
+      "0.9": {
+        "n_elements": 4,
+        "connectivity": 0.9,
+        "phi_single_element": 1.2477,
+        "phi_full_system": 4.4916,
+        "Phi_minimum": 1.2477,
+        "exponential_scaling": 2.4596,
+        "eml_depth_phi": 2,
+        "eml_depth_Phi_at_critical": 3,
+        "eml_depth_transition": "\u221e",
+        "note": "\u03a6 = EML-2 (MI differences); critical \u03a6 transition = EML-\u221e"
+      }
+    },
+    "quale_space": {
+      "n_concepts": 8,
+      "q_space_dimension": 256,
+      "intrinsic_dimension": 8,
+      "wasserstein_upper_bound": 15.6952,
+      "eml_depth_q_dimension": 0,
+      "eml_depth_wasserstein": 2,
+      "eml_depth_particular_quale": "\u221e",
+      "note": "Q-space dim = EML-0; metric = EML-2; particular quale = EML-\u221e (irreducible)"
+    },
+    "exclusion": {
+      "phi_vals": [
+        0.0555,
+        0.4159,
+        0.6931,
+        0.9704,
+        1.2477
+      ],
+      "max_phi": 1.2477,
+      "winner_system": 4,
+      "eml_depth_selection": 0,
+      "eml_depth_winner_quale": "\u221e",
+      "note": "Max-\u03a6 selection = EML-0; the selected quale remains EML-\u221e"
+    },
+    "eml_depth": {
+      "phi_MI": 2,
+      "phi_critical": 3,
+      "phi_transition": "\u221e",
+      "q_dim": 0,
+      "metric": 2,
+      "particular_quale": "\u221e"
+    },
+    "key_insight": "IIT: \u03a6=EML-2; \u03a6 transition=EML-\u221e; particular quale=EML-\u221e (Hard Problem)"
+  },
+  "hard_problem": {
+    "model": "HardProblemEML",
+    "explanatory_gap": {
+      "ncc_eml_depth": 3,
+      "explanatory_gap": "EML-3 \u2192 EML-\u221e",
+      "chalmers_stratum": "EML-\u221e stratum 4 (phenomenal)",
+      "type_B_physicalism": "EML-2 (epistemic gap, not ontological)",
+      "type_A_physicalism": "no gap (denies qualia reality)",
+      "property_dualism": "EML-\u221e stratum 4 (two substances)",
+      "eml_claim": "Hard Problem = EML-\u221e stratum 4: irreducible to EML-finite description"
+    },
+    "zombie_argument": {
+      "zombie_ncc_depth": 3,
+      "zombie_behavior_depth": 3,
+      "zombie_qualia": "undefined (EML-\u221e absent)",
+      "conceivability_argument": "EML-\u221e (possible worlds, modal logic)",
+      "chalmers_conclusion": "qualia = fundamental (EML-\u221e stratum 4)",
+      "dennett_rebuttal": "zombies inconceivable = deny EML-\u221e stratum 4",
+      "eml_verdict": "Zombie argument locates hard problem at EML-\u221e stratum 4"
+    },
+    "global_workspace": {
+      "broadcast_spread": {
+        "0.1": 0.3935,
+        "0.2": 0.6321,
+        "0.3": 0.7769,
+        "0.4": 0.8647,
+        "0.5": 0.9179
+      },
+      "ignition_threshold": 0.3,
+      "eml_depth_broadcast": 1,
+      "eml_depth_ignition": "\u221e",
+      "access_consciousness_eml": 3,
+      "phenomenal_consciousness_eml": "\u221e",
+      "note": "GWT explains access (EML-3) not phenomenal (EML-\u221e) consciousness"
+    },
+    "panpsychism": {
+      "panpsychism_claim": "all matter proto-conscious = EML-\u221e distributed",
+      "combination_problem": "EML-\u221e \u2192 EML-\u221e: still irreducible",
+      "russellian_monism_depth": "\u221e",
+      "eml_verdict": "Panpsychism distributes EML-\u221e but doesn't reduce stratum",
+      "advantage": "avoids special-pleading for biological systems",
+      "disadvantage": "combination problem = new EML-\u221e gap"
+    },
+    "eml_depth": {
+      "ncc_oscillations": 3,
+      "access_consciousness": 3,
+      "phenomenal_qualia": "\u221e",
+      "explanatory_gap": "\u221e",
+      "hard_problem_statement": "\u221e"
+    },
+    "key_insight": "Hard Problem: NCC=EML-3; qualia=EML-\u221e; gap cannot be bridged by EML-finite"
+  },
+  "qualia_strata": {
+    "model": "QualiaStrataEML",
+    "qualia_types": {
+      "sensory_qualia": {
+        "eml": "\u221e",
+        "stratum": "4a",
+        "example": "redness, middle-C pitch"
+      },
+      "affective_qualia": {
+        "eml": "\u221e",
+        "stratum": "4b",
+        "example": "pain, pleasure (valenced)"
+      },
+      "cognitive_qualia": {
+        "eml": "\u221e",
+        "stratum": "4c",
+        "example": "insight, understanding (Aha!)"
+      },
+      "temporal_qualia": {
+        "eml": "\u221e",
+        "stratum": "4d",
+        "example": "nowness, felt duration"
+      },
+      "self_qualia": {
+        "eml": "\u221e",
+        "stratum": "4e",
+        "example": "I-feeling, mineness, presence"
+      },
+      "unity_qualia": {
+        "eml": "\u221e",
+        "stratum": "4f",
+        "example": "binding of all qualia into one experience"
+      },
+      "internal_ordering": "4a < 4b < 4c < 4d < 4e < 4f by complexity?"
+    },
+    "binding_problem": {
+      "binding_mechanism_gamma_sync": "EML-3 (40 Hz oscillation)",
+      "gamma_coherence_sample": 1.0,
+      "binding_mechanism_phi": "EML-2 (integrated information)",
+      "binding_mechanism_attractor": "EML-3 (convergent dynamics)",
+      "binding_itself_eml": "\u221e",
+      "eml_verdict": "Mechanisms = EML-3; binding (why) = EML-\u221e",
+      "connection_S168": "Neural criticality = EML-\u221e attractor = binding substrate"
+    },
+    "free_will": {
+      "deterministic_physics_eml": 3,
+      "compatibilist_free_will_eml": 2,
+      "libertarian_free_will_eml": "\u221e",
+      "readiness_potential": {
+        "-1.0": -0.3935,
+        "-0.5": -0.2212,
+        "-0.2": -0.0952,
+        "0.0": 0.0
+      },
+      "eml_depth_readiness": 1,
+      "feeling_of_authorship_eml": "\u221e",
+      "note": "Libet: readiness=EML-1 precedes conscious intent=EML-\u221e"
+    },
+    "eml_depth": {
+      "sensory_qualia": "\u221e",
+      "affective_qualia": "\u221e",
+      "cognitive_qualia": "\u221e",
+      "binding": "\u221e",
+      "free_will_feeling": "\u221e",
+      "binding_mechanisms": 3
+    },
+    "key_insight": "All qualia = EML-\u221e; binding mechanisms = EML-3; feeling of authorship = EML-\u221e"
+  },
+  "eml_depth_summary": {
+    "EML-0": "Q-space dimension 2^n, max-\u03a6 selection, quale type count",
+    "EML-1": "Global workspace broadcast exp(-t), readiness potential",
+    "EML-2": "\u03a6 (integrated information MI), Wasserstein metric, compatibilist free will",
+    "EML-3": "NCC oscillations (40 Hz gamma), ignition threshold, binding mechanisms",
+    "EML-\u221e": "Qualia (all types), Hard Problem, explanatory gap, binding unity, authorship"
+  },
+  "key_theorem": "The EML Consciousness Depth Theorem: Consciousness research stratifies precisely by EML depth. Neural correlates = EML-3 (oscillatory, measurable). IIT \u03a6 = EML-2 (integrated mutual information). The Hard Problem is an EML-3 \u2192 EML-\u221e gap: no EML-finite theory bridges it. Qualia occupy EML-\u221e stratum 4, internally stratified 4a\u20134f by sensory/affective/cognitive/temporal/self/unity type. The binding problem: mechanisms = EML-3; unity = EML-\u221e. This is the deepest instance of the EML-2 Skeleton Theorem: every EML-\u221e phenomenon (consciousness) has an EML-2 accessible shadow (\u03a6, NCCs) but the phenomenon itself remains EML-\u221e.",
+  "rabbit_hole_log": [
+    "IIT \u03a6 = EML-2: mutual information differences \u2014 same depth as Fisher, entropy, BS-d1",
+    "\u03a6 critical transition = EML-\u221e: same as Kuramoto sync, neural criticality, protein fold",
+    "Hard Problem gap = EML-3\u2192EML-\u221e: no EML-finite theory closes it",
+    "GWT broadcast = EML-1: exp(-t) spreading \u2014 same as Boltzmann, memory decay, ADSR",
+    "Qualia 4a\u20134f: EML-\u221e has internal structure (not flat infinity)",
+    "Libet readiness = EML-1; intent feeling = EML-\u221e: asymmetry in time direction"
+  ],
+  "connections": {
+    "S101_cognition": "GWT from S101 = EML-1 (confirmed); adds binding problem here",
+    "S173_music": "Musical qualia = stratum 4a/4b (sensory+affective): same EML-\u221e",
+    "S150_synthesis": "EML-\u221e stratum 4 = phenomenal consciousness (defined in S150)"
+  }
+}
