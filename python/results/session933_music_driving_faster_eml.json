@@ -1,0 +1,36 @@
+{
+  "session": 933,
+  "title": "Why Music Makes You Drive Faster",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "MusicDrivingFasterEML",
+    "analysis": {
+      "object": "T654: Why Music Makes You Drive Faster depth analysis",
+      "domains": {
+        "tempo_entrainment": {
+          "description": "Tempo entrainment: body syncs to external EML-3 rhythm",
+          "depth": "EML-3",
+          "reason": "Entrainment is EML-3 coupling: external musical oscillation invades internal motor oscillation"
+        },
+        "cross_system_resonance": {
+          "description": "Cross-system EML-3 resonance: music oscillation couples to motor system oscillation",
+          "depth": "EML-3",
+          "reason": "Same mechanism as infrasound (T428): any external EML-3 can couple to internal EML-3 process"
+        },
+        "universal_coupling": {
+          "description": "Any external EML-3 signal can couple to any internal EML-3 process via resonance",
+          "depth": "EML-3",
+          "reason": "Universal EML-3 coupling theorem: EML-3 oscillations couple across substrate boundaries"
+        }
+      }
+    },
+    "distribution": {
+      "EML-3": 3
+    },
+    "theorem": "T654: Why Music Makes You Drive Faster (S933)."
+  },
+  "key_theorem": "T654: Why Music Makes You Drive Faster (S933).",
+  "rabbit_hole_log": [
+    "T654: tempo_entrainment depth confirmed"
+  ]
+}
