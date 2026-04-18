@@ -1,0 +1,136 @@
+{
+  "session": 156,
+  "title": "Stochastic Processes & Path Integrals: EML Depth of Randomness",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "brownian_motion": {
+    "model": "BrownianMotionEML",
+    "sigma": 1.0,
+    "mu": 0.0,
+    "transition_density_x05": {
+      "0.1": 0.361445,
+      "0.5": 0.439391,
+      "1.0": 0.352065,
+      "2.0": 0.265004,
+      "5.0": 0.174007
+    },
+    "quadratic_variation_vs_steps": {
+      "10": 0.1,
+      "50": 0.5,
+      "100": 1.0,
+      "500": 5.0
+    },
+    "holder_exponent": {
+      "holder_alpha": 0.5,
+      "is_differentiable": false,
+      "dimension_hausdorff": 1.5,
+      "eml_depth_distribution": 2,
+      "eml_depth_sample_path": "\u221e",
+      "note": "BM distribution = EML-2; individual BM path = EML-\u221e"
+    },
+    "ito_formulas": {
+      "quadratic": {
+        "f": "x\u00b2",
+        "ito_correction": "\u03c3\u00b2=1.0*dt",
+        "eml_depth_f": 0,
+        "eml_depth_correction": 0
+      },
+      "log": {
+        "f": "log(x)",
+        "ito_drift_correction": "-\u03c3\u00b2/2=-0.5*dt",
+        "eml_depth_f": 2,
+        "eml_depth_correction": 2
+      },
+      "exponential": {
+        "f": "exp(x)",
+        "ito_sde": "d(e^X) = e^X dX + \u00bd\u03c3\u00b2e^X dt",
+        "eml_depth_f": 1,
+        "eml_depth_correction": 1
+      }
+    },
+    "eml_depth": {
+      "transition_density": 2,
+      "quadratic_variation": 0,
+      "distribution": 2,
+      "sample_path": "\u221e"
+    },
+    "key_insight": "BM distribution = EML-2; individual sample path = EML-\u221e (non-differentiable)"
+  },
+  "path_integrals": {
+    "model": "PathIntegralEML",
+    "propagators": {
+      "x=1.0,t=0.5": "(0.304833+0.474749j)",
+      "x=2.0,t=1.0": "(-0.166019+0.362757j)",
+      "x=0.0,t=0.5": "(0.56419+0j)"
+    },
+    "wick_rotation": {
+      "minkowski_weight": "exp(iS/\u210f) = EML-3 (oscillatory)",
+      "euclidean_weight": "exp(-S_E/\u210f) = EML-1 (damped)",
+      "wick_rotation": "t \u2192 -i\u03c4",
+      "depth_reduction": "3 \u2192 1",
+      "note": "Wick rotation is an EML 3\u21921 depth reduction (oscillatory \u2192 equilibrium)",
+      "saddle_point": "Classical path = saddle of S_E: EML-1 minimum"
+    },
+    "stationary_phase": 0.63981667,
+    "stochastic_action": {
+      "(0.5, 1.0)": 0.125,
+      "(1.0, 0.5)": 1.0,
+      "(2.0, 2.0)": 1.0
+    },
+    "eml_depth": {
+      "minkowski_propagator": 3,
+      "euclidean_propagator": 1,
+      "stochastic_action": 2,
+      "path_measure": "\u221e"
+    },
+    "key_insight": "Feynman paths = EML-3 (oscillatory); Wick rotation = 3\u21921; path measure = EML-\u221e"
+  },
+  "large_deviations": {
+    "model": "LargeDeviationsEML",
+    "cramer_rate_function": {
+      "-2": 2.0,
+      "-1": 0.5,
+      "0": 0.0,
+      "1": 0.5,
+      "2": 2.0
+    },
+    "freidlin_wentzell_exit": {
+      "0.1": 0.0,
+      "0.2": 4.5e-05,
+      "0.5": 0.018316,
+      "1.0": 0.135335
+    },
+    "entropy_production": {
+      "(1.5, 0.5)": 1.0986,
+      "(2.0, 1.0)": 0.6931,
+      "(1.0, 1.0)": 0.0
+    },
+    "eml_depth": {
+      "cramer_I": 2,
+      "fw_probability": 1,
+      "entropy_production": 2,
+      "fluctuation_theorem": 2
+    },
+    "key_insight": "Rate functions = EML-2; rare event probability = EML-1; entropy production = EML-2"
+  },
+  "eml_depth_summary": {
+    "EML-0": "Quadratic variation [X,X]_T = \u03c3\u00b2T (linear), It\u00f4 correction for x\u00b2",
+    "EML-1": "BCS/Kondo-like: FW exit probability exp(-I/\u03b5), Euclidean propagator",
+    "EML-2": "BM transition density, Cram\u00e9r rate function, entropy production, stochastic action",
+    "EML-3": "Feynman path integral (oscillatory, Minkowski), BM density at small t",
+    "EML-\u221e": "Individual Brownian sample path (H\u00f6lder-1/2, non-differentiable), path measure"
+  },
+  "key_theorem": "The EML Stochastic Depth Theorem: The distribution of a stochastic process is EML-2 (entropy, rate functions). Feynman path integrals in Minkowski space are EML-3 (oscillatory). Wick rotation achieves an EML 3\u21921 depth reduction (oscillatory \u2192 damped). But any individual sample path of Brownian motion is EML-\u221e: H\u00f6lder-1/2 but not H\u00f6lder-1/2+\u03b5 \u2014 the path is a non-EML-finite object. Randomness stratifies: mean = EML-2, fluctuation = EML-1, sample path = EML-\u221e.",
+  "rabbit_hole_log": [
+    "BM transition density = EML-2: Gaussian (exp of -x\u00b2/t) = quadratic EML",
+    "Sample BM path = EML-\u221e: H\u00f6lder-\u00bd but non-differentiable \u2014 fractal trajectory",
+    "Feynman exp(iS/\u210f) = EML-3: oscillatory phase (same as Fourier basis)",
+    "Wick rotation 3\u21921: same class of reduction as period-doubling approximation",
+    "Cram\u00e9r rate I(x) = (x-\u03bc)\u00b2/2\u03c3\u00b2 = EML-2: same as quadratic Lyapunov function!",
+    "Entropy production = EML-2: (\u03c3\u208a-\u03c3\u208b)log(\u03c3\u208a/\u03c3\u208b) \u2014 NESS dissipation"
+  ],
+  "connections": {
+    "S57_stat_mech": "Boltzmann partition = EML-1; path integral (Euclidean) = EML-1; same!",
+    "S155_qft_nonpert": "Instanton = EML-1 (Euclidean); Wick rotation confirms EML-3\u21921",
+    "S152_chaos_control": "Lyapunov V = EML-2 (quadratic); Cram\u00e9r rate = EML-2 (same structure)"
+  }
+}
