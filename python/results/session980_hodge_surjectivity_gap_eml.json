@@ -1,0 +1,41 @@
+{
+  "session": 980,
+  "title": "The Surjectivity Gap - EML-inf Component",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "HodgeSurjectivityGapEML",
+    "analysis": {
+      "object": "T701: The Surjectivity Gap - EML-inf Component depth analysis",
+      "domains": {
+        "surjectivity_target": {
+          "description": "Surjectivity: every (p,p) Hodge class should be algebraic; the main conjectural content",
+          "depth": "EML-inf",
+          "reason": "Surjectivity is EML-inf: requires showing EML-inf Hodge class has EML-0 algebraic preimage"
+        },
+        "categorification_constraint": {
+          "description": "If algebraic -> Hodge IS a categorification (Deltad=+k/2), does categorification constrain which EML-inf classes are reached?",
+          "depth": "EML-inf",
+          "reason": "Categorification image: categorification maps EML-0 -> EML-k/2; image may not cover all EML-k/2 classes"
+        },
+        "no_inverse_barrier": {
+          "description": "Tropical no-inverse: no tropical morphism maps EML-k/2 Hodge class back to EML-0 algebraic cycle in general",
+          "depth": "EML-inf",
+          "reason": "No-inverse obstruction: cannot generally invert the categorification; surjectivity is EML-inf claim"
+        },
+        "surjectivity_open": {
+          "description": "Surjectivity gap remains open; EML-inf barrier confirmed; best attack is Langlands LUC-30 bridge",
+          "depth": "EML-inf",
+          "reason": "Status: surjectivity is THE remaining gap; EML-inf; LUC-30 is best available tool"
+        }
+      }
+    },
+    "distribution": {
+      "EML-inf": 4
+    },
+    "theorem": "T701: The Surjectivity Gap - EML-inf Component (S980)."
+  },
+  "key_theorem": "T701: The Surjectivity Gap - EML-inf Component (S980).",
+  "rabbit_hole_log": [
+    "T701: surjectivity_target depth confirmed"
+  ]
+}
