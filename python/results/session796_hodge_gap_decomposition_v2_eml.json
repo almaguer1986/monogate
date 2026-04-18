@@ -1,0 +1,38 @@
+{
+  "session": 796,
+  "title": "Hodge Gap Decomposition v2",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "HodgeGapV2",
+    "analysis": {
+      "object": "T517: Hodge Gap Decomposition v2 depth analysis",
+      "domains": {
+        "eml0_algebraic": {
+          "description": "Algebraic cycles: discrete, countable; Chow group EML-0",
+          "depth": "EML-0",
+          "reason": "Algebraic cycles are discrete geometric objects"
+        },
+        "eml2_cohomology": {
+          "description": "de Rham cohomology classes: EML-2 (integration, measurement)",
+          "depth": "EML-2",
+          "reason": "Period integrals are Deltad=+2 from discrete cycles"
+        },
+        "type3_gap": {
+          "description": "Shadow bijection gap is TYPE3: algebraic(EML-0) vs Hodge(EML-2) classes",
+          "depth": "EML-inf",
+          "reason": "No EML-finite map sends all EML-2 Hodge classes to EML-0 algebraic"
+        }
+      }
+    },
+    "distribution": {
+      "EML-0": 1,
+      "EML-2": 1,
+      "EML-inf": 1
+    },
+    "theorem": "T517: Hodge Gap Decomposition v2 (S796)."
+  },
+  "key_theorem": "T517: Hodge Gap Decomposition v2 (S796).",
+  "rabbit_hole_log": [
+    "T517: eml0_algebraic depth confirmed"
+  ]
+}

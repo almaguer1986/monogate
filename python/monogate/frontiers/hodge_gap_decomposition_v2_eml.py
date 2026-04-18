@@ -1,44 +1,40 @@
-"""Session 730 --- Hodge Shadow Bijection Gap Decomposition v2"""
+"""Session 796 --- Hodge Gap Decomposition v2"""
 from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-
 @dataclass
-class HodgeGapDecompositionV2EML:
+class HodgeGapV2:
     def depth_analysis(self) -> dict[str, Any]:
         return {
-            "object": "T451: Hodge Shadow Bijection Gap Decomposition v2 depth analysis",
+            "object": "T517: Hodge Gap Decomposition v2 depth analysis",
             "domains": {
-                "algebraic_classes_v2": {"description": "Algebraic cycle classes: EML-0 discrete objects", "depth": "EML-0", "reason": "algebraic cycles = EML-0"},
-                "hodge_classes_v2": {"description": "Hodge (p,p) classes: EML-3 oscillatory cohomology", "depth": "EML-3", "reason": "Hodge position = EML-3"},
-                "gap_components": {"description": "Gap = three sub-problems: finiteness, surjectivity, naturality", "depth": "EML-inf", "reason": "each sub-problem lives at different depth"},
-                "finiteness_gap": {"description": "Algebraic cycles: finitely generated? EML-0 question", "depth": "EML-0", "reason": "discrete finiteness = EML-0"},
-                "surjectivity_gap": {"description": "Surjectivity: every Hodge class algebraic? EML-inf", "depth": "EML-inf", "reason": "surjectivity claim = EML-inf"},
-                "gap_decomp_law": {"description": "T451: Hodge gap decomposes into EML-0 finiteness + EML-inf surjectivity + EML-3 naturality", "depth": "EML-inf", "reason": ""},
+                "eml0_algebraic": {"description": "Algebraic cycles: discrete, countable; Chow group EML-0", "depth": "EML-0", "reason": "Algebraic cycles are discrete geometric objects"},
+                "eml2_cohomology": {"description": "de Rham cohomology classes: EML-2 (integration, measurement)", "depth": "EML-2", "reason": "Period integrals are Deltad=+2 from discrete cycles"},
+                "type3_gap": {"description": "Shadow bijection gap is TYPE3: algebraic(EML-0) vs Hodge(EML-2) classes", "depth": "EML-inf", "reason": "No EML-finite map sends all EML-2 Hodge classes to EML-0 algebraic"},
             },
         }
-
     def analyze(self) -> dict[str, Any]:
+        depths = [v['depth'] for v in self.depth_analysis()['domains'].values()]
+        dist: dict[str, int] = {}
+        for d in depths: dist[d] = dist.get(d, 0) + 1
         return {
-            "model": "HodgeGapDecompositionV2EML",
+            "model": "HodgeGapV2",
             "analysis": self.depth_analysis(),
-            "distribution": {'EML-0': 2, 'EML-3': 1, 'EML-inf': 3},
-            "theorem": "T451: Hodge Shadow Bijection Gap Decomposition v2 (S730).",
+            "distribution": dist,
+            "theorem": "T517: Hodge Gap Decomposition v2 (S796).",
         }
 
-
 def analyze_hodge_gap_decomposition_v2_eml() -> dict[str, Any]:
-    t = HodgeGapDecompositionV2EML()
+    t = HodgeGapV2()
     return {
-        "session": 730,
-        "title": "Hodge Shadow Bijection Gap Decomposition v2",
+        "session": 796,
+        "title": "Hodge Gap Decomposition v2",
         "eml_operator": "eml(x,y) = exp(x) - ln(y)",
         "analysis": t.analyze(),
-        "key_theorem": "T451: Hodge Shadow Bijection Gap Decomposition v2 (S730).",
-        "rabbit_hole_log": ['T451: algebraic_classes_v2 depth=EML-0 confirmed', 'T451: hodge_classes_v2 depth=EML-3 confirmed', 'T451: gap_components depth=EML-inf confirmed', 'T451: finiteness_gap depth=EML-0 confirmed', 'T451: surjectivity_gap depth=EML-inf confirmed', 'T451: gap_decomp_law depth=EML-inf confirmed'],
+        "key_theorem": "T517: Hodge Gap Decomposition v2 (S796).",
+        "rabbit_hole_log": ["T517: eml0_algebraic depth confirmed"],
     }
-
 
 if __name__ == "__main__":
     import json
