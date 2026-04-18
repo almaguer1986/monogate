@@ -1,0 +1,278 @@
+{
+  "session": 114,
+  "title": "Optimal Control & Dynamic Programming: EML of Optimization",
+  "key_theorem": {
+    "theorem": "EML Optimal Control Theorem",
+    "statement": "Optimal value function V* is EML-1 (contraction fixed point = ground state). Discount factor \u03b3 is EML-0 (constant). Bellman residual converges geometrically \u03b3^n: EML-1. Soft Bellman free energy -1/\u03b2\u00b7ln Z is EML-1 (Boltzmann ground state). LQR Riccati solution P is EML-2 (quadratic matrix equation fixed point). Kalman filter is EML-1 (min-variance = ground state of estimation). HJB PDE is EML-2 (first-order PDE on quadratic value function). Bandit regret \u221a(T\u00b7ln T) is EML-2. Viscosity solution shocks are EML-\u221e."
+  },
+  "bellman_equation": {
+    "value_iteration": [
+      {
+        "V_old": [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        "V_new": [
+          0.0,
+          0.63,
+          1.45,
+          0.0
+        ],
+        "bellman_residual": 0.63,
+        "gamma": 0.9,
+        "eml_V_star": 1,
+        "reason": "V* = fixed point of Bellman operator T: EML-1 (contraction = ground state)"
+      },
+      {
+        "V_old": [
+          0.6152,
+          1.3336,
+          1.7436,
+          0.0765
+        ],
+        "V_new": [
+          0.876979,
+          1.458568,
+          1.819076,
+          0.214326
+        ],
+        "bellman_residual": 0.261784,
+        "gamma": 0.9,
+        "eml_V_star": 1,
+        "reason": "V* = fixed point of Bellman operator T: EML-1 (contraction = ground state)"
+      },
+      {
+        "V_old": [
+          1.1659,
+          1.6222,
+          2.0291,
+          0.518
+        ],
+        "V_new": [
+          1.254643,
+          1.71632,
+          2.146189,
+          0.641131
+        ],
+        "bellman_residual": 0.123122,
+        "gamma": 0.9,
+        "eml_V_star": 1,
+        "reason": "V* = fixed point of Bellman operator T: EML-1 (contraction = ground state)"
+      },
+      {
+        "V_old": [
+          1.4186,
+          1.9104,
+          2.3486,
+          0.8289
+        ],
+        "V_new": [
+          1.498045,
+          1.995444,
+          2.429867,
+          0.905197
+        ],
+        "bellman_residual": 0.085052,
+        "gamma": 0.9,
+        "eml_V_star": 1,
+        "reason": "V* = fixed point of Bellman operator T: EML-1 (contraction = ground state)"
+      }
+    ],
+    "convergence": {
+      "gamma": 0.9,
+      "n_steps": 20,
+      "convergence": [
+        1.0,
+        0.9,
+        0.81,
+        0.729,
+        0.6561,
+        0.59049,
+        0.531441,
+        0.478297,
+        0.430467,
+        0.38742,
+        0.348678,
+        0.313811,
+        0.28243,
+        0.254187,
+        0.228768,
+        0.205891,
+        0.185302,
+        0.166772,
+        0.150095,
+        0.135085
+      ],
+      "eml": 1,
+      "reason": "Geometric convergence \u03b3^n = exp(n\u00b7ln \u03b3): EML-1 per step"
+    },
+    "free_energy": {
+      "beta_temperature": 1.0,
+      "V_opt": 2.5,
+      "log_partition": -2.5,
+      "F_free_energy": 2.5,
+      "eml": 1,
+      "reason": "Soft Bellman = -1/\u03b2\u00b7ln Z: EML-1 (log partition = free energy = Boltzmann ground state)",
+      "connection": "Optimal control IS thermodynamics: V* = free energy, \u03c0* = Boltzmann policy"
+    },
+    "eml_V_star": 1,
+    "eml_Q_function": 2,
+    "eml_TD_error": 2,
+    "eml_policy": 0
+  },
+  "lqr_riccati": {
+    "lqr_examples": [
+      {
+        "a": 1.1,
+        "b": 1.0,
+        "q": 1.0,
+        "r": 1.0,
+        "P_riccati": 1.773771,
+        "K_gain": 0.703428,
+        "closed_loop_a": 0.396572,
+        "stable": true,
+        "eml_P": 2,
+        "eml_K": 2,
+        "reason": "Riccati solution P: EML-2 (fixed point of quadratic matrix equation). K = (R+B'PB)^{-1}B'PA: EML-2"
+      },
+      {
+        "a": 0.9,
+        "b": 0.5,
+        "q": 1.0,
+        "r": 1.0,
+        "P_riccati": 2.123597,
+        "K_gain": 0.62422,
+        "closed_loop_a": 0.58789,
+        "stable": true,
+        "eml_P": 2,
+        "eml_K": 2,
+        "reason": "Riccati solution P: EML-2 (fixed point of quadratic matrix equation). K = (R+B'PB)^{-1}B'PA: EML-2"
+      },
+      {
+        "a": 1.5,
+        "b": 2.0,
+        "q": 1.0,
+        "r": 1.0,
+        "P_riccati": 1.481274,
+        "K_gain": 0.641698,
+        "closed_loop_a": 0.216604,
+        "stable": true,
+        "eml_P": 2,
+        "eml_K": 2,
+        "reason": "Riccati solution P: EML-2 (fixed point of quadratic matrix equation). K = (R+B'PB)^{-1}B'PA: EML-2"
+      }
+    ],
+    "kalman_steps": [
+      {
+        "P_prior": 1.0,
+        "P_predicted": 1.1,
+        "K_kalman": 0.52381,
+        "P_updated": 0.52381,
+        "eml": 1,
+        "reason": "Kalman filter = min-variance estimator = EML-1 (ground state of estimation under Gaussian noise)"
+      },
+      {
+        "P_prior": 0.5,
+        "P_predicted": 0.6,
+        "K_kalman": 0.375,
+        "P_updated": 0.375,
+        "eml": 1,
+        "reason": "Kalman filter = min-variance estimator = EML-1 (ground state of estimation under Gaussian noise)"
+      }
+    ],
+    "eml_lqr": 2,
+    "eml_kalman": 1,
+    "lqr_kalman_duality": "LQR (EML-2 control) is dual to Kalman (EML-1 estimation): same Riccati equation"
+  },
+  "pontryagin_hjb": {
+    "hjb_lq": [
+      {
+        "t": 0.0,
+        "x": 1.0,
+        "V_x_t": 0.2071,
+        "dV_dx": 0.4142,
+        "optimal_u": -0.4142,
+        "eml_V": 2,
+        "eml_HJB": 2,
+        "reason": "V(x) = x\u00b2P/2: EML-2 (quadratic value function). HJB = first-order PDE on EML-2 function"
+      },
+      {
+        "t": 0.5,
+        "x": 2.0,
+        "V_x_t": 0.8284,
+        "dV_dx": 0.8284,
+        "optimal_u": -0.8284,
+        "eml_V": 2,
+        "eml_HJB": 2,
+        "reason": "V(x) = x\u00b2P/2: EML-2 (quadratic value function). HJB = first-order PDE on EML-2 function"
+      },
+      {
+        "t": 1.0,
+        "x": -1.0,
+        "V_x_t": 0.2071,
+        "dV_dx": -0.4142,
+        "optimal_u": 0.4142,
+        "eml_V": 2,
+        "eml_HJB": 2,
+        "reason": "V(x) = x\u00b2P/2: EML-2 (quadratic value function). HJB = first-order PDE on EML-2 function"
+      }
+    ],
+    "bandit_regret": [
+      {
+        "T": 100,
+        "K": 2,
+        "regret_upper_bound": 42.92,
+        "sqrt_T_ln_T": 21.46,
+        "eml": 2,
+        "reason": "Regret ~ \u221a(T\u00b7ln T): EML-2 (square root \u00d7 log = power law \u00d7 log)"
+      },
+      {
+        "T": 1000,
+        "K": 2,
+        "regret_upper_bound": 166.23,
+        "sqrt_T_ln_T": 83.11,
+        "eml": 2,
+        "reason": "Regret ~ \u221a(T\u00b7ln T): EML-2 (square root \u00d7 log = power law \u00d7 log)"
+      },
+      {
+        "T": 10000,
+        "K": 2,
+        "regret_upper_bound": 606.97,
+        "sqrt_T_ln_T": 303.49,
+        "eml": 2,
+        "reason": "Regret ~ \u221a(T\u00b7ln T): EML-2 (square root \u00d7 log = power law \u00d7 log)"
+      },
+      {
+        "T": 100000,
+        "K": 2,
+        "regret_upper_bound": 2145.97,
+        "sqrt_T_ln_T": 1072.98,
+        "eml": 2,
+        "reason": "Regret ~ \u221a(T\u00b7ln T): EML-2 (square root \u00d7 log = power law \u00d7 log)"
+      }
+    ],
+    "eml_pontryagin_H": 2,
+    "eml_costate": 2,
+    "eml_HJB": 2,
+    "eml_viscosity_shock": Infinity,
+    "eml_bandit_regret": 2
+  },
+  "eml_depth_summary": {
+    "EML-0": "Discount factor \u03b3; optimal policy argmin (discrete); LQR closed-loop u*=-Kx (linear)",
+    "EML-1": "V* (Bellman fixed point); geometric convergence \u03b3^n; soft Bellman free energy; Kalman filter",
+    "EML-2": "Riccati solution P; LQR gain K; HJB PDE; TD error; Q-function; bandit regret \u221a(T\u00b7ln T)",
+    "EML-\u221e": "HJB viscosity shocks; exact bandit lower bounds with all arms; multi-agent game equilibria (NP-hard)"
+  },
+  "rabbit_hole_log": [
+    "Optimal control IS thermodynamics at EML-1: the soft Bellman equation V_soft = -1/\u03b2\u00b7ln \u03a3 exp(-\u03b2\u00b7Q(s,a)) is the free energy of a Boltzmann distribution over actions. \u03b2 is the inverse temperature of the policy. The optimal deterministic policy (\u03b2\u2192\u221e) is the zero-temperature ground state. Stochastic policies are thermal fluctuations. The EML-1 nature of V* is not accidental \u2014 it's the same minimum principle as thermodynamic equilibrium.",
+    "Kalman filter = EML-1 by duality: the LQR (EML-2 Riccati) and Kalman filter (EML-1 min-variance) are dual problems via the same Riccati equation. Control (EML-2 design) is dual to estimation (EML-1 ground state). The difference in depth reflects the asymmetry between imposing constraints (EML-2) and satisfying them (EML-1).",
+    "Bandit regret is EML-2 (\u221aT\u00b7ln T): the exploration-exploitation tradeoff costs exactly O(\u221aT\u00b7ln T) regret, which is EML-2. You can't do better than EML-2 efficiency without knowing the environment's EML-class. If the reward function is EML-\u221e (adversarial), regret is \u03a9(\u221aT) \u2014 purely EML-2 with no logarithm.",
+    "HJB shocks are EML-\u221e: when the value function is non-smooth (shocks in viscosity solutions), V* cannot be described by any finite EML tree in the vicinity. The optimal policy undergoes a discontinuous switch \u2014 an EML-\u221e event embedded in an otherwise EML-2 landscape. This is how games with switching strategies produce EML-\u221e dynamics despite EML-2 objective functions."
+  ],
+  "connections": {
+    "to_session_57": "Free energy = -kT ln Z = EML-1. Soft Bellman free energy is the control analog. EML-1 ground state = universal.",
+    "to_session_113": "Epidemic R\u2080 fixed point (EML-1) and Bellman V* (EML-1) have identical structure. Spreading and optimizing both converge to EML-1."
+  }
+}
