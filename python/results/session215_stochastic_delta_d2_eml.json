@@ -1,0 +1,86 @@
+{
+  "session": 215,
+  "title": "Probability & Stochastic Processes Attack: \u0394d=2 in Stochastic Calculus",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "expectation_operator": {
+    "model": "ExpectationOperatorEML",
+    "expectation": {
+      "rv_depth": 0,
+      "expectation_depth": 2,
+      "variance_depth": 2,
+      "moment_generating_depth": 1,
+      "cumulant_depth": 2,
+      "raw_moments": {
+        "1": 0,
+        "2": 1.0,
+        "3": 0,
+        "4": 6.0
+      },
+      "cumulants": {
+        "mean": 0.0,
+        "variance": 1.0,
+        "skewness": 0,
+        "kurtosis": 3.0
+      },
+      "delta_d_rv_to_E": 2,
+      "measure_introduced": "Probability measure P (the law of X)",
+      "conjecture_check": "YES \u2014 E[\u00b7] = \u222b dP is precisely adding the probability measure",
+      "note": "E[X]: rv(EML-0) \u2192 expectation(EML-2) = \u0394d=2; measure P introduced"
+    },
+    "ito_calculus": {
+      "integrand_depth": 1,
+      "ito_integral_depth": 2,
+      "delta_d_ito": 1,
+      "delta_d_from_rv": 2,
+      "ito_isometry_depth": 2,
+      "quadratic_variation": 1.0,
+      "ito_correction": 0.5,
+      "measure_introduced": "Wiener measure W on C([0,T]) \u2014 the canonical path-space measure",
+      "conjecture_check": "YES \u2014 Wiener measure is introduced by the stochastic integral",
+      "note": "It\u00f4: f(EML-1) \u2192 \u222bf dB(EML-2) = \u0394d=1; but rv(0) \u2192 \u222bf dB(2) = \u0394d=2"
+    },
+    "key_insight": "E[\u00b7] = canonical \u0394d=2: adds probability measure P; It\u00f4 = \u0394d=1 from EML-1"
+  },
+  "malliavin_wick": {
+    "model": "MalliavinWickEML",
+    "malliavin": {
+      "malliavin_derivative_depth": 2,
+      "delta_d_D": 0,
+      "ou_operator_depth": 2,
+      "delta_d_L": 0,
+      "density_formula_depth": 2,
+      "chaos_decomposition_depth": 2,
+      "note": "Malliavin D = \u0394d=0 (EML-2\u2192EML-2 self-map on Wiener space)"
+    },
+    "wick_rotation": {
+      "minkowski_path_integral_depth": 3,
+      "euclidean_path_integral_depth": 1,
+      "delta_d_wick": -2,
+      "is_depth_reduction": true,
+      "measure_change": "Oscillatory measure e^{iS} \u2192 damping measure e^{-S}",
+      "note": "Wick rotation: EML-3 \u2192 EML-1 = \u0394d=-2 (depth REDUCTION, not increase)"
+    },
+    "feynman_kac": {
+      "pde_solution_depth": 3,
+      "stochastic_rep_depth": 2,
+      "delta_d_feynman_kac": -1,
+      "is_depth_reduction": true,
+      "existence_depth": "\u221e",
+      "formula_depth": 3,
+      "note": "Feynman-Kac: PDE(3) \u2192 stochastic rep(2) = \u0394d=-1 (reduction); existence=EML-\u221e"
+    },
+    "key_insight": "Malliavin=\u0394d=0 (self-map); Wick=\u0394d=-2 (reduction); Feynman-Kac=\u0394d=-1 (reduction)"
+  },
+  "eml_depth_summary": {
+    "delta_d_positive_2": "E[\u00b7] from rv: adds probability measure P (canonical \u0394d=2)",
+    "delta_d_positive_1": "It\u00f4 integral \u222bf dB: from EML-1 f",
+    "delta_d_zero": "Malliavin derivative D (self-map on Wiener chaos)",
+    "delta_d_negative": "Wick rotation (\u0394d=-2), Feynman-Kac (\u0394d=-1): depth reductions"
+  },
+  "key_theorem": "The EML Stochastic Calculus Theorem (S215): The expectation operator E[\u00b7] = \u222b dP is the canonical POSITIVE \u0394d=2 mechanism: random variable X (EML-0) \u2192 E[X] (EML-2): \u0394d=2 via probability measure P. Wick rotation and Feynman-Kac are NEGATIVE \u0394d operations (depth reductions). This reveals the BIDIRECTIONALITY of the \u0394d=2 measure theorem: adding a probability measure (E[\u00b7]) raises depth by 2; removing oscillation (Wick rotation) reduces depth by 2. The 'adding a measure' conjecture applies to both directions: \u00b12.",
+  "rabbit_hole_log": [
+    "E[\u00b7] = canonical \u0394d=+2: every expectation adds the probability measure P",
+    "Wick rotation = \u0394d=-2: removes oscillatory measure, replaces with damping \u2014 bidirectional!",
+    "Feynman-Kac = \u0394d=-1 reduction: stochastic representation is simpler than PDE"
+  ]
+}
