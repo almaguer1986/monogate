@@ -1,0 +1,36 @@
+{
+  "session": 834,
+  "title": "No-Inverse Lemma in Fluid Mechanics",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "NSNoInverseFluidsEML",
+    "analysis": {
+      "object": "T555: No-Inverse Lemma in Fluid Mechanics depth analysis",
+      "domains": {
+        "irreversibility": {
+          "description": "Mixing is irreversible; no inverse tropical morphism unmixes cream from coffee",
+          "depth": "EML-inf",
+          "reason": "No-inverse in fluids: mixing is the physical example of tropical no-inverse"
+        },
+        "turbulent_irreversible": {
+          "description": "Turbulent cascade is irreversible: energy flows large->small, never back",
+          "depth": "EML-inf",
+          "reason": "Energy cascade irreversibility is tropical no-inverse in fluid dynamics"
+        },
+        "viscous_dissipation": {
+          "description": "Viscous dissipation: EML-3 kinetic energy -> EML-2 heat; no inverse",
+          "depth": "EML-inf",
+          "reason": "Viscous dissipation is EML-3->EML-2 irreversible; thermodynamic no-inverse"
+        }
+      }
+    },
+    "distribution": {
+      "EML-inf": 3
+    },
+    "theorem": "T555: No-Inverse Lemma in Fluid Mechanics (S834)."
+  },
+  "key_theorem": "T555: No-Inverse Lemma in Fluid Mechanics (S834).",
+  "rabbit_hole_log": [
+    "T555: irreversibility depth confirmed"
+  ]
+}
