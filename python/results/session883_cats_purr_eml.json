@@ -1,0 +1,42 @@
+{
+  "session": 883,
+  "title": "Why Cats Purr - Self-Administered EML-3 Therapy",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "CatsPurrEML",
+    "analysis": {
+      "object": "T604: Why Cats Purr - Self-Administered EML-3 Therapy depth analysis",
+      "domains": {
+        "purr_frequency": {
+          "description": "Purring: 25-150 Hz oscillatory; EML-3",
+          "depth": "EML-3",
+          "reason": "Purr is EML-3: continuous oscillatory vocal fold vibration at therapeutic frequency"
+        },
+        "healing_eml1": {
+          "description": "Healing effect: exponential tissue repair acceleration; EML-1",
+          "depth": "EML-1",
+          "reason": "Vibration at 25-50 Hz promotes EML-1 exponential bone density and wound healing"
+        },
+        "dual_context": {
+          "description": "Cats purr when content AND when injured: self-administered EML-3 therapy",
+          "depth": "EML-3",
+          "reason": "Dual-context purring: EML-3 oscillation serves as both contentment signal and healing tool"
+        },
+        "self_therapy": {
+          "description": "Purring = self-administered depth-3 therapy: cat uses EML-3 to drive EML-1 healing",
+          "depth": "EML-3",
+          "reason": "Cat theorem: EML-3 oscillation (purr) drives EML-1 biological repair; natural depth-based medicine"
+        }
+      }
+    },
+    "distribution": {
+      "EML-3": 3,
+      "EML-1": 1
+    },
+    "theorem": "T604: Why Cats Purr - Self-Administered EML-3 Therapy (S883)."
+  },
+  "key_theorem": "T604: Why Cats Purr - Self-Administered EML-3 Therapy (S883).",
+  "rabbit_hole_log": [
+    "T604: purr_frequency depth confirmed"
+  ]
+}
