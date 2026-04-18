@@ -1,0 +1,384 @@
+{
+  "session": 183,
+  "title": "Music & Perception Deep III: Timbre, Emotion & EML-\u221e Strata",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "timbre_strata": {
+    "model": "TimbreStrataEML",
+    "instruments": {
+      "piano": {
+        "brightness": {
+          "centroid_Hz": 540.41,
+          "log_brightness": 1.1559,
+          "eml_depth": 2,
+          "note": "Brightness = log\u2082(centroid/ref) = EML-2"
+        },
+        "inharmonicity": {
+          "f0": 220.0,
+          "inharmonicity": 0.003033,
+          "log_inharmonicity": -5.7978,
+          "eml_depth": 2,
+          "note": "Inharmonicity = EML-2 (log deviation); perfect harmonic = EML-0"
+        }
+      },
+      "violin": {
+        "brightness": {
+          "centroid_Hz": 788.13,
+          "log_brightness": 1.4809,
+          "eml_depth": 2,
+          "note": "Brightness = log\u2082(centroid/ref) = EML-2"
+        },
+        "inharmonicity": {
+          "f0": 220.0,
+          "inharmonicity": 0.0,
+          "log_inharmonicity": -13.8155,
+          "eml_depth": 0,
+          "note": "Inharmonicity = EML-2 (log deviation); perfect harmonic = EML-0"
+        }
+      },
+      "bell": {
+        "brightness": {
+          "centroid_Hz": 514.77,
+          "log_brightness": 1.1177,
+          "eml_depth": 2,
+          "note": "Brightness = log\u2082(centroid/ref) = EML-2"
+        },
+        "inharmonicity": {
+          "f0": 220.0,
+          "inharmonicity": 0.125,
+          "log_inharmonicity": -2.0794,
+          "eml_depth": 2,
+          "note": "Inharmonicity = EML-2 (log deviation); perfect harmonic = EML-0"
+        }
+      }
+    },
+    "roughness_intervals": {
+      "unison": {
+        "f1": 440,
+        "f2": 440,
+        "f_beat": 0,
+        "critical_band": 113.5,
+        "beat_ratio": 0.0,
+        "dissonance": 0.0,
+        "beating_oscillation_sample": 1.0,
+        "eml_depth_cb": 2,
+        "eml_depth_beat": 0,
+        "eml_depth_beating": 3,
+        "note": "Critical band = EML-2; beat frequency = EML-0; beating oscillation = EML-3"
+      },
+      "minor2nd": {
+        "f1": 440,
+        "f2": 466,
+        "f_beat": 26,
+        "critical_band": 114.28,
+        "beat_ratio": 0.2275,
+        "dissonance": 0.18122,
+        "beating_oscillation_sample": -0.0628,
+        "eml_depth_cb": 2,
+        "eml_depth_beat": 0,
+        "eml_depth_beating": 3,
+        "note": "Critical band = EML-2; beat frequency = EML-0; beating oscillation = EML-3"
+      },
+      "major3rd": {
+        "f1": 440,
+        "f2": 554,
+        "f_beat": 114,
+        "critical_band": 117.06,
+        "beat_ratio": 0.9739,
+        "dissonance": 0.367752,
+        "beating_oscillation_sample": 0.6374,
+        "eml_depth_cb": 2,
+        "eml_depth_beat": 0,
+        "eml_depth_beating": 3,
+        "note": "Critical band = EML-2; beat frequency = EML-0; beating oscillation = EML-3"
+      },
+      "fifth": {
+        "f1": 440,
+        "f2": 660,
+        "f_beat": 220,
+        "critical_band": 120.69,
+        "beat_ratio": 1.8228,
+        "dissonance": 0.294513,
+        "beating_oscillation_sample": 0.309,
+        "eml_depth_cb": 2,
+        "eml_depth_beat": 0,
+        "eml_depth_beating": 3,
+        "note": "Critical band = EML-2; beat frequency = EML-0; beating oscillation = EML-3"
+      },
+      "octave": {
+        "f1": 440,
+        "f2": 880,
+        "f_beat": 440,
+        "critical_band": 129.17,
+        "beat_ratio": 3.4064,
+        "dissonance": 0.11296,
+        "beating_oscillation_sample": -0.809,
+        "eml_depth_cb": 2,
+        "eml_depth_beat": 0,
+        "eml_depth_beating": 3,
+        "note": "Critical band = EML-2; beat frequency = EML-0; beating oscillation = EML-3"
+      }
+    },
+    "eml_depth": {
+      "brightness": 2,
+      "inharmonicity": 2,
+      "critical_band": 2,
+      "beat_freq": 0,
+      "beating": 3
+    },
+    "key_insight": "Timbre: brightness=EML-2, inharmonicity=EML-2, beating=EML-3"
+  },
+  "emotional_peaks": {
+    "model": "EmotionalPeakEML",
+    "chills_frisson": {
+      "climax_ending": {
+        "tension_history": [
+          0.2,
+          0.4,
+          0.6,
+          0.8,
+          0.9,
+          0.95,
+          0.5,
+          0.1
+        ],
+        "peak_tension": 0.95,
+        "mean_tension": 0.5563,
+        "surprise_magnitude": 0.3937,
+        "expectation_approach": 0.018316,
+        "resolution_wave": 0.3276,
+        "eml_depth_approach": 1,
+        "eml_depth_peak": "\u221e",
+        "eml_depth_resolution": 3,
+        "depth_collapse": "EML-\u221e \u2192 EML-3 (frisson = depth collapse)"
+      },
+      "plateau_release": {
+        "tension_history": [
+          0.5,
+          0.55,
+          0.6,
+          0.55,
+          0.5,
+          0.3,
+          0.1
+        ],
+        "peak_tension": 0.6,
+        "mean_tension": 0.4429,
+        "surprise_magnitude": 0.1571,
+        "expectation_approach": 0.030197,
+        "resolution_wave": 0.8806,
+        "eml_depth_approach": 1,
+        "eml_depth_peak": "\u221e",
+        "eml_depth_resolution": 3,
+        "depth_collapse": "EML-\u221e \u2192 EML-3 (frisson = depth collapse)"
+      },
+      "double_peak": {
+        "tension_history": [
+          0.3,
+          0.7,
+          0.4,
+          0.8,
+          0.2
+        ],
+        "peak_tension": 0.8,
+        "mean_tension": 0.48,
+        "surprise_magnitude": 0.32,
+        "expectation_approach": 0.082085,
+        "resolution_wave": 0.5358,
+        "eml_depth_approach": 1,
+        "eml_depth_peak": "\u221e",
+        "eml_depth_resolution": 3,
+        "depth_collapse": "EML-\u221e \u2192 EML-3 (frisson = depth collapse)"
+      }
+    },
+    "tension_release": {
+      "0.5": {
+        "t": 0.5,
+        "rise_rate": 1.0,
+        "fall_rate": 2.0,
+        "tension": 0.3935,
+        "release": 0.465,
+        "eml_depth_tension": 1,
+        "eml_depth_release": 3,
+        "delta_d": 2,
+        "note": "Tension=EML-1, release=EML-3; \u0394d=2 (musical instance of asymmetry)"
+      },
+      "1.0": {
+        "t": 1.0,
+        "rise_rate": 1.0,
+        "fall_rate": 2.0,
+        "tension": 0.6321,
+        "release": -0.3083,
+        "eml_depth_tension": 1,
+        "eml_depth_release": 3,
+        "delta_d": 2,
+        "note": "Tension=EML-1, release=EML-3; \u0394d=2 (musical instance of asymmetry)"
+      },
+      "1.5": {
+        "t": 1.5,
+        "rise_rate": 1.0,
+        "fall_rate": 2.0,
+        "tension": 0.7769,
+        "release": -0.6312,
+        "eml_depth_tension": 1,
+        "eml_depth_release": 3,
+        "delta_d": 2,
+        "note": "Tension=EML-1, release=EML-3; \u0394d=2 (musical instance of asymmetry)"
+      },
+      "2.0": {
+        "t": 2.0,
+        "rise_rate": 1.0,
+        "fall_rate": 2.0,
+        "tension": 0.8647,
+        "release": -0.3587,
+        "eml_depth_tension": 1,
+        "eml_depth_release": 3,
+        "delta_d": 2,
+        "note": "Tension=EML-1, release=EML-3; \u0394d=2 (musical instance of asymmetry)"
+      },
+      "3.0": {
+        "t": 3.0,
+        "rise_rate": 1.0,
+        "fall_rate": 2.0,
+        "tension": 0.9502,
+        "release": 0.3904,
+        "eml_depth_tension": 1,
+        "eml_depth_release": 3,
+        "delta_d": 2,
+        "note": "Tension=EML-1, release=EML-3; \u0394d=2 (musical instance of asymmetry)"
+      }
+    },
+    "eml_depth": {
+      "expectation_approach": 1,
+      "emotional_peak": "\u221e",
+      "resolution_wave": 3,
+      "tension": 1,
+      "release": 3
+    },
+    "key_insight": "Musical peaks: buildup=EML-1, peak=EML-\u221e, resolution=EML-3 (depth collapse)"
+  },
+  "generative_composition": {
+    "model": "GenerativeCompositionEML",
+    "asymmetry_melody": {
+      "n_notes": 8,
+      "f0_Hz": 261.63,
+      "rising_notes_Hz": [
+        261.63,
+        296.47,
+        335.94,
+        380.67
+      ],
+      "falling_notes_Hz": [
+        261.63,
+        442.98,
+        549.06,
+        624.33
+      ],
+      "full_melody_Hz": [
+        261.63,
+        296.47,
+        335.94,
+        380.67,
+        624.33,
+        549.06,
+        442.98,
+        261.63
+      ],
+      "intervals_rising": [
+        1.1332,
+        1.1331,
+        1.1331
+      ],
+      "intervals_falling": [
+        1.6932,
+        1.2395,
+        1.1371
+      ],
+      "eml_depth_rising": 1,
+      "eml_depth_falling": 2,
+      "rule": "Tension (exp-spaced) = EML-1; Release (log-compressed) = EML-2"
+    },
+    "depth_transition_rhythm": {
+      "rhythm": [
+        {
+          "beat": 0,
+          "ioi": 0.5,
+          "eml_depth": 0
+        },
+        {
+          "beat": 1,
+          "ioi": 0.5,
+          "eml_depth": 0
+        },
+        {
+          "beat": 2,
+          "ioi": 0.3268,
+          "eml_depth": 3
+        },
+        {
+          "beat": 3,
+          "ioi": 0.5,
+          "eml_depth": 3
+        },
+        {
+          "beat": 4,
+          "ioi": 0.6732,
+          "eml_depth": 3
+        },
+        {
+          "beat": 5,
+          "ioi": 0.3268,
+          "eml_depth": 3
+        },
+        {
+          "beat": 6,
+          "ioi": 0.5,
+          "eml_depth": 0
+        },
+        {
+          "beat": 7,
+          "ioi": 0.5,
+          "eml_depth": 0
+        }
+      ],
+      "surprise_beat": 4,
+      "eml_depth_surprise": "\u221e",
+      "rule": "Isochronous=EML-0; syncopation=EML-3; missing beat=EML-\u221e"
+    },
+    "composition_rules": {
+      "tension_rising": "exp-spaced = EML-1",
+      "release_falling": "log-compressed = EML-2",
+      "rhythm_climax": "EML-3 syncopation",
+      "surprise_peak": "EML-\u221e (missing/unexpected beat)",
+      "resolution": "EML-0 (return to isochrony)"
+    },
+    "eml_depth": {
+      "rising_melody": 1,
+      "falling_melody": 2,
+      "syncopation": 3,
+      "surprise": "\u221e",
+      "isochronous": 0
+    },
+    "key_insight": "Asymmetry Theorem generates music: exp-tension=EML-1, log-release=EML-2"
+  },
+  "eml_depth_summary": {
+    "EML-0": "Beat frequency (|f2-f1|), isochronous rhythm, perfect harmonic (B=0)",
+    "EML-1": "Expectation buildup exp(-rt), rising tension melody (exp-spaced)",
+    "EML-2": "Brightness log\u2082(centroid), inharmonicity, critical band, release melody (log)",
+    "EML-3": "Beating oscillation, resolution wave cos, syncopated rhythm",
+    "EML-\u221e": "Emotional peak/frisson, surprise moment, missing beat"
+  },
+  "key_theorem": "The EML Musical Asymmetry Theorem: Musical timbre qualities map to EML strata: brightness = EML-2 (log centroid), inharmonicity = EML-2, beating = EML-3. Emotional peaks (frisson/chills) = EML-\u221e \u2192 EML-3 depth collapses: buildup = EML-1 (exponential approach), surprise = EML-\u221e, resolution = EML-3. The Asymmetry Theorem generates composition rules: tension uses exp-spaced intervals (EML-1); release uses log-compressed intervals (EML-2). Rhythm: isochrony = EML-0, syncopation = EML-3, surprise/missing beat = EML-\u221e. Musical structure follows the EML depth ladder: 0 (counting) \u2192 1 (exponential tension) \u2192 2 (log geometry) \u2192 3 (oscillation) \u2192 \u221e (feeling).",
+  "rabbit_hole_log": [
+    "Frisson = EML-\u221e \u2192 EML-3 collapse: same mechanism as sync collapse (S182)!",
+    "Tension/release \u0394d=2 (EML-1 to EML-3): not the unique \u0394d=1 but musical instance",
+    "Rising exp-melody = EML-1: same depth as expectation buildup, BCS gap, ISI",
+    "Critical band = EML-2: same depth class as running coupling, Fisher info, log N(\u03c3,T)",
+    "Isochronous rhythm = EML-0: simplest possible temporal structure",
+    "The Asymmetry Theorem literally writes music: exp=tension, log=release"
+  ],
+  "connections": {
+    "S173_music": "S173 basic timbre; S183 adds stratum classification and generative rules",
+    "S182_sync": "Frisson = EML-\u221e\u2192EML-3: same collapse type as synchronization!",
+    "S111_asym": "Rising melody=EML-1, falling=EML-2: Asymmetry Theorem in auditory form"
+  }
+}
