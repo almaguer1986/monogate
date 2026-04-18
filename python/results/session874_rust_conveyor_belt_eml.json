@@ -1,0 +1,49 @@
+{
+  "session": 874,
+  "title": "Rust on a Conveyor Belt",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "RustConveyorEML",
+    "analysis": {
+      "object": "T595: Rust on a Conveyor Belt depth analysis",
+      "domains": {
+        "surface_oxidation": {
+          "description": "Surface oxidation: EML-1 exponential pit initiation",
+          "depth": "EML-1",
+          "reason": "Corrosion initiation is EML-1: exponential increase in pit density with time"
+        },
+        "pit_depth_eml2": {
+          "description": "Pit depth measurement: logarithmic corrosion rate; EML-2",
+          "depth": "EML-2",
+          "reason": "Corrosion rate is EML-2: log-linear pit growth after initiation; standard inspection metric"
+        },
+        "fatigue_eml3": {
+          "description": "Fatigue cracking from oscillatory conveyor load: EML-3",
+          "depth": "EML-3",
+          "reason": "Belt fatigue is EML-3: oscillatory tensile stress from cyclic loading creates crack propagation"
+        },
+        "belt_failure_emlinf": {
+          "description": "Catastrophic belt failure: EML-inf; unpredictable final break",
+          "depth": "EML-inf",
+          "reason": "Belt failure is EML-inf: sudden categorification from EML-3 crack propagation to total rupture"
+        },
+        "replacement_decision": {
+          "description": "Replacement decision: EML-2 measurement (or EML-3 oscillation between safe/unsafe)",
+          "depth": "EML-2",
+          "reason": "Professional judgment: EML-2 measurement of pit depth and fatigue crack length vs safety threshold"
+        }
+      }
+    },
+    "distribution": {
+      "EML-1": 1,
+      "EML-2": 2,
+      "EML-3": 1,
+      "EML-inf": 1
+    },
+    "theorem": "T595: Rust on a Conveyor Belt (S874)."
+  },
+  "key_theorem": "T595: Rust on a Conveyor Belt (S874).",
+  "rabbit_hole_log": [
+    "T595: surface_oxidation depth confirmed"
+  ]
+}
