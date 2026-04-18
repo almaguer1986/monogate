@@ -1,0 +1,282 @@
+{
+  "session": 188,
+  "title": "Cellular Automata Deep II: CA Universality Strata & Emergence Taxonomy",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "wolfram_classes": {
+    "model": "WolframClassStrataEML",
+    "class_I": {
+      "attractor": "uniform_fixed_point",
+      "eml_depth_attractor": 0,
+      "eml_depth_convergence": 1,
+      "convergence_exp": {
+        "1": 0.606531,
+        "2": 0.367879,
+        "5": 0.082085,
+        "10": 0.006738
+      },
+      "entropy_limit": 0,
+      "eml_depth_entropy_approach": 2,
+      "examples": [
+        "Rule 0",
+        "Rule 255"
+      ],
+      "note": "Attractor=EML-0; convergence=EML-1; entropy descent=EML-2"
+    },
+    "class_II": {
+      "attractor_type": "periodic_orbit",
+      "eml_depth_period": 0,
+      "eml_depth_pattern": 3,
+      "lyapunov": 0,
+      "eml_depth_lyapunov": 0,
+      "autocorrelations": {
+        "2": {
+          "0": 1.0,
+          "1": -1.0,
+          "2": 1.0
+        },
+        "4": {
+          "0": 1.0,
+          "1": 0.0,
+          "2": -1.0,
+          "3": -0.0,
+          "4": 1.0
+        },
+        "8": {
+          "0": 1.0,
+          "1": 0.7071,
+          "2": 0.0,
+          "3": -0.7071,
+          "4": -1.0,
+          "5": -0.7071,
+          "6": -0.0,
+          "7": 0.7071,
+          "8": 1.0
+        }
+      },
+      "examples": [
+        "Rule 4",
+        "Rule 8",
+        "Conway blinker"
+      ],
+      "note": "Period=EML-0; pattern oscillation=EML-3; \u03bb=0 (EML-0)"
+    },
+    "class_III": {
+      "lyapunov_exponent": 0.69,
+      "eml_depth_lyapunov": 2,
+      "spatial_entropy": 0.6931,
+      "eml_depth_entropy": 2,
+      "correlation_length_xi": 3.0,
+      "two_point_correlation": {
+        "1": 0.716531,
+        "2": 0.513417,
+        "5": 0.188876,
+        "10": 0.035674
+      },
+      "eml_depth_correlation": 1,
+      "fractal_dim": 1.585,
+      "eml_depth_fractal": 2,
+      "kolmogorov_complexity": "\u221e (uncomputable)",
+      "eml_depth_kolmogorov": "\u221e",
+      "examples": [
+        "Rule 30",
+        "Rule 45"
+      ],
+      "note": "Chaos: \u03bb=EML-2; entropy=EML-2; correlation=EML-1; K-complexity=EML-\u221e"
+    },
+    "class_IV": {
+      "attractor_type": "complex_universal",
+      "halting_problem": "undecidable",
+      "eml_depth_halting": "\u221e",
+      "eml_depth_simulation": "\u221e",
+      "eml_depth_glider_pattern": 3,
+      "garden_of_eden": "EML-\u221e (existence undecidable for general CA)",
+      "examples": [
+        "Rule 110",
+        "Conway's Game of Life"
+      ],
+      "universal_computation": true,
+      "eml_depth_universality": "\u221e",
+      "note": "Universality=EML-\u221e; finite glider=EML-3; halting=EML-\u221e (undecidable)"
+    },
+    "eml_depth_map": {
+      "class_I_attractor": 0,
+      "class_I_convergence": 1,
+      "class_II_period": 0,
+      "class_II_pattern": 3,
+      "class_III_lyapunov": 2,
+      "class_III_correlation": 1,
+      "class_IV_glider": 3,
+      "class_IV_universal": "\u221e"
+    },
+    "key_insight": "CA classes: I=EML-0/1, II=EML-0/3, III=EML-2, IV=EML-3/\u221e"
+  },
+  "emergence_taxonomy": {
+    "model": "EmergenceTaxonomyEML",
+    "weak_emergence": {
+      "n_cells": 100,
+      "percolation_threshold": 0.593,
+      "density_depth": 0,
+      "mean_field_depth": 1,
+      "correlation_length_results": {
+        "0.3": {
+          "density": 0.3,
+          "xi": 30.36,
+          "eml_depth": 1
+        },
+        "0.5": {
+          "density": 0.5,
+          "xi": 46755.55,
+          "eml_depth": 1
+        },
+        "0.593": {
+          "density": 0.593,
+          "xi": "\u221e",
+          "eml_depth": "\u221e"
+        },
+        "0.7": {
+          "density": 0.7,
+          "xi": 11450.57,
+          "eml_depth": 1
+        }
+      },
+      "eml_depth_transition": "\u221e",
+      "weak_emergence_depth": 2,
+      "note": "Weak emergence: macro computable by EML-2 coarse-graining; transition=EML-\u221e"
+    },
+    "strong_emergence": {
+      "consciousness_depth": "\u221e",
+      "life_complexity_depth": "\u221e",
+      "kolmogorov_depth": "\u221e",
+      "logical_depth": "\u221e",
+      "effective_complexity": "\u221e (uncomputable)",
+      "eml_depth_strong_emergence": "\u221e",
+      "eml_depth_micro_rules": 0,
+      "asymmetry": "micro=EML-0; strong macro=EML-\u221e; \u0394d=\u221e",
+      "note": "Strong emergence: cannot be deduced from micro by any EML-finite procedure"
+    },
+    "kolmogorov_strata": {
+      "n": 100,
+      "uniform_K": 6.64,
+      "eml_depth_uniform": 0,
+      "periodic_K": 8.64,
+      "eml_depth_periodic": 0,
+      "chaotic_K_approx": 100,
+      "eml_depth_chaotic": "\u221e",
+      "universal_K": "constant (program size)",
+      "eml_depth_universal": "\u221e",
+      "note": "K-complexity: simple\u2192EML-0; random\u2192EML-\u221e; universal\u2192EML-\u221e"
+    },
+    "eml_depth": {
+      "micro_rules": 0,
+      "density": 0,
+      "mean_field": 1,
+      "correlation": 1,
+      "coarse_grain": 2,
+      "phase_transition": "\u221e",
+      "strong_emergence": "\u221e",
+      "kolmogorov": "\u221e"
+    },
+    "key_insight": "Weak=EML-2 (computable coarse-grain); strong=EML-\u221e (non-deducible)"
+  },
+  "universality_depth": {
+    "model": "UniversalityDepthEML",
+    "simulation_hierarchy": {
+      "finite_automaton": {
+        "depth": 0,
+        "reason": "bounded lookup, EML-0 transition"
+      },
+      "pushdown_automaton": {
+        "depth": 1,
+        "reason": "stack ~ exp(n) depth, EML-1"
+      },
+      "turing_machine": {
+        "depth": "\u221e",
+        "reason": "halting undecidable, Rice's theorem"
+      },
+      "universal_ca": {
+        "depth": "\u221e",
+        "reason": "simulates all TMs, EML-\u221e"
+      },
+      "eml_asymmetry": "simulating (EML-\u221e) vs being simulated (EML-finite): \u0394d=\u221e",
+      "note": "Simulation ladder: FA=EML-0, PDA=EML-1, TM=EML-\u221e"
+    },
+    "rice_theorem": {
+      "syntactic_properties": {
+        "rule_number": {
+          "decidable": true,
+          "depth": 0
+        },
+        "neighborhood_size": {
+          "decidable": true,
+          "depth": 0
+        },
+        "state_count": {
+          "decidable": true,
+          "depth": 0
+        }
+      },
+      "semantic_properties": {
+        "halting": {
+          "decidable": false,
+          "depth": "\u221e"
+        },
+        "fixed_point_existence": {
+          "decidable": false,
+          "depth": "\u221e"
+        },
+        "pattern_production": {
+          "decidable": false,
+          "depth": "\u221e"
+        },
+        "universality": {
+          "decidable": false,
+          "depth": "\u221e"
+        }
+      },
+      "syntax_depth": 0,
+      "semantics_depth": "\u221e",
+      "delta_d": "\u221e",
+      "note": "Syntax=EML-0; semantics=EML-\u221e: Rice's theorem = maximal Asymmetry Theorem instance"
+    },
+    "garden_of_eden": {
+      "moore_myhill_depth": 0,
+      "injectivity_depth": 0,
+      "goe_existence_finite_depth": 0,
+      "goe_existence_infinite_depth": "\u221e",
+      "goe_search_depth": "\u221e",
+      "eml_asymmetry": "existence check=EML-0; finding one=EML-\u221e: \u0394d=\u221e",
+      "note": "GoE: decidability=EML-0; construction=EML-\u221e; Asymmetry Theorem applies"
+    },
+    "eml_depth": {
+      "syntax": 0,
+      "decidable_properties": 0,
+      "pushdown": 1,
+      "semantics": "\u221e",
+      "universality": "\u221e",
+      "goe_existence": 0,
+      "goe_construction": "\u221e"
+    },
+    "key_insight": "Rice=maximal Asymmetry: syntax=EML-0, semantics=EML-\u221e, \u0394d=\u221e"
+  },
+  "eml_depth_summary": {
+    "EML-0": "Class I attractor, period, Lyapunov=0, rule syntax, GoE existence (finite), density",
+    "EML-1": "Convergence exp(-t/\u03c4), mean field, correlation decay, PDA stack depth",
+    "EML-2": "Lyapunov exponent (Class III), spatial entropy, fractal dimension, coarse-graining",
+    "EML-3": "Class II pattern oscillation, gliders/spaceships in Class IV",
+    "EML-\u221e": "Class IV universality, halting, Rice's theorem, Kolmogorov complexity, strong emergence"
+  },
+  "key_theorem": "The EML CA Universality Strata Theorem: Wolfram's four CA classes map precisely to EML depth strata: Class I (fixed point) = EML-0/EML-1 (attractor + convergence). Class II (periodic) = EML-0/EML-3 (period + oscillation). Class III (chaotic) = EML-2 (Lyapunov, entropy, fractal dimension). Class IV (universal) = EML-3/EML-\u221e (finite patterns + universality). Rice's theorem is the maximal Asymmetry Theorem instance: syntax (EML-0) vs semantics (EML-\u221e), \u0394d=\u221e. Emergence taxonomy: weak = EML-2 (computable coarse-grain); strong = EML-\u221e (non-deducible from micro). The Asymmetry Theorem applies to Garden of Eden: existence check = EML-0; construction = EML-\u221e; \u0394d=\u221e. Kolmogorov complexity: uniform/periodic = EML-0; random/universal = EML-\u221e.",
+  "rabbit_hole_log": [
+    "Class III = EML-2 (Lyapunov): same stratum as Fisher info, running coupling \u2014 universal EML-2",
+    "Rice's theorem = maximal Asymmetry Theorem: syntax=EML-0, semantics=EML-\u221e, \u0394d=\u221e",
+    "GoE: existence=EML-0, construction=EML-\u221e: another \u0394d=\u221e pair from Asymmetry Theorem",
+    "Weak emergence = EML-2: coarse-graining preserves depth (same as EML-2 skeleton theorem)",
+    "Strong emergence = EML-\u221e: same depth as consciousness, confinement proof, path integrals",
+    "PDA simulation = EML-1: stack depth grows exponentially \u2014 universal EML-1 again"
+  ],
+  "connections": {
+    "S178_automata": "S178: Class IV=EML-\u221e, Rule 30=EML-3; S188 adds emergence taxonomy + Rice",
+    "S111_asym": "Rice's theorem = strongest Asymmetry instance: \u0394d=\u221e between syntax and semantics",
+    "S184_cognition": "Strong emergence = EML-\u221e = qualia: same depth as explanatory gap"
+  }
+}
