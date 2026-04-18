@@ -1,0 +1,37 @@
+{
+  "session": 836,
+  "title": "Smoke Rings as Stable EML-3 Structures",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "NSSmokeRingsEML",
+    "analysis": {
+      "object": "T557: Smoke Rings as Stable EML-3 Structures depth analysis",
+      "domains": {
+        "toroidal_vortex": {
+          "description": "Smoke ring = toroidal vortex; topological protection prevents categorification",
+          "depth": "EML-3",
+          "reason": "Toroidal topology provides Hopf fibration protection: EML-3 structure stabilized"
+        },
+        "topology_shield": {
+          "description": "Topological charge Q=1 protects smoke ring from dissolving into EML-inf turbulence",
+          "depth": "EML-3",
+          "reason": "Topology is the shield: EML-3 stability from non-trivial pi_1 of torus"
+        },
+        "eventually_turbulent": {
+          "description": "Smoke ring eventually turbulizes at large Re; topology delays but cannot prevent EML-inf",
+          "depth": "EML-inf",
+          "reason": "At high Re, EML-inf turbulence overcomes topological protection"
+        }
+      }
+    },
+    "distribution": {
+      "EML-3": 2,
+      "EML-inf": 1
+    },
+    "theorem": "T557: Smoke Rings as Stable EML-3 Structures (S836)."
+  },
+  "key_theorem": "T557: Smoke Rings as Stable EML-3 Structures (S836).",
+  "rabbit_hole_log": [
+    "T557: toroidal_vortex depth confirmed"
+  ]
+}
