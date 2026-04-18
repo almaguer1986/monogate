@@ -1,0 +1,83 @@
+{
+  "session": 400,
+  "title": "RDL Limit Stability: P\u2260NP Boundary from EML Perspective",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "RDLPNPBOUNDARYELM",
+    "classification": {
+      "object": "P\u2260NP in the EML depth hierarchy",
+      "p_class": {
+        "depth": "EML-0: polynomial algorithms use algebraic gates (Boolean + polynomial)",
+        "examples": "Sorting (EML-0), matrix multiply (EML-0), primality (AKS, EML-0)",
+        "structure": "P = class of EML-0 decidable problems"
+      },
+      "np_class": {
+        "depth": "EML-\u221e: verification is EML-0 but solution search is non-constructive",
+        "examples": "SAT (EML-\u221e to solve), Factoring (EML-\u221e classically), TSP (EML-\u221e)",
+        "structure": "NP = class of problems with EML-0 verification but EML-\u221e search"
+      },
+      "np_complete": {
+        "depth": "EML-\u221e: Cook-Levin (SAT is NP-complete); search requires EML-\u221e",
+        "shadow": "shadow(SAT) = 0: Boolean structure is EML-0; only search is EML-\u221e",
+        "pattern": "NP-complete: EML-\u221e search, EML-0 shadow \u2014 same pattern as RH (EML-3)/BSD"
+      },
+      "p_neq_np": {
+        "eml_statement": "P\u2260NP: no EML-0 algorithm for NP-complete search",
+        "depth_prediction": "P\u2260NP \u2194 search requires depth jump from EML-0 to EML-\u221e",
+        "eml_stratum": "P\u2260NP is EML-2: real computational resource measurement (time/space)"
+      }
+    },
+    "oracle": {
+      "object": "Baker-Gill-Solovay oracle separation in EML framework",
+      "bgs_theorem": "There exist oracles A,B such that P^A=NP^A and P^B\u2260NP^B",
+      "eml_reading": {
+        "oracle_A": "Oracle A collapses depth: EML-\u221e search \u2192 EML-0 with oracle call",
+        "oracle_B": "Oracle B preserves depth: no shortcut; EML-\u221e remains EML-\u221e",
+        "implication": "P\u2260NP proof cannot be relativizable (cannot use oracle arguments)",
+        "depth_consequence": "Relativization barrier = barrier to depth-change proof techniques"
+      },
+      "natural_proof_barrier": {
+        "razborov_rudich": "Natural proofs cannot separate P from NP (pseudorandomness assumption)",
+        "eml_reading": "Natural proof = depth-0 argument; P\u2260NP requires trans-depth-0 argument",
+        "prediction": "P\u2260NP proof must use non-natural (EML-2 or higher) methods"
+      },
+      "algebraization_barrier": {
+        "theorem": "Arithmetic (NEXP vs coNEXP) proofs cannot be arithmetized to P vs NP",
+        "eml_reading": "Arithmetization = EML-depth lift; barriers prevent naive depth argument",
+        "eml_stratum": "All three barriers live in EML-2: real resource measurements"
+      }
+    },
+    "prediction": {
+      "object": "EML predictions and approach for P\u2260NP",
+      "prediction_1": "P\u2260NP is TRUE: EML-\u221e search is irreducibly harder than EML-0 verification",
+      "prediction_2": "No EML-0 proof exists (natural proofs barrier maps to depth-0 argument failure)",
+      "prediction_3": "EML-2 proof tools needed: real resource lower bounds (circuit complexity)",
+      "known_results": {
+        "circuit_lower_bounds": "Razborov-Smolensky: MOD_p circuits EML-0; exponential lower bounds for MOD_q (q\u2260p)",
+        "monotone_circuits": "Razborov 1985: monotone circuit lower bounds; EML-0 argument works here",
+        "general_circuits": "General circuit lower bounds: OPEN; EML-0 methods insufficient"
+      },
+      "eml_approach": {
+        "step1": "Classify NP-complete shadow: shadow(SAT)=0",
+        "step2": "Prove irreducibility of search: EML-\u221e search cannot be EML-0 reduced",
+        "step3": "P\u2260NP follows from depth irreducibility",
+        "gap": "Step 2 is the core of P\u2260NP; EML framework identifies it but doesn't solve it",
+        "eml_value": "EML correctly classifies P\u2260NP as EML-2 (resource, not analytic); clarifies that RH/BSD methods (EML-3) don't apply directly"
+      }
+    },
+    "verdicts": {
+      "classification": "P=EML-0; NP=EML-\u221e search; P\u2260NP is EML-2 resource question",
+      "oracle": "BGS barriers = depth-0 proof failures; algebraization = depth lifts",
+      "prediction": "P\u2260NP: TRUE (EML prediction); needs EML-2 (resource) proof tools",
+      "distinction": "P\u2260NP is EML-2 (not EML-3); RH methods don't apply; different domain"
+    }
+  },
+  "key_theorem": "P\u2260NP EML Boundary (S400, milestone session): P = EML-0 (algebraic decidability); NP = EML-\u221e search with EML-0 verification. P\u2260NP is EML-2: a real computational resource measurement (time/space bounds). Barriers: BGS oracle separation = depth-0 proof failure; natural proofs = depth-0 barrier; algebraization = naive depth-lift failure. All three barriers are EML-2 phenomena. EML prediction: P\u2260NP is TRUE (EML-\u221e search irreducible to EML-0); proof needs EML-2 tools (circuit lower bounds), NOT EML-3 (analytic) tools. Milestone: Session 400 \u2014 400 domains surveyed in the EML Atlas.",
+  "rabbit_hole_log": [
+    "P=EML-0; NP=EML-\u221e search; P\u2260NP is EML-2 (resource measurement)",
+    "Barriers: BGS, natural proofs, algebraization \u2014 all EML-2 depth-0 proof failures",
+    "EML prediction: P\u2260NP true; circuit complexity (EML-2) is the right tool",
+    "RH methods (EML-3) don't apply to P\u2260NP (EML-2): different strata",
+    "MILESTONE: Session 400 \u2014 400 domains in EML Atlas"
+  ]
+}
