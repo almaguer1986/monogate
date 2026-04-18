@@ -1,0 +1,37 @@
+{
+  "session": 879,
+  "title": "Umami as Depth-1 Synergistic Taste",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "UmamiTasteEML",
+    "analysis": {
+      "object": "T600: Umami as Depth-1 Synergistic Taste depth analysis",
+      "domains": {
+        "basic_tastes_eml0": {
+          "description": "Sweet, sour, salty, bitter: simple receptor activations; EML-0",
+          "depth": "EML-0",
+          "reason": "Basic tastes are EML-0: discrete receptor binding, simple threshold response"
+        },
+        "umami_eml1": {
+          "description": "Umami: synergistic amplification of other flavors; EML-1 exponential enhancement",
+          "depth": "EML-1",
+          "reason": "Umami is EML-1: glutamate+nucleotide synergy creates exponential flavor amplification"
+        },
+        "hardest_to_describe": {
+          "description": "Umami discovered last; hardest to describe; only taste above EML-0",
+          "depth": "EML-1",
+          "reason": "Umami uniqueness: EML-1 makes it indescribable in EML-0 terms; requires tasting to understand"
+        }
+      }
+    },
+    "distribution": {
+      "EML-0": 1,
+      "EML-1": 2
+    },
+    "theorem": "T600: Umami as Depth-1 Synergistic Taste (S879)."
+  },
+  "key_theorem": "T600: Umami as Depth-1 Synergistic Taste (S879).",
+  "rabbit_hole_log": [
+    "T600: basic_tastes_eml0 depth confirmed"
+  ]
+}
