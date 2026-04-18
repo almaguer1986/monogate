@@ -1,0 +1,127 @@
+{
+  "session": 135,
+  "title": "Cryptography Deep II: One-Way Functions, Lattices & Zero-Knowledge Proofs",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "rsa_cryptography": {
+    "model": "RSACryptography",
+    "bit_length": 2048,
+    "security_bits_vs_key_size": {
+      "512": 63.9,
+      "1024": 86.8,
+      "2048": 116.9,
+      "4096": 156.5
+    },
+    "gnfs_complexity": "L[1/3, 1.9229] \u2014 sub-exponential = EML-2",
+    "rsa_eml_depths": {
+      "key_generation_phi": "0 (arithmetic)",
+      "encryption_x^e_mod_n": "2 (modular exponentiation via fast exp = EML-2)",
+      "decryption_x^d_mod_n": "2 (same structure as encryption)",
+      "factoring_n": "\u221e (no known EML-finite algorithm)",
+      "discrete_log": "\u221e (same hardness class)"
+    },
+    "cryptographic_asymmetry": {
+      "encryption_eml_depth": 2,
+      "decryption_eml_depth": 2,
+      "factoring_eml_depth": "\u221e",
+      "asymmetry": "\u0394d(enc\u2192factor) = \u221e",
+      "interpretation": "Security = EML-\u221e barrier between EML-2 forward map and its inversion"
+    },
+    "eml_depth": {
+      "encryption_decryption": 2,
+      "gnfs_factoring": 2,
+      "factoring_hardness_barrier": "\u221e"
+    },
+    "key_insight": "RSA: forward (EML-2) vs inversion (EML-\u221e) \u2014 security = EML asymmetry"
+  },
+  "elliptic_curve_crypto": {
+    "model": "EllipticCurveCryptographyV2",
+    "curve_bits": 256,
+    "group_order_log2": 256,
+    "bsgs_log2_ops": 128.0,
+    "quantum_shor_log2_ops": 24.0,
+    "eml_depths": {
+      "point_addition": "0 (affine arithmetic)",
+      "scalar_multiplication_kP": "2 (double-and-add = O(log k) additions)",
+      "ECDLP_classical": "\u221e (no sub-exp classical algorithm)",
+      "ECDLP_quantum_Shor": "3 (QFT-based period finding = EML-3)"
+    },
+    "quantum_speedup": {
+      "classical": "O(2^128) = EML-1",
+      "quantum": "O(log^3 p) = O(256^3) = EML-3",
+      "depth_reduction": "EML-\u221e \u2192 EML-3 (Shor reduces ECDLP from \u221e to 3 on quantum hardware)"
+    },
+    "eml_depth": {
+      "point_addition": 0,
+      "scalar_multiplication": 2,
+      "classical_ECDLP": "\u221e",
+      "quantum_ECDLP": 3
+    },
+    "key_insight": "Shor's algorithm is an EML depth reduction: ECDLP goes from EML-\u221e to EML-3 on quantum hardware"
+  },
+  "lwe_and_zero_knowledge": {
+    "model": "LWEAndZeroKnowledge",
+    "lwe_parameters": {
+      "n": 256,
+      "q": 3329,
+      "sigma": 3.19
+    },
+    "lwe_hardness": {
+      "forward_computation_log2_ops": 19.7,
+      "lattice_attack_log2_ops": 74.75,
+      "forward_eml_depth": 2,
+      "inversion_eml_depth": "\u221e",
+      "security_assumption": "LWE \u2248 shortest vector problem (SVP) = EML-\u221e"
+    },
+    "regev_encryption_eml": {
+      "public_key_generation": "EML-2 (matrix mult + noise)",
+      "encryption": "EML-2 (linear combination + noise rounding)",
+      "decryption": "EML-0 (mod q rounding = threshold)",
+      "security_reduction": "EML-\u221e (breaks encryption \u2194 solves SVP)"
+    },
+    "schnorr_zk_proof": {
+      "commitment": "R = g^r: EML-1",
+      "challenge": "c = H(R||m): EML-1 (hash = EML-1 compression function)",
+      "response": "s = r + cx: EML-0 (modular linear)",
+      "verification": "g^s = R\u00b7y^c: EML-1",
+      "soundness": "Breaking = extracting x = EML-\u221e (discrete log)",
+      "zero_knowledge": "Simulator generates (R,c,s) without x: EML-1",
+      "protocol_eml_depth": 1
+    },
+    "hash_function_eml": {
+      "sha256_round_function": "EML-1 (bitwise + modular add \u2248 EML-1 mixing)",
+      "collision_resistance": "EML-\u221e (birthday: O(2^{n/2}) but no structural shortcut)",
+      "preimage_resistance": "EML-\u221e (full random oracle model)",
+      "hmac": "EML-1 (nested hash = EML-1 composition)"
+    },
+    "eml_depth": {
+      "lwe_forward": 2,
+      "lwe_inversion": "\u221e",
+      "schnorr_protocol": 1,
+      "hash_function": 1,
+      "svp_hardness": "\u221e"
+    },
+    "key_insight": "LWE encryption is EML-2 (forward); breaking it requires EML-\u221e (SVP). Schnorr ZK is EML-1 (commitment = exp). All cryptographic security = EML-\u221e barrier."
+  },
+  "eml_depth_summary": {
+    "EML-0": "Modular arithmetic, Euler totient, point addition on elliptic curves",
+    "EML-1": "Exponential (RSA encrypt/decrypt, g^r in Schnorr, hash function mixing)",
+    "EML-2": "GNFS complexity, scalar multiplication kP, LWE forward computation",
+    "EML-3": "Shor's algorithm (QFT-based ECDLP), quantum period finding",
+    "EML-\u221e": "Integer factoring, ECDLP (classical), SVP/LWE inversion, collision finding"
+  },
+  "key_theorem": "The EML Cryptographic Depth Theorem: Every secure cryptographic primitive is a one-way function from EML-2 to EML-2, whose inversion requires EML-\u221e. Quantum computers (Shor, Grover) perform EML depth reductions: Shor reduces ECDLP from EML-\u221e to EML-3; Grover reduces symmetric preimage from EML-\u221e to EML-1 (square root speedup). Post-quantum security requires hardness assumptions where quantum depth reduction cannot lower the barrier below EML-\u221e.",
+  "rabbit_hole_log": [
+    "RSA asymmetry: enc=EML-2, factor=EML-\u221e: this IS the EML Universal Asymmetry",
+    "Shor = EML depth reduction: QFT maps ECDLP from \u221e to 3",
+    "LWE: same asymmetry (forward=2, inversion=\u221e) but lattice-based = quantum-resistant",
+    "Schnorr ZK: commitment g^r = EML-1 (same as Boltzmann!)",
+    "Hash = EML-1 compression function: entropy mixing = same class as partition function",
+    "All cryptographic security = EML-\u221e barrier: security depth = \u221e"
+  ],
+  "connections": {
+    "S111_eml_asymmetry": "d(f^{-1}) = \u221e when d(f) = 2: RSA is canonical example",
+    "S70_quantum_random": "Shor uses QFT (EML-3) to reduce ECDLP (EML-\u221e)",
+    "S130_grand_synthesis_7": "Cryptographic hardness = EML-\u221e irreversibility",
+    "S125_crypto_deep": "Extends ECC depth analysis from Session 125"
+  }
+}
