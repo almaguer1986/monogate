@@ -1,0 +1,114 @@
+{
+  "session": 234,
+  "title": "Direction D: Signed \u0394d Theory",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "signed_theory": {
+    "model": "SignedDeltaDCatalog",
+    "positive": {
+      "\u0394d=+2": {
+        "examples": [
+          "Fourier inversion",
+          "E[\u00b7]",
+          "anomalous dim",
+          "Born rule",
+          "log-partition"
+        ],
+        "mechanism": "Adding exp+log pair = introducing integration measure",
+        "primitive_interpretation": "+2 real primitives added"
+      },
+      "\u0394d=+1": {
+        "examples": [
+          "Turing jump",
+          "Radon",
+          "rough paths",
+          "GL(1)\u2192GL(2)",
+          "Dolbeault"
+        ],
+        "mechanism": "Adding single exp primitive without log partner",
+        "primitive_interpretation": "+1 real primitive added"
+      },
+      "\u0394d=0": {
+        "examples": [
+          "Hilbert transform (L\u00b2\u2192L\u00b2)",
+          "Legendre duality",
+          "Malliavin D",
+          "Fourier\u2192Fourier",
+          "\u03a9^\u03a9 in topos"
+        ],
+        "mechanism": "Self-map: same primitive structure, same depth",
+        "primitive_interpretation": "0 new primitives"
+      }
+    },
+    "negative": {
+      "\u0394d=-1": {
+        "examples": [
+          "Feynman-Kac: PDE(EML-3) \u2192 stochastic rep(EML-2)",
+          "OPE: operator(EML-3) \u2192 coefficient(EML-2)",
+          "Conformal bootstrap solution: crossing eqs(EML-3) \u2192 spectrum(EML-2)",
+          "RG flow: UV theory(EML-\u221e) \u2192 IR fixed point(EML-2) [\u0394d=-\u221e then +0]"
+        ],
+        "mechanism": "Removing one oscillatory/exp layer via averaging/coarse-graining",
+        "primitive_interpretation": "-1 primitive removed"
+      },
+      "\u0394d=-2": {
+        "examples": [
+          "Wick rotation: oscillatory Z_M(EML-3) \u2192 Euclidean Z_E(EML-1)",
+          "Thermodynamic limit: partition function(EML-3) \u2192 free energy density(EML-1) ... wait",
+          "Decoherence reversal (theoretical): coherent(EML-2) \u2192 classical(EML-0)"
+        ],
+        "mechanism": "Removing exp+log pair: oscillatory \u2192 exponential decay",
+        "primitive_interpretation": "-2 primitives removed (both real primitives at once)",
+        "note": "Wick rotation: removes complex-exp phase \u2192 reduces EML-3\u2192EML-1 (\u0394d=-2)"
+      },
+      "\u0394d=-inf": {
+        "examples": [
+          "RG flow: UV divergence(EML-\u221e) \u2192 perturbative IR(EML-2)",
+          "AdS/CFT: bulk gravity(EML-\u221e) \u2192 boundary CFT(EML-3)",
+          "Feynman-Kac: existence(EML-\u221e) \u2192 solution formula(EML-3)",
+          "Turing patterns: reaction-diffusion(EML-\u221e) \u2192 stationary pattern(EML-3)"
+        ],
+        "mechanism": "Horizon descent: non-constructive \u2192 constructive finite shadow",
+        "primitive_interpretation": "Infinite tower collapses to finite number of primitives"
+      }
+    },
+    "algebra": {
+      "composition_rule": "\u0394d(T\u2082\u2218T\u2081) = \u0394d(T\u2081) + \u0394d(T\u2082)",
+      "inverse_rule": "\u0394d(T\u207b\u00b9) = -\u0394d(T) when T is invertible",
+      "examples": {
+        "Fourier_then_inverse": {
+          "T1": "Fourier transform (\u0394d=+2)",
+          "T2": "Fourier inverse (\u0394d=-2)",
+          "composition_delta_d": 0,
+          "result": "Identity (\u0394d=0) \u2713"
+        },
+        "Wick_then_inverse_Wick": {
+          "T1": "Wick rotation (\u0394d=-2)",
+          "T2": "Inverse Wick (analytic continuation, \u0394d=+2)",
+          "composition_delta_d": 0,
+          "result": "Identity (\u0394d=0) \u2713"
+        },
+        "quantize_then_dequantize": {
+          "T1": "Quantization \u222bD\u03c6 (\u0394d=+2)",
+          "T2": "Classical limit \u210f\u21920 (\u0394d=-2)",
+          "composition_delta_d": 0,
+          "result": "Classical theory recovered (\u0394d=0) \u2713"
+        },
+        "encode_then_decode": {
+          "T1": "Fourier encode (\u0394d=+2)",
+          "T2": "Shannon entropy H (\u0394d=0 from EML-2 input)",
+          "composition_delta_d": 2,
+          "result": "EML-2 \u2192 EML-2 (entropy of Fourier spectrum, \u0394d=0+2=2)"
+        }
+      },
+      "group_structure": "Signed \u0394d forms a group under composition: (Z, +)"
+    },
+    "complete_set": "\u0394d \u2208 {0, \u00b11, \u00b12, \u00b1\u221e}",
+    "key_insight": "Signed \u0394d forms (Z\u222a{\u00b1\u221e}, +); Fourier and Wick are mutual inverses"
+  },
+  "key_theorem": "The EML Signed \u0394d Theorem (S234, Direction D): \u0394d is a signed quantity: \u0394d \u2208 {0, \u00b11, \u00b12, \u00b1\u221e}. Positive \u0394d: adds primitives (depth increase). Negative \u0394d: removes primitives (depth reduction). Composition rule: \u0394d(T\u2082\u2218T\u2081) = \u0394d(T\u2081) + \u0394d(T\u2082). Inverse rule: \u0394d(T\u207b\u00b9) = -\u0394d(T). Fourier transform (\u0394d=+2) and Fourier inverse (\u0394d=-2) are mutual inverses. Wick rotation (\u0394d=-2) and analytic continuation (\u0394d=+2) are mutual inverses. Quantization (\u0394d=+2) and classical limit (\u0394d=-2) are mutual inverses. The signed \u0394d forms the integers Z \u222a {\u00b1\u221e} under composition. The Asymmetry Theorem restricted to POSITIVE operations gives {0,1,2,\u221e}.",
+  "rabbit_hole_log": [
+    "Fourier=\u0394d+2, inverse=\u0394d-2: mutual inverses in the signed \u0394d group",
+    "Wick rotation: \u0394d=-2 precisely; removes complex exp layer to get real exp",
+    "\u0394d composition: (T\u2082\u2218T\u2081) adds \u0394d values \u2014 signed integer arithmetic"
+  ]
+}
