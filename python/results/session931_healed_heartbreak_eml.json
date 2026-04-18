@@ -1,0 +1,37 @@
+{
+  "session": 931,
+  "title": "Mathematics of a Heartbreak That Heals",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "HealedHeartbreakEML",
+    "analysis": {
+      "object": "T652: Mathematics of a Heartbreak That Heals depth analysis",
+      "domains": {
+        "heartbreak_eml3": {
+          "description": "Heartbreak: EML-3 oscillation between grief and memory (T353)",
+          "depth": "EML-3",
+          "reason": "Heartbreak is EML-3: oscillating between loss and remembrance; temporal cycling"
+        },
+        "healing_categorification": {
+          "description": "Healing: not depth reduction but Deltad=inf categorification; integration into larger self",
+          "depth": "EML-inf",
+          "reason": "Healing is EML-inf: not forgetting (depth reduction) but integrating (categorification into expanded self)"
+        },
+        "not_same_person": {
+          "description": "I am not the same person I was = true; you categorified; larger self contains the loss",
+          "depth": "EML-inf",
+          "reason": "Healed heartbreak theorem: healing = TYPE3 event; the person who heals is genuinely not the same person"
+        }
+      }
+    },
+    "distribution": {
+      "EML-3": 1,
+      "EML-inf": 2
+    },
+    "theorem": "T652: Mathematics of a Heartbreak That Heals (S931)."
+  },
+  "key_theorem": "T652: Mathematics of a Heartbreak That Heals (S931).",
+  "rabbit_hole_log": [
+    "T652: heartbreak_eml3 depth confirmed"
+  ]
+}
