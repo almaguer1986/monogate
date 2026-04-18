@@ -1,0 +1,44 @@
+{
+  "session": 853,
+  "title": "Sandcastle Structural Failure Depth",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "SandcastleFailureEML",
+    "analysis": {
+      "object": "T574: Sandcastle Structural Failure Depth depth analysis",
+      "domains": {
+        "dry_sand": {
+          "description": "Dry sand: EML-0 discrete grains; no cohesion",
+          "depth": "EML-0",
+          "reason": "Dry sand is EML-0: independent particles with no cooperative structure"
+        },
+        "water_cohesion": {
+          "description": "Water bridges between grains: exponential cohesion increase with moisture",
+          "depth": "EML-1",
+          "reason": "Capillary cohesion is EML-1: exponential increase with water film thickness"
+        },
+        "optimal_measurement": {
+          "description": "Optimal water content is EML-2 measurement problem: Laplace pressure balance",
+          "depth": "EML-2",
+          "reason": "Optimal sand is EML-2: measurement of capillary vs gravitational force"
+        },
+        "wave_failure": {
+          "description": "Wave impact: EML-3 oscillatory stress -> catastrophic EML-inf structural failure",
+          "depth": "EML-inf",
+          "reason": "Sandcastle failure under waves is EML-inf: oscillatory stress exceeds cohesion threshold"
+        }
+      }
+    },
+    "distribution": {
+      "EML-0": 1,
+      "EML-1": 1,
+      "EML-2": 1,
+      "EML-inf": 1
+    },
+    "theorem": "T574: Sandcastle Structural Failure Depth (S853)."
+  },
+  "key_theorem": "T574: Sandcastle Structural Failure Depth (S853).",
+  "rabbit_hole_log": [
+    "T574: dry_sand depth confirmed"
+  ]
+}
