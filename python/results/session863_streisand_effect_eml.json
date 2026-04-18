@@ -1,0 +1,38 @@
+{
+  "session": 863,
+  "title": "Streisand Effect as Depth Inversion",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "StreisandEffectEML",
+    "analysis": {
+      "object": "T584: Streisand Effect as Depth Inversion depth analysis",
+      "domains": {
+        "suppression_eml2": {
+          "description": "Suppression attempt: EML-2 measurement (identifying what to suppress)",
+          "depth": "EML-2",
+          "reason": "Suppression is EML-2: requires identifying, measuring, targeting the information"
+        },
+        "triggers_eml1": {
+          "description": "Suppression attempt creates EML-1 exponential growth: Streisand effect",
+          "depth": "EML-1",
+          "reason": "Depth inversion: EML-2 operation triggers EML-1 exponential spread"
+        },
+        "depth_cascade": {
+          "description": "Every information control attempt risks depth cascade: EML-2 -> EML-1 -> EML-inf spread",
+          "depth": "EML-inf",
+          "reason": "Depth inversion theorem: attempts to reduce information depth increase it exponentially"
+        }
+      }
+    },
+    "distribution": {
+      "EML-2": 1,
+      "EML-1": 1,
+      "EML-inf": 1
+    },
+    "theorem": "T584: Streisand Effect as Depth Inversion (S863)."
+  },
+  "key_theorem": "T584: Streisand Effect as Depth Inversion (S863).",
+  "rabbit_hole_log": [
+    "T584: suppression_eml2 depth confirmed"
+  ]
+}
