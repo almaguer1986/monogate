@@ -1,0 +1,159 @@
+{
+  "session": 166,
+  "title": "Protein Folding: EML Depth of the Sequence-Structure Map",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "energy_landscape": {
+    "model": "EnergyLandscape",
+    "n_residues": 100,
+    "levinthal_paradox": {
+      "n_residues": 100,
+      "log10_conformations": 143.14,
+      "conformations_approx": "10^143",
+      "eml_depth_count": 1,
+      "levinthal_paradox": "EML-\u221e (how folding is fast despite EML-1 search space)",
+      "resolution": "Energy funnel guides search: EML-\u221e \u2192 EML-2 depth reduction"
+    },
+    "funnel_G_vs_Q": {
+      "0.0": -109.8612,
+      "0.2": -127.889,
+      "0.5": -154.9306,
+      "0.8": -181.9722,
+      "1.0": -200.0
+    },
+    "folding_temperature": 1.8205,
+    "cooperativity": {
+      "cooperativity_width": 0.01,
+      "two_state_ratio": 1.0,
+      "eml_depth_width": 0,
+      "eml_depth_transition": "\u221e",
+      "note": "Width = EML-0; the transition itself = EML-\u221e"
+    },
+    "eml_depth": {
+      "conformation_count": 1,
+      "funnel_free_energy": 2,
+      "folding_temperature": 2,
+      "folding_transition": "\u221e"
+    },
+    "key_insight": "Conformation count = EML-1; funnel G(Q) = EML-2; folding transition = EML-\u221e"
+  },
+  "secondary_structure": {
+    "model": "SecondaryStructure",
+    "zimm_bragg_helix_fraction": {
+      "0.5": {
+        "s_propagation": 0.5,
+        "sigma_cooperativity": 0.001,
+        "n_residues": 20.0,
+        "theta_H_helix_fraction": 0.001988,
+        "eml_depth_theta": 2,
+        "eml_depth_sigma": 1,
+        "transition_at_s1": "EML-\u221e (sigma\u21920: sharp transition)"
+      },
+      "1.0": {
+        "s_propagation": 1.0,
+        "sigma_cooperativity": 0.001,
+        "n_residues": 20.0,
+        "theta_H_helix_fraction": 0.5,
+        "eml_depth_theta": 2,
+        "eml_depth_sigma": 1,
+        "transition_at_s1": "EML-\u221e (sigma\u21920: sharp transition)"
+      },
+      "1.5": {
+        "s_propagation": 1.5,
+        "sigma_cooperativity": 0.001,
+        "n_residues": 20.0,
+        "theta_H_helix_fraction": 0.994106,
+        "eml_depth_theta": 2,
+        "eml_depth_sigma": 1,
+        "transition_at_s1": "EML-\u221e (sigma\u21920: sharp transition)"
+      },
+      "2.0": {
+        "s_propagation": 2.0,
+        "sigma_cooperativity": 0.001,
+        "n_residues": 20.0,
+        "theta_H_helix_fraction": 0.998012,
+        "eml_depth_theta": 2,
+        "eml_depth_sigma": 1,
+        "transition_at_s1": "EML-\u221e (sigma\u21920: sharp transition)"
+      }
+    },
+    "hydrophobic_energy": {
+      "100": 2500.0,
+      "500": 12500.0,
+      "1000": 25000.0,
+      "5000": 125000.0
+    },
+    "ramachandran": {
+      "alpha_helix": {
+        "phi": -60,
+        "psi": -40,
+        "eml_depth": 3
+      },
+      "beta_sheet": {
+        "phi": -120,
+        "psi": 130,
+        "eml_depth": 3
+      },
+      "boltzmann_allowed_fraction": 0.3679,
+      "eml_depth_angles": 3,
+      "eml_depth_allowed_region": 1
+    },
+    "eml_depth": {
+      "zimm_bragg": 2,
+      "sigma_cooperativity": 1,
+      "helix_transition": "\u221e",
+      "ramachandran_angles": 3
+    },
+    "key_insight": "Helix-coil = EML-2; nucleation \u03c3 = EML-1; sharp transition = EML-\u221e"
+  },
+  "alphafold": {
+    "model": "AlphaFoldEML",
+    "evoformer": {
+      "msa_attention": "EML-1 (softmax row/column attention)",
+      "triangular_update": "EML-0 (outer product + gating)",
+      "recycling_n": 3,
+      "eml_depth_computation": 1,
+      "eml_depth_accuracy": "\u221e",
+      "note": "AlphaFold2 computes at EML-1; why it works = EML-\u221e"
+    },
+    "plddt_classes": {
+      "30": "very low",
+      "60": "low (EML-0 threshold)",
+      "75": "confident (EML-0 threshold)",
+      "95": "very high (EML-0 threshold)"
+    },
+    "sequence_structure_map": {
+      "exhaustive_search_eml": "\u221e",
+      "alphafold2_computation_eml": 1,
+      "prediction_accuracy": "EML-\u221e (theoretically unjustified, empirically near-perfect)",
+      "key_reduction": "EML-\u221e problem \u2192 EML-1 approximate solution (remarkable!)"
+    },
+    "eml_depth": {
+      "evoformer_compute": 1,
+      "plddt_threshold": 0,
+      "prediction_accuracy": "\u221e",
+      "sequence_structure_map": "\u221e"
+    },
+    "key_insight": "AlphaFold2 solves EML-\u221e folding problem with EML-1 computation"
+  },
+  "eml_depth_summary": {
+    "EML-0": "Cooperativity width 1/N, hydrophobic linear energy, pLDDT thresholds",
+    "EML-1": "Conformation count 3^{3N}, nucleation parameter \u03c3, AlphaFold attention",
+    "EML-2": "Funnel free energy G(Q), folding temperature T_f, helix-coil \u03b8_H",
+    "EML-3": "Ramachandran angles (\u03c6,\u03c8), backbone torsion coordinates",
+    "EML-\u221e": "Levinthal paradox, folding transition, native state uniqueness, AlphaFold accuracy"
+  },
+  "key_theorem": "The EML Protein Folding Theorem: The sequence-structure mapping is EML-\u221e: Levinthal's paradox shows exhaustive conformational search is EML-1 (exponentially large). The energy funnel is EML-2 (free energy landscape with gradient). The folding transition is EML-\u221e (first-order-like phase transition). AlphaFold2 achieves the extraordinary: it solves an EML-\u221e problem using EML-1 computation (attention-based inference). This may be the most practically consequential EML-\u221e \u2192 EML-1 depth reduction.",
+  "rabbit_hole_log": [
+    "3^{3N} conformations = EML-1 (exponential): same class as BCS, Kondo, instantons",
+    "Energy funnel G(Q) = EML-2: free energy as function of reaction coordinate",
+    "Helix nucleation \u03c3 = EML-1: small because \u0394G_nuc involves exp(-cost/kT)",
+    "AlphaFold EvoFormer = EML-1: softmax attention at core",
+    "Folding transition = EML-\u221e: same as liquid-gas phase transition",
+    "AlphaFold accuracy = EML-\u221e: no theoretical explanation for why it works so well"
+  ],
+  "connections": {
+    "S57_stat_mech": "Partition function = EML-1; protein conformation count = EML-1: same",
+    "S162_deep_learning": "AlphaFold = transformer = attention = EML-1 (confirmed here)",
+    "S165_soc": "Folding = rapid search on funnel; SOC = self-organization: both find EML-\u221e attractor quickly"
+  }
+}
