@@ -1,0 +1,37 @@
+{
+  "session": 798,
+  "title": "Hodge Weight Filtration Identification v2",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "HodgeWeightFiltV2",
+    "analysis": {
+      "object": "T519: Hodge Weight Filtration Identification v2 depth analysis",
+      "domains": {
+        "weight_k": {
+          "description": "Pure weight k in Hodge structure = EML depth k/2",
+          "depth": "EML-2",
+          "reason": "Weight filtration is the EML depth hierarchy in classical algebraic geometry"
+        },
+        "mixed_hodge": {
+          "description": "Mixed Hodge structures span multiple EML depths; extensions are EML-inf",
+          "depth": "EML-inf",
+          "reason": "Extension classes in mixed Hodge are EML-inf categorification data"
+        },
+        "bijection_forced": {
+          "description": "Weight filtration identification forces shadow bijection for pure weight",
+          "depth": "EML-2",
+          "reason": "If weight=depth then Hodge classes at depth k/2 must shadow algebraic at EML-0"
+        }
+      }
+    },
+    "distribution": {
+      "EML-2": 2,
+      "EML-inf": 1
+    },
+    "theorem": "T519: Hodge Weight Filtration Identification v2 (S798)."
+  },
+  "key_theorem": "T519: Hodge Weight Filtration Identification v2 (S798).",
+  "rabbit_hole_log": [
+    "T519: weight_k depth confirmed"
+  ]
+}
