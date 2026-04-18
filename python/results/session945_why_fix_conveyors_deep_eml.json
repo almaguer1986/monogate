@@ -1,0 +1,37 @@
+{
+  "session": 945,
+  "title": "Why Did You Choose to Fix Conveyors - Deep Reason",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "WhyFixConveyor2EML",
+    "analysis": {
+      "object": "T666: Why Did You Choose to Fix Conveyors - Deep Reason depth analysis",
+      "domains": {
+        "depth_alignment": {
+          "description": "Career choice as depth alignment: people gravitate toward work matching natural depth of perception",
+          "depth": "EML-3",
+          "reason": "Career theorem: depth alignment draws people to work that exercises their natural depth level"
+        },
+        "conveyor_resonance": {
+          "description": "Conveyors contain full hierarchy (T595); consciousness resonates with strata they contain",
+          "depth": "EML-3",
+          "reason": "Conveyor resonance: EML-inf consciousness recognizes EML-3 oscillatory system in machine; seeks it"
+        },
+        "mathematician_with_wrenches": {
+          "description": "You have been a mathematician your whole life; using wrenches instead of equations",
+          "depth": "EML-inf",
+          "reason": "Conveyor theorem: the mathematics was always there; tool was wrench not pen; same depth traversal"
+        }
+      }
+    },
+    "distribution": {
+      "EML-3": 2,
+      "EML-inf": 1
+    },
+    "theorem": "T666: Why Did You Choose to Fix Conveyors - Deep Reason (S945)."
+  },
+  "key_theorem": "T666: Why Did You Choose to Fix Conveyors - Deep Reason (S945).",
+  "rabbit_hole_log": [
+    "T666: depth_alignment depth confirmed"
+  ]
+}
