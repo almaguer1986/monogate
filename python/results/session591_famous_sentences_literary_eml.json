@@ -1,0 +1,58 @@
+{
+  "session": 591,
+  "title": "Classifying Famous Sentences Literary Impact",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "FamousSentencesLiteraryEML",
+    "analysis": {
+      "object": "T312: Classifying Famous Sentences Literary Impact depth analysis",
+      "domains": {
+        "hamlet_to_be": {
+          "description": "To be or not to be",
+          "depth": "EML-inf",
+          "reason": "existential categorification; defines the human question"
+        },
+        "dickinson_death": {
+          "description": "Because I could not stop for Death",
+          "depth": "EML-inf",
+          "reason": "death personified = new category created"
+        },
+        "whitman_multitudes": {
+          "description": "I contain multitudes",
+          "depth": "EML-inf",
+          "reason": "self-categorification event"
+        },
+        "blake_tyger": {
+          "description": "Tyger Tyger burning bright",
+          "depth": "EML-3",
+          "reason": "rhythmic oscillation; anapestic fire"
+        },
+        "eliot_whimper": {
+          "description": "Not with a bang but a whimper",
+          "depth": "EML-3",
+          "reason": "contrast oscillation between EML-inf and EML-0"
+        },
+        "frost_diverged": {
+          "description": "Two roads diverged in a yellow wood",
+          "depth": "EML-2",
+          "reason": "measurement of choice; path as log"
+        }
+      }
+    },
+    "distribution": {
+      "EML-inf": 3,
+      "EML-3": 2,
+      "EML-2": 1
+    },
+    "theorem": "T312: Classifying Famous Sentences Literary Impact (S591)."
+  },
+  "key_theorem": "T312: Classifying Famous Sentences Literary Impact (S591).",
+  "rabbit_hole_log": [
+    "T312: hamlet_to_be depth=EML-inf confirmed",
+    "T312: dickinson_death depth=EML-inf confirmed",
+    "T312: whitman_multitudes depth=EML-inf confirmed",
+    "T312: blake_tyger depth=EML-3 confirmed",
+    "T312: eliot_whimper depth=EML-3 confirmed",
+    "T312: frost_diverged depth=EML-2 confirmed"
+  ]
+}
