@@ -1,0 +1,372 @@
+{
+  "session": 121,
+  "title": "Consciousness & Cognitive Science: EML Models of Attention, Insight & Qualia",
+  "key_theorem": {
+    "theorem": "EML Consciousness Stratification Theorem",
+    "statement": "Global Workspace broadcast competition is EML-1 (Boltzmann softmax). Predictive coding free energy F = \u00bd\u03b5\u00b2/\u03c3\u00b2 + \u00bdln(2\u03c0\u03c3\u00b2) is EML-2. Integrated Information \u03a6 = MI across bipartition is EML-2. Ignition threshold is EML-\u221e (step-function discontinuity). Gamma reverberation is EML-3. Insight is an EML-\u221e\u2192EML-3 transition (impasse\u2192aha\u2192solution). Qualia are EML-\u221e: the explanatory gap is a genuine EML-\u221e barrier \u2014 no EML-finite formula maps neural activity to subjective experience."
+  },
+  "global_workspace": {
+    "broadcast": [
+      {
+        "activations": [
+          2.0,
+          1.0,
+          0.5,
+          0.3,
+          0.1,
+          0.0
+        ],
+        "broadcast_probs": [
+          0.4858,
+          0.1787,
+          0.1084,
+          0.0887,
+          0.0727,
+          0.0657
+        ],
+        "winner": 0,
+        "competition_entropy_nats": 1.4837,
+        "eml": 1,
+        "reason": "Workspace competition = softmax Boltzmann over processor activations: EML-1."
+      },
+      {
+        "activations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "broadcast_probs": [
+          0.1667,
+          0.1667,
+          0.1667,
+          0.1667,
+          0.1667,
+          0.1667
+        ],
+        "winner": 0,
+        "competition_entropy_nats": 1.7918,
+        "eml": 1,
+        "reason": "Workspace competition = softmax Boltzmann over processor activations: EML-1."
+      }
+    ],
+    "ignition": [
+      {
+        "activation": 0.5,
+        "theta": 2.0,
+        "conscious": false,
+        "eml_subthreshold": 0,
+        "eml_suprathreshold": 1,
+        "eml_threshold_itself": Infinity,
+        "reason": "Ignition threshold step function at \u03b8: discontinuity = EML-\u221e transition."
+      },
+      {
+        "activation": 1.5,
+        "theta": 2.0,
+        "conscious": false,
+        "eml_subthreshold": 0,
+        "eml_suprathreshold": 1,
+        "eml_threshold_itself": Infinity,
+        "reason": "Ignition threshold step function at \u03b8: discontinuity = EML-\u221e transition."
+      },
+      {
+        "activation": 2.0,
+        "theta": 2.0,
+        "conscious": true,
+        "eml_subthreshold": 0,
+        "eml_suprathreshold": 1,
+        "eml_threshold_itself": Infinity,
+        "reason": "Ignition threshold step function at \u03b8: discontinuity = EML-\u221e transition."
+      },
+      {
+        "activation": 2.5,
+        "theta": 2.0,
+        "conscious": true,
+        "eml_subthreshold": 0,
+        "eml_suprathreshold": 1,
+        "eml_threshold_itself": Infinity,
+        "reason": "Ignition threshold step function at \u03b8: discontinuity = EML-\u221e transition."
+      },
+      {
+        "activation": 3.0,
+        "theta": 2.0,
+        "conscious": true,
+        "eml_subthreshold": 0,
+        "eml_suprathreshold": 1,
+        "eml_threshold_itself": Infinity,
+        "reason": "Ignition threshold step function at \u03b8: discontinuity = EML-\u221e transition."
+      }
+    ],
+    "reverberation": [
+      {
+        "t_ms": 0,
+        "omega_Hz": 40.0,
+        "tau_ms": 200.0,
+        "signal": 1.0,
+        "eml": 3,
+        "reason": "exp(-t/\u03c4)\u00b7cos(\u03c9t): EML-1 decay \u00d7 EML-3 oscillation = EML-3 (gamma reverberation)."
+      },
+      {
+        "t_ms": 10,
+        "omega_Hz": 40.0,
+        "tau_ms": 200.0,
+        "signal": -0.769561,
+        "eml": 3,
+        "reason": "exp(-t/\u03c4)\u00b7cos(\u03c9t): EML-1 decay \u00d7 EML-3 oscillation = EML-3 (gamma reverberation)."
+      },
+      {
+        "t_ms": 25,
+        "omega_Hz": 40.0,
+        "tau_ms": 200.0,
+        "signal": 0.882497,
+        "eml": 3,
+        "reason": "exp(-t/\u03c4)\u00b7cos(\u03c9t): EML-1 decay \u00d7 EML-3 oscillation = EML-3 (gamma reverberation)."
+      },
+      {
+        "t_ms": 50,
+        "omega_Hz": 40.0,
+        "tau_ms": 200.0,
+        "signal": 0.778801,
+        "eml": 3,
+        "reason": "exp(-t/\u03c4)\u00b7cos(\u03c9t): EML-1 decay \u00d7 EML-3 oscillation = EML-3 (gamma reverberation)."
+      },
+      {
+        "t_ms": 100,
+        "omega_Hz": 40.0,
+        "tau_ms": 200.0,
+        "signal": 0.606531,
+        "eml": 3,
+        "reason": "exp(-t/\u03c4)\u00b7cos(\u03c9t): EML-1 decay \u00d7 EML-3 oscillation = EML-3 (gamma reverberation)."
+      },
+      {
+        "t_ms": 200,
+        "omega_Hz": 40.0,
+        "tau_ms": 200.0,
+        "signal": 0.367879,
+        "eml": 3,
+        "reason": "exp(-t/\u03c4)\u00b7cos(\u03c9t): EML-1 decay \u00d7 EML-3 oscillation = EML-3 (gamma reverberation)."
+      }
+    ],
+    "eml_competition": 1,
+    "eml_ignition_threshold": "\u221e",
+    "eml_reverberation": 3,
+    "eml_access_consciousness": 1,
+    "eml_phenomenal_consciousness": "\u221e"
+  },
+  "predictive_coding": {
+    "free_energy": [
+      {
+        "obs": 1.0,
+        "pred": 0.5,
+        "sigma": 0.3,
+        "prediction_error": 0.5,
+        "free_energy": 1.1039,
+        "eml": 2,
+        "reason": "F = \u00bd\u03b5\u00b2/\u03c3\u00b2 + \u00bdln(2\u03c0\u03c3\u00b2): quadratic + log = EML-2 (Gaussian variational free energy)."
+      },
+      {
+        "obs": 2.0,
+        "pred": 1.8,
+        "sigma": 0.5,
+        "prediction_error": 0.2,
+        "free_energy": 0.3058,
+        "eml": 2,
+        "reason": "F = \u00bd\u03b5\u00b2/\u03c3\u00b2 + \u00bdln(2\u03c0\u03c3\u00b2): quadratic + log = EML-2 (Gaussian variational free energy)."
+      },
+      {
+        "obs": 0.0,
+        "pred": 1.0,
+        "sigma": 1.0,
+        "prediction_error": -1.0,
+        "free_energy": 1.4189,
+        "eml": 2,
+        "reason": "F = \u00bd\u03b5\u00b2/\u03c3\u00b2 + \u00bdln(2\u03c0\u03c3\u00b2): quadratic + log = EML-2 (Gaussian variational free energy)."
+      }
+    ],
+    "precision": [
+      {
+        "epsilon": 0.5,
+        "sigma": 0.3,
+        "precision_Pi": 11.1111,
+        "weighted_error_xi": 5.5556,
+        "eml": 2,
+        "reason": "Precision \u03a0=1/\u03c3\u00b2: inverse variance = EML-2; \u03be=\u03a0\u00b7\u03b5 = EML-2."
+      },
+      {
+        "epsilon": 1.0,
+        "sigma": 1.0,
+        "precision_Pi": 1.0,
+        "weighted_error_xi": 1.0,
+        "eml": 2,
+        "reason": "Precision \u03a0=1/\u03c3\u00b2: inverse variance = EML-2; \u03be=\u03a0\u00b7\u03b5 = EML-2."
+      },
+      {
+        "epsilon": 2.0,
+        "sigma": 0.1,
+        "precision_Pi": 100.0,
+        "weighted_error_xi": 200.0,
+        "eml": 2,
+        "reason": "Precision \u03a0=1/\u03c3\u00b2: inverse variance = EML-2; \u03be=\u03a0\u00b7\u03b5 = EML-2."
+      }
+    ],
+    "surprise": [
+      {
+        "obs": 1.0,
+        "pred": 0.5,
+        "surprise_nats": 1.0439,
+        "eml": 2,
+        "reason": "Surprise = -ln p(o) \u2248 F: EML-2 (Gaussian log-likelihood = quadratic + log)."
+      },
+      {
+        "obs": 0.0,
+        "pred": 1.0,
+        "surprise_nats": 1.4189,
+        "eml": 2,
+        "reason": "Surprise = -ln p(o) \u2248 F: EML-2 (Gaussian log-likelihood = quadratic + log)."
+      },
+      {
+        "obs": 3.0,
+        "pred": 3.0,
+        "surprise_nats": 0.9189,
+        "eml": 2,
+        "reason": "Surprise = -ln p(o) \u2248 F: EML-2 (Gaussian log-likelihood = quadratic + log)."
+      }
+    ],
+    "eml_free_energy": 2,
+    "eml_precision": 2,
+    "eml_surprise": 2,
+    "eml_active_inference": 2
+  },
+  "integrated_information": {
+    "mutual_information": [
+      {
+        "p_xy": [
+          [
+            0.25,
+            0.25
+          ],
+          [
+            0.25,
+            0.25
+          ]
+        ],
+        "MI_nats": 0.0,
+        "eml": 2,
+        "reason": "MI = \u03a3 p(x,y) log(p(x,y)/p(x)p(y)): product of probs inside log = EML-2."
+      },
+      {
+        "p_xy": [
+          [
+            0.4,
+            0.1
+          ],
+          [
+            0.1,
+            0.4
+          ]
+        ],
+        "MI_nats": 0.1927,
+        "eml": 2,
+        "reason": "MI = \u03a3 p(x,y) log(p(x,y)/p(x)p(y)): product of probs inside log = EML-2."
+      }
+    ],
+    "phi_regimes": [
+      {
+        "Phi": 0.0,
+        "eml": 0,
+        "regime": "feedforward \u2014 no integration"
+      },
+      {
+        "Phi": 0.5,
+        "eml": 2,
+        "regime": "partially integrated \u2014 EML-2 information structure"
+      },
+      {
+        "Phi": 1.0,
+        "eml": 2,
+        "regime": "partially integrated \u2014 EML-2 information structure"
+      },
+      {
+        "Phi": 2.0,
+        "eml": 2,
+        "regime": "partially integrated \u2014 EML-2 information structure"
+      }
+    ],
+    "eml_MI": 2,
+    "eml_phi_partial": 2,
+    "eml_phi_max": "\u221e",
+    "eml_feedforward": 0
+  },
+  "insight_and_qualia": {
+    "insight_dynamics": [
+      {
+        "t": -5,
+        "phase": "pre-impasse",
+        "progress_proxy": 1.7918,
+        "eml": 2
+      },
+      {
+        "t": -1,
+        "phase": "pre-impasse",
+        "progress_proxy": 0.6931,
+        "eml": 2
+      },
+      {
+        "t": 0,
+        "phase": "insight (aha)",
+        "progress_proxy": "\u2192\u221e",
+        "eml": "\u221e"
+      },
+      {
+        "t": 1,
+        "phase": "post-insight",
+        "progress_proxy": 2.9851,
+        "eml": 3
+      },
+      {
+        "t": 5,
+        "phase": "post-insight",
+        "progress_proxy": 2.8348,
+        "eml": 3
+      },
+      {
+        "t": 20,
+        "phase": "post-insight",
+        "progress_proxy": 1.6593,
+        "eml": 3
+      }
+    ],
+    "explanatory_gap": {
+      "physical_description_eml": 3,
+      "phenomenal_experience_eml": "\u221e",
+      "gap": "EML-\u221e barrier",
+      "reason": "Physical (neural) description = EML-3 (gamma oscillations, NCC). Qualia = EML-\u221e: no EML-finite formula maps neural firing patterns to subjective redness. The explanatory gap IS the EML-\u221e barrier \u2014 no finite composition of exp/ln crosses it.",
+      "chalmers_zombie": "EML-3 without EML-\u221e supplement \u2014 physically complete, phenomenally absent",
+      "panpsychism_eml": "Attempts to reduce EML-\u221e to EML-3 by distributing qualia \u2014 fails by EML-\u221e Gap"
+    },
+    "eml_impasse": 2,
+    "eml_insight": "\u221e",
+    "eml_post_insight": 3,
+    "eml_qualia": "\u221e"
+  },
+  "eml_depth_summary": {
+    "EML-0": "Prediction error \u03b5=o-\u03bc (linear); working memory count 7\u00b12; feedforward \u03a6=0",
+    "EML-1": "Workspace broadcast softmax; access consciousness; post-ignition amplitude",
+    "EML-2": "Free energy F=\u00bd\u03b5\u00b2/\u03c3\u00b2+\u00bdln(2\u03c0\u03c3\u00b2); precision \u03a0=1/\u03c3\u00b2; integrated information \u03a6; surprise",
+    "EML-3": "Gamma reverberation exp(-t/\u03c4)\u00b7cos(\u03c9t); post-insight representational structure",
+    "EML-\u221e": "Ignition threshold; insight (aha); qualia; explanatory gap; hard problem of consciousness"
+  },
+  "rabbit_hole_log": [
+    "The Global Workspace is an EML-1 machine: the competition among processors for workspace access is exactly a Boltzmann distribution at temperature T (attention temperature). High-temperature attention (T\u2192\u221e) = uniform broadcast (democratic); low T \u2192 winner-take-all (focused). The transformer's softmax attention (S119) and the brain's workspace competition (S121) are the SAME EML-1 mechanism \u2014 evolution and engineering converged on the same Boltzmann ground state.",
+    "Predictive coding is EML-2: the variational free energy F = \u00bd\u03b5\u00b2/\u03c3\u00b2 + \u00bdln(2\u03c0\u03c3\u00b2) is identical to the negative log-likelihood of a Gaussian \u2014 EML-2 by the same argument as all Gaussian statistics (heat kernel S62, BSM option price S64, Fisher information S60). Friston's free energy principle unifies attention, perception, and action under one EML-2 functional \u2014 the same functional that appears in thermodynamics (Helmholtz F=-kT ln Z, EML-2) and information theory (rate-distortion R(D), EML-2).",
+    "Insight is EML-\u221e\u2192EML-3: during impasse the system searches in an EML-2 subspace (the wrong problem representation), hits an EML-\u221e barrier (dead end = local minimum), and then undergoes a non-analytic restructuring to a new EML-3 representational frame (the aha moment). This is the cognitive analog of the phase transition: Ising T_c (S57), epidemic R\u2080=1 (S113), neural criticality \u03c3=1 (S118). Restructuring = phase transition in the representational field.",
+    "The explanatory gap (Chalmers 1995) is the EML-\u221e barrier: we can give EML-3 descriptions of neural correlates of consciousness (NCC: gamma oscillations, S101/S118), but no EML-finite formula maps these to the subjective quality of experience (qualia). The gap is not a gap in our knowledge but a structural EML-\u221e barrier \u2014 the same barrier that separates computable from uncomputable (S109). Qualia are EML-\u221e in the same sense that G\u00f6del sentences are EML-\u221e: they exist but cannot be reached by any finite EML tree."
+  ],
+  "connections": {
+    "to_session_119": "Transformer softmax (EML-1) = Global Workspace broadcast (EML-1): same Boltzmann mechanism.",
+    "to_session_118": "Neural criticality \u03c3=1 (EML-\u221e) = ignition threshold (EML-\u221e): same phase transition.",
+    "to_session_109": "Qualia EML-\u221e \u2194 G\u00f6del sentence EML-\u221e: both are real but EML-unreachable by finite composition."
+  }
+}
