@@ -1,0 +1,433 @@
+{
+  "session": 108,
+  "title": "Materials Science & Condensed Matter: EML in Matter",
+  "key_theorem": {
+    "theorem": "EML Materials Depth Theorem",
+    "statement": "Free electron dispersion E(k) = \u0127\u00b2k\u00b2/2m is EML-2 (quadratic = power law). Fermi-Dirac distribution is EML-1 (logistic function = EML-1 sigmoid). Phonon dispersion \u03c9(k) = 2\u221a(K/M)|sin(ka/2)| is EML-3 (oscillatory in k). Debye low-T heat capacity C_v ~ (T/T_D)\u00b3 is EML-2. Bose-Einstein occupation n_BE = 1/(e^{\u0127\u03c9/kT}-1) is EML-1. BCS gap \u0394 = 2\u0127\u03c9_D\u00b7exp(-1/N(0)V) is EML-1 (exponential of rational). Josephson current I = I_c\u00b7sin(\u03c6) is EML-3. Ginzburg-Landau free energy is EML-2. Mott insulator transition is EML-\u221e (strong correlations)."
+  },
+  "band_structure": {
+    "free_electron": [
+      {
+        "k_invA": 0.0,
+        "mass_ratio_m_over_me": 1.0,
+        "E_eV": 0.0,
+        "eml": 2,
+        "reason": "E(k) = \u0127\u00b2k\u00b2/2m: EML-2 (quadratic in k = power law)"
+      },
+      {
+        "k_invA": 0.5,
+        "mass_ratio_m_over_me": 1.0,
+        "E_eV": 0.9525,
+        "eml": 2,
+        "reason": "E(k) = \u0127\u00b2k\u00b2/2m: EML-2 (quadratic in k = power law)"
+      },
+      {
+        "k_invA": 1.0,
+        "mass_ratio_m_over_me": 1.0,
+        "E_eV": 3.81,
+        "eml": 2,
+        "reason": "E(k) = \u0127\u00b2k\u00b2/2m: EML-2 (quadratic in k = power law)"
+      },
+      {
+        "k_invA": 1.5,
+        "mass_ratio_m_over_me": 1.0,
+        "E_eV": 8.5725,
+        "eml": 2,
+        "reason": "E(k) = \u0127\u00b2k\u00b2/2m: EML-2 (quadratic in k = power law)"
+      },
+      {
+        "k_invA": 2.0,
+        "mass_ratio_m_over_me": 1.0,
+        "E_eV": 15.24,
+        "eml": 2,
+        "reason": "E(k) = \u0127\u00b2k\u00b2/2m: EML-2 (quadratic in k = power law)"
+      }
+    ],
+    "fermi_dirac_300K": [
+      {
+        "E_eV": -0.5,
+        "E_F_eV": 0.0,
+        "T_K": 300.0,
+        "f": 1.0,
+        "eml": 1,
+        "reason": "f = 1/(exp((E-E_F)/kT)+1): EML-1 (Fermi function = logistic = EML-1 sigmoid)"
+      },
+      {
+        "E_eV": -0.1,
+        "E_F_eV": 0.0,
+        "T_K": 300.0,
+        "f": 0.979534,
+        "eml": 1,
+        "reason": "f = 1/(exp((E-E_F)/kT)+1): EML-1 (Fermi function = logistic = EML-1 sigmoid)"
+      },
+      {
+        "E_eV": 0.0,
+        "E_F_eV": 0.0,
+        "T_K": 300.0,
+        "f": 0.5,
+        "eml": 1,
+        "reason": "f = 1/(exp((E-E_F)/kT)+1): EML-1 (Fermi function = logistic = EML-1 sigmoid)"
+      },
+      {
+        "E_eV": 0.1,
+        "E_F_eV": 0.0,
+        "T_K": 300.0,
+        "f": 0.020466,
+        "eml": 1,
+        "reason": "f = 1/(exp((E-E_F)/kT)+1): EML-1 (Fermi function = logistic = EML-1 sigmoid)"
+      },
+      {
+        "E_eV": 0.5,
+        "E_F_eV": 0.0,
+        "T_K": 300.0,
+        "f": 0.0,
+        "eml": 1,
+        "reason": "f = 1/(exp((E-E_F)/kT)+1): EML-1 (Fermi function = logistic = EML-1 sigmoid)"
+      }
+    ],
+    "fermi_dirac_1000K": [
+      {
+        "E_eV": -0.5,
+        "E_F_eV": 0.0,
+        "T_K": 1000,
+        "f": 0.996989,
+        "eml": 1,
+        "reason": "f = 1/(exp((E-E_F)/kT)+1): EML-1 (Fermi function = logistic = EML-1 sigmoid)"
+      },
+      {
+        "E_eV": -0.1,
+        "E_F_eV": 0.0,
+        "T_K": 1000,
+        "f": 0.761423,
+        "eml": 1,
+        "reason": "f = 1/(exp((E-E_F)/kT)+1): EML-1 (Fermi function = logistic = EML-1 sigmoid)"
+      },
+      {
+        "E_eV": 0.0,
+        "E_F_eV": 0.0,
+        "T_K": 1000,
+        "f": 0.5,
+        "eml": 1,
+        "reason": "f = 1/(exp((E-E_F)/kT)+1): EML-1 (Fermi function = logistic = EML-1 sigmoid)"
+      },
+      {
+        "E_eV": 0.1,
+        "E_F_eV": 0.0,
+        "T_K": 1000,
+        "f": 0.238577,
+        "eml": 1,
+        "reason": "f = 1/(exp((E-E_F)/kT)+1): EML-1 (Fermi function = logistic = EML-1 sigmoid)"
+      },
+      {
+        "E_eV": 0.5,
+        "E_F_eV": 0.0,
+        "T_K": 1000,
+        "f": 0.003011,
+        "eml": 1,
+        "reason": "f = 1/(exp((E-E_F)/kT)+1): EML-1 (Fermi function = logistic = EML-1 sigmoid)"
+      }
+    ],
+    "dos_3d": [
+      {
+        "E_eV": 0.1,
+        "g_relative": 0.3162,
+        "eml": 2,
+        "reason": "g(E) ~ \u221aE = E^{1/2}: EML-2 (power law in energy)"
+      },
+      {
+        "E_eV": 0.5,
+        "g_relative": 0.7071,
+        "eml": 2,
+        "reason": "g(E) ~ \u221aE = E^{1/2}: EML-2 (power law in energy)"
+      },
+      {
+        "E_eV": 1.0,
+        "g_relative": 1.0,
+        "eml": 2,
+        "reason": "g(E) ~ \u221aE = E^{1/2}: EML-2 (power law in energy)"
+      },
+      {
+        "E_eV": 2.0,
+        "g_relative": 1.4142,
+        "eml": 2,
+        "reason": "g(E) ~ \u221aE = E^{1/2}: EML-2 (power law in energy)"
+      },
+      {
+        "E_eV": 4.0,
+        "g_relative": 2.0,
+        "eml": 2,
+        "reason": "g(E) ~ \u221aE = E^{1/2}: EML-2 (power law in energy)"
+      }
+    ],
+    "eml_bloch_state": 1,
+    "eml_dispersion": 2,
+    "eml_fermi_dirac": 1,
+    "eml_dos_3d": 2,
+    "band_gap_eml": 2
+  },
+  "phonon_dispersion": {
+    "monoatomic_chain": [
+      {
+        "k": 0.0,
+        "omega": 0.0,
+        "eml": 3,
+        "reason": "\u03c9(k) = 2\u221a(K/M)|sin(ka/2)|: EML-3 (sin function of wavevector k)"
+      },
+      {
+        "k": 0.25,
+        "omega": 0.249349,
+        "eml": 3,
+        "reason": "\u03c9(k) = 2\u221a(K/M)|sin(ka/2)|: EML-3 (sin function of wavevector k)"
+      },
+      {
+        "k": 0.5,
+        "omega": 0.494808,
+        "eml": 3,
+        "reason": "\u03c9(k) = 2\u221a(K/M)|sin(ka/2)|: EML-3 (sin function of wavevector k)"
+      },
+      {
+        "k": 0.75,
+        "omega": 0.732545,
+        "eml": 3,
+        "reason": "\u03c9(k) = 2\u221a(K/M)|sin(ka/2)|: EML-3 (sin function of wavevector k)"
+      },
+      {
+        "k": 1.0,
+        "omega": 0.958851,
+        "eml": 3,
+        "reason": "\u03c9(k) = 2\u221a(K/M)|sin(ka/2)|: EML-3 (sin function of wavevector k)"
+      },
+      {
+        "k": 3.1416,
+        "omega": 2.0,
+        "eml": 3,
+        "reason": "\u03c9(k) = 2\u221a(K/M)|sin(ka/2)|: EML-3 (sin function of wavevector k)"
+      }
+    ],
+    "bose_einstein": [
+      {
+        "hbar_omega_over_kT": 10.0,
+        "n_BE": 0.0,
+        "eml": 1,
+        "reason": "n_BE = 1/(e^{\u0127\u03c9/kT}-1): EML-1 (exp in denominator = Boltzmann form)"
+      },
+      {
+        "hbar_omega_over_kT": 2.0,
+        "n_BE": 0.1565,
+        "eml": 1,
+        "reason": "n_BE = 1/(e^{\u0127\u03c9/kT}-1): EML-1 (exp in denominator = Boltzmann form)"
+      },
+      {
+        "hbar_omega_over_kT": 1.0,
+        "n_BE": 0.582,
+        "eml": 1,
+        "reason": "n_BE = 1/(e^{\u0127\u03c9/kT}-1): EML-1 (exp in denominator = Boltzmann form)"
+      },
+      {
+        "hbar_omega_over_kT": 0.5,
+        "n_BE": 1.5415,
+        "eml": 1,
+        "reason": "n_BE = 1/(e^{\u0127\u03c9/kT}-1): EML-1 (exp in denominator = Boltzmann form)"
+      },
+      {
+        "hbar_omega_over_kT": 0.2,
+        "n_BE": 4.5167,
+        "eml": 1,
+        "reason": "n_BE = 1/(e^{\u0127\u03c9/kT}-1): EML-1 (exp in denominator = Boltzmann form)"
+      }
+    ],
+    "debye_Cv": [
+      {
+        "T_over_T_D": 0.01,
+        "C_v_over_R": 0.0002,
+        "regime": "low-T (Debye T\u00b3)",
+        "eml": 2,
+        "reason_low": "C_v ~ (T/T_D)\u00b3: EML-2 (cubic power law at low T)",
+        "reason_high": "C_v = 3R (classical): EML-0 (constant at high T)"
+      },
+      {
+        "T_over_T_D": 0.05,
+        "C_v_over_R": 0.0292,
+        "regime": "low-T (Debye T\u00b3)",
+        "eml": 2,
+        "reason_low": "C_v ~ (T/T_D)\u00b3: EML-2 (cubic power law at low T)",
+        "reason_high": "C_v = 3R (classical): EML-0 (constant at high T)"
+      },
+      {
+        "T_over_T_D": 0.1,
+        "C_v_over_R": 1.5,
+        "regime": "high-T (Dulong-Petit)",
+        "eml": 0,
+        "reason_low": "C_v ~ (T/T_D)\u00b3: EML-2 (cubic power law at low T)",
+        "reason_high": "C_v = 3R (classical): EML-0 (constant at high T)"
+      },
+      {
+        "T_over_T_D": 0.5,
+        "C_v_over_R": 2.7,
+        "regime": "high-T (Dulong-Petit)",
+        "eml": 0,
+        "reason_low": "C_v ~ (T/T_D)\u00b3: EML-2 (cubic power law at low T)",
+        "reason_high": "C_v = 3R (classical): EML-0 (constant at high T)"
+      },
+      {
+        "T_over_T_D": 1.0,
+        "C_v_over_R": 2.85,
+        "regime": "high-T (Dulong-Petit)",
+        "eml": 0,
+        "reason_low": "C_v ~ (T/T_D)\u00b3: EML-2 (cubic power law at low T)",
+        "reason_high": "C_v = 3R (classical): EML-0 (constant at high T)"
+      },
+      {
+        "T_over_T_D": 2.0,
+        "C_v_over_R": 2.925,
+        "regime": "high-T (Dulong-Petit)",
+        "eml": 0,
+        "reason_low": "C_v ~ (T/T_D)\u00b3: EML-2 (cubic power law at low T)",
+        "reason_high": "C_v = 3R (classical): EML-0 (constant at high T)"
+      }
+    ],
+    "eml_phonon": 3,
+    "eml_debye_lowT": 2,
+    "eml_einstein": 0,
+    "eml_BE": 1
+  },
+  "superconductivity": {
+    "bcs_gap": [
+      {
+        "omega_D": 1.0,
+        "N0V": 0.2,
+        "Delta": 0.013476,
+        "T_c_ratio": 0.00382,
+        "gap_ratio_2D_kTc": 3.528,
+        "eml_gap": 1,
+        "eml_gap_ratio": 0,
+        "reason": "\u0394 = 2\u0127\u03c9_D\u00b7exp(-1/N(0)V): EML-1 (exponential of rational parameter)"
+      },
+      {
+        "omega_D": 1.0,
+        "N0V": 0.3,
+        "Delta": 0.071348,
+        "T_c_ratio": 0.020223,
+        "gap_ratio_2D_kTc": 3.528,
+        "eml_gap": 1,
+        "eml_gap_ratio": 0,
+        "reason": "\u0394 = 2\u0127\u03c9_D\u00b7exp(-1/N(0)V): EML-1 (exponential of rational parameter)"
+      },
+      {
+        "omega_D": 1.0,
+        "N0V": 0.5,
+        "Delta": 0.270671,
+        "T_c_ratio": 0.076721,
+        "gap_ratio_2D_kTc": 3.528,
+        "eml_gap": 1,
+        "eml_gap_ratio": 0,
+        "reason": "\u0394 = 2\u0127\u03c9_D\u00b7exp(-1/N(0)V): EML-1 (exponential of rational parameter)"
+      },
+      {
+        "omega_D": 1.0,
+        "N0V": 1.0,
+        "Delta": 0.735759,
+        "T_c_ratio": 0.208548,
+        "gap_ratio_2D_kTc": 3.528,
+        "eml_gap": 1,
+        "eml_gap_ratio": 0,
+        "reason": "\u0394 = 2\u0127\u03c9_D\u00b7exp(-1/N(0)V): EML-1 (exponential of rational parameter)"
+      }
+    ],
+    "josephson": [
+      {
+        "phi_rad": 0,
+        "I_over_Ic": 0.0,
+        "eml": 3,
+        "reason": "I = I_c\u00b7sin(\u03c6): EML-3 (sine of phase = oscillatory)"
+      },
+      {
+        "phi_rad": 0.5236,
+        "I_over_Ic": 0.5,
+        "eml": 3,
+        "reason": "I = I_c\u00b7sin(\u03c6): EML-3 (sine of phase = oscillatory)"
+      },
+      {
+        "phi_rad": 0.7854,
+        "I_over_Ic": 0.707107,
+        "eml": 3,
+        "reason": "I = I_c\u00b7sin(\u03c6): EML-3 (sine of phase = oscillatory)"
+      },
+      {
+        "phi_rad": 1.5708,
+        "I_over_Ic": 1.0,
+        "eml": 3,
+        "reason": "I = I_c\u00b7sin(\u03c6): EML-3 (sine of phase = oscillatory)"
+      },
+      {
+        "phi_rad": 3.1416,
+        "I_over_Ic": 0.0,
+        "eml": 3,
+        "reason": "I = I_c\u00b7sin(\u03c6): EML-3 (sine of phase = oscillatory)"
+      }
+    ],
+    "gl_energy": [
+      {
+        "psi": 0.0,
+        "F": 0.0,
+        "psi_eq": 1.4142,
+        "eml": 2,
+        "reason": "GL: F = \u03b1|\u03c8|\u00b2 + \u03b2|\u03c8|\u2074: EML-2 (polynomial in |\u03c8|\u00b2)"
+      },
+      {
+        "psi": 0.5,
+        "F": -0.234375,
+        "psi_eq": 1.4142,
+        "eml": 2,
+        "reason": "GL: F = \u03b1|\u03c8|\u00b2 + \u03b2|\u03c8|\u2074: EML-2 (polynomial in |\u03c8|\u00b2)"
+      },
+      {
+        "psi": 1.0,
+        "F": -0.75,
+        "psi_eq": 1.4142,
+        "eml": 2,
+        "reason": "GL: F = \u03b1|\u03c8|\u00b2 + \u03b2|\u03c8|\u2074: EML-2 (polynomial in |\u03c8|\u00b2)"
+      },
+      {
+        "psi": 1.414,
+        "F": -1.0,
+        "psi_eq": 1.4142,
+        "eml": 2,
+        "reason": "GL: F = \u03b1|\u03c8|\u00b2 + \u03b2|\u03c8|\u2074: EML-2 (polynomial in |\u03c8|\u00b2)"
+      },
+      {
+        "psi": 2.0,
+        "F": 0.0,
+        "psi_eq": 1.4142,
+        "eml": 2,
+        "reason": "GL: F = \u03b1|\u03c8|\u00b2 + \u03b2|\u03c8|\u2074: EML-2 (polynomial in |\u03c8|\u00b2)"
+      }
+    ],
+    "eml_BCS_gap": 1,
+    "eml_Tc": 1,
+    "eml_gap_ratio": 0,
+    "eml_josephson": 3,
+    "eml_GL": 2,
+    "mott_transition": {
+      "eml": Infinity,
+      "reason": "Mott insulator-metal transition = EML-\u221e (strong correlations, no perturbative description)"
+    }
+  },
+  "eml_depth_summary": {
+    "EML-0": "Band gap 2|V_G| (constant); Einstein phonon (fixed frequency); universal BCS ratio 2\u0394/kT_c=3.528",
+    "EML-1": "Fermi-Dirac f(E); Bose-Einstein n_BE; BCS gap \u0394 (exp of coupling); T_c (same form as \u0394)",
+    "EML-2": "Free electron E(k)~k\u00b2; DOS ~\u221aE; London penetration depth; GL free energy; Debye T\u00b3 law",
+    "EML-3": "Phonon dispersion \u03c9(k)~sin(ka); Josephson current I_c\u00b7sin(\u03c6); Abrikosov vortex lattice",
+    "EML-\u221e": "Mott insulator transition; heavy fermion systems; high-T_c (d-wave pairing symmetry unknown origin)"
+  },
+  "rabbit_hole_log": [
+    "BCS gap is EML-1 by the same mechanism as Boltzmann: \u0394 = 2\u0127\u03c9_D\u00b7exp(-1/N(0)V). The argument -1/N(0)V of the exponential is negative-rational (a ratio of coupling constant to density of states). This is the exact same EML-1 structure as the Boltzmann weight exp(-E/kT), with 1/N(0)V playing the role of energy/temperature.",
+    "Phonon dispersion is EML-3 for the same reason as quantum harmonic oscillator wavefunctions: both involve sin(ka), the projection of circular motion onto a line. The phonon is literally a quantized sin wave in the lattice \u2014 EML-3 is the fundamental depth of oscillatory collective modes.",
+    "The Josephson junction is EML-3: I = I_c\u00b7sin(\u03c6). This is the fundamental quantum interference of superconducting order parameters. The sin(\u03c6) structure means the Josephson junction is in the EML-3 class along with all quantum coherence phenomena.",
+    "Mott transition is EML-\u221e because it requires resummation of all perturbative orders: no finite EML tree can describe the strongly-correlated electron state. This is the condensed matter analog of QCD confinement (Session 98): strong coupling \u2192 EML-\u221e. Both represent breakdowns of the EML-2 perturbative regime."
+  ],
+  "connections": {
+    "to_session_57": "Ising = EML-\u221e phase transition. Mott transition = EML-\u221e same universality class.",
+    "to_session_61": "Harmonic oscillator = EML-3. Phonons = quantized oscillators = EML-3. Same mathematics."
+  }
+}
