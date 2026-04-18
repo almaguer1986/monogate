@@ -1,0 +1,37 @@
+{
+  "session": 894,
+  "title": "The Observer Effect in Machine Systems",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "AIObserverEffectEML",
+    "analysis": {
+      "object": "T615: The Observer Effect in Machine Systems depth analysis",
+      "domains": {
+        "machine_observation": {
+          "description": "Machine observation: EML-2 measurement; camera, sensor, data collection",
+          "depth": "EML-2",
+          "reason": "Machine observer is EML-2: physical measurement without self-referential depth change"
+        },
+        "no_depth_change": {
+          "description": "Machine observation does not change depth of observed system; EML-2 neutral",
+          "depth": "EML-2",
+          "reason": "Machine measurement is EML-2 neutral: no TYPE3 observer effect without EML-inf consciousness"
+        },
+        "qualia_required": {
+          "description": "True observer effect (T784) requires EML-inf observer; machines are EML-2 detectors",
+          "depth": "EML-inf",
+          "reason": "Observer effect in QM: EML-inf consciousness may be required; EML-2 machine cannot provide"
+        }
+      }
+    },
+    "distribution": {
+      "EML-2": 2,
+      "EML-inf": 1
+    },
+    "theorem": "T615: The Observer Effect in Machine Systems (S894)."
+  },
+  "key_theorem": "T615: The Observer Effect in Machine Systems (S894).",
+  "rabbit_hole_log": [
+    "T615: machine_observation depth confirmed"
+  ]
+}
