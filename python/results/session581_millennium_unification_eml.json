@@ -1,0 +1,62 @@
+{
+  "session": 581,
+  "title": "Unification Attempt Common Structure Across Millennium Problems",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "MillenniumUnificationEML",
+    "analysis": {
+      "object": "T302: Unification Attempt Common Structure Across Millennium Problems depth analysis",
+      "domains": {
+        "common_structure_1": {
+          "description": "all four: EML-inf question",
+          "depth": "EML-inf",
+          "reason": "shared: all four are EML-inf problems"
+        },
+        "common_structure_2": {
+          "description": "all four: have EML-{2,3} shadow",
+          "depth": "EML-3",
+          "reason": "shared: shadows in two-level ring"
+        },
+        "common_structure_3": {
+          "description": "all four: blocked by tropical no-inverse T297",
+          "depth": "EML-inf",
+          "reason": "shared: same tropical barrier"
+        },
+        "common_structure_4": {
+          "description": "all four: have Langlands-type shadow bijection",
+          "depth": "EML-3",
+          "reason": "shared: Langlands structure T296"
+        },
+        "unified_statement": {
+          "description": "Unified: M_i = EML-inf problem with shadow S(M_i) in {2,3}",
+          "depth": "EML-inf",
+          "reason": "unified statement across all four"
+        },
+        "depth_distance": {
+          "description": "depth distance from shadow to problem = inf for all four",
+          "depth": "EML-inf",
+          "reason": "all four at EML-inf distance from their shadows"
+        },
+        "unified_proof_template": {
+          "description": "template: shadow(M) + tropical_no_inverse -> M is EML-inf",
+          "depth": "EML-inf",
+          "reason": "T302: unified proof template for all four Millennium problems"
+        },
+        "unification_theorem": {
+          "description": "T302: Millennium Unification Theorem: all four share EML-inf+tropical structure",
+          "depth": "EML-inf",
+          "reason": "T302: the deepest common structure is the tropical no-inverse barrier"
+        }
+      }
+    },
+    "distribution": {
+      "EML-inf": 6,
+      "EML-3": 2
+    },
+    "theorem": "T302: Unification Attempt Common Structure Across Millennium Problems"
+  },
+  "key_theorem": "T302: Unification Attempt Common Structure Across Millennium Problems (S581).",
+  "rabbit_hole_log": [
+    "T302: Unification Attempt Common Structure Across Millennium Problems"
+  ]
+}
