@@ -1,0 +1,43 @@
+{
+  "session": 861,
+  "title": "Concrete Curing Depth Schedule",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "ConcreteCuringEML",
+    "analysis": {
+      "object": "T582: Concrete Curing Depth Schedule depth analysis",
+      "domains": {
+        "hydration_eml1": {
+          "description": "Portland cement hydration: exponential strength gain; EML-1",
+          "depth": "EML-1",
+          "reason": "Cement hydration is EML-1: exponential C-S-H crystal network formation"
+        },
+        "strength_eml2": {
+          "description": "Compressive strength: measured logarithmically (log-time); EML-2",
+          "depth": "EML-2",
+          "reason": "Concrete strength gain follows EML-2 log-time law after initial EML-1 surge"
+        },
+        "thermal_cracking": {
+          "description": "Heat of hydration + oscillatory temperature cycling -> EML-3 thermal cracks",
+          "depth": "EML-3",
+          "reason": "Thermal cracking is EML-3: oscillatory temperature gradient drives crack propagation"
+        },
+        "depth_schedule": {
+          "description": "Optimal curing: follow depth-guided path; slow EML-1, measure EML-2, prevent EML-3",
+          "depth": "EML-2",
+          "reason": "Depth-guided curing: EML-1 hydration under EML-2 monitoring to prevent EML-3 cracking"
+        }
+      }
+    },
+    "distribution": {
+      "EML-1": 1,
+      "EML-2": 2,
+      "EML-3": 1
+    },
+    "theorem": "T582: Concrete Curing Depth Schedule (S861)."
+  },
+  "key_theorem": "T582: Concrete Curing Depth Schedule (S861).",
+  "rabbit_hole_log": [
+    "T582: hydration_eml1 depth confirmed"
+  ]
+}
