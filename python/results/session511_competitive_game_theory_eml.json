@@ -1,0 +1,70 @@
+{
+  "session": 511,
+  "title": "Competitive Game Theory (Chess, Go, Poker)",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "CompetitiveGameTheoryEML",
+    "analysis": {
+      "object": "T232: Competitive games depth analysis",
+      "domains": {
+        "chess_game_tree": {
+          "description": "Chess: game-theoretic value exists (Zermelo)",
+          "depth": "EML-0",
+          "reason": "Chess is finite \u2014 perfect information, decidable, EML-0 in principle"
+        },
+        "chess_evaluation": {
+          "description": "Neural net evaluation function (Stockfish, AlphaZero)",
+          "depth": "EML-2",
+          "reason": "Log-linear evaluation scores; ELO is logarithmic"
+        },
+        "chess_opening_theory": {
+          "description": "Opening book: oscillatory pattern competition",
+          "depth": "EML-3",
+          "reason": "Opening battles = strategic oscillation between attack/defense modes"
+        },
+        "go_complexity": {
+          "description": "Go: 10^{170} positions, no known analytic solution",
+          "depth": "EML-\u221e",
+          "reason": "Computational irreducibility \u2014 no finite EML description of optimal play"
+        },
+        "go_intuition": {
+          "description": "Go 'reading': local pattern recognition",
+          "depth": "EML-2",
+          "reason": "Pattern matching = logarithmic information comparison"
+        },
+        "poker_expectation": {
+          "description": "Pot equity: E[value] = \u03a3 P(outcome)\u00b7payout",
+          "depth": "EML-2",
+          "reason": "Expected value = linear in probabilities; bluffing is log-odds"
+        },
+        "poker_bluffing": {
+          "description": "Mixed strategy equilibrium in poker",
+          "depth": "EML-3",
+          "reason": "Mixed Nash equilibrium: exp(utility) softmax \u2014 oscillation between strategies"
+        },
+        "elo_rating": {
+          "description": "ELO: P(win) = 1/(1+10^{-\u0394/400})",
+          "depth": "EML-2",
+          "reason": "Logistic function of log-rating difference \u2014 EML-2"
+        }
+      },
+      "computational_tractability": "Does the framework predict which games are computationally tractable? YES. EML depth predicts tractability: EML-0: decidable in principle (Chess, Checkers \u2014 solved). EML-2: tractable with logarithmic heuristics (evaluations, ELO). EML-\u221e: computationally irreducible \u2014 no polynomial shortcut (Go, general game). Go = EML-\u221e because its optimal evaluation function has no finite EML description. AlphaGo works by approximating EML-\u221e with a large EML-2/3 neural network."
+    },
+    "distribution": {
+      "EML-0": 1,
+      "EML-2": 4,
+      "EML-3": 2,
+      "EML-\u221e": 1
+    },
+    "verdict": "Chess: EML-0 (solvable). Go: EML-\u221e (irreducible). ELO/poker: EML-2.",
+    "theorem": "T232: Game Tractability \u2014 EML depth predicts computational tractability"
+  },
+  "key_theorem": "T232: Game Tractability (S511). Chess: EML-0 (finite, decidable). ELO/evaluation: EML-2 (log). Poker mixed strategy: EML-3. Go: EML-\u221e (computationally irreducible). EML depth predicts tractability: EML-finite \u2192 tractable with heuristics; EML-\u221e \u2192 irreducible.",
+  "rabbit_hole_log": [
+    "Chess: finite game tree \u2192 EML-0 (decidable in principle)",
+    "ELO: logistic of log-rating \u2192 EML-2",
+    "Poker Nash equilibrium: softmax mixed strategy \u2192 EML-3",
+    "Go: no finite evaluation function \u2192 EML-\u221e irreducibility",
+    "T232: EML depth = tractability classifier for games"
+  ]
+}
