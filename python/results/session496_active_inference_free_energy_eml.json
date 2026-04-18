@@ -1,0 +1,65 @@
+{
+  "session": 496,
+  "title": "Active Inference & Free Energy Principle",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "ActiveInferenceFreeEnergyEML",
+    "analysis": {
+      "object": "T217: Active inference and variational free energy under EML framework",
+      "free_energy_structure": {
+        "variational_free_energy": {
+          "formula": "F = E_q[log q(s) - log p(o,s)] = KL[q\u2016p] - log p(o)",
+          "depth": "EML-2",
+          "reason": "KL divergence = logarithmic divergence measure; log p(o) = log marginal"
+        },
+        "expected_free_energy": {
+          "formula": "G = E_q[log q(s|\u03c0) - log p(o,s|\u03c0)]",
+          "depth": "EML-2",
+          "reason": "Same logarithmic structure; epistemic and pragmatic terms both EML-2"
+        },
+        "precision_weighting": {
+          "formula": "\u03c0_\u03c3 = exp(-F/T) \u2014 Boltzmann precision",
+          "depth": "EML-1",
+          "reason": "Exponential precision weighting"
+        },
+        "belief_updating": {
+          "formula": "\u03bc \u2192 \u03bc - \u2202F/\u2202\u03bc (gradient descent on free energy)",
+          "depth": "EML-2",
+          "reason": "Gradient of log-likelihood \u2014 logarithmic information structure"
+        },
+        "active_inference_policy": {
+          "formula": "P(\u03c0) \u221d exp(-G(\u03c0)) \u2014 softmax over policies",
+          "depth": "EML-1",
+          "reason": "Exponential policy selection"
+        },
+        "markov_blanket": {
+          "description": "Statistical boundary partitioning internal/external states",
+          "depth": "EML-0",
+          "reason": "Discrete partition \u2014 topological boundary, no continuous function"
+        },
+        "self_organization": {
+          "description": "Autopoiesis: system maintains its own Markov blanket",
+          "depth": "EML-3",
+          "reason": "Self-organizing oscillation \u2014 system perpetually minimizes free energy via oscillatory cycles"
+        }
+      },
+      "delta_d2_theorem_application": "The \u0394d=2 Theorem applies directly: Free energy F has depth 2 (logarithmic). Active inference minimizes F \u2192 policies have depth 1 (exp(\u2212G)). The GAP of 2 between policy (EML-1) and belief (EML-2) and action (EML-1) is the signature of the \u0394d=2 structure in biological agents."
+    },
+    "distribution": {
+      "EML-0": 1,
+      "EML-1": 2,
+      "EML-2": 3,
+      "EML-3": 1
+    },
+    "verdict": "Free energy: EML-2. Policy selection: EML-1. Self-organization: EML-3.",
+    "theorem": "T217: Active Inference Depth \u2014 FEP is EML-2; \u0394d=2 structure in biological agents"
+  },
+  "key_theorem": "T217: Active Inference Depth (S496). Variational free energy F = EML-2 (KL divergence = logarithmic). Policy selection exp(-G) = EML-1. Markov blanket = EML-0. Self-organization = EML-3. The \u0394d=2 Theorem signature: biological agents operate across the full {0,1,2,3} ladder.",
+  "rabbit_hole_log": [
+    "F = KL[q\u2016p] - log p(o): both terms logarithmic \u2192 EML-2",
+    "P(\u03c0) \u221d exp(-G): exponential policy \u2192 EML-1",
+    "Markov blanket: discrete partition \u2192 EML-0",
+    "Autopoiesis: self-organizing oscillatory cycle \u2192 EML-3",
+    "T217: FEP spans full {0,1,2,3} ladder"
+  ]
+}
