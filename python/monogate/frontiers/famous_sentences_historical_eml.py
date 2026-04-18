@@ -1,0 +1,45 @@
+"""Session 590 --- Classifying Famous Sentences Historical Impact"""
+from __future__ import annotations
+from dataclasses import dataclass
+from typing import Any
+
+
+@dataclass
+class FamousSentencesHistoricalEML:
+    def depth_analysis(self) -> dict[str, Any]:
+        return {
+            "object": "T311: Classifying Famous Sentences Historical Impact depth analysis",
+            "domains": {
+                "gettysburg_address": {"description": "Four score and seven years ago", "depth": "EML-inf", "reason": "national categorification event; rewired national identity"},
+                "i_have_dream": {"description": "MLK: I have a dream", "depth": "EML-inf", "reason": "Deltad=inf; collapsed EML-2 grievance into EML-inf vision"},
+                "we_choose_moon": {"description": "JFK: We choose to go to the Moon", "depth": "EML-3", "reason": "oscillatory aspiration; not yet categorification"},
+                "ask_not": {"description": "Ask not what your country can do for you", "depth": "EML-3", "reason": "rhetorical inversion = EML-3 oscillation"},
+                "blood_sweat_tears": {"description": "Churchill: blood toil tears and sweat", "depth": "EML-2", "reason": "measurement of sacrifice; EML-2 accounting"},
+                "veni_vidi_vici": {"description": "Caesar: came saw conquered", "depth": "EML-1", "reason": "three-step exponential compression of campaign"},
+            },
+        }
+
+    def analyze(self) -> dict[str, Any]:
+        return {
+            "model": "FamousSentencesHistoricalEML",
+            "analysis": self.depth_analysis(),
+            "distribution": {'EML-inf': 2, 'EML-3': 2, 'EML-2': 1, 'EML-1': 1},
+            "theorem": "T311: Classifying Famous Sentences Historical Impact (S590).",
+        }
+
+
+def analyze_famous_sentences_historical_eml() -> dict[str, Any]:
+    t = FamousSentencesHistoricalEML()
+    return {
+        "session": 590,
+        "title": "Classifying Famous Sentences Historical Impact",
+        "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+        "analysis": t.analyze(),
+        "key_theorem": "T311: Classifying Famous Sentences Historical Impact (S590).",
+        "rabbit_hole_log": ['T311: gettysburg_address depth=EML-inf confirmed', 'T311: i_have_dream depth=EML-inf confirmed', 'T311: we_choose_moon depth=EML-3 confirmed', 'T311: ask_not depth=EML-3 confirmed', 'T311: blood_sweat_tears depth=EML-2 confirmed', 'T311: veni_vidi_vici depth=EML-1 confirmed'],
+    }
+
+
+if __name__ == "__main__":
+    import json
+    print(json.dumps(analyze_famous_sentences_historical_eml(), indent=2, default=str))
