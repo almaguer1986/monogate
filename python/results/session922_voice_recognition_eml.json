@@ -1,0 +1,43 @@
+{
+  "session": 922,
+  "title": "What Makes a Voice Recognizable",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "VoiceRecognitionEML",
+    "analysis": {
+      "object": "T643: What Makes a Voice Recognizable depth analysis",
+      "domains": {
+        "fundamental_eml3": {
+          "description": "Fundamental frequency: EML-3 oscillatory (pitch = periodic vibration)",
+          "depth": "EML-3",
+          "reason": "Voice pitch is EML-3: fundamental frequency is EML-3 oscillatory; measured in Hz"
+        },
+        "formants_eml2": {
+          "description": "Formant ratios: EML-2 measurement of resonance frequencies",
+          "depth": "EML-2",
+          "reason": "Formants are EML-2: discrete resonance peaks measured in spectrogram"
+        },
+        "timbre_emlinf": {
+          "description": "Vocal timbre: EML-inf; no finite set of measurements fully captures unique voice",
+          "depth": "EML-inf",
+          "reason": "Voice recognition is EML-inf: individual vocal identity is beyond finite spectral description"
+        },
+        "synthetic_wrong": {
+          "description": "Synthetic voices sound wrong: reproduce EML-3 oscillation without EML-inf individuality",
+          "depth": "EML-inf",
+          "reason": "TTS fails EML-inf: EML-3 oscillation correct but EML-inf timbre absent; voice feels hollow"
+        }
+      }
+    },
+    "distribution": {
+      "EML-3": 1,
+      "EML-2": 1,
+      "EML-inf": 2
+    },
+    "theorem": "T643: What Makes a Voice Recognizable (S922)."
+  },
+  "key_theorem": "T643: What Makes a Voice Recognizable (S922).",
+  "rabbit_hole_log": [
+    "T643: fundamental_eml3 depth confirmed"
+  ]
+}
