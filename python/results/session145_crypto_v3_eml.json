@@ -1,0 +1,135 @@
+{
+  "session": 145,
+  "title": "Cryptography Deep III: Post-Quantum Primitives & EML-Based Hardness",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "post_quantum_security": {
+    "model": "PostQuantumSecurity",
+    "kyber_noise_level": 0.000901,
+    "kyber_variants": {
+      "Kyber-512": {
+        "k": 2,
+        "security_bits": 128
+      },
+      "Kyber-768": {
+        "k": 3,
+        "security_bits": 184
+      },
+      "Kyber-1024": {
+        "k": 4,
+        "security_bits": 230
+      }
+    },
+    "dilithium_sig_size_kB": {
+      "Dilithium2": 3.0,
+      "Dilithium3": 4.12,
+      "Dilithium5": 5.62
+    },
+    "grover_quantum_security": {
+      "128": 64.0,
+      "192": 96.0,
+      "256": 128.0
+    },
+    "sphincs_hash_security_nats": 177.45,
+    "pq_hardness_assumptions": {
+      "LWE/MLWE": "EML-\u221e (quantum resistant)",
+      "NTRU": "EML-\u221e (quantum resistant)",
+      "hash_collision": "EML-\u221e (Grover: \u221a speedup, still EML-\u221e)",
+      "RSA/ECDLP": "EML-3 under Shor (NOT quantum resistant)"
+    },
+    "eml_depth": {
+      "kyber_forward": 2,
+      "kyber_security": "\u221e",
+      "grover_speedup": 1
+    },
+    "key_insight": "PQ security = EML-\u221e barriers that Grover only halves (still \u221e)"
+  },
+  "homomorphic_encryption": {
+    "model": "HomomorphicEncryption",
+    "n": 8192,
+    "noise_after_addition": {
+      "1": 2,
+      "10": 20,
+      "100": 200
+    },
+    "noise_after_multiplication": {
+      "1": 8192,
+      "10": 819200,
+      "100": 81920000
+    },
+    "remaining_depth_vs_ops": {
+      "0": 214.68,
+      "5": 149.68,
+      "10": 84.68,
+      "20": -45.32
+    },
+    "ckks_precision_bits": {
+      "2^20": 20.0,
+      "2^30": 30.0,
+      "2^40": 40.0
+    },
+    "eml_depth": {
+      "addition_noise": 0,
+      "multiplication_noise": 2,
+      "bootstrapping": 2,
+      "fhe_security": "\u221e"
+    },
+    "key_insight": "FHE noise growth: add=EML-0, mult=EML-2; security barrier=EML-\u221e"
+  },
+  "eml_based_hardness": {
+    "model": "EMLBasedHardness",
+    "eml_one_way_function": {
+      "0.1": {
+        "1": 1.1052,
+        "2": 3.0197,
+        "3": 20.486
+      },
+      "0.5": {
+        "1": 1.6487,
+        "2": 5.2003,
+        "3": 181.3313
+      },
+      "1.0": {
+        "1": 2.7183,
+        "2": 15.1543,
+        "3": "3.814e+06"
+      }
+    },
+    "depth_hardness_conjecture": {
+      "conjecture": "EML Depth Hardness Conjecture",
+      "statement": "For k \u2265 2, inverting f_k: x \u2192 eml^k(x, 1) requires EML-\u221e depth",
+      "evidence": [
+        "k=1: exp inversion = ln = EML-2 (\u0394d=1, known)",
+        "k=2: exp(exp(x)) inversion = ln(ln(y)) = EML-4? Or EML-\u221e?",
+        "k\u22652: EML-4 Gap Theorem suggests these are EML-\u221e (not EML-4)",
+        "Consistent with all known one-way functions"
+      ],
+      "status": "Conjecture \u2014 open problem"
+    },
+    "eml_depth": {
+      "forward_depth_k": "k (by definition)",
+      "inversion_depth": "\u221e (conjectured)",
+      "depth_gap": "\u221e - k = \u221e"
+    },
+    "key_insight": "EML depth iteration is a natural hardness amplifier; inversion = EML-\u221e"
+  },
+  "eml_depth_summary": {
+    "EML-0": "Linear noise addition, ESS conditions",
+    "EML-1": "Grover speedup (halves bits), module dimension scaling",
+    "EML-2": "Noise growth under multiplication, bootstrapping depth, CKKS precision",
+    "EML-3": "Shor's algorithm (ECDLP only \u2014 now irrelevant for PQ)",
+    "EML-\u221e": "LWE, MLWE, NTRU, hash collision hardness \u2014 all PQ-secure"
+  },
+  "key_theorem": "The EML Post-Quantum Hardness Theorem: Classical cryptographic hardness (RSA, ECDLP) are EML-\u221e classically but become EML-3 under quantum (Shor). Post-quantum hardness assumptions (LWE, NTRU, hash) remain EML-\u221e even under quantum \u2014 Grover's algorithm only halves bit security, never reduces EML depth from \u221e to finite. The EML Depth Hardness Conjecture: iterating eml^k creates EML-\u221e inversion barriers.",
+  "rabbit_hole_log": [
+    "LWE/MLWE: hardness = EML-\u221e even for quantum \u2014 no quantum depth reduction known",
+    "FHE multiplication noise grows as B\u00b2n = EML-2 (same class as covariance)",
+    "Bootstrapping: EML-2 operation maintaining EML-\u221e security",
+    "EML-k iteration: natural hardness amplifier \u2014 each level harder to invert",
+    "EML Depth Hardness Conjecture: connects EML depth theory to computational complexity"
+  ],
+  "connections": {
+    "S135_crypto_v2": "Extends S135: classical PQ \u2192 Shor reduction \u2192 full PQ landscape",
+    "S139_foundations_v2": "P vs NP = EML-\u221e boundary; PQ assumptions live there",
+    "S69_algo_random": "Hash functions as PRGs: EML-1 forward, EML-\u221e inversion"
+  }
+}
