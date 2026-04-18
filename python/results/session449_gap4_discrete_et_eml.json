@@ -1,0 +1,42 @@
+{
+  "session": 449,
+  "title": "Gap 4: Exhaustion Validity & Discrete ET Values",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "Gap4DiscreteETEML",
+    "discrete_et": {
+      "object": "T170: Discrete ET Theorem \u2014 ET values in {0,1,2,3,\u221e}",
+      "the_gap": "The exhaustion argument for ECL assumes ET cannot take fractional values. Why can't ET(L,s) = 2.5 for some L? This needs a proof that ET is always an integer or \u221e.",
+      "proof_route_1": {
+        "name": "Tropical semiring route",
+        "argument": "In the tropical semiring (R\u222a{\u221e}, max, +), depth is defined by MAX-PLUS operations. The tropical MAX of two depths d1, d2 is max(d1,d2) \u2208 {0,1,2,3,\u221e}. No MAX-PLUS expression produces a non-integer. Formal: depth is an ordinal, not a real number. The depth function d: EMLExpr \u2192 {0,1,2,3,\u221e} is defined inductively; inductive definitions produce discrete values only."
+      },
+      "proof_route_2": {
+        "name": "EML-tree depth route",
+        "argument": "EML depth counts the MAXIMUM nesting depth of eml applications in a tree. Tree depth is always a non-negative integer by definition. EML-\u221e means 'not achievable by any finite tree'. Therefore ET \u2208 {0,1,2,...} \u222a {\u221e}. The EML-4 Gap (T163) then shows ET \u2208 {0,1,2,3,\u221e} specifically."
+      },
+      "proof_route_3": {
+        "name": "Analytic type route",
+        "argument": "The five analytic types are:   EML-0: algebraic/Boolean (no transcendental).   EML-1: single real exponential.   EML-2: real analytic (exp applied to real).   EML-3: complex analytic (exp applied to complex argument).   EML-\u221e: non-constructive (no finite formula). These are QUALITATIVE types, not a real-valued scale. Fractional EML depth is a category error: there is no 'partly complex' analytic type."
+      },
+      "conclusion": "ET values are always in {0,1,2,3,\u221e}. The 'exhaustion' in ECL is NOT exhaustion of a continuous range [0,\u221e]; it is exhaustion of four discrete possibilities: ET<3 (contradiction), ET=3 (desired), ET>3 finite (contradiction by EML-4 Gap), ET=\u221e (contradiction by Tropical Continuity). Each is a DISCRETE case elimination."
+    },
+    "fractional_refutation": {
+      "object": "Why ET cannot be fractional",
+      "argument_1": "Suppose ET(f) = 2.5. Then f requires 2.5 nestings of eml. But 0.5 of an eml application is not defined: you either apply eml or you don't. Depth is a COUNTING measure, like dimension in integers.",
+      "argument_2": "The EML operator is applied to SUBEXPRESSIONS, not to scalars. Each application is a full eml(x,y) call. There is no half-application. Therefore depth \u2208 Z\u22650 \u222a {\u221e}.",
+      "argument_3": "Compare: can a tree have depth 2.5? No. EML depth is tree depth. Tree depth is always an integer.",
+      "verdict": "Fractional ET is a category error. ET \u2208 Z\u22650 \u222a {\u221e} = {0,1,2,3,...,\u221e}."
+    },
+    "verdict": "GAP 4 RESOLVED: ET always discrete; exhaustion reduces to 4 cases",
+    "theorem": "T170: Discrete ET Theorem \u2014 ET \u2208 {0,1,2,3,\u221e} by tree depth + EML-4 Gap"
+  },
+  "key_theorem": "T170: Discrete ET Theorem (Gap 4, S449). ET values are always in {0,1,2,3,\u221e}. Three independent proofs: (1) Tropical semiring MAX-PLUS: only integers producible. (2) EML tree depth: counting measure, always integer. (3) Analytic types are qualitative categories, not a real scale. ECL exhaustion = 4 discrete case eliminations (not continuous). GAP 4 RESOLVED.",
+  "rabbit_hole_log": [
+    "Fractional ET = category error: half an eml application is undefined",
+    "Tropical MAX-PLUS: max(d1,d2) always integer when d1,d2 are integers",
+    "ECL exhaustion: 4 cases (ET<3, ET=3, ET\u2208{4,5,...}, ET=\u221e) \u2014 all discrete",
+    "Tree depth analogy: can a tree have depth 2.5? No.",
+    "T170: Discrete ET \u2014 Gap 4 resolved"
+  ]
+}
