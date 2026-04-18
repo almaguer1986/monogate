@@ -1,0 +1,63 @@
+{
+  "session": 529,
+  "title": "Protein Folding Distillation EML Tree Compression",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "ProteinFoldingDistillationEML",
+    "analysis": {
+      "object": "T250: Protein Folding Distillation EML Tree Compression depth analysis",
+      "domains": {
+        "energy_function": {
+          "description": "E = sum bond + electrostatic + vdW",
+          "depth": "EML-2",
+          "reason": "weighted sum = EML-2"
+        },
+        "alphafold_network": {
+          "description": "MSA transformer plus structure module",
+          "depth": "EML-inf",
+          "reason": "full neural network = EML-inf function class"
+        },
+        "contact_map": {
+          "description": "P(distance < 8 Ang) pairwise",
+          "depth": "EML-2",
+          "reason": "log-probability = EML-2"
+        },
+        "folding_pathway": {
+          "description": "kinetic folding trajectory",
+          "depth": "EML-3",
+          "reason": "oscillatory energy funnel search = EML-3"
+        },
+        "distillation_delta_d2": {
+          "description": "AlphaFold(EML-inf) distilled to EML tree",
+          "depth": "EML-2",
+          "reason": "Deltad=2 theorem collapses EML-inf to EML-2"
+        },
+        "thermodynamic_stability": {
+          "description": "deltaG = -kT ln(K_eq)",
+          "depth": "EML-2",
+          "reason": "free energy = EML-2 log measurement"
+        },
+        "chaperone_cycle": {
+          "description": "GroEL GroES ATP oscillatory folding",
+          "depth": "EML-3",
+          "reason": "ATP-hydrolysis oscillation = EML-3"
+        },
+        "sequence_compression": {
+          "description": "1D sequence to 3D structure",
+          "depth": "EML-2",
+          "reason": "information compression = EML-2"
+        }
+      }
+    },
+    "distribution": {
+      "EML-2": 5,
+      "EML-inf": 1,
+      "EML-3": 2
+    },
+    "theorem": "T250: Protein Folding Distillation EML Tree Compression"
+  },
+  "key_theorem": "T250: Protein Folding Distillation EML Tree Compression (S529).",
+  "rabbit_hole_log": [
+    "T250: Protein Folding Distillation EML Tree Compression"
+  ]
+}
