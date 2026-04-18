@@ -1,0 +1,127 @@
+{
+  "session": 133,
+  "title": "Cosmology Deep II: Inflation, Singularities & Quantum Gravity",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "slow_roll_inflation": {
+    "model": "SlowRollInflationV2",
+    "phi0": 15.0,
+    "e_folds": 56.0,
+    "hubble_rate_vs_phi": {
+      "15.0": 8.42e-06,
+      "10.0": 7.07e-06,
+      "5.0": 6.12e-06,
+      "2.0": 5.83e-06,
+      "1.0": 5.79e-06
+    },
+    "slow_roll_epsilon_vs_phi": {
+      "15.0": 0.002491,
+      "10.0": 0.002222,
+      "5.0": 0.000988,
+      "2.0": 0.000192,
+      "1.0": 5e-05
+    },
+    "inflation_end_phi": 1.0,
+    "spectral_index_at_phi15": 0.994464,
+    "scale_factor_growth": {
+      "0": 1.0,
+      "10": 1.0001,
+      "100": 1.0008,
+      "1000": 1.0085
+    },
+    "eml_depth": {
+      "hubble_rate": 1,
+      "scale_factor": 1,
+      "slow_roll_epsilon": 2,
+      "e_folds": 2,
+      "spectral_index": 2
+    },
+    "key_insight": "de Sitter inflation is EML-1 (a = exp(Ht)); slow-roll parameters are EML-2 corrections"
+  },
+  "graceful_exit_reheating": {
+    "model": "GracefulExitReheating",
+    "inflaton_oscillations_vs_t": {
+      "0": 1.0,
+      "100000.0": 0.990042,
+      "1000000.0": 0.513951,
+      "10000000.0": -0.508923,
+      "100000000.0": 0.00581
+    },
+    "radiation_density_vs_t": {
+      "0": "0.000e+00",
+      "100000.0": "9.900e-15",
+      "1000000.0": "9.048e-14",
+      "10000000.0": "3.679e-13",
+      "100000000.0": "4.540e-16"
+    },
+    "reheat_temperature_GeV": "4.899e+05",
+    "reheating_transition": "EML-\u221e: non-analytic transition from de Sitter to radiation-dominated FRW",
+    "eml_depth": {
+      "inflaton_oscillation": 3,
+      "radiation_buildup": 2,
+      "reheat_temperature": 1,
+      "transition_event": "\u221e"
+    },
+    "key_insight": "Inflaton decay is EML-3 (damped oscillation); reheating transition is EML-\u221e"
+  },
+  "penrose_singularity_and_qg": {
+    "model": "PenroseSingularityAndQG",
+    "schwarzschild_radii": {
+      "solar_mass": "2.950e+03 m",
+      "stellar_BH_10Msun": "2.950e+04 m",
+      "supermassive_BH_1e9Msun": "2.950e+12 m"
+    },
+    "hawking_temperatures": {
+      "solar_mass": "6.182e-08 K",
+      "stellar_BH_10Msun": "6.182e-09 K",
+      "supermassive_BH_1e9Msun": "6.182e-17 K"
+    },
+    "lqg_area_spectrum_j": {
+      "0.5": "1.557e-69",
+      "1.0": "2.543e-69",
+      "1.5": "3.482e-69",
+      "2.0": "4.405e-69",
+      "3.0": "6.230e-69"
+    },
+    "string_landscape_log10_N": 270.0,
+    "penrose_theorem": {
+      "hypotheses": [
+        "1. Spacetime satisfies Einstein equations",
+        "2. Energy conditions hold (null energy condition)",
+        "3. A compact trapped surface exists"
+      ],
+      "conclusion": "A geodesically incomplete singularity necessarily exists",
+      "eml_depth": "\u221e",
+      "reason": "Singularity = boundary of spacetime = non-analytic point; cannot be EML-finite"
+    },
+    "eml_depth": {
+      "schwarzschild_radius": 2,
+      "hawking_temperature": 2,
+      "lqg_area_eigenvalues": 2,
+      "string_landscape_enumeration": "\u221e",
+      "penrose_singularity": "\u221e"
+    },
+    "key_insight": "Schwarzschild and Hawking are EML-2 (geometric corrections). LQG area = EML-2 (\u221a(j(j+1))). String landscape and Penrose singularities are EML-\u221e."
+  },
+  "eml_depth_summary": {
+    "EML-0": "Topological invariants: Euler characteristic of Calabi-Yau",
+    "EML-1": "de Sitter scale factor a=exp(Ht), Hubble rate H=\u221a(V/3), reheat temperature",
+    "EML-2": "Slow-roll parameters \u03b5/\u03b7, Schwarzschild radius, Hawking temperature, LQG area",
+    "EML-3": "Inflaton oscillation (damped cosine), gravitational wave strain",
+    "EML-\u221e": "Reheating transition, Penrose singularities, string landscape, Big Bang"
+  },
+  "key_theorem": "The EML Cosmological Depth Theorem: Inflationary expansion (de Sitter) is EML-1 \u2014 same universality class as Boltzmann equilibria and path integral amplitudes. Quantum gravity corrections (Hawking, LQG) are EML-2. All singularities (Big Bang, black hole interior, Penrose) are EML-\u221e: they are the cosmological instances of the EML-\u221e barrier.",
+  "rabbit_hole_log": [
+    "de Sitter expansion = EML-1: confirms Grand Synthesis VII universality principle",
+    "Slow-roll \u03b5 = (V'/V)\u00b2/2: two log-derivatives \u2192 EML-2",
+    "Inflaton oscillation = damped cosine = EML-3 (same class as GW strain)",
+    "LQG area = 8\u03c0\u03b3 l_P\u00b2 \u221a(j(j+1)): square root of quadratic = EML-2",
+    "String landscape: 10^500 vacua = log(N) EML-\u221e enumeration problem",
+    "Penrose theorem: singularity = EML-\u221e by geodesic incompleteness"
+  ],
+  "connections": {
+    "S61_qft_free": "Path integral Z=exp(-S) = EML-1 (same as de Sitter scale factor)",
+    "S77_gr_deep": "Schwarzschild/Kerr metrics = EML-2; Penrose singularity = EML-\u221e",
+    "S75_qft_interacting": "Phase transitions in cosmology (reheating) = EML-\u221e (same as confinement)",
+    "S130_grand_synthesis_7": "Cosmological singularities are maximal EML-\u221e instances"
+  }
+}
