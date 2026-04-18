@@ -1,0 +1,37 @@
+{
+  "session": 920,
+  "title": "Why Time Slows Down During a Car Accident",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "TimeDilationCrisisEML",
+    "analysis": {
+      "object": "T641: Why Time Slows Down During a Car Accident depth analysis",
+      "domains": {
+        "normal_time_eml2": {
+          "description": "Normal time perception: EML-2 logarithmic compression (T343)",
+          "depth": "EML-2",
+          "reason": "Normal time is EML-2: logarithmic Weber-Fechner temporal perception"
+        },
+        "crisis_eml1": {
+          "description": "Crisis: brain floods with norepinephrine; writes more memories per second; EML-1 exponential density",
+          "depth": "EML-1",
+          "reason": "Terror triggers EML-1 memory density: exponential encoding rate; more memories per clock second"
+        },
+        "depth_reduction": {
+          "description": "Time dilation during crisis = EML-2 -> EML-1 depth reduction: logarithmic -> exponential encoding",
+          "depth": "EML-1",
+          "reason": "Terror is depth reduction: EML-2 logarithmic time temporarily reverts to EML-1 exponential; terror lowers depth"
+        }
+      }
+    },
+    "distribution": {
+      "EML-2": 1,
+      "EML-1": 2
+    },
+    "theorem": "T641: Why Time Slows Down During a Car Accident (S920)."
+  },
+  "key_theorem": "T641: Why Time Slows Down During a Car Accident (S920).",
+  "rabbit_hole_log": [
+    "T641: normal_time_eml2 depth confirmed"
+  ]
+}
