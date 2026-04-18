@@ -1,0 +1,58 @@
+{
+  "session": 705,
+  "title": "Ghosts as Structured Absence",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "GhostsStructuredAbsenceEML",
+    "analysis": {
+      "object": "T426: Ghosts as Structured Absence depth analysis",
+      "domains": {
+        "cold_spot": {
+          "description": "Temperature drop at reported haunting",
+          "depth": "EML-2",
+          "reason": "thermal measurement = EML-2 shadow of EML-inf presence"
+        },
+        "apparition": {
+          "description": "Visual ghost: EML-inf entity casting EML-3 optical pattern",
+          "depth": "EML-3",
+          "reason": "visual pattern = EML-3 oscillatory shadow"
+        },
+        "evp": {
+          "description": "Electronic voice: EML-3 oscillatory artifact",
+          "depth": "EML-3",
+          "reason": "audio oscillation captured from EML-inf source"
+        },
+        "emf_spike": {
+          "description": "EMF anomaly: EML-2 measurement of field disturbance",
+          "depth": "EML-2",
+          "reason": "field measurement = EML-2"
+        },
+        "ghost_as_absence": {
+          "description": "Ghost = EML-inf with structured EML-2/3 shadow",
+          "depth": "EML-inf",
+          "reason": "T426: ghost is structured absence; shadow is the only detectable evidence"
+        },
+        "shadow_catalog": {
+          "description": "All ghost phenomena have depth-specific signatures",
+          "depth": "EML-inf",
+          "reason": "absence has measurable EML-2/3 shadow by shadow theorem"
+        }
+      }
+    },
+    "distribution": {
+      "EML-2": 2,
+      "EML-3": 2,
+      "EML-inf": 2
+    },
+    "theorem": "T426: Ghosts as Structured Absence (S705)."
+  },
+  "key_theorem": "T426: Ghosts as Structured Absence (S705).",
+  "rabbit_hole_log": [
+    "T426: cold_spot depth=EML-2 confirmed",
+    "T426: apparition depth=EML-3 confirmed",
+    "T426: evp depth=EML-3 confirmed",
+    "T426: emf_spike depth=EML-2 confirmed",
+    "T426: ghost_as_absence depth=EML-inf confirmed",
+    "T426: shadow_catalog depth=EML-inf confirmed"
+  ]
+}
