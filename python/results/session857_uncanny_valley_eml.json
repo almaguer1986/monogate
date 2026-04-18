@@ -1,0 +1,43 @@
+{
+  "session": 857,
+  "title": "Uncanny Valley as Depth Classification Failure",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "UncannyValleyEML",
+    "analysis": {
+      "object": "T578: Uncanny Valley as Depth Classification Failure depth analysis",
+      "domains": {
+        "human_face_classified": {
+          "description": "Real human face: classified at one EML depth by brain",
+          "depth": "EML-3",
+          "reason": "Human face recognition is EML-3: oscillatory neural pattern matching"
+        },
+        "cartoon_classified": {
+          "description": "Cartoon face: classified at different EML depth; no discomfort",
+          "depth": "EML-0",
+          "reason": "Cartoon is EML-0: symbolic, discrete; brain classifies cleanly"
+        },
+        "between_depths": {
+          "description": "Almost-human sits BETWEEN depths; T110 says fractional depth is impossible",
+          "depth": "EML-inf",
+          "reason": "Uncanny valley is depth classification failure: brain cannot assign integer depth"
+        },
+        "discomfort_is_impossibility": {
+          "description": "The discomfort IS the impossibility of fractional EML depth",
+          "depth": "EML-inf",
+          "reason": "Uncanny valley is the subjective experience of EML-4 nonexistence"
+        }
+      }
+    },
+    "distribution": {
+      "EML-3": 1,
+      "EML-0": 1,
+      "EML-inf": 2
+    },
+    "theorem": "T578: Uncanny Valley as Depth Classification Failure (S857)."
+  },
+  "key_theorem": "T578: Uncanny Valley as Depth Classification Failure (S857).",
+  "rabbit_hole_log": [
+    "T578: human_face_classified depth confirmed"
+  ]
+}
