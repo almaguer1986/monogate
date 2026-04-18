@@ -1,0 +1,37 @@
+{
+  "session": 807,
+  "title": "NS 2D vs 3D Dimensional Threshold v2",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "NSDimensionalV2",
+    "analysis": {
+      "object": "T528: NS 2D vs 3D Dimensional Threshold v2 depth analysis",
+      "domains": {
+        "two_d_eml3": {
+          "description": "2D NS is EML-3: oscillatory, bounded, Enstrophy conserved",
+          "depth": "EML-3",
+          "reason": "2D has EML-3 ceiling; inverse energy cascade keeps it bounded"
+        },
+        "three_d_emlinf": {
+          "description": "3D NS is EML-inf: vortex stretching triggers categorification",
+          "depth": "EML-inf",
+          "reason": "3D is the EML-inf threshold; stretching is the dimensional switch"
+        },
+        "threshold_sharpness": {
+          "description": "Transition from EML-3 to EML-inf is sharp at d=3; no fractal intermediate",
+          "depth": "EML-inf",
+          "reason": "Vortex stretching is a discrete topological property absent below d=3"
+        }
+      }
+    },
+    "distribution": {
+      "EML-3": 1,
+      "EML-inf": 2
+    },
+    "theorem": "T528: NS 2D vs 3D Dimensional Threshold v2 (S807)."
+  },
+  "key_theorem": "T528: NS 2D vs 3D Dimensional Threshold v2 (S807).",
+  "rabbit_hole_log": [
+    "T528: two_d_eml3 depth confirmed"
+  ]
+}
