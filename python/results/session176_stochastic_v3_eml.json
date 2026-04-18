@@ -1,0 +1,375 @@
+{
+  "session": 176,
+  "title": "Stochastic Processes & Path Integrals Deep: It\u00f4 vs Stratonovich",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "ito_stratonovich": {
+    "model": "ItoStratonovichComparison",
+    "ito_lemma": {
+      "50.0": {
+        "x": 50.0,
+        "mu": 0.05,
+        "sigma": 0.2,
+        "dt": 0.01,
+        "ito_drift": 0.0005,
+        "ito_correction": -0.0002,
+        "ito_d_log_x": 0.0003,
+        "diffusion_scale": 0.02,
+        "eml_depth_correction": 2,
+        "eml_depth_d_log_x": 2,
+        "note": "It\u00f4 correction \u03c3\u00b2/2 = EML-2; d(log x) = EML-2"
+      },
+      "100.0": {
+        "x": 100.0,
+        "mu": 0.05,
+        "sigma": 0.2,
+        "dt": 0.01,
+        "ito_drift": 0.0005,
+        "ito_correction": -0.0002,
+        "ito_d_log_x": 0.0003,
+        "diffusion_scale": 0.02,
+        "eml_depth_correction": 2,
+        "eml_depth_d_log_x": 2,
+        "note": "It\u00f4 correction \u03c3\u00b2/2 = EML-2; d(log x) = EML-2"
+      },
+      "150.0": {
+        "x": 150.0,
+        "mu": 0.05,
+        "sigma": 0.2,
+        "dt": 0.01,
+        "ito_drift": 0.0005,
+        "ito_correction": -0.0002,
+        "ito_d_log_x": 0.0003,
+        "diffusion_scale": 0.02,
+        "eml_depth_correction": 2,
+        "eml_depth_d_log_x": 2,
+        "note": "It\u00f4 correction \u03c3\u00b2/2 = EML-2; d(log x) = EML-2"
+      }
+    },
+    "stratonovich": {
+      "0.1": {
+        "x": 100.0,
+        "sigma": 0.1,
+        "dt": 0.01,
+        "ito_to_strat_correction": 0.005,
+        "strat_oscillation_factor": 0.99995,
+        "eml_depth_ito_correction": 2,
+        "eml_depth_strat_oscillation": 3,
+        "note": "Strat-It\u00f4 gap = EML-2; Stratonovich for oscillators = EML-3"
+      },
+      "0.2": {
+        "x": 100.0,
+        "sigma": 0.2,
+        "dt": 0.01,
+        "ito_to_strat_correction": 0.02,
+        "strat_oscillation_factor": 0.9998,
+        "eml_depth_ito_correction": 2,
+        "eml_depth_strat_oscillation": 3,
+        "note": "Strat-It\u00f4 gap = EML-2; Stratonovich for oscillators = EML-3"
+      },
+      "0.3": {
+        "x": 100.0,
+        "sigma": 0.3,
+        "dt": 0.01,
+        "ito_to_strat_correction": 0.045,
+        "strat_oscillation_factor": 0.99955,
+        "eml_depth_ito_correction": 2,
+        "eml_depth_strat_oscillation": 3,
+        "note": "Strat-It\u00f4 gap = EML-2; Stratonovich for oscillators = EML-3"
+      },
+      "0.5": {
+        "x": 100.0,
+        "sigma": 0.5,
+        "dt": 0.01,
+        "ito_to_strat_correction": 0.125,
+        "strat_oscillation_factor": 0.99875,
+        "eml_depth_ito_correction": 2,
+        "eml_depth_strat_oscillation": 3,
+        "note": "Strat-It\u00f4 gap = EML-2; Stratonovich for oscillators = EML-3"
+      }
+    },
+    "geometric_brownian_motion": {
+      "S0": 100.0,
+      "mu": 0.05,
+      "sigma": 0.2,
+      "T": 1.0,
+      "E_S_T": 105.1271,
+      "log_drift": 0.03,
+      "sample_without_noise": 103.0455,
+      "variance_S": 451.03,
+      "eml_depth_GBM": 3,
+      "eml_depth_log_normal": 2,
+      "eml_depth_E_S": 1,
+      "note": "GBM = EML-3; log-normal = EML-2; mean E[S] = EML-1"
+    },
+    "eml_depth": {
+      "ito_correction": 2,
+      "strat_oscillation": 3,
+      "gbm": 3,
+      "log_normal": 2,
+      "E_S": 1
+    },
+    "key_insight": "It\u00f4 = EML-2 (log correction); Stratonovich = EML-3 (oscillatory); GBM = EML-3"
+  },
+  "feynman_kac": {
+    "model": "FeynmanKacEML",
+    "heat_kernels": {
+      "x=0.0,t=0.5": {
+        "x": 0.0,
+        "t": 0.5,
+        "D": 1.0,
+        "kernel": 0.39894228,
+        "eml_depth_kernel": 3,
+        "eml_depth_path_integral": "\u221e",
+        "eml_depth_t_to_0": "\u221e",
+        "note": "Heat kernel = EML-3 (Gaussian); path integral representation = EML-\u221e"
+      },
+      "x=0.0,t=1.0": {
+        "x": 0.0,
+        "t": 1.0,
+        "D": 1.0,
+        "kernel": 0.28209479,
+        "eml_depth_kernel": 3,
+        "eml_depth_path_integral": "\u221e",
+        "eml_depth_t_to_0": "\u221e",
+        "note": "Heat kernel = EML-3 (Gaussian); path integral representation = EML-\u221e"
+      },
+      "x=1.0,t=0.5": {
+        "x": 1.0,
+        "t": 0.5,
+        "D": 1.0,
+        "kernel": 0.24197072,
+        "eml_depth_kernel": 3,
+        "eml_depth_path_integral": "\u221e",
+        "eml_depth_t_to_0": "\u221e",
+        "note": "Heat kernel = EML-3 (Gaussian); path integral representation = EML-\u221e"
+      },
+      "x=1.0,t=1.0": {
+        "x": 1.0,
+        "t": 1.0,
+        "D": 1.0,
+        "kernel": 0.21969564,
+        "eml_depth_kernel": 3,
+        "eml_depth_path_integral": "\u221e",
+        "eml_depth_t_to_0": "\u221e",
+        "note": "Heat kernel = EML-3 (Gaussian); path integral representation = EML-\u221e"
+      }
+    },
+    "feynman_kac_solutions": {
+      "x=0.0,t=0.5": {
+        "x": 0.0,
+        "t": 0.5,
+        "V": 0.1,
+        "T": 1.0,
+        "discount": 0.904837,
+        "gaussian_terminal": 0.39894228,
+        "solution_approx": 0.3609779029,
+        "eml_depth_discount": 1,
+        "eml_depth_terminal": 3,
+        "eml_depth_fk_map": 0,
+        "note": "FK discount = EML-1; terminal payoff = EML-3; FK equivalence = EML-0"
+      },
+      "x=0.0,t=1.0": {
+        "x": 0.0,
+        "t": 1.0,
+        "V": 0.1,
+        "T": 1.0,
+        "discount": 0.904837,
+        "gaussian_terminal": 0.39894228,
+        "solution_approx": 0.3609779029,
+        "eml_depth_discount": 1,
+        "eml_depth_terminal": 3,
+        "eml_depth_fk_map": 0,
+        "note": "FK discount = EML-1; terminal payoff = EML-3; FK equivalence = EML-0"
+      },
+      "x=1.0,t=0.5": {
+        "x": 1.0,
+        "t": 0.5,
+        "V": 0.1,
+        "T": 1.0,
+        "discount": 0.904837,
+        "gaussian_terminal": 0.24197072,
+        "solution_approx": 0.2189441656,
+        "eml_depth_discount": 1,
+        "eml_depth_terminal": 3,
+        "eml_depth_fk_map": 0,
+        "note": "FK discount = EML-1; terminal payoff = EML-3; FK equivalence = EML-0"
+      },
+      "x=1.0,t=1.0": {
+        "x": 1.0,
+        "t": 1.0,
+        "V": 0.1,
+        "T": 1.0,
+        "discount": 0.904837,
+        "gaussian_terminal": 0.24197072,
+        "solution_approx": 0.2189441656,
+        "eml_depth_discount": 1,
+        "eml_depth_terminal": 3,
+        "eml_depth_fk_map": 0,
+        "note": "FK discount = EML-1; terminal payoff = EML-3; FK equivalence = EML-0"
+      }
+    },
+    "wick_rotation": {
+      "0.5": {
+        "t_Minkowski": 0.5,
+        "tau_Euclidean": 0.5,
+        "minkowski_integrand_real": 0.877583,
+        "euclidean_weight": 0.606531,
+        "eml_depth_minkowski": 3,
+        "eml_depth_euclidean": 1,
+        "depth_reduction": "EML-3 \u2192 EML-1 (same as S156 Wick rotation)",
+        "note": "Wick rotation is EML-3 \u2192 EML-1 depth reduction (analytic continuation)"
+      },
+      "1.0": {
+        "t_Minkowski": 1.0,
+        "tau_Euclidean": 1.0,
+        "minkowski_integrand_real": 0.540302,
+        "euclidean_weight": 0.367879,
+        "eml_depth_minkowski": 3,
+        "eml_depth_euclidean": 1,
+        "depth_reduction": "EML-3 \u2192 EML-1 (same as S156 Wick rotation)",
+        "note": "Wick rotation is EML-3 \u2192 EML-1 depth reduction (analytic continuation)"
+      },
+      "2.0": {
+        "t_Minkowski": 2.0,
+        "tau_Euclidean": 2.0,
+        "minkowski_integrand_real": -0.416147,
+        "euclidean_weight": 0.135335,
+        "eml_depth_minkowski": 3,
+        "eml_depth_euclidean": 1,
+        "depth_reduction": "EML-3 \u2192 EML-1 (same as S156 Wick rotation)",
+        "note": "Wick rotation is EML-3 \u2192 EML-1 depth reduction (analytic continuation)"
+      },
+      "3.14": {
+        "t_Minkowski": 3.141592653589793,
+        "tau_Euclidean": 3.141592653589793,
+        "minkowski_integrand_real": -1.0,
+        "euclidean_weight": 0.043214,
+        "eml_depth_minkowski": 3,
+        "eml_depth_euclidean": 1,
+        "depth_reduction": "EML-3 \u2192 EML-1 (same as S156 Wick rotation)",
+        "note": "Wick rotation is EML-3 \u2192 EML-1 depth reduction (analytic continuation)"
+      }
+    },
+    "eml_depth": {
+      "heat_kernel": 3,
+      "path_integral": "\u221e",
+      "fk_discount": 1,
+      "fk_terminal": 3,
+      "fk_map": 0,
+      "minkowski": 3,
+      "euclidean": 1
+    },
+    "key_insight": "FK: heat kernel=EML-3; discount=EML-1; path integral=EML-\u221e; Wick=3\u21921"
+  },
+  "malliavin_calculus": {
+    "model": "MalliavinCalculusEML",
+    "malliavin_derivative": {
+      "0.5": {
+        "F_value": 0.5,
+        "sigma": 0.2,
+        "T": 1.0,
+        "malliavin_weight": 0.4,
+        "variance_estimate": 0.04,
+        "eml_depth_D_t_F": 2,
+        "eml_depth_clark_ocone": 2,
+        "note": "Malliavin derivative = EML-2 (stochastic gradient, like Fisher info)"
+      },
+      "1.0": {
+        "F_value": 1.0,
+        "sigma": 0.2,
+        "T": 1.0,
+        "malliavin_weight": 0.2,
+        "variance_estimate": 0.04,
+        "eml_depth_D_t_F": 2,
+        "eml_depth_clark_ocone": 2,
+        "note": "Malliavin derivative = EML-2 (stochastic gradient, like Fisher info)"
+      },
+      "2.0": {
+        "F_value": 2.0,
+        "sigma": 0.2,
+        "T": 1.0,
+        "malliavin_weight": 0.1,
+        "variance_estimate": 0.04,
+        "eml_depth_D_t_F": 2,
+        "eml_depth_clark_ocone": 2,
+        "note": "Malliavin derivative = EML-2 (stochastic gradient, like Fisher info)"
+      },
+      "5.0": {
+        "F_value": 5.0,
+        "sigma": 0.2,
+        "T": 1.0,
+        "malliavin_weight": 0.04,
+        "variance_estimate": 0.04,
+        "eml_depth_D_t_F": 2,
+        "eml_depth_clark_ocone": 2,
+        "note": "Malliavin derivative = EML-2 (stochastic gradient, like Fisher info)"
+      }
+    },
+    "integration_by_parts": {
+      "0.5": {
+        "x": 0.5,
+        "sigma": 0.2,
+        "ibp_weight": 5.0,
+        "ibp_correction": 2.5,
+        "eml_depth": 2,
+        "application": "Greeks computation without differentiating payoff",
+        "note": "Malliavin IBP weight = EML-2; Skorohod integral = EML-2"
+      },
+      "1.0": {
+        "x": 1.0,
+        "sigma": 0.2,
+        "ibp_weight": 5.0,
+        "ibp_correction": 5.0,
+        "eml_depth": 2,
+        "application": "Greeks computation without differentiating payoff",
+        "note": "Malliavin IBP weight = EML-2; Skorohod integral = EML-2"
+      },
+      "1.5": {
+        "x": 1.5,
+        "sigma": 0.2,
+        "ibp_weight": 5.0,
+        "ibp_correction": 7.5,
+        "eml_depth": 2,
+        "application": "Greeks computation without differentiating payoff",
+        "note": "Malliavin IBP weight = EML-2; Skorohod integral = EML-2"
+      },
+      "2.0": {
+        "x": 2.0,
+        "sigma": 0.2,
+        "ibp_weight": 5.0,
+        "ibp_correction": 10.0,
+        "eml_depth": 2,
+        "application": "Greeks computation without differentiating payoff",
+        "note": "Malliavin IBP weight = EML-2; Skorohod integral = EML-2"
+      }
+    },
+    "eml_depth": {
+      "malliavin_D_t_F": 2,
+      "clark_ocone": 2,
+      "skorohod_integral": 2,
+      "ibp_weight": 2
+    },
+    "key_insight": "Malliavin calculus = EML-2 throughout (stochastic gradient = same as Fisher)"
+  },
+  "eml_depth_summary": {
+    "EML-0": "FK equivalence map, Clark-Ocone evaluation, duality correspondences",
+    "EML-1": "E[S(T)]=S\u2080exp(\u03bcT), FK discount exp(-VT), Euclidean path weight exp(-S_E)",
+    "EML-2": "It\u00f4 correction \u03c3\u00b2/2, log-normal dist, Malliavin derivative, running coupling",
+    "EML-3": "GBM = exp(Brownian), heat kernel Gaussian, Minkowski exp(iS/\u210f), Stratonovich",
+    "EML-\u221e": "Path integral \u222bDx, t\u21920 heat kernel (delta), confinement proof"
+  },
+  "key_theorem": "The EML Stochastic Depth Theorem: Stochastic calculus stratifies sharply. It\u00f4 correction (\u03c3\u00b2/2) = EML-2 (variance, log-level information). Stratonovich calculus preserves the chain rule \u2192 EML-3 (oscillatory systems). GBM S(T) = exp(Brownian motion) = EML-3. Feynman-Kac connects EML-3 heat kernel to EML-\u221e path integral. Wick rotation: EML-3 (Minkowski oscillation) \u2192 EML-1 (Euclidean damping). Malliavin calculus = EML-2 throughout: stochastic gradient = same depth as Fisher info. The full path integral \u222bDx exp(iS/\u210f) over all paths is EML-\u221e: it requires summing over EML-\u221e many trajectories.",
+  "rabbit_hole_log": [
+    "It\u00f4 correction = EML-2: \u03c3\u00b2/2 is variance \u2014 same depth as Shannon entropy, Fisher info",
+    "GBM = EML-3: exp(Brownian) = EML-1 exp of EML-2 log process = EML-3 overall",
+    "Wick rotation = EML-3\u2192EML-1: same as S155/S175 instanton connection!",
+    "Heat kernel = EML-3: Gaussian propagator \u2014 same as spectral envelope, wave packet",
+    "FK map = EML-0: equivalence between PDE and probability \u2014 no depth added",
+    "Path integral = EML-\u221e: uncountably infinite sum over paths"
+  ],
+  "connections": {
+    "S156_stochastic": "S156 covered Brownian motion; S176 adds It\u00f4-Strat, Malliavin",
+    "S169_finance": "GBM = EML-3 here confirms BS = EML-3 from S169",
+    "S155_qft": "Wick rotation EML-3\u2192EML-1 confirmed in both S155 and S176"
+  }
+}
