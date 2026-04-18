@@ -1,0 +1,307 @@
+{
+  "session": 122,
+  "title": "Evolutionary Biology: Fitness Landscapes, Speciation & Evolutionary Phase Transitions",
+  "key_theorem": {
+    "theorem": "EML Evolution Phase Transition Theorem",
+    "statement": "Additive fitness W=exp(\u03a3s\u1d62\u03c3\u1d62) is EML-1 (Boltzmann product). Fisher's fundamental theorem dW\u0304/dt=Var(W)/W\u0304 is EML-2 (variance/mean). NK landscape with K=0 is EML-1; K\u2192N-1 is EML-\u221e (spin glass). Dobzhansky-Muller incompatibility P=1-exp(-k\u00b2/2) is EML-2. Time to speciation T~ln(N)/s is EML-2. Speciation threshold m=m_c is EML-\u221e (phase transition). Stochastic tunneling P~exp(-N\u00b7d) is EML-1. Adaptive radiation follows logistic EML-2 growth. Punctuated equilibrium: stasis=EML-0, tunneling=EML-1, burst=EML-\u221e."
+  },
+  "fitness_landscape": {
+    "additive_fitness": [
+      {
+        "selection_coeffs": [
+          0.1,
+          -0.05,
+          0.2
+        ],
+        "alleles": [
+          1,
+          0,
+          1
+        ],
+        "log_W": 0.3,
+        "W": 1.3499,
+        "eml": 1,
+        "reason": "W=exp(\u03a3 s\u1d62\u03c3\u1d62): product of EML-1 Boltzmann factors = EML-1."
+      },
+      {
+        "selection_coeffs": [
+          0.05,
+          0.05,
+          0.05,
+          0.05
+        ],
+        "alleles": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "log_W": 0.2,
+        "W": 1.2214,
+        "eml": 1,
+        "reason": "W=exp(\u03a3 s\u1d62\u03c3\u1d62): product of EML-1 Boltzmann factors = EML-1."
+      }
+    ],
+    "nk_landscape": [
+      {
+        "N": 20,
+        "K": 0,
+        "eml": 1,
+        "description": "Additive landscape: single global peak, closed form W=exp(\u03a3s\u1d62)"
+      },
+      {
+        "N": 20,
+        "K": 1,
+        "eml": 2,
+        "description": "Pairwise epistasis: pair correlations, EML-2 structure (quadratic interactions)"
+      },
+      {
+        "N": 20,
+        "K": 5,
+        "eml": 3,
+        "description": "Moderate epistasis: multiple local peaks, EML-3 (oscillatory fitness surface)"
+      },
+      {
+        "N": 20,
+        "K": 10,
+        "eml": "\u221e",
+        "description": "Fully epistatic (spin glass): no closed form, random energy model = EML-\u221e"
+      },
+      {
+        "N": 20,
+        "K": 19,
+        "eml": "\u221e",
+        "description": "Fully epistatic (spin glass): no closed form, random energy model = EML-\u221e"
+      }
+    ],
+    "fishers_theorem": {
+      "fitnesses": [
+        1.0,
+        1.1,
+        0.9
+      ],
+      "frequencies": [
+        0.5,
+        0.3,
+        0.2
+      ],
+      "W_bar": 1.01,
+      "Var_W": 0.0049,
+      "dW_bar_dt": 0.0049,
+      "eml": 2,
+      "reason": "dW\u0304/dt = Var(W)/W\u0304: variance/mean = EML-2 (ratio of quadratic to linear)."
+    },
+    "eml_additive_fitness": 1,
+    "eml_nk_K0": 1,
+    "eml_nk_K_high": "\u221e"
+  },
+  "speciation_dynamics": {
+    "dobzhansky_muller": [
+      {
+        "k_incompatibility_loci": 1,
+        "P_incompatible": 0.3935,
+        "eml": 2,
+        "reason": "P=1-exp(-k\u00b2/2): exp of quadratic = EML-2 (Gaussian complement)."
+      },
+      {
+        "k_incompatibility_loci": 2,
+        "P_incompatible": 0.8647,
+        "eml": 2,
+        "reason": "P=1-exp(-k\u00b2/2): exp of quadratic = EML-2 (Gaussian complement)."
+      },
+      {
+        "k_incompatibility_loci": 3,
+        "P_incompatible": 0.9889,
+        "eml": 2,
+        "reason": "P=1-exp(-k\u00b2/2): exp of quadratic = EML-2 (Gaussian complement)."
+      },
+      {
+        "k_incompatibility_loci": 5,
+        "P_incompatible": 1.0,
+        "eml": 2,
+        "reason": "P=1-exp(-k\u00b2/2): exp of quadratic = EML-2 (Gaussian complement)."
+      },
+      {
+        "k_incompatibility_loci": 10,
+        "P_incompatible": 1.0,
+        "eml": 2,
+        "reason": "P=1-exp(-k\u00b2/2): exp of quadratic = EML-2 (Gaussian complement)."
+      }
+    ],
+    "time_to_speciation": [
+      {
+        "s": 0.01,
+        "N": 1000,
+        "T_spec_generations": 690.8,
+        "eml": 2,
+        "reason": "T~ln(N)/s: logarithm of population size = EML-2."
+      },
+      {
+        "s": 0.1,
+        "N": 10000,
+        "T_spec_generations": 92.1,
+        "eml": 2,
+        "reason": "T~ln(N)/s: logarithm of population size = EML-2."
+      },
+      {
+        "s": 0.001,
+        "N": 1000000,
+        "T_spec_generations": 13815.5,
+        "eml": 2,
+        "reason": "T~ln(N)/s: logarithm of population size = EML-2."
+      }
+    ],
+    "gene_flow": [
+      {
+        "m": 0.001,
+        "s": 0.01,
+        "m_critical": 0.001,
+        "regime": "critical: speciation threshold",
+        "eml": "\u221e"
+      },
+      {
+        "m": 0.005,
+        "s": 0.01,
+        "m_critical": 0.001,
+        "regime": "gene flow dominates \u2192 single species",
+        "eml": 1
+      },
+      {
+        "m": 0.01,
+        "s": 0.01,
+        "m_critical": 0.001,
+        "regime": "gene flow dominates \u2192 single species",
+        "eml": 1
+      },
+      {
+        "m": 0.05,
+        "s": 0.01,
+        "m_critical": 0.001,
+        "regime": "gene flow dominates \u2192 single species",
+        "eml": 1
+      }
+    ],
+    "eml_DM_incompatibility": 2,
+    "eml_speciation_time": 2,
+    "eml_speciation_threshold": "\u221e"
+  },
+  "punctuated_equilibrium": {
+    "stochastic_tunneling": [
+      {
+        "valley_depth": 0.01,
+        "N_population": 100,
+        "P_tunnel": 0.36787944,
+        "eml": 1,
+        "reason": "P~exp(-N\u00b7d): exponential in valley depth \u00d7 population = EML-1."
+      },
+      {
+        "valley_depth": 0.1,
+        "N_population": 100,
+        "P_tunnel": 4.54e-05,
+        "eml": 1,
+        "reason": "P~exp(-N\u00b7d): exponential in valley depth \u00d7 population = EML-1."
+      },
+      {
+        "valley_depth": 0.01,
+        "N_population": 1000,
+        "P_tunnel": 4.54e-05,
+        "eml": 1,
+        "reason": "P~exp(-N\u00b7d): exponential in valley depth \u00d7 population = EML-1."
+      }
+    ],
+    "radiation_burst": [
+      {
+        "t_My": 0,
+        "t_burst_My": 10.0,
+        "N_species": 0.67,
+        "eml": 2,
+        "reason": "Logistic N=K/(1+exp(-r(t-t_b))): sigmoid = EML-2 (rational of EML-1)."
+      },
+      {
+        "t_My": 3,
+        "t_burst_My": 10.0,
+        "N_species": 2.93,
+        "eml": 2,
+        "reason": "Logistic N=K/(1+exp(-r(t-t_b))): sigmoid = EML-2 (rational of EML-1)."
+      },
+      {
+        "t_My": 6,
+        "t_burst_My": 10.0,
+        "N_species": 11.92,
+        "eml": 2,
+        "reason": "Logistic N=K/(1+exp(-r(t-t_b))): sigmoid = EML-2 (rational of EML-1)."
+      },
+      {
+        "t_My": 9,
+        "t_burst_My": 10.0,
+        "N_species": 37.75,
+        "eml": 2,
+        "reason": "Logistic N=K/(1+exp(-r(t-t_b))): sigmoid = EML-2 (rational of EML-1)."
+      },
+      {
+        "t_My": 12,
+        "t_burst_My": 10.0,
+        "N_species": 73.11,
+        "eml": 2,
+        "reason": "Logistic N=K/(1+exp(-r(t-t_b))): sigmoid = EML-2 (rational of EML-1)."
+      },
+      {
+        "t_My": 15,
+        "t_burst_My": 10.0,
+        "N_species": 92.41,
+        "eml": 2,
+        "reason": "Logistic N=K/(1+exp(-r(t-t_b))): sigmoid = EML-2 (rational of EML-1)."
+      },
+      {
+        "t_My": 18,
+        "t_burst_My": 10.0,
+        "N_species": 98.2,
+        "eml": 2,
+        "reason": "Logistic N=K/(1+exp(-r(t-t_b))): sigmoid = EML-2 (rational of EML-1)."
+      },
+      {
+        "t_My": 21,
+        "t_burst_My": 10.0,
+        "N_species": 99.59,
+        "eml": 2,
+        "reason": "Logistic N=K/(1+exp(-r(t-t_b))): sigmoid = EML-2 (rational of EML-1)."
+      },
+      {
+        "t_My": 24,
+        "t_burst_My": 10.0,
+        "N_species": 99.91,
+        "eml": 2,
+        "reason": "Logistic N=K/(1+exp(-r(t-t_b))): sigmoid = EML-2 (rational of EML-1)."
+      },
+      {
+        "t_My": 27,
+        "t_burst_My": 10.0,
+        "N_species": 99.98,
+        "eml": 2,
+        "reason": "Logistic N=K/(1+exp(-r(t-t_b))): sigmoid = EML-2 (rational of EML-1)."
+      }
+    ],
+    "eml_stasis": 0,
+    "eml_tunneling": 1,
+    "eml_punctuation": "\u221e",
+    "eml_radiation": 2,
+    "eml_mass_extinction": "\u221e"
+  },
+  "eml_depth_summary": {
+    "EML-0": "Neutral evolution (drift); stasis; morphological conservation; fixation time 4N",
+    "EML-1": "Additive fitness exp(\u03a3s\u1d62\u03c3\u1d62); stochastic tunneling exp(-Nd); post-extinction rebound",
+    "EML-2": "Fisher's theorem Var(W)/W\u0304; DM incompatibility 1-exp(-k\u00b2/2); speciation time ln(N)/s; logistic radiation",
+    "EML-3": "Moderate epistasis (K~N/2): oscillatory fitness surface with multiple peaks",
+    "EML-\u221e": "NK K=N-1 (spin glass); speciation threshold m=m_c; Cambrian explosion; mass extinction"
+  },
+  "rabbit_hole_log": [
+    "The NK landscape is the evolutionary analog of the Ising model. K=0 (additive) = non-interacting spins = EML-1. K=N-1 (fully epistatic) = random energy model = spin glass = EML-\u221e. The spin glass phase transition at K_c is the evolutionary analog of Ising T_c (S57) \u2014 above K_c, the fitness landscape has exponentially many local optima, no gradient to follow, and evolution stalls. Evolution itself is an EML-\u221e problem in the fully epistatic regime.",
+    "Speciation is an EML-\u221e phase transition: below the critical migration rate m_c~s, gene flow prevents divergence (single species = EML-1 shared gene pool). Above m_c, allele frequencies diverge, reproductive isolation builds up via Dobzhansky-Muller incompatibilities (EML-2), and speciation occurs. The speciation threshold m=m_c is the same EML-\u221e structure as R\u2080=1 (S113), laser threshold (S116), and neural criticality \u03c3=1 (S118). Phase transitions are evolution's mechanism for generating biological diversity.",
+    "Fisher's Fundamental Theorem is EML-2: dW\u0304/dt = Var(W)/W\u0304. This is a ratio of variance (EML-2 quadratic) to mean (EML-1), giving EML-2. The theorem says mean fitness increases at the rate of additive genetic variance \u2014 the engine of evolution is EML-2. This connects to the Fisher information (S60): Fisher information I(\u03b8) = E[(\u2202 ln p/\u2202\u03b8)\u00b2] = 1/\u03c3\u00b2 (also EML-2). The same Fisher who proved the fundamental theorem derived the Fisher information \u2014 both are EML-2 by the same variance-over-mean structure."
+  ],
+  "connections": {
+    "to_session_57": "NK spin glass (EML-\u221e) = Ising spin glass below T_c. Same EML-\u221e frustrated landscape.",
+    "to_session_113": "Speciation threshold m=m_c = epidemic threshold R\u2080=1: same EML-\u221e phase transition structure.",
+    "to_session_60": "Fisher's theorem Var(W)/W\u0304 = EML-2, same depth as Fisher information I(\u03b8)=1/\u03c3\u00b2."
+  }
+}
