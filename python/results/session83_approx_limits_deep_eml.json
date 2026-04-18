@@ -1,0 +1,128 @@
+{
+  "session": 83,
+  "title": "Limits of Approximation Deep: Runge, NTK, Chebyshev",
+  "key_theorem": {
+    "theorem": "EML Approximation Obstruction Theorem",
+    "statement": "For f \u2208 EML-j (j finite), N-term EML-k approximation (k\u2265j) achieves exact representation for finite N. For f \u2208 EML-\u221e \u2229 H\u00f6lder-s, the best N-term approximation error is \u0398(N^{-s}): no EML-finite shortcut exists; the rate is determined purely by the H\u00f6lder smoothness. EML depth of the approximation atoms does NOT improve beyond the smoothness barrier."
+  },
+  "runge_phenomenon": {
+    "function": "1/(1+25x\u00b2)",
+    "eml_depth_f": 2,
+    "runge_comparison": [
+      {
+        "n": 5,
+        "equispaced_max_error": 0.4383,
+        "chebyshev_max_error": 0.402
+      },
+      {
+        "n": 10,
+        "equispaced_max_error": 0.298,
+        "chebyshev_max_error": 0.2671
+      },
+      {
+        "n": 15,
+        "equispaced_max_error": 7.1893,
+        "chebyshev_max_error": 0.0461
+      }
+    ],
+    "eml_insight": "Runge: equispaced interpolation diverges even for EML-2 functions; Chebyshev nodes converge geometrically"
+  },
+  "chebyshev_decay_rates": [
+    {
+      "function": "sin(\u03c0x) [EML-3]",
+      "eml_depth": 3,
+      "chebyshev_coefficients": [
+        0.0,
+        0.569231,
+        0.0,
+        0.666917,
+        0.0,
+        0.104282,
+        0.0,
+        0.006841
+      ],
+      "geometric_decay_rate": -0.668,
+      "convergence_type": "geometric (analytic f)"
+    },
+    {
+      "function": "|x| [EML-\u221e]",
+      "eml_depth": Infinity,
+      "chebyshev_coefficients": [
+        0.636621,
+        0.0,
+        0.424411,
+        0.0,
+        0.084881,
+        0.0,
+        0.036376,
+        0.0
+      ],
+      "geometric_decay_rate": -0.1664,
+      "convergence_type": "polynomial (non-analytic)"
+    },
+    {
+      "function": "exp(-x\u00b2) [EML-3]",
+      "eml_depth": 3,
+      "chebyshev_coefficients": [
+        0.645035,
+        0.0,
+        0.312842,
+        0.0,
+        0.038704,
+        0.0,
+        0.003209,
+        0.0
+      ],
+      "geometric_decay_rate": -0.4093,
+      "convergence_type": "polynomial (non-analytic)"
+    },
+    {
+      "function": "1/(1+25x\u00b2) [EML-2]",
+      "eml_depth": 2,
+      "chebyshev_coefficients": [
+        0.196116,
+        0.0,
+        0.263611,
+        0.0,
+        0.177167,
+        0.0,
+        0.11907,
+        0.0
+      ],
+      "geometric_decay_rate": -0.0662,
+      "convergence_type": "polynomial (non-analytic)"
+    }
+  ],
+  "neural_tangent_kernel": [
+    {
+      "activation": "erf (EML-3)",
+      "K_NTK_depth": 3,
+      "RKHS_space": "Sobolev H^s for all s",
+      "approx_rate": "O(N^{-s}) matching target smoothness",
+      "note": "Smooth kernel \u2192 faster convergence for smooth targets"
+    },
+    {
+      "activation": "ReLU (EML-\u221e)",
+      "K_NTK_depth": 2,
+      "RKHS_space": "Sobolev H^{3/2} (arc-cosine kernel)",
+      "approx_rate": "O(N^{-3/2}) for smooth targets",
+      "note": "Less smooth kernel \u2192 limited rate even for smooth targets"
+    },
+    {
+      "activation": "tanh (EML-3)",
+      "K_NTK_depth": 3,
+      "RKHS_space": "Sobolev H^s for s depending on depth",
+      "approx_rate": "O(N^{-s}) for smooth targets",
+      "note": "Similar to erf; EML-3 activations give smoother NTK"
+    }
+  ],
+  "eml_depth_summary": {
+    "EML-2": "Runge function 1/(1+25x\u00b2); polynomial interpolants; Chebyshev polynomials",
+    "EML-3": "erf activation NTK; sin(\u03c0x) with geometric Chebyshev decay; Shannon sinc",
+    "EML-\u221e": "|x| at 0; ReLU activation; Chebyshev decay is polynomial not geometric"
+  },
+  "connections": {
+    "to_session_72": "Session 72: Gibbs, rate O(N^{-s}). Session 83: adds Runge, Chebyshev decay, NTK.",
+    "to_session_56": "ML theory (Session 56): EML-3 activation (erf/tanh) better than EML-\u221e (ReLU) for smooth targets"
+  }
+}
