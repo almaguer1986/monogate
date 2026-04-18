@@ -1,0 +1,37 @@
+{
+  "session": 832,
+  "title": "Tropical Navier-Stokes Equations",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "NSTropicalEquationsEML",
+    "analysis": {
+      "object": "T553: Tropical Navier-Stokes Equations depth analysis",
+      "domains": {
+        "tropical_ns": {
+          "description": "Replace real +,* with MAX,+ in NS; tropical NS has MAX-PLUS velocity field",
+          "depth": "EML-3",
+          "reason": "Tropical NS is EML-3: MAX operation is tropical analogue of oscillatory superposition"
+        },
+        "tropical_regularity": {
+          "description": "Tropical NS always regular: MAX operation has ceiling; no tropical blow-up",
+          "depth": "EML-2",
+          "reason": "Tropical MAX prevents unbounded growth; tropical NS stays EML-2/3"
+        },
+        "shadow_ns": {
+          "description": "Tropical NS is EML-2/3 shadow of real EML-inf NS",
+          "depth": "EML-2",
+          "reason": "Shadow depth theorem: tropical NS is the EML-2 shadow of EML-inf real NS"
+        }
+      }
+    },
+    "distribution": {
+      "EML-3": 1,
+      "EML-2": 2
+    },
+    "theorem": "T553: Tropical Navier-Stokes Equations (S832)."
+  },
+  "key_theorem": "T553: Tropical Navier-Stokes Equations (S832).",
+  "rabbit_hole_log": [
+    "T553: tropical_ns depth confirmed"
+  ]
+}
