@@ -1,0 +1,149 @@
+{
+  "session": 136,
+  "title": "Linguistics Deep II: Compositionality, Ambiguity & Semantic Shift",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "compositional_semantics": {
+    "model": "CompositionalSemanticsV2",
+    "vocab_size": 50000,
+    "lambda_tree_depths": {
+      "2": 1,
+      "4": 2,
+      "8": 3,
+      "16": 4,
+      "32": 5
+    },
+    "montague_types": {
+      "0": "e",
+      "1": "(e \u2192 t)",
+      "2": "((e \u2192 t) \u2192 t)",
+      "3": "(((e \u2192 t) \u2192 t) \u2192 t)"
+    },
+    "montague_eml_depths": {
+      "entity_type_e": "EML-0 (atomic)",
+      "truth_value_type_t": "EML-0 (Boolean)",
+      "function_application": "EML-0 (structural composition)",
+      "lambda_abstraction": "EML-0 (binding)",
+      "quantifier_raising": "EML-0 (movement in syntax tree)",
+      "intensional_operator": "EML-2 (world-relative computation)"
+    },
+    "log_productivity": 108.2,
+    "eml_depth": {
+      "function_application": 0,
+      "lambda_abstraction": 0,
+      "quantifiers": 0,
+      "intensional_operators": 2,
+      "sentence_productivity": 1
+    },
+    "key_insight": "Compositional grammar is EML-0 (structural tree operations)"
+  },
+  "distributional_semantics": {
+    "model": "DistributionalSemanticsV2",
+    "embedding_dim": 300,
+    "pmi_examples": [
+      1.3863,
+      -0.0,
+      0.6931
+    ],
+    "zipf_distribution": {
+      "1": 0.082712,
+      "10": 0.008271,
+      "100": 0.000827,
+      "1000": 8.3e-05,
+      "10000": 8e-06
+    },
+    "word2vec_objective": {
+      "-2.0": -2.1269,
+      "-1.0": -1.3133,
+      "0.0": -0.6931,
+      "1.0": -0.3133,
+      "2.0": -0.1269
+    },
+    "analogy_geometry": {
+      "vector_arithmetic": "EML-0 (linear operations)",
+      "analogy_completion": "EML-2 (nearest neighbor in Euclidean space)",
+      "semantic_subspace": "EML-2 (PCA/SVD decomposition)",
+      "isotropy": "EML-2 (uniform distribution over sphere)"
+    },
+    "eml_depth": {
+      "pmi": 2,
+      "word2vec_objective": 2,
+      "cosine_similarity": 0,
+      "zipf_law": 2,
+      "vector_analogy": 0
+    },
+    "key_insight": "Distributional semantics = EML-2 (log-linear PMI, power-law Zipf)"
+  },
+  "semantic_change_and_ambiguity": {
+    "model": "SemanticChangeAndAmbiguity",
+    "time_span": 100.0,
+    "drift_rate": 0.015,
+    "semantic_drift_over_time": {
+      "0": 0.0,
+      "10": 0.1393,
+      "25": 0.3127,
+      "50": 0.5276,
+      "75": 0.6753,
+      "100": 0.7769
+    },
+    "meaning_shift_probability": {
+      "0": 0.0,
+      "10": 0.0,
+      "25": 0.0,
+      "50": 0.5,
+      "75": 1.0,
+      "100": 1.0
+    },
+    "semantic_bleaching": {
+      "0": 1.0,
+      "10": 0.7408,
+      "25": 0.4724,
+      "50": 0.2231,
+      "75": 0.1054,
+      "100": 0.0498
+    },
+    "ambiguity_entropy_vs_n_senses": {
+      "1": 0.0,
+      "2": 0.6109,
+      "3": 0.8188,
+      "5": 1.0268,
+      "10": 1.27
+    },
+    "garden_path_effect": {
+      "example": "The horse raced past the barn fell.",
+      "initial_parse_eml": 1,
+      "reanalysis_eml": "\u221e",
+      "mechanism": "Reanalysis = phase transition in parse tree space",
+      "surprise_cost": "EML-\u221e (non-incremental structural jump)"
+    },
+    "eml_depth": {
+      "semantic_drift": 1,
+      "meaning_shift_event": "\u221e",
+      "ambiguity_entropy": 2,
+      "bleaching": 1,
+      "garden_path_reanalysis": "\u221e"
+    },
+    "key_insight": "Gradual semantic change is EML-1 (exponential drift). Discrete meaning shifts and garden-path reanalysis are EML-\u221e (phase transitions)."
+  },
+  "eml_depth_summary": {
+    "EML-0": "Lambda calculus composition, syntax tree structure, function application",
+    "EML-1": "Sentence productivity (N^k), semantic drift, semantic bleaching",
+    "EML-2": "PMI, Word2Vec objective, Zipf's law, ambiguity entropy",
+    "EML-3": "Prosodic oscillations, tonal patterns (EML-3 in tone languages)",
+    "EML-\u221e": "Ambiguity resolution, garden-path reanalysis, discrete meaning shift"
+  },
+  "key_theorem": "The EML Linguistic Depth Theorem: Compositional meaning (Montague grammar) is EML-0 \u2014 it is purely structural, like topology. Distributional meaning (Word2Vec, PMI) is EML-2 \u2014 log-linear geometry. Semantic ambiguity resolution and garden-path reanalysis are EML-\u221e: they are phase transitions in the parse/meaning space, not computable by any EML-finite algorithm from the local context.",
+  "rabbit_hole_log": [
+    "Montague grammar = EML-0: type-theoretic composition is counting/structural",
+    "Word2Vec objective = log \u03c3(v\u00b7c): log of EML-1 = EML-2",
+    "Zipf's law P(k)~k^{-1}: power law = EML-2 (same class as all scale-free laws)",
+    "Semantic drift = 1-exp(-\u03bbt): EML-1 (same as OU mean reversion in evolution)",
+    "Garden path reanalysis: non-local structural revision = EML-\u221e jump",
+    "Ambiguity entropy: Shannon = EML-2 (same as thermodynamic entropy)"
+  ],
+  "connections": {
+    "S60_info_theory": "PMI = pointwise mutual information = EML-2 (same class as Shannon)",
+    "S119_transformer": "Word2Vec \u2192 Transformer: both EML-2 (distributional geometry)",
+    "S124_graph_deep": "Semantic networks = graph structure; syntax trees = EML-0 trees",
+    "S130_grand_synthesis_7": "Language ambiguity resolution = EML-\u221e phase transition"
+  }
+}
