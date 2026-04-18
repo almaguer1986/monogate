@@ -1,0 +1,411 @@
+{
+  "session": 112,
+  "title": "Extreme Value Theory & Rare Events: EML of Extremes",
+  "key_theorem": {
+    "theorem": "EML Extreme Value Theorem",
+    "statement": "All three extreme value attractors are EML-2: Gumbel F(x)=exp(-exp(-x)) is EML-2 (double exponential = EML-1\u2218EML-1). Fr\u00e9chet F(x)=exp(-x^{-\u03b1}) is EML-2 (exp of power law). Weibull F(x)=exp(-(-x)^\u03b1) is EML-2. GEV unification is EML-2. Return levels x_T = EML-2 (ln of ln for Gumbel). Expected records H_n \u2248 ln(n) = EML-2. Black swans are EML-2 Fr\u00e9chet tails mislabeled as EML-\u221e. True EML-\u221e rare events: L\u00e9vy stable (no closed form)."
+  },
+  "extreme_value_distributions": {
+    "gumbel": [
+      {
+        "x": -2,
+        "mu": 0.0,
+        "beta": 1.0,
+        "F_x": 0.000618,
+        "f_x": 0.004566,
+        "eml": 2,
+        "reason": "F = exp(-exp(-z)): EML-1\u2218EML-1 = EML-2 (double exponential)"
+      },
+      {
+        "x": -1,
+        "mu": 0.0,
+        "beta": 1.0,
+        "F_x": 0.065988,
+        "f_x": 0.179374,
+        "eml": 2,
+        "reason": "F = exp(-exp(-z)): EML-1\u2218EML-1 = EML-2 (double exponential)"
+      },
+      {
+        "x": 0,
+        "mu": 0.0,
+        "beta": 1.0,
+        "F_x": 0.367879,
+        "f_x": 0.367879,
+        "eml": 2,
+        "reason": "F = exp(-exp(-z)): EML-1\u2218EML-1 = EML-2 (double exponential)"
+      },
+      {
+        "x": 1,
+        "mu": 0.0,
+        "beta": 1.0,
+        "F_x": 0.692201,
+        "f_x": 0.254646,
+        "eml": 2,
+        "reason": "F = exp(-exp(-z)): EML-1\u2218EML-1 = EML-2 (double exponential)"
+      },
+      {
+        "x": 2,
+        "mu": 0.0,
+        "beta": 1.0,
+        "F_x": 0.873423,
+        "f_x": 0.118205,
+        "eml": 2,
+        "reason": "F = exp(-exp(-z)): EML-1\u2218EML-1 = EML-2 (double exponential)"
+      },
+      {
+        "x": 3,
+        "mu": 0.0,
+        "beta": 1.0,
+        "F_x": 0.951432,
+        "f_x": 0.047369,
+        "eml": 2,
+        "reason": "F = exp(-exp(-z)): EML-1\u2218EML-1 = EML-2 (double exponential)"
+      },
+      {
+        "x": 4,
+        "mu": 0.0,
+        "beta": 1.0,
+        "F_x": 0.981851,
+        "f_x": 0.017983,
+        "eml": 2,
+        "reason": "F = exp(-exp(-z)): EML-1\u2218EML-1 = EML-2 (double exponential)"
+      }
+    ],
+    "frechet_alpha2": [
+      {
+        "x": 0.5,
+        "alpha": 2.0,
+        "F_x": 0.018316,
+        "f_x": 0.29305,
+        "eml": 2,
+        "reason": "F = exp(-x^{-\u03b1}): EML-1\u2218EML-2(power law) = EML-2"
+      },
+      {
+        "x": 1.0,
+        "alpha": 2.0,
+        "F_x": 0.367879,
+        "f_x": 0.735759,
+        "eml": 2,
+        "reason": "F = exp(-x^{-\u03b1}): EML-1\u2218EML-2(power law) = EML-2"
+      },
+      {
+        "x": 2.0,
+        "alpha": 2.0,
+        "F_x": 0.778801,
+        "f_x": 0.1947,
+        "eml": 2,
+        "reason": "F = exp(-x^{-\u03b1}): EML-1\u2218EML-2(power law) = EML-2"
+      },
+      {
+        "x": 5.0,
+        "alpha": 2.0,
+        "F_x": 0.960789,
+        "f_x": 0.015373,
+        "eml": 2,
+        "reason": "F = exp(-x^{-\u03b1}): EML-1\u2218EML-2(power law) = EML-2"
+      },
+      {
+        "x": 10.0,
+        "alpha": 2.0,
+        "F_x": 0.99005,
+        "f_x": 0.00198,
+        "eml": 2,
+        "reason": "F = exp(-x^{-\u03b1}): EML-1\u2218EML-2(power law) = EML-2"
+      }
+    ],
+    "weibull_alpha2": [
+      {
+        "x": -3.0,
+        "alpha": 2.0,
+        "F_x": 0.000123,
+        "eml": 2,
+        "reason": "F = exp(-(-x/\u03c3)^\u03b1): EML-2 (exp of power law of reflected variable)"
+      },
+      {
+        "x": -2.0,
+        "alpha": 2.0,
+        "F_x": 0.018316,
+        "eml": 2,
+        "reason": "F = exp(-(-x/\u03c3)^\u03b1): EML-2 (exp of power law of reflected variable)"
+      },
+      {
+        "x": -1.0,
+        "alpha": 2.0,
+        "F_x": 0.367879,
+        "eml": 2,
+        "reason": "F = exp(-(-x/\u03c3)^\u03b1): EML-2 (exp of power law of reflected variable)"
+      },
+      {
+        "x": -0.5,
+        "alpha": 2.0,
+        "F_x": 0.778801,
+        "eml": 2,
+        "reason": "F = exp(-(-x/\u03c3)^\u03b1): EML-2 (exp of power law of reflected variable)"
+      },
+      {
+        "x": 0.0,
+        "F_x": 1.0,
+        "eml": 2
+      }
+    ],
+    "gev_family": [
+      {
+        "x": 2.0,
+        "xi": -0.5,
+        "mu": 0.0,
+        "sigma": 1.0,
+        "F_x": 1.0,
+        "family": "Weibull",
+        "eml": 2,
+        "reason": "GEV unification: all three types = EML-2"
+      },
+      {
+        "x": 2.0,
+        "xi": -0.1,
+        "mu": 0.0,
+        "sigma": 1.0,
+        "F_x": 0.89819,
+        "family": "Weibull",
+        "eml": 2,
+        "reason": "GEV unification: all three types = EML-2"
+      },
+      {
+        "x": 2.0,
+        "xi": 0.0,
+        "mu": 0.0,
+        "sigma": 1.0,
+        "F_x": 0.873423,
+        "family": "Gumbel",
+        "eml": 2,
+        "reason": "GEV unification: all three types = EML-2"
+      },
+      {
+        "x": 2.0,
+        "xi": 0.1,
+        "mu": 0.0,
+        "sigma": 1.0,
+        "F_x": 0.850862,
+        "family": "Fr\u00e9chet",
+        "eml": 2,
+        "reason": "GEV unification: all three types = EML-2"
+      },
+      {
+        "x": 2.0,
+        "xi": 0.5,
+        "mu": 0.0,
+        "sigma": 1.0,
+        "F_x": 0.778801,
+        "family": "Fr\u00e9chet",
+        "eml": 2,
+        "reason": "GEV unification: all three types = EML-2"
+      }
+    ],
+    "eml_gumbel": 2,
+    "eml_frechet": 2,
+    "eml_weibull": 2,
+    "eml_gev": 2,
+    "fisher_tippett_gnedenko": "All extreme value attractors are EML-2 (double exponential or exp of power law)"
+  },
+  "return_periods": {
+    "gumbel_return_levels": [
+      {
+        "T_years": 2,
+        "x_T": 0.3665,
+        "exceedance_prob": 0.5,
+        "eml": 2,
+        "reason": "x_T = \u03bc - \u03b2\u00b7ln(-ln(1-1/T)): EML-2 (ln of ln = double logarithm)"
+      },
+      {
+        "T_years": 5,
+        "x_T": 1.4999,
+        "exceedance_prob": 0.2,
+        "eml": 2,
+        "reason": "x_T = \u03bc - \u03b2\u00b7ln(-ln(1-1/T)): EML-2 (ln of ln = double logarithm)"
+      },
+      {
+        "T_years": 10,
+        "x_T": 2.2504,
+        "exceedance_prob": 0.1,
+        "eml": 2,
+        "reason": "x_T = \u03bc - \u03b2\u00b7ln(-ln(1-1/T)): EML-2 (ln of ln = double logarithm)"
+      },
+      {
+        "T_years": 25,
+        "x_T": 3.1985,
+        "exceedance_prob": 0.04,
+        "eml": 2,
+        "reason": "x_T = \u03bc - \u03b2\u00b7ln(-ln(1-1/T)): EML-2 (ln of ln = double logarithm)"
+      },
+      {
+        "T_years": 50,
+        "x_T": 3.9019,
+        "exceedance_prob": 0.02,
+        "eml": 2,
+        "reason": "x_T = \u03bc - \u03b2\u00b7ln(-ln(1-1/T)): EML-2 (ln of ln = double logarithm)"
+      },
+      {
+        "T_years": 100,
+        "x_T": 4.6001,
+        "exceedance_prob": 0.01,
+        "eml": 2,
+        "reason": "x_T = \u03bc - \u03b2\u00b7ln(-ln(1-1/T)): EML-2 (ln of ln = double logarithm)"
+      },
+      {
+        "T_years": 500,
+        "x_T": 6.2136,
+        "exceedance_prob": 0.002,
+        "eml": 2,
+        "reason": "x_T = \u03bc - \u03b2\u00b7ln(-ln(1-1/T)): EML-2 (ln of ln = double logarithm)"
+      },
+      {
+        "T_years": 1000,
+        "x_T": 6.9073,
+        "exceedance_prob": 0.001,
+        "eml": 2,
+        "reason": "x_T = \u03bc - \u03b2\u00b7ln(-ln(1-1/T)): EML-2 (ln of ln = double logarithm)"
+      }
+    ],
+    "frechet_return_levels": [
+      {
+        "T_years": 2,
+        "x_T": 1.2011,
+        "eml": 2,
+        "reason": "x_T = \u03c3\u00b7(-ln p)^{-1/\u03b1}: EML-2 (power of logarithm)"
+      },
+      {
+        "T_years": 5,
+        "x_T": 2.1169,
+        "eml": 2,
+        "reason": "x_T = \u03c3\u00b7(-ln p)^{-1/\u03b1}: EML-2 (power of logarithm)"
+      },
+      {
+        "T_years": 10,
+        "x_T": 3.0808,
+        "eml": 2,
+        "reason": "x_T = \u03c3\u00b7(-ln p)^{-1/\u03b1}: EML-2 (power of logarithm)"
+      },
+      {
+        "T_years": 25,
+        "x_T": 4.9494,
+        "eml": 2,
+        "reason": "x_T = \u03c3\u00b7(-ln p)^{-1/\u03b1}: EML-2 (power of logarithm)"
+      },
+      {
+        "T_years": 50,
+        "x_T": 7.0355,
+        "eml": 2,
+        "reason": "x_T = \u03c3\u00b7(-ln p)^{-1/\u03b1}: EML-2 (power of logarithm)"
+      },
+      {
+        "T_years": 100,
+        "x_T": 9.9749,
+        "eml": 2,
+        "reason": "x_T = \u03c3\u00b7(-ln p)^{-1/\u03b1}: EML-2 (power of logarithm)"
+      },
+      {
+        "T_years": 500,
+        "x_T": 22.3495,
+        "eml": 2,
+        "reason": "x_T = \u03c3\u00b7(-ln p)^{-1/\u03b1}: EML-2 (power of logarithm)"
+      },
+      {
+        "T_years": 1000,
+        "x_T": 31.6149,
+        "eml": 2,
+        "reason": "x_T = \u03c3\u00b7(-ln p)^{-1/\u03b1}: EML-2 (power of logarithm)"
+      }
+    ],
+    "black_swan": {
+      "claim": "Black swans are EML-2, not EML-\u221e",
+      "argument": "Taleb's 'black swans' are events in the tails of Fr\u00e9chet distributions (power law tails). P(X > x) ~ x^{-\u03b1}: this is EML-2 (power law). The surprise is not that the distribution is EML-\u221e, but that we fitted a thin-tailed EML-3 Gaussian to an EML-2 power-law process. Black swans = EML-2 events modeled as if EML-3 \u2192 apparent EML-\u221e surprise.",
+      "true_eml_inf_rare": "L\u00e9vy stable distributions with index \u03b1<2 and no closed form (except Gaussian \u03b1=2, Cauchy \u03b1=1, L\u00e9vy \u03b1=1/2): these are EML-\u221e (no elementary closed form). Genuinely EML-\u221e rare events have no computable return period.",
+      "eml_model_mismatch": "EML-3 model on EML-2 data = apparent EML-\u221e surprise"
+    }
+  },
+  "record_statistics": {
+    "expected_records": [
+      {
+        "n": 10,
+        "E_records": 2.929,
+        "approx_ln_n": 2.3026,
+        "eml": 2,
+        "reason": "E[records] = H_n \u2248 ln(n): EML-2 (harmonic number \u2192 logarithm)"
+      },
+      {
+        "n": 100,
+        "E_records": 5.1874,
+        "approx_ln_n": 4.6052,
+        "eml": 2,
+        "reason": "E[records] = H_n \u2248 ln(n): EML-2 (harmonic number \u2192 logarithm)"
+      },
+      {
+        "n": 1000,
+        "E_records": 7.4855,
+        "approx_ln_n": 6.9078,
+        "eml": 2,
+        "reason": "E[records] = H_n \u2248 ln(n): EML-2 (harmonic number \u2192 logarithm)"
+      },
+      {
+        "n": 10000,
+        "E_records": 9.7876,
+        "approx_ln_n": 9.2103,
+        "eml": 2,
+        "reason": "E[records] = H_n \u2248 ln(n): EML-2 (harmonic number \u2192 logarithm)"
+      }
+    ],
+    "record_maxima": [
+      {
+        "n": 10,
+        "mu": 0.0,
+        "beta": 1.0,
+        "E_max": 2.3026,
+        "eml": 2,
+        "reason": "E[max] \u2248 \u03bc + \u03b2\u00b7ln(n): EML-2 (logarithmic growth of expected maximum)"
+      },
+      {
+        "n": 100,
+        "mu": 0.0,
+        "beta": 1.0,
+        "E_max": 4.6052,
+        "eml": 2,
+        "reason": "E[max] \u2248 \u03bc + \u03b2\u00b7ln(n): EML-2 (logarithmic growth of expected maximum)"
+      },
+      {
+        "n": 1000,
+        "mu": 0.0,
+        "beta": 1.0,
+        "E_max": 6.9078,
+        "eml": 2,
+        "reason": "E[max] \u2248 \u03bc + \u03b2\u00b7ln(n): EML-2 (logarithmic growth of expected maximum)"
+      },
+      {
+        "n": 10000,
+        "mu": 0.0,
+        "beta": 1.0,
+        "E_max": 9.2103,
+        "eml": 2,
+        "reason": "E[max] \u2248 \u03bc + \u03b2\u00b7ln(n): EML-2 (logarithmic growth of expected maximum)"
+      }
+    ],
+    "record_increment_eml": 1,
+    "record_waiting_time_eml": 0,
+    "log_normal_record_times_eml": 2
+  },
+  "eml_depth_summary": {
+    "EML-0": "Return period counting (n+1)/i; inter-record waiting time E[\u0394_k]=k",
+    "EML-1": "Record increments ~ Exp(1); Gumbel inner layer exp(-z)",
+    "EML-2": "All EVT attractors (Gumbel/Fr\u00e9chet/Weibull/GEV); return levels ln(-ln(p)); E[records]\u2248ln(n)",
+    "EML-3": "Not present naturally in EVT (no oscillation)",
+    "EML-\u221e": "L\u00e9vy stable (no closed form except Gaussian/Cauchy/L\u00e9vy); true model uncertainty"
+  },
+  "rabbit_hole_log": [
+    "The double exponential is EML-2, not EML-3: Gumbel F(x)=exp(-exp(-x)) looks like it should be deep, but it's EML-1\u2218EML-1 = EML-2 by the composition law. This is surprising \u2014 the distribution of maximum values is simpler (EML-2) than the distribution of individual values might be (EML-3 for Gaussian). Extremes are simpler than typical values!",
+    "Return levels are double-logarithmic (EML-2): the 100-year flood level x_{100} = \u03bc - \u03b2\u00b7ln(-ln(0.99)) \u2248 \u03bc + \u03b2\u00b74.6. The formula involves ln(ln(T)) \u2014 two nested logarithms = EML-2. Every civil engineer computing flood levels is doing EML-2 arithmetic.",
+    "Black swans are an EML model mismatch: Taleb's insight is correct empirically but mislabeled mathematically. The 'black swan' phenomenon is EML-2 (power law) presented as if EML-3 (Gaussian). The surprise is from applying the wrong EML depth model. The events themselves are EML-2 \u2014 just the model was wrong.",
+    "Records grow logarithmically (EML-2): after 1 million trials, you expect only ~14 records (ln(10\u2076) \u2248 13.8). Records are rare not because of EML-\u221e complexity but because of EML-2 logarithmic scarcity. The rarity of records is the rarity of EML-2 events at the tail."
+  ],
+  "connections": {
+    "to_session_95": "Finance fat tails = EML-2 (confirmed). EVT Fr\u00e9chet is the precise distribution behind power-law tails.",
+    "to_session_111": "Gumbel = EML-1\u2218EML-1 = EML-2 by composition law from S111. EVT confirms the depth arithmetic."
+  }
+}
