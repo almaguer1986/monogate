@@ -1,0 +1,37 @@
+{
+  "session": 968,
+  "title": "The Depth of Adjunction",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "AdjunctionDepthEML",
+    "analysis": {
+      "object": "T689: The Depth of Adjunction depth analysis",
+      "domains": {
+        "adjunction_pair": {
+          "description": "Every adjunction F-|G pairs depth increase (F, left adjoint) with depth decrease (G, right adjoint)",
+          "depth": "EML-3",
+          "reason": "Adjunction theorem: left adjoint increases depth, right adjoint decreases it; adjunction is depth pairing"
+        },
+        "shadow_adjunction": {
+          "description": "Shadow Depth Theorem is an adjunction: categorification -| shadow; left increases, right decreases",
+          "depth": "EML-inf",
+          "reason": "Shadow theorem is adjunction: categorification (Deltad=+inf) left-adjoint to shadow (Deltad=-inf)"
+        },
+        "hundreds_of_theorems": {
+          "description": "Every known adjunction in mathematics is a depth transition pair; hundreds of instances",
+          "depth": "EML-3",
+          "reason": "Adjunction catalog: Free-|Forget, Suspension-|Loop, Global sections-|Constant sheaf; each is depth pair"
+        }
+      }
+    },
+    "distribution": {
+      "EML-3": 2,
+      "EML-inf": 1
+    },
+    "theorem": "T689: The Depth of Adjunction (S968)."
+  },
+  "key_theorem": "T689: The Depth of Adjunction (S968).",
+  "rabbit_hole_log": [
+    "T689: adjunction_pair depth confirmed"
+  ]
+}
