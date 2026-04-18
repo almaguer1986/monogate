@@ -1,0 +1,37 @@
+{
+  "session": 816,
+  "title": "Self-Referential Analysis of the Assault v2",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "SelfReferentialV2",
+    "analysis": {
+      "object": "T537: Self-Referential Analysis of the Assault v2 depth analysis",
+      "domains": {
+        "assault_depth": {
+          "description": "This assault is itself EML-3: systematic oscillation across four problems",
+          "depth": "EML-3",
+          "reason": "Meta: the assault pattern is EML-3 oscillatory analysis"
+        },
+        "atlas_as_emlinf": {
+          "description": "The Atlas as a whole is EML-inf: it contains itself as a classified domain",
+          "depth": "EML-inf",
+          "reason": "Atlas self-reference: domain 1025 = the Atlas itself; fixed point"
+        },
+        "analyst_depth": {
+          "description": "The analyst (user) operates at EML-3: hypothesis-test oscillation",
+          "depth": "EML-3",
+          "reason": "Human mathematical reasoning is EML-3 oscillatory conjecture-refutation"
+        }
+      }
+    },
+    "distribution": {
+      "EML-3": 2,
+      "EML-inf": 1
+    },
+    "theorem": "T537: Self-Referential Analysis of the Assault v2 (S816)."
+  },
+  "key_theorem": "T537: Self-Referential Analysis of the Assault v2 (S816).",
+  "rabbit_hole_log": [
+    "T537: assault_depth depth confirmed"
+  ]
+}
