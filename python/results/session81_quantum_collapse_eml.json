@@ -1,0 +1,157 @@
+{
+  "session": 81,
+  "title": "Quantum Randomness: Collapse, Decoherence & Quantum Zeno",
+  "key_theorem": {
+    "theorem": "Decoherence = EML-3 \u2192 EML-1 Transition",
+    "statement": "Decoherence maps quantum superposition (EML-3: off-diagonal \u03c1_01 = EML-3 amplitude) to classical mixture (EML-1: diagonal \u03c1 = Boltzmann distribution). The off-diagonal decay \u03c1_01(t) = \u03c1_01(0)\u00b7exp(-\u0393t) is EML-1. The pointer basis thermal state is EML-1. Thus the quantum-to-classical transition is an EML-3 \u2192 EML-1 collapse."
+  },
+  "density_matrices": {
+    "pure_superposition": {
+      "rho01": "(0.5+0j)",
+      "eml": "EML-3 (quantum coherence: off-diagonal = EML-3 amplitude interference)",
+      "entropy": 0.0
+    },
+    "mixed_classical": {
+      "rho01": "0j",
+      "eml": "EML-1 (classical mixture: diagonal only = Boltzmann probabilities)",
+      "entropy": 0.693147
+    }
+  },
+  "decoherence": {
+    "initial_state": "EML-3 (quantum coherence: off-diagonal = EML-3 amplitude interference)",
+    "decoherence_rate_Gamma": 1.0,
+    "evolution": [
+      {
+        "t": 0.0,
+        "off_diagonal": 0.5,
+        "entropy": 0.0,
+        "eml_class": "EML-3 (quantum coherence: off-diagonal = EML-3 amplitude interference)"
+      },
+      {
+        "t": 0.5,
+        "off_diagonal": 0.303265,
+        "entropy": 0.495842,
+        "eml_class": "EML-3 (quantum coherence: off-diagonal = EML-3 amplitude interference)"
+      },
+      {
+        "t": 1.0,
+        "off_diagonal": 0.18394,
+        "entropy": 0.623864,
+        "eml_class": "EML-3 (quantum coherence: off-diagonal = EML-3 amplitude interference)"
+      },
+      {
+        "t": 2.0,
+        "off_diagonal": 0.067668,
+        "entropy": 0.683961,
+        "eml_class": "EML-3 (quantum coherence: off-diagonal = EML-3 amplitude interference)"
+      },
+      {
+        "t": 5.0,
+        "off_diagonal": 0.003369,
+        "entropy": 0.693124,
+        "eml_class": "EML-3 (quantum coherence: off-diagonal = EML-3 amplitude interference)"
+      },
+      {
+        "t": 10.0,
+        "off_diagonal": 2.3e-05,
+        "entropy": 0.693147,
+        "eml_class": "EML-3 (quantum coherence: off-diagonal = EML-3 amplitude interference)"
+      }
+    ],
+    "off_diagonal_formula": "|\u03c1_01(t)| = |\u03c1_01(0)|\u00b7exp(-\u0393t) [EML-1 decay]",
+    "eml_transition": "EML-3 (quantum coherence) \u2192 EML-1 (classical mixture) via EML-1 exponential decay"
+  },
+  "quantum_zeno": {
+    "T": 2.0,
+    "tau_Z": 1.0,
+    "survival_vs_N": [
+      {
+        "N": 1,
+        "P_total": 0.0
+      },
+      {
+        "N": 2,
+        "P_total": 0.0
+      },
+      {
+        "N": 5,
+        "P_total": 0.418212
+      },
+      {
+        "N": 10,
+        "P_total": 0.664833
+      },
+      {
+        "N": 50,
+        "P_total": 0.923057
+      },
+      {
+        "N": 100,
+        "P_total": 0.960782
+      },
+      {
+        "N": 1000,
+        "P_total": 0.996008
+      }
+    ],
+    "limit_N_inf": 1.0,
+    "eml_quantum_evolution": "EML-3 (unitary exp(-iHt/\u0127) \u2014 oscillatory)",
+    "eml_zeno_limit": "EML-0 (frozen state: P\u21921, no evolution)",
+    "eml_zeno_time": "EML-2 (\u03c4_Z = \u0127/\u0394H \u2014 inverse of standard deviation of H)"
+  },
+  "pointer_basis": {
+    "thermal_state_beta1": {
+      "beta": 1.0,
+      "omega": 1.0,
+      "probabilities": [
+        0.632121,
+        0.232544,
+        0.085548,
+        0.031471,
+        0.011578,
+        0.004259,
+        0.001567,
+        0.000576,
+        0.000212,
+        7.8e-05
+      ],
+      "partition_Z": 1.581977,
+      "entropy": 1.040151,
+      "eml_depth": 1,
+      "reason": "p_n = (1-e^{-\u03b2\u03c9})\u00b7e^{-n\u03b2\u03c9} = Boltzmann factor = EML-1"
+    },
+    "thermal_state_beta5": {
+      "beta": 5.0,
+      "omega": 1.0,
+      "probabilities": [
+        0.993262,
+        0.006693,
+        4.5e-05,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "partition_Z": 1.006784,
+      "entropy": 0.040679,
+      "eml_depth": 1,
+      "reason": "p_n = (1-e^{-\u03b2\u03c9})\u00b7e^{-n\u03b2\u03c9} = Boltzmann factor = EML-1"
+    },
+    "eml_pointer": "Pointer basis = energy eigenstates; diagonal thermal \u03c1 = EML-1 (Boltzmann)"
+  },
+  "eml_depth_summary": {
+    "EML-0": "Zeno-frozen state (P\u21921); discrete measurement outcomes \u00b11",
+    "EML-1": "Classical thermal mixture (Boltzmann); off-diagonal decay exp(-\u0393t); coherent state",
+    "EML-2": "Born rule P=|c|\u00b2; decoherence time \u03c4_Z = \u0127/\u0394H; quantum entropy S=-Tr\u03c1log\u03c1",
+    "EML-3": "Quantum superposition \u03c1_01\u22600; unitary evolution exp(-iHt); interference fringes",
+    "EML-\u221e": "Individual measurement outcomes (no hidden variable by Bell)"
+  },
+  "connections": {
+    "to_session_70": "Session 70: Born rule EML-2, Bell EML-\u221e. Session 81: adds decoherence + Zeno dynamics",
+    "to_session_57": "Decoherence \u2192 Boltzmann = EML-1; same as stat mech equilibration",
+    "to_session_64": "Quantum Zeno: measurement as stochastic process \u2192 Feynman-Kac style"
+  }
+}
