@@ -1,0 +1,65 @@
+{
+  "session": 490,
+  "title": "Earthquake Dynamics & Fault Mechanics",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "EarthquakeFaultMechanicsEML",
+    "analysis": {
+      "object": "T211: EML depth analysis of earthquake dynamics",
+      "domains": {
+        "gutenberg_richter": {
+          "description": "log N(M) = a - bM (power law for magnitude-frequency)",
+          "depth": "EML-2",
+          "reason": "Logarithmic relationship \u2014 depth-2 power law scaling"
+        },
+        "stick_slip": {
+          "description": "Stick-slip fault dynamics: stress accumulates then releases",
+          "depth": "EML-3",
+          "reason": "Oscillatory stress cycle: \u03c3 \u2192 \u03c3_c \u2192 sudden drop \u2192 rebuild \u2192 repeat"
+        },
+        "seismic_waves": {
+          "description": "P and S wave propagation: u(x,t) = A\u00b7exp(i(kx-\u03c9t))",
+          "depth": "EML-3",
+          "reason": "Plane wave = explicit EML-3 oscillatory expression"
+        },
+        "omori_law": {
+          "description": "Aftershock rate: n(t) = K/(t+c)^p",
+          "depth": "EML-2",
+          "reason": "Power law decay \u2014 algebraic in t"
+        },
+        "earthquake_prediction": {
+          "description": "Prediction of location, magnitude, and timing",
+          "depth": "EML-\u221e",
+          "reason": "Chaotic fault system \u2014 no finite EML model captures full state"
+        },
+        "rupture_propagation": {
+          "description": "Dynamic rupture: crack tip velocity approaching Rayleigh wave speed",
+          "depth": "EML-3",
+          "reason": "Fracture mechanics involves exp(i\u03c9t) oscillatory singularities at crack tip"
+        },
+        "stress_drop": {
+          "description": "Static stress drop \u0394\u03c3 = C\u03bcD/L",
+          "depth": "EML-0",
+          "reason": "Simple linear algebraic relation \u2014 depth 0"
+        }
+      },
+      "cross_type_analysis": "Is earthquake unpredictability a cross-type consequence like superspreaders? Answer: YES. Stick-slip (EML-3) \u00d7 Gutenberg-Richter (EML-2) interaction. When oscillatory stress meets power-law distribution, the result is EML-\u221e (chaos). Cross-type product EML-3 \u2297 EML-2 \u2192 EML-\u221e. This IS the superspreader mechanism."
+    },
+    "distribution": {
+      "EML-0": 1,
+      "EML-2": 2,
+      "EML-3": 3,
+      "EML-\u221e": 1
+    },
+    "verdict": "Seismic waves: EML-3. G-R law: EML-2. Prediction: EML-\u221e (cross-type).",
+    "theorem": "T211: Earthquake Depth Map \u2014 stick-slip EML-3, prediction EML-\u221e cross-type"
+  },
+  "key_theorem": "T211: Earthquake Depth Map (S490). Seismic waves: EML-3. Gutenberg-Richter: EML-2. Stick-slip: EML-3. Prediction: EML-\u221e via cross-type product EML-3 \u2297 EML-2. Revelation: earthquake unpredictability is the same structural phenomenon as superspreaders.",
+  "rabbit_hole_log": [
+    "G-R law: log N ~ M \u2192 EML-2 (logarithmic power law)",
+    "Stick-slip: oscillatory stress cycle \u2192 EML-3",
+    "Seismic waves: exp(i(kx-\u03c9t)) = explicit EML-3",
+    "Prediction: EML-3 \u00d7 EML-2 = EML-\u221e (cross-type chaos)",
+    "T211: Earthquake unpredictability = superspreader mechanism"
+  ]
+}
