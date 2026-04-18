@@ -1,0 +1,153 @@
+{
+  "session": 137,
+  "title": "Climate & Earth Systems Deep II: Feedback, Tipping Points & Paleoclimate",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "energy_balance_model": {
+    "model": "EnergyBalanceModelV2",
+    "T_ice_eq_C": -37.32,
+    "T_ocean_eq_C": 15.68,
+    "T_current_eq_C": -1.91,
+    "T_eq_vs_albedo_C": {
+      "0.1": 15.68,
+      "0.2": 7.3,
+      "0.3": -1.91,
+      "0.4": -12.16,
+      "0.5": -23.79,
+      "0.6": -37.32
+    },
+    "ECS_degC_per_2xCO2": 2.96,
+    "feedback_gain_factor": 2.0,
+    "ice_albedo_transition": "EML-\u221e (discontinuous bifurcation at T_freeze)",
+    "eml_depth": {
+      "OLR_T4": 2,
+      "equilibrium_temperature": 2,
+      "climate_sensitivity": 2,
+      "ice_albedo_feedback": "\u221e"
+    },
+    "key_insight": "EBM equilibrium = EML-2 (T^{1/4} formula); ice-albedo bifurcation = EML-\u221e"
+  },
+  "climate_tipping_points": {
+    "model": "ClimateTippingPoints",
+    "fold_bifurcation_critical_r": [
+      -0.3849,
+      0.3849
+    ],
+    "critical_slowing_down": {
+      "-0.5": 0.5,
+      "-0.3": 0.3,
+      "-0.1": 0.1,
+      "0.0": 0.0,
+      "0.1": 0.1,
+      "0.3": 0.3,
+      "0.5": 0.5
+    },
+    "amoc_strength_vs_time": {
+      "0": 1.0,
+      "20": 0.9048,
+      "40": 0.7993,
+      "50": 0.5841,
+      "55": 0.4491,
+      "60": 0.388,
+      "80": 0.3352
+    },
+    "amazon_dieback_vs_deforestation": {
+      "0.1": 0.925,
+      "0.2": 0.85,
+      "0.3": 0.775,
+      "0.39": 0.7075,
+      "0.4": 0.0,
+      "0.5": 0.0
+    },
+    "known_tipping_elements": [
+      "West Antarctic Ice Sheet: EAIS-\u221e",
+      "Greenland Ice Sheet: EML-\u221e",
+      "AMOC: EML-\u221e",
+      "Amazon dieback: EML-\u221e",
+      "Permafrost carbon: EML-\u221e"
+    ],
+    "eml_depth": {
+      "fold_bifurcation": 2,
+      "critical_slowing_down": 2,
+      "tipping_event": "\u221e",
+      "pre_collapse_dynamics": 1
+    },
+    "key_insight": "All tipping points are EML-\u221e; pre-tipping critical slowing is EML-2"
+  },
+  "milankovitch_paleoclimate": {
+    "model": "MilankovitchPaleoclimate",
+    "orbital_periods_kyr": {
+      "eccentricity": 100.0,
+      "obliquity": 41.0,
+      "precession": 23.0
+    },
+    "orbital_forcing_vs_t_kyr": {
+      "0": 0.8,
+      "10": -0.1789,
+      "23": -0.0585,
+      "41": 0.3766,
+      "50": 0.1142,
+      "82": 0.1674,
+      "100": -0.444,
+      "123": 0.2395,
+      "164": 0.541,
+      "200": 0.2877
+    },
+    "ice_volume_response": {
+      "0": 0.9837,
+      "10": -0.4906,
+      "23": -0.1736,
+      "41": 0.811,
+      "50": 0.3297,
+      "82": 0.4639,
+      "100": -0.8697,
+      "123": 0.616,
+      "164": 0.9251,
+      "200": 0.6979
+    },
+    "co2_radiative_forcing_vs_ratio": {
+      "0.5": -3.7083,
+      "0.8": -1.1938,
+      "1.0": 0.0,
+      "1.5": 2.1692,
+      "2.0": 3.7083,
+      "4.0": 7.4167
+    },
+    "power_spectrum": {
+      "10": 0.0031,
+      "23": 0.0902,
+      "41": 0.1601,
+      "65": 0.0,
+      "100": 0.01,
+      "130": 0.0
+    },
+    "eml_depth": {
+      "orbital_forcing": 3,
+      "carbon_cycle_forcing": 2,
+      "ice_volume_response": 3,
+      "glacial_termination": "\u221e"
+    },
+    "key_insight": "Orbital forcing = EML-3 (sum of cosines). CO\u2082 forcing = EML-2 (logarithm). Glacial terminations (100 kyr problem) = EML-\u221e (nonlinear threshold)."
+  },
+  "eml_depth_summary": {
+    "EML-0": "Albedo fractions, deforestation ratios (pure numbers)",
+    "EML-1": "Pre-tipping exponential approach (slow decay toward critical state)",
+    "EML-2": "T^{1/4} equilibrium, climate sensitivity, CO\u2082 forcing ln(C/C\u2080), fold bifurcation",
+    "EML-3": "Milankovitch orbital cycles (EML-3 sum of cosines), ENSO oscillations",
+    "EML-\u221e": "Ice-albedo bifurcation, AMOC collapse, Amazon dieback, glacial terminations"
+  },
+  "key_theorem": "The EML Climate Depth Theorem: Climate equilibria are EML-2 (energy balance = T^{1/4}, CO\u2082 forcing = ln(C/C\u2080)). Orbital forcing is EML-3 (sum of three cosines). All tipping points \u2014 ice-albedo feedback, AMOC, Amazon, permafrost \u2014 are EML-\u221e: they are fold bifurcations where the equilibrium curve becomes non-analytic and the system jumps irreversibly to a new state.",
+  "rabbit_hole_log": [
+    "T_eq = (Q(1-\u03b1)/\u03b5\u03c3)^{1/4}: fourth root = exp(ln/4) = EML-2",
+    "CO\u2082 forcing = 5.35 ln(C/C\u2080): logarithm = EML-2",
+    "Feedback gain G = 1/(1-f): diverges at runaway \u2192 EML-\u221e",
+    "Orbital forcing = \u03a3 A_i cos(2\u03c0t/T_i): sum of EML-3 terms = EML-3",
+    "Tipping points = fold bifurcations = EML-\u221e (same as QCD confinement, NS blowup)",
+    "CO\u2082 forcing log structure: same class as Hawking temperature, PMI, Word2Vec"
+  ],
+  "connections": {
+    "S57_stat_mech": "EBM equilibrium = thermodynamic equilibrium (EML-2)",
+    "S62_pde": "Energy balance ODE = same class as heat equation (EML-2)",
+    "S75_qft": "Tipping points = fold bifurcations = phase transitions (EML-\u221e)",
+    "S127_climate_deep": "Extends EBM from Session 127 with full tipping point analysis"
+  }
+}
