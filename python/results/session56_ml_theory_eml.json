@@ -1,0 +1,341 @@
+{
+  "activations": {
+    "linear": 0,
+    "relu": "inf",
+    "tanh": 3,
+    "sigmoid": 2,
+    "gelu": 4,
+    "silu": 3,
+    "sin": 3,
+    "softplus": 2
+  },
+  "architectures": {
+    "linear_regression": {
+      "activation": "linear",
+      "activation_formula": "f(x) = x",
+      "activation_eml_depth": 0,
+      "n_layers": 3,
+      "n_neurons": 64,
+      "single_neuron_depth": 0,
+      "full_network_depth": 0,
+      "expressivity_class": "EML-0 (linear \u2014 same as linear regression)",
+      "is_analytic": true,
+      "activation_notes": "Identity \u2014 EML-0. Linear networks are EML-0."
+    },
+    "logistic_regression": {
+      "activation": "sigmoid",
+      "activation_formula": "f(x) = 1/(1+exp(-x))",
+      "activation_eml_depth": 2,
+      "n_layers": 3,
+      "n_neurons": 64,
+      "single_neuron_depth": 2,
+      "full_network_depth": 6,
+      "expressivity_class": "EML-6 (deep transcendental)",
+      "is_analytic": true,
+      "activation_notes": "sigma(x) = 1/(1+exp(-x)). Rational in exp(-x): exp is EML-1, reciprocal adds 1 \u2192 EML-2."
+    },
+    "shallow_tanh_mlp": {
+      "activation": "tanh",
+      "activation_formula": "f(x) = (exp(2x)-1)/(exp(2x)+1)",
+      "activation_eml_depth": 3,
+      "n_layers": 3,
+      "n_neurons": 64,
+      "single_neuron_depth": 3,
+      "full_network_depth": 9,
+      "expressivity_class": "EML-9 (deep transcendental)",
+      "is_analytic": true,
+      "activation_notes": "tanh(x) = 1 - 2/(exp(2x)+1). exp(2x) is EML-1; rational in exp is EML-2; full tanh is EML-3."
+    },
+    "deep_relu_mlp": {
+      "activation": "relu",
+      "activation_formula": "f(x) = max(0,x)",
+      "activation_eml_depth": "inf",
+      "n_layers": 3,
+      "n_neurons": 64,
+      "single_neuron_depth": "inf",
+      "full_network_depth": "inf",
+      "expressivity_class": "EML-inf (piecewise-linear \u2014 universal but non-analytic)",
+      "is_analytic": false,
+      "activation_notes": "Not analytic at x=0. ReLU networks are piecewise-linear \u2192 EML-inf."
+    },
+    "siren": {
+      "activation": "sin",
+      "activation_formula": "f(x) = sin(x)",
+      "activation_eml_depth": 3,
+      "n_layers": 3,
+      "n_neurons": 64,
+      "single_neuron_depth": 3,
+      "full_network_depth": 9,
+      "expressivity_class": "EML-9 (deep transcendental)",
+      "is_analytic": true,
+      "activation_notes": "SIREN activation. EML-3 (same as pure tone). Dense oscillations \u2192 richer basis."
+    },
+    "relu_resnet": {
+      "activation": "relu",
+      "activation_formula": "f(x) = max(0,x)",
+      "activation_eml_depth": "inf",
+      "n_layers": 3,
+      "n_neurons": 64,
+      "single_neuron_depth": "inf",
+      "full_network_depth": "inf",
+      "expressivity_class": "EML-inf (piecewise-linear \u2014 universal but non-analytic)",
+      "is_analytic": false,
+      "activation_notes": "Not analytic at x=0. ReLU networks are piecewise-linear \u2192 EML-inf."
+    }
+  },
+  "pac_complexity": {
+    "EML-1": {
+      "eml_k": 1,
+      "n_nodes": 20,
+      "vc_dim": 59.914645471079815,
+      "pac_samples_eps005_delta005": 1259,
+      "rademacher_n1000": 0.24477468306808164,
+      "insight": "EML-1 hypothesis class with 20 nodes: VC-dim ~ 60. PAC learning needs ~1259 samples (\u03b5=\u03b4=0.05). Depth k enters quadratically: EML-3 needs 9\u00d7 more samples than EML-1 (for same n_nodes). This formalizes why deep networks need more data."
+    },
+    "EML-2": {
+      "eml_k": 2,
+      "n_nodes": 20,
+      "vc_dim": 239.65858188431926,
+      "pac_samples_eps005_delta005": 4854,
+      "rademacher_n1000": 0.4895493661361633,
+      "insight": "EML-2 hypothesis class with 20 nodes: VC-dim ~ 240. PAC learning needs ~4854 samples (\u03b5=\u03b4=0.05). Depth k enters quadratically: EML-3 needs 9\u00d7 more samples than EML-1 (for same n_nodes). This formalizes why deep networks need more data."
+    },
+    "EML-3": {
+      "eml_k": 3,
+      "n_nodes": 20,
+      "vc_dim": 539.2318092397184,
+      "pac_samples_eps005_delta005": 10845,
+      "rademacher_n1000": 0.734324049204245,
+      "insight": "EML-3 hypothesis class with 20 nodes: VC-dim ~ 539. PAC learning needs ~10845 samples (\u03b5=\u03b4=0.05). Depth k enters quadratically: EML-3 needs 9\u00d7 more samples than EML-1 (for same n_nodes). This formalizes why deep networks need more data."
+    },
+    "EML-4": {
+      "eml_k": 4,
+      "n_nodes": 20,
+      "vc_dim": 958.634327537277,
+      "pac_samples_eps005_delta005": 19233,
+      "rademacher_n1000": 0.9790987322723266,
+      "insight": "EML-4 hypothesis class with 20 nodes: VC-dim ~ 959. PAC learning needs ~19233 samples (\u03b5=\u03b4=0.05). Depth k enters quadratically: EML-3 needs 9\u00d7 more samples than EML-1 (for same n_nodes). This formalizes why deep networks need more data."
+    },
+    "EML-5": {
+      "eml_k": 5,
+      "n_nodes": 20,
+      "vc_dim": 1497.8661367769955,
+      "pac_samples_eps005_delta005": 30018,
+      "rademacher_n1000": 1.2238734153404083,
+      "insight": "EML-5 hypothesis class with 20 nodes: VC-dim ~ 1498. PAC learning needs ~30018 samples (\u03b5=\u03b4=0.05). Depth k enters quadratically: EML-3 needs 9\u00d7 more samples than EML-1 (for same n_nodes). This formalizes why deep networks need more data."
+    }
+  },
+  "vc_scaling": [
+    {
+      "k": 1,
+      "n": 5,
+      "vc_dim": 8.0
+    },
+    {
+      "k": 1,
+      "n": 10,
+      "vc_dim": 23.0
+    },
+    {
+      "k": 1,
+      "n": 20,
+      "vc_dim": 59.9
+    },
+    {
+      "k": 1,
+      "n": 50,
+      "vc_dim": 195.6
+    },
+    {
+      "k": 2,
+      "n": 5,
+      "vc_dim": 32.2
+    },
+    {
+      "k": 2,
+      "n": 10,
+      "vc_dim": 92.1
+    },
+    {
+      "k": 2,
+      "n": 20,
+      "vc_dim": 239.7
+    },
+    {
+      "k": 2,
+      "n": 50,
+      "vc_dim": 782.4
+    },
+    {
+      "k": 3,
+      "n": 5,
+      "vc_dim": 72.4
+    },
+    {
+      "k": 3,
+      "n": 10,
+      "vc_dim": 207.2
+    },
+    {
+      "k": 3,
+      "n": 20,
+      "vc_dim": 539.2
+    },
+    {
+      "k": 3,
+      "n": 50,
+      "vc_dim": 1760.4
+    },
+    {
+      "k": 5,
+      "n": 5,
+      "vc_dim": 201.2
+    },
+    {
+      "k": 5,
+      "n": 10,
+      "vc_dim": 575.6
+    },
+    {
+      "k": 5,
+      "n": 20,
+      "vc_dim": 1497.9
+    },
+    {
+      "k": 5,
+      "n": 50,
+      "vc_dim": 4890.0
+    },
+    {
+      "k": 10,
+      "n": 5,
+      "vc_dim": 804.7
+    },
+    {
+      "k": 10,
+      "n": 10,
+      "vc_dim": 2302.6
+    },
+    {
+      "k": 10,
+      "n": 20,
+      "vc_dim": 5991.5
+    },
+    {
+      "k": 10,
+      "n": 50,
+      "vc_dim": 19560.1
+    }
+  ],
+  "taxonomy": {
+    "linear_regression": {
+      "activation": "linear",
+      "eml_per_layer": 0,
+      "network_depth": 0,
+      "universal": false,
+      "verdict": "EML-0: linear maps only"
+    },
+    "logistic_regression": {
+      "activation": "sigmoid",
+      "eml_per_layer": 2,
+      "network_depth": 2,
+      "universal": false,
+      "verdict": "EML-2: sigmoid is rational-in-exp"
+    },
+    "shallow_tanh_mlp": {
+      "activation": "tanh",
+      "eml_per_layer": 3,
+      "network_depth": "3*L",
+      "universal": true,
+      "verdict": "EML-3L for L layers: universal approximator (Cybenko 1989)"
+    },
+    "deep_relu_mlp": {
+      "activation": "relu",
+      "eml_per_layer": "inf",
+      "network_depth": "inf",
+      "universal": true,
+      "verdict": "EML-inf: piecewise-linear, non-analytic at kinks"
+    },
+    "siren": {
+      "activation": "sin",
+      "eml_per_layer": 3,
+      "network_depth": "3*L",
+      "universal": true,
+      "verdict": "EML-3L: Implicit Neural Representation with sin activation"
+    },
+    "transformer_attention": {
+      "activation": "softmax+gelu",
+      "eml_per_layer": 4,
+      "network_depth": "4*L",
+      "universal": true,
+      "verdict": "EML-4L: GELU is depth 4; attention is EML-1 (linear softmax weights)"
+    },
+    "gaussian_process": {
+      "activation": "kernel (RBF)",
+      "eml_per_layer": 3,
+      "network_depth": 3,
+      "universal": true,
+      "verdict": "EML-3: RBF kernel exp(-||x-y||\u00b2/2\u03c3\u00b2) is EML-3 (squared dist is EML-2, exp is EML-3)"
+    },
+    "relu_resnet": {
+      "activation": "relu+linear_skip",
+      "eml_per_layer": "inf",
+      "network_depth": "inf",
+      "universal": true,
+      "verdict": "EML-inf: ReLU activations dominate; skip connections are EML-0"
+    }
+  },
+  "key_insights": {
+    "depth_not_layers": "Adding more layers adds ATOMS (breadth) not DEPTH. Network depth in EML = n_layers \u00d7 activation_depth. A 100-layer ReLU net is EML-inf (from first layer); a 1-layer tanh net is EML-3.",
+    "relu_is_eml_inf": "ReLU = max(0,x) uses the absolute value (kink at 0). Same barrier as tent map and Chua circuit (Sessions 51, 52). Universal but EML-inf \u2014 the same tradeoff as piecewise chaos.",
+    "smooth_universality": "Tanh, sigmoid, sin, GELU are all EML-finite (depth 2-4). The Cybenko (1989) universal approximation theorem says ONE LAYER of tanh suffices. In EML terms: EML-3 (one layer) already dense by Weierstrass. Adding layers increases depth but not expressivity class.",
+    "pac_depth_quadratic": "PAC sample complexity grows as O(k\u00b2\u00b7n\u00b7log n) for EML-k hypothesis class. Deeper functions require quadratically more training data (in the EML depth sense). This is a concrete generalization bound."
+  },
+  "summary": {
+    "session": 56,
+    "title": "Machine Learning Theory \u2014 EML Complexity",
+    "findings": [
+      {
+        "id": "F56.1",
+        "name": "ReLU = EML-inf (same class as piecewise chaos)",
+        "content": "max(0,x) has a kink at 0 \u2014 not real-analytic. Same EML class as tent map and Chua circuit.",
+        "status": "CONFIRMED"
+      },
+      {
+        "id": "F56.2",
+        "name": "Smooth activations: linear=EML-0, sigmoid=EML-2, tanh/sin=EML-3, GELU=EML-4",
+        "content": "Activation depth is the EML depth of the activation formula. All smooth activations are EML-finite.",
+        "status": "CONFIRMED"
+      },
+      {
+        "id": "F56.3",
+        "name": "Network depth = n_layers \u00d7 activation_depth",
+        "content": "Adding layers multiplies EML depth. Adding neurons adds atoms (breadth). Cybenko: 1-layer tanh (EML-3) already universal.",
+        "status": "STRUCTURAL INSIGHT"
+      },
+      {
+        "id": "F56.4",
+        "name": "PAC complexity grows as O(k\u00b2\u00b7n\u00b7log n)",
+        "content": "EML-k hypothesis class VC-dimension scales quadratically in k. Deeper functions need quadratically more training data.",
+        "status": "DERIVED BOUND"
+      },
+      {
+        "id": "F56.5",
+        "name": "Depth = efficiency, not power",
+        "content": "EML-3 represents sin(x) exactly with 1 atom. EML-1 needs infinitely many. Depth measures compositional efficiency, not closure expressivity.",
+        "status": "UNIFYING INSIGHT"
+      }
+    ],
+    "next_session": {
+      "id": 57,
+      "title": "Statistical Mechanics \u2014 EML Complexity of Phase Transitions",
+      "priorities": [
+        "Boltzmann factor exp(-\u03b2E): EML-1 atom",
+        "Partition function Z = sum exp(-\u03b2E_i): EML-1 Dirichlet-like series",
+        "Free energy F = -kT*ln(Z): EML-2 (log of EML-1)",
+        "Order parameter: continuous \u2192 EML-finite, discrete/kink \u2192 EML-inf",
+        "Phase transitions: EML-inf at critical point (non-analyticity of free energy)"
+      ]
+    }
+  }
+}
