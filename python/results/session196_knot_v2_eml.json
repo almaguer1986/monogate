@@ -1,0 +1,118 @@
+{
+  "session": 196,
+  "title": "\u0394d Charge Angle 5: Knot Theory & Topological Invariants",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "knot_invariant_ladder": {
+    "model": "KnotInvariantLadderDeep",
+    "alexander": {
+      "polynomial_depth": 0,
+      "seifert_matrix_depth": 0,
+      "trefoil_coefficients": [
+        1,
+        -1,
+        1
+      ],
+      "figure_eight_coefficients": [
+        -1,
+        3,
+        -1
+      ],
+      "distinguishes_chirality": false,
+      "note": "Alexander = EML-0 (integer polynomial); limitation = chirality blindness"
+    },
+    "jones": {
+      "polynomial_depth": 3,
+      "skein_relation_depth": 3,
+      "quantum_group_deformation": "q = exp(\u03c0i/r)",
+      "q_parameter_depth": 3,
+      "jones_at_root_of_unity_depth": 3,
+      "categorification_to_khovanov": "EML-3 \u2192 EML-\u221e",
+      "omega": "(0.309+0.9511j)",
+      "note": "Jones = EML-3 (q-oscillatory); categorification lifts to EML-\u221e"
+    },
+    "khovanov": {
+      "khovanov_depth": "\u221e",
+      "graded_euler_chi": "reduces to Jones (EML-3)",
+      "floer_depth": "\u221e",
+      "concordance_depth": 2,
+      "arf_invariant_depth": 0,
+      "four_ball_genus_depth": 0,
+      "alexander_to_khovanov_type": "CATEGORIFICATION (not inversion)",
+      "categorification_delta_d": "\u221e but NOT in Asymmetry Theorem class",
+      "note": "Categorification: depth elevation through structural enrichment, not inversion"
+    },
+    "categorification_analysis": {
+      "type": "CATEGORIFICATION (not inversion)",
+      "alexander_depth": 0,
+      "khovanov_depth": "\u221e",
+      "apparent_delta_d": "\u221e",
+      "is_inversion": false,
+      "is_categorification": true,
+      "decategorification": "Euler characteristic: EML-\u221e \u2192 EML-0 (deep drop, not Asymmetry)",
+      "theorem_scope": "Asymmetry Theorem applies to INVERSIONS; categorification is a separate class",
+      "new_finding": "Categorification = third type of depth change: enrichment (not inversion, not self-map)",
+      "note": "S196 identifies 3 types: inversion (Asymmetry Thm), depth reduction (RG/FK), categorification"
+    },
+    "depth_ladder": {
+      "Alexander": 0,
+      "Jones": 3,
+      "Khovanov": "\u221e"
+    },
+    "key_insight": "Knot ladder: categorification \u2260 inversion \u2014 third depth-change type identified"
+  },
+  "virtual_knots": {
+    "model": "VirtualKnotsEML",
+    "virtual_knots": {
+      "crossing_number_depth": 0,
+      "parity_depth": 0,
+      "virtual_alexander_depth": 0,
+      "writhe_depth": 0,
+      "virtual_jones_depth": 3,
+      "arrow_polynomial_depth": 3,
+      "note": "Virtual knots: same EML structure as classical; EML-0 for integer invariants"
+    },
+    "concordance": {
+      "group_depth": 0,
+      "four_ball_genus_depth": 0,
+      "s_invariant_depth": 2,
+      "tau_depth": 2,
+      "upsilon_depth": 3,
+      "concordance_ladder": {
+        "g4": 0,
+        "tau": 2,
+        "s": 2,
+        "upsilon": 3,
+        "khovanov": "\u221e"
+      },
+      "enrichment_delta_d_g4_to_s": 2,
+      "note": "Concordance: integer invariants \u2192 filtered invariants: enrichment \u0394d=2"
+    },
+    "key_insight": "Virtual knots = classical EML structure; concordance: integer\u2192filtered \u0394d=2"
+  },
+  "depth_change_taxonomy": {
+    "inversion": "Asymmetry Theorem: \u0394d \u2208 {0,1,2,\u221e}. f\u207b\u00b9 harder than f.",
+    "depth_reduction": "Physical: EML-\u221e\u2192k (RG, AdS/CFT, FK). Depth decreases.",
+    "categorification": "Enrichment: EML-k \u2192 EML-\u221e. Alexander\u2192Khovanov, g4\u2192HFK. New class!",
+    "decategorification": "EML-\u221e \u2192 EML-k. Euler characteristic, Hilbert series. Inverse of categorification."
+  },
+  "eml_depth_summary": {
+    "EML-0": "Alexander polynomial, crossing number, writhe, group elements, g_4",
+    "EML-2": "Rasmussen s-invariant, tau-invariant, concordance filtered invariants",
+    "EML-3": "Jones polynomial, virtual Jones, Upsilon, quantum group deformation",
+    "EML-\u221e": "Khovanov homology, knot Floer HFK, spectral sequence convergence"
+  },
+  "key_theorem": "The Knot Categorification Theorem (S196): The knot invariant ladder Alexander (EML-0) \u2192 Jones (EML-3) \u2192 Khovanov (EML-\u221e) is NOT governed by the Asymmetry Theorem. Categorification is a THIRD type of depth change: enrichment (not inversion). Three types of depth change now identified: (1) Inversion (Asymmetry Theorem): \u0394d \u2208 {0,1,2,\u221e}. (2) Depth reduction (RG, AdS/CFT, FK): EML-\u221e \u2192 EML-k. (3) Categorification (enrichment): EML-k \u2192 EML-\u221e by structural lifting. Decategorification reverses (3): EML-\u221e \u2192 EML-k (Euler characteristic). The Asymmetry Theorem applies ONLY to type (1). Concordance invariants show enrichment \u0394d=2: g_4 (EML-0) \u2192 s,\u03c4 (EML-2). No \u0394d=3 in inversion class. Knot theory confirms Extended Asymmetry Theorem.",
+  "rabbit_hole_log": [
+    "Categorification \u2260 inversion: third type of depth change \u2014 enrichment through chain complexes",
+    "Alexander \u2192 Jones: apparent \u0394d=3 but it's categorification (structural enrichment, not harder inverse)",
+    "Concordance: g_4(EML-0) \u2192 s(EML-2): enrichment \u0394d=2 (same value as Fourier type but different mechanism)",
+    "Upsilon = EML-3: piecewise linear concordance invariant = oscillatory in t",
+    "Decategorification (Euler char): EML-\u221e \u2192 EML-0 \u2014 the exact reverse of categorification",
+    "Virtual knots: same EML-0/3 structure as classical \u2014 virtuality doesn't change EML depth"
+  ],
+  "connections": {
+    "S191_breakthrough": "Knot confirms: \u0394d=3 absent from INVERSION class; categorification is separate",
+    "S193_traversal": "Khovanov = internal dependent type theory: traversal system structure",
+    "S164_knot": "S164 established base: Alexander=EML-0, Jones=EML-3; S196 adds categorification taxonomy"
+  }
+}
