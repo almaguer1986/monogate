@@ -1,0 +1,226 @@
+{
+  "session": 93,
+  "title": "Fractals Deep: Multifractals, Hausdorff Measure & Dimension Theory",
+  "key_theorem": {
+    "theorem": "EML Fractal Dimension Theorem",
+    "statement": "Self-similar IFS fractals have Hausdorff dimension dim_H = ln(N)/ln(1/r) = EML-2 (ratio of logarithms of integers). The multifractal spectrum f(\u03b1) (Legendre transform of \u03c4(q)) is EML-2. However, the invariant fractal measure itself is EML-\u221e (singular continuous). The Mandelbrot set boundary has dim_H = 2 = EML-0 (integer), despite infinite visual complexity. Strange attractor dimensions (Lorenz \u2248 2.06, H\u00e9non \u2248 1.261) are EML-\u221e (no closed formula). EML-2 IFS constructions (depth reduction recipe) produce EML-\u221e measures (depth amplification): the EML depth of a measure exceeds that of its construction."
+  },
+  "multifractal_spectrum": {
+    "cantor_set": {
+      "set": "Middle-thirds Cantor set",
+      "construction": "Remove middle third, iterate",
+      "hausdorff_dim": 0.63092975,
+      "hausdorff_formula": "ln(2)/ln(3): EML-2 (ratio of logarithms)",
+      "eml_dimension": 2,
+      "eml_measure": Infinity,
+      "reason_measure": "Cantor measure is singular continuous (fractal) \u2192 EML-\u221e",
+      "reason_dimension": "dim_H = ln2/ln3: EML-2 (ratio of logs of integers)",
+      "monofractal": true,
+      "spectrum": "f(\u03b1) = \u03b4(\u03b1 - ln2/ln3): point mass at single \u03b1 = EML-2"
+    },
+    "binomial_p_0.3": [
+      {
+        "q": -2,
+        "tau_q": -3.717202,
+        "alpha_q": 1.547284,
+        "f_alpha": 0.622634,
+        "eml_tau": 2,
+        "eml_f": 2
+      },
+      {
+        "q": -1,
+        "tau_q": -2.251539,
+        "alpha_q": 1.370248,
+        "f_alpha": 0.881291,
+        "eml_tau": 2,
+        "eml_f": 2
+      },
+      {
+        "q": 0,
+        "tau_q": -1.0,
+        "alpha_q": 1.125769,
+        "f_alpha": 1.0,
+        "eml_tau": 2,
+        "eml_f": 2
+      },
+      {
+        "q": 0.5,
+        "tau_q": -0.469243,
+        "alpha_q": 0.998205,
+        "f_alpha": 0.968345,
+        "eml_tau": 2,
+        "eml_f": 2
+      },
+      {
+        "q": 1,
+        "tau_q": -0.0,
+        "alpha_q": 0.881291,
+        "f_alpha": 0.881291,
+        "eml_tau": 2,
+        "eml_f": 2
+      },
+      {
+        "q": 2,
+        "tau_q": 0.785875,
+        "alpha_q": 0.704255,
+        "f_alpha": 0.622634,
+        "eml_tau": 2,
+        "eml_f": 2
+      },
+      {
+        "q": 3,
+        "tau_q": 1.434403,
+        "alpha_q": 0.603775,
+        "f_alpha": 0.376922,
+        "eml_tau": 2,
+        "eml_f": 2
+      }
+    ],
+    "binomial_p_0.5": [
+      {
+        "q": -2,
+        "tau_q": -3.0,
+        "alpha_q": 1.0,
+        "f_alpha": 1.0,
+        "eml_tau": 2,
+        "eml_f": 2
+      },
+      {
+        "q": -1,
+        "tau_q": -2.0,
+        "alpha_q": 1.0,
+        "f_alpha": 1.0,
+        "eml_tau": 2,
+        "eml_f": 2
+      },
+      {
+        "q": 0,
+        "tau_q": -1.0,
+        "alpha_q": 1.0,
+        "f_alpha": 1.0,
+        "eml_tau": 2,
+        "eml_f": 2
+      }
+    ],
+    "eml_tau_q": 2,
+    "eml_f_alpha": 2,
+    "eml_measure": Infinity,
+    "legendre_transform": "EML-2 (min over q of EML-2 function = EML-2 output)"
+  },
+  "hausdorff_measure": {
+    "famous_fractals": [
+      {
+        "name": "Cantor set (middle-thirds)",
+        "dim_H": 0.63093,
+        "formula": "ln2/ln3",
+        "eml": 2
+      },
+      {
+        "name": "Koch snowflake",
+        "dim_H": 1.26186,
+        "formula": "ln4/ln3",
+        "eml": 2
+      },
+      {
+        "name": "Sierpinski triangle",
+        "dim_H": 1.584963,
+        "formula": "ln3/ln2",
+        "eml": 2
+      },
+      {
+        "name": "Sierpinski carpet",
+        "dim_H": 1.892789,
+        "formula": "ln8/ln3",
+        "eml": 2
+      },
+      {
+        "name": "Mandelbrot boundary",
+        "dim_H": 2.0,
+        "formula": "2 (integer \u2014 Shishikura 1998)",
+        "eml": 0
+      },
+      {
+        "name": "Brownian path",
+        "dim_H": 2.0,
+        "formula": "2 (a.s.)",
+        "eml": 0
+      },
+      {
+        "name": "Lorenz attractor",
+        "dim_H": 2.06,
+        "formula": "\u22482.06 (Kaplan-Yorke, no exact formula)",
+        "eml": "\u221e"
+      },
+      {
+        "name": "H\u00e9non attractor",
+        "dim_H": 1.261,
+        "formula": "\u22481.261 (numerical)",
+        "eml": "\u221e"
+      }
+    ],
+    "pattern": "Self-similar IFS fractals: dim_H = ln(N)/ln(1/r) = EML-2 (ratio of logs). Strange attractors: EML-\u221e (Kaplan-Yorke formula gives EML-2 approximation, true value unknown).",
+    "mandelbrot_insight": "Mandelbrot boundary has dim_H = 2 (integer = EML-0) despite infinite complexity. The EML depth of the Mandelbrot boundary is 0 \u2014 the most complex simple set!"
+  },
+  "ifs_fractals": {
+    "ifs_examples": [
+      {
+        "N_copies": 2,
+        "contraction_ratio": 0.3333333333333333,
+        "hausdorff_dim": 0.63092975,
+        "formula": "ln(N)/ln(1/r)",
+        "eml_ifs_map": 2,
+        "eml_attractor_dim": 2,
+        "eml_attractor_measure": Infinity
+      },
+      {
+        "N_copies": 3,
+        "contraction_ratio": 0.5,
+        "hausdorff_dim": 1.5849625,
+        "formula": "ln(N)/ln(1/r)",
+        "eml_ifs_map": 2,
+        "eml_attractor_dim": 2,
+        "eml_attractor_measure": Infinity
+      },
+      {
+        "N_copies": 4,
+        "contraction_ratio": 0.3333333333333333,
+        "hausdorff_dim": 1.26185951,
+        "formula": "ln(N)/ln(1/r)",
+        "eml_ifs_map": 2,
+        "eml_attractor_dim": 2,
+        "eml_attractor_measure": Infinity
+      }
+    ],
+    "cantor_ifs": {
+      "maps": [
+        "T\u2081(x) = x/3",
+        "T\u2082(x) = x/3 + 2/3"
+      ],
+      "contraction": 0.3333333333333333,
+      "N": 2,
+      "N_copies": 2,
+      "contraction_ratio": 0.3333333333333333,
+      "hausdorff_dim": 0.63092975,
+      "formula": "ln(N)/ln(1/r)",
+      "eml_ifs_map": 2,
+      "eml_attractor_dim": 2,
+      "eml_attractor_measure": Infinity,
+      "unique_invariant_measure": "Cantor measure: EML-\u221e (singular continuous)"
+    },
+    "key_insight": "EML-2 IFS (affine contractions) produces EML-\u221e measures. The construction recipe is EML-2 but the output measure is EML-\u221e. This is a depth amplification (opposite of Cole-Hopf depth reduction)."
+  },
+  "eml_depth_summary": {
+    "EML-0": "Mandelbrot boundary dim_H=2; Brownian path dim_H=2; integer box counts",
+    "EML-2": "Cantor dim ln2/ln3; Koch dim ln4/ln3; \u03c4(q) and f(\u03b1) spectrum; IFS dimension formula",
+    "EML-\u221e": "Fractal measures (Cantor, Bernoulli); strange attractor measures; Lorenz dim \u2248 2.06"
+  },
+  "rabbit_hole_log": [
+    "Depth amplification: EML-2 IFS \u2192 EML-\u221e measure. Depth reduction: Cole-Hopf EML-2 \u2192 EML-3\u2192EML-3. The EML framework has both: construction recipe depth \u2260 output object depth.",
+    "Mandelbrot boundary paradox: dim_H=2 (EML-0) but the boundary is maximally complex. This suggests EML depth of a set's dimension \u2260 EML depth of the set's description. The dimension is a simple number (EML-0) but the boundary requires EML-\u221e to describe pointwise.",
+    "Multifractal spectrum f(\u03b1) is the 'EML depth profile' of a measure: it tells you which H\u00f6lder exponent \u03b1 (= local EML depth of the measure) occurs at which dimension f(\u03b1). The average exponent \u03b1\u2081 = \u03c4'(1) = -H (Shannon entropy rate) = EML-2."
+  ],
+  "connections": {
+    "to_session_82": "Session 82: strange attractor dims (Lorenz 2.06) = EML-\u221e. Session 93: confirmed by Hausdorff dimension theory",
+    "to_session_74": "Legendre duality (S74): information geometry. Session 93: Legendre transform of \u03c4(q) gives f(\u03b1) \u2014 same mathematical structure"
+  }
+}
