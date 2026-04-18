@@ -1,0 +1,66 @@
+{
+  "session": 493,
+  "title": "Immune System Dynamics & Adaptive Immunity",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "ImmuneSystemAdaptiveEML",
+    "analysis": {
+      "object": "T214: EML depth analysis of adaptive immunity",
+      "domains": {
+        "vdj_recombination": {
+          "description": "V(D)J combinatorial antibody diversity: ~10^15 combinations",
+          "depth": "EML-0",
+          "reason": "Combinatorial counting \u2014 discrete segments V, D, J"
+        },
+        "clonal_expansion": {
+          "description": "Selected B/T cells multiply exponentially upon activation",
+          "depth": "EML-1",
+          "reason": "Exponential growth: N(t) = N\u2080\u00b7exp(rt)"
+        },
+        "affinity_maturation": {
+          "description": "Somatic hypermutation + selection \u2014 log-linear affinity increase",
+          "depth": "EML-2",
+          "reason": "Information optimization: log-affinity improves as log(selection rounds)"
+        },
+        "immune_memory": {
+          "description": "Long-lived plasma/memory cells encode antigen history",
+          "depth": "EML-2",
+          "reason": "Memory = compressed information = EML-2 (logarithmic compression)"
+        },
+        "autoimmune_oscillation": {
+          "description": "Flare-remission cycles in autoimmune disease",
+          "depth": "EML-3",
+          "reason": "Periodic oscillation between attack and suppression states"
+        },
+        "cytokine_storm": {
+          "description": "Runaway positive feedback of inflammatory cytokines",
+          "depth": "EML-\u221e",
+          "reason": "Positive feedback loop diverges \u2014 no finite EML equilibrium"
+        },
+        "germinal_center": {
+          "description": "Germinal center reactions: Darwinian evolution in miniature",
+          "depth": "EML-2",
+          "reason": "Fitness landscape navigation \u2014 log-probability selection"
+        }
+      },
+      "depth_1_hypothesis": "Is immune memory a depth-2 measurement system? Answer: YES. Memory = compression of encounter history. log(antigen concentration) at time of encounter is stored. Immune memory IS EML-2 biological measurement. Autoimmune disorder: \u0394d=+1 intrusion \u2014 oscillation (EML-3) invades measurement (EML-2)."
+    },
+    "distribution": {
+      "EML-0": 1,
+      "EML-1": 1,
+      "EML-2": 3,
+      "EML-3": 1,
+      "EML-\u221e": 1
+    },
+    "verdict": "Immune memory: EML-2. Autoimmune: EML-3 intrusion into EML-2.",
+    "theorem": "T214: Immune Depth Map \u2014 memory EML-2, autoimmune = \u0394d=+1 intrusion"
+  },
+  "key_theorem": "T214: Immune Depth Map (S493). V(D)J recombination: EML-0 (combinatorial). Clonal expansion: EML-1 (exp growth). Affinity maturation + memory: EML-2 (log compression). Autoimmune flare-remission: EML-3 (oscillation). Key: autoimmune = EML-3 oscillation invading EML-2 measurement = \u0394d=+1 intrusion.",
+  "rabbit_hole_log": [
+    "V(D)J: combinatorial discrete counting \u2192 EML-0",
+    "Clonal expansion: exp(rt) \u2192 EML-1",
+    "Affinity maturation: log-linear optimization \u2192 EML-2",
+    "Immune memory: log-compression of encounter \u2192 EML-2 measurement",
+    "T214: Autoimmune = \u0394d=+1, oscillation invading measurement"
+  ]
+}
