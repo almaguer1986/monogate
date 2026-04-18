@@ -1,0 +1,213 @@
+{
+  "session": 434,
+  "title": "Atlas Expansion XV: Domains 836-865 (Mathematical Biology & Complex Networks)",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "AtlasExpansion15EML",
+    "math_biology": {
+      "object": "EML classification: Mathematical biology domains 836-850",
+      "D836": {
+        "name": "Population dynamics (Lotka-Volterra)",
+        "depth": "EML-2",
+        "reason": "\u1e8b = x(a-by), \u1e8f = y(cx-d): real ODE = EML-2"
+      },
+      "D837": {
+        "name": "Epidemic models (SIR, SEIR)",
+        "depth": "EML-1",
+        "reason": "R\u2080 = \u03b2/\u03b3; exp(-\u03b3t) decay = EML-1"
+      },
+      "D838": {
+        "name": "Reaction kinetics (Michaelis-Menten)",
+        "depth": "EML-2",
+        "reason": "v = Vmax\u00b7[S]/(Km+[S]): real rational = EML-2"
+      },
+      "D839": {
+        "name": "Developmental biology (morphogenesis, Turing)",
+        "depth": "EML-2",
+        "reason": "Activator-inhibitor PDE; real bifurcation = EML-2"
+      },
+      "D840": {
+        "name": "Mathematical neuroscience (Hodgkin-Huxley)",
+        "depth": "EML-1",
+        "reason": "Ion channel gating: m(V) = exp-based = EML-1"
+      },
+      "D841": {
+        "name": "Neural coding (spike trains, rate codes)",
+        "depth": "EML-1",
+        "reason": "Firing rate = exp(-t/\u03c4) integration = EML-1"
+      },
+      "D842": {
+        "name": "Evolutionary game theory (ESS)",
+        "depth": "EML-2",
+        "reason": "Replicator dynamics; fitness = real = EML-2"
+      },
+      "D843": {
+        "name": "Phylogenetics (distance methods)",
+        "depth": "EML-2",
+        "reason": "UPGMA; distance matrix = EML-2 real"
+      },
+      "D844": {
+        "name": "Sequence alignment (dynamic programming)",
+        "depth": "EML-0",
+        "reason": "Smith-Waterman; discrete DP = EML-0"
+      },
+      "D845": {
+        "name": "Population genetics (Fisher-Wright)",
+        "depth": "EML-2",
+        "reason": "Allele frequency diffusion; real = EML-2"
+      },
+      "D846": {
+        "name": "Protein folding (energy landscape)",
+        "depth": "EML-\u221e",
+        "reason": "NP-hard energy minimization; rugged landscape = EML-\u221e"
+      },
+      "D847": {
+        "name": "Systems biology (gene regulatory networks)",
+        "depth": "EML-2",
+        "reason": "ODE network; Hill functions = EML-2"
+      },
+      "D848": {
+        "name": "Mathematical oncology (tumor growth)",
+        "depth": "EML-1",
+        "reason": "Gompertz: dN/dt = -\u03bbN ln(N/K) = EML-1"
+      },
+      "D849": {
+        "name": "Ecological networks (food webs)",
+        "depth": "EML-2",
+        "reason": "Stability matrix; real eigenvalues = EML-2"
+      },
+      "D850": {
+        "name": "Spatial ecology (dispersal, diffusion)",
+        "depth": "EML-2",
+        "reason": "Reaction-diffusion PDE; real = EML-2"
+      }
+    },
+    "complex_networks": {
+      "object": "EML classification: Complex networks domains 851-865",
+      "D851": {
+        "name": "Scale-free networks (Barab\u00e1si-Albert)",
+        "depth": "EML-2",
+        "reason": "Degree distribution P(k) ~ k^{-\u03b3}: real power law = EML-2"
+      },
+      "D852": {
+        "name": "Small-world networks (Watts-Strogatz)",
+        "depth": "EML-2",
+        "reason": "Clustering + short path; real rewiring = EML-2"
+      },
+      "D853": {
+        "name": "Community detection (spectral)",
+        "depth": "EML-2",
+        "reason": "Modularity Q; real eigenspectrum = EML-2"
+      },
+      "D854": {
+        "name": "Spreading processes on networks",
+        "depth": "EML-1",
+        "reason": "SIR on network: exp spreading = EML-1"
+      },
+      "D855": {
+        "name": "Network robustness (percolation)",
+        "depth": "EML-\u221e",
+        "reason": "Cascading failures; critical threshold = EML-\u221e"
+      },
+      "D856": {
+        "name": "Opinion dynamics (voter model, DeGroot)",
+        "depth": "EML-2",
+        "reason": "Linear consensus dynamics; real = EML-2"
+      },
+      "D857": {
+        "name": "Random graph theory (Erd\u0151s-R\u00e9nyi)",
+        "depth": "EML-1",
+        "reason": "Phase transition at p=1/n: exp near-critical = EML-1"
+      },
+      "D858": {
+        "name": "Stochastic block models",
+        "depth": "EML-2",
+        "reason": "Community structure; real probability matrix = EML-2"
+      },
+      "D859": {
+        "name": "Multilayer networks",
+        "depth": "EML-2",
+        "reason": "Supra-adjacency matrix; real spectral = EML-2"
+      },
+      "D860": {
+        "name": "Temporal networks",
+        "depth": "EML-2",
+        "reason": "Time-varying adjacency; real dynamics = EML-2"
+      },
+      "D861": {
+        "name": "Network motifs (Milo)",
+        "depth": "EML-0",
+        "reason": "Subgraph counting; discrete = EML-0"
+      },
+      "D862": {
+        "name": "Centrality measures (PageRank, betweenness)",
+        "depth": "EML-1",
+        "reason": "PageRank = dominant eigenvector; EML-1 (log iteration)"
+      },
+      "D863": {
+        "name": "Graph neural networks (GNN)",
+        "depth": "EML-1",
+        "reason": "Message passing with softmax = EML-1"
+      },
+      "D864": {
+        "name": "Network reconstruction (inverse problems)",
+        "depth": "EML-\u221e",
+        "reason": "Ill-posed; non-unique solution = EML-\u221e"
+      },
+      "D865": {
+        "name": "Power grid networks (synchronization)",
+        "depth": "EML-3",
+        "reason": "Kuramoto model: coupled oscillators = EML-3 (complex phase)"
+      }
+    },
+    "summary": {
+      "object": "Depth distribution for domains 836-865",
+      "EML_0": [
+        "D844 sequence alignment",
+        "D861 network motifs"
+      ],
+      "EML_1": [
+        "D837 SIR",
+        "D840-D841 HH/neural",
+        "D848 oncology",
+        "D854 spreading",
+        "D857 Erd\u0151s-R\u00e9nyi",
+        "D862 PageRank",
+        "D863 GNN"
+      ],
+      "EML_2": [
+        "D836 Lotka-Volterra",
+        "D838-D839 kinetics/morphogenesis",
+        "D842-D843 game theory/phylogenetics",
+        "D845 pop genetics",
+        "D847 sys bio",
+        "D849-D853 ecology/networks",
+        "D856-D860 opinion/SBM/temporal"
+      ],
+      "EML_3": [
+        "D865 power grid (Kuramoto)"
+      ],
+      "EML_inf": [
+        "D846 protein folding",
+        "D855 network robustness",
+        "D864 network reconstruction"
+      ],
+      "violations": 0,
+      "new_theorem": "T154: Atlas Batch 15 (S434): 30 biology/network domains; total 865"
+    },
+    "verdicts": {
+      "biology": "Most bio: EML-2; epidemic/neural: EML-1; protein folding: EML-\u221e",
+      "networks": "Most networks: EML-2; PageRank/spreading: EML-1; power grid: EML-3",
+      "violations": 0,
+      "new_theorem": "T154: Atlas Batch 15"
+    }
+  },
+  "key_theorem": "Atlas Batch 15 (T154, S434): 30 biology/complex network domains. Mathematical biology: Lotka-Volterra/morphogenesis = EML-2; SIR/Hodgkin-Huxley = EML-1; protein folding = EML-\u221e (rugged NP landscape). Complex networks: scale-free/small-world/community = EML-2; spreading = EML-1; cascading failures = EML-\u221e; Kuramoto power grid = EML-3 (coupled oscillators). 0 violations. Total domains: 865.",
+  "rabbit_hole_log": [
+    "Hodgkin-Huxley: EML-1 (ion channel gating = exp-based voltage functions)",
+    "Protein folding: EML-\u221e (energy landscape = rugged; HP model NP-hard)",
+    "Kuramoto oscillators: EML-3 (sync via complex phase = EML-3)",
+    "PageRank: EML-1 (power iteration = log convergence)",
+    "NEW: T154 Atlas Batch 15 \u2014 30 domains, 0 violations, total 865"
+  ]
+}
