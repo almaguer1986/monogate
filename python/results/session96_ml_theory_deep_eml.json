@@ -1,0 +1,242 @@
+{
+  "session": 96,
+  "title": "ML Theory Deep: Grokking, Emergence & Scaling Laws",
+  "key_theorem": {
+    "theorem": "EML ML Phase Transition Theorem",
+    "statement": "Grokking is an EML-\u221e \u2192 EML-3 transition: memorization (EML-\u221e lookup table) gives way to Fourier generalization (EML-3 modular features). Scaling laws L ~ N^{-\u03b1} are EML-2 (power law). Emergent abilities are EML-\u221e \u2192 EML-3 sharp transitions at threshold compute. Double descent has EML-\u221e at the interpolation threshold flanked by EML-2. These are all instances of the EML Phase Transition Theorem from Session 57: non-analytic events = EML-\u221e; smooth learning dynamics = EML-2."
+  },
+  "grokking": {
+    "phenomenon": "Grokking: delayed generalization in modular arithmetic",
+    "modular_fourier": {
+      "modulus_p": 97,
+      "n_training_pairs": 9409,
+      "memorization_parameters": 9409,
+      "generalization_fourier_modes": 20,
+      "compression_ratio": 470.45,
+      "eml_memorization": Infinity,
+      "eml_generalization": 3,
+      "fourier_features": "\u03c9_k(a) = exp(2\u03c0i\u00b7k\u00b7a/p): EML-3",
+      "grokking_transition": "EML-\u221e (lookup table) \u2192 EML-3 (Fourier) during training"
+    },
+    "loss_curve": [
+      {
+        "epoch": 100,
+        "train_loss": 0.0,
+        "test_loss": 2.3,
+        "test_accuracy": 0.1,
+        "eml_representation": "\u221e"
+      },
+      {
+        "epoch": 300,
+        "train_loss": 0.0,
+        "test_loss": 2.3,
+        "test_accuracy": 0.1,
+        "eml_representation": "\u221e"
+      },
+      {
+        "epoch": 500,
+        "train_loss": 0.0,
+        "test_loss": 2.3,
+        "test_accuracy": 0.0,
+        "eml_representation": 3
+      },
+      {
+        "epoch": 700,
+        "train_loss": 0.0,
+        "test_loss": 1.1809,
+        "test_accuracy": 0.4866,
+        "eml_representation": 3
+      },
+      {
+        "epoch": 1000,
+        "train_loss": 0.0,
+        "test_loss": 0.4344,
+        "test_accuracy": 0.8111,
+        "eml_representation": 3
+      },
+      {
+        "epoch": 1500,
+        "train_loss": 0.0,
+        "test_loss": 0.0821,
+        "test_accuracy": 0.9643,
+        "eml_representation": 3
+      },
+      {
+        "epoch": 2000,
+        "train_loss": 0.0,
+        "test_loss": 0.0155,
+        "test_accuracy": 0.9933,
+        "eml_representation": 3
+      }
+    ],
+    "eml_interpretation": "Grokking = EML-\u221e \u2192 EML-3 transition: model drops from memorization (EML-\u221e) to Fourier generalization (EML-3)",
+    "weight_norm_proxy": "Weight norm decrease tracks EML depth reduction during grokking"
+  },
+  "neural_scaling_laws": {
+    "scaling_law": "L(N,D) = E + A/N^\u03b1 + B/D^\u03b2 (Chinchilla)",
+    "loss_vs_N": [
+      {
+        "N_params": 100000000.0,
+        "D_tokens": 1000000000000.0,
+        "loss": 2.643656,
+        "eml_loss_fn": 2,
+        "reason": "L = E + A/N^\u03b1 + B/D^\u03b2: power laws in N,D = EML-2"
+      },
+      {
+        "N_params": 1000000000.0,
+        "D_tokens": 1000000000000.0,
+        "loss": 2.223237,
+        "eml_loss_fn": 2,
+        "reason": "L = E + A/N^\u03b1 + B/D^\u03b2: power laws in N,D = EML-2"
+      },
+      {
+        "N_params": 10000000000.0,
+        "D_tokens": 1000000000000.0,
+        "loss": 2.031068,
+        "eml_loss_fn": 2,
+        "reason": "L = E + A/N^\u03b1 + B/D^\u03b2: power laws in N,D = EML-2"
+      },
+      {
+        "N_params": 100000000000.0,
+        "D_tokens": 1000000000000.0,
+        "loss": 1.94323,
+        "eml_loss_fn": 2,
+        "reason": "L = E + A/N^\u03b1 + B/D^\u03b2: power laws in N,D = EML-2"
+      }
+    ],
+    "optimal_allocation": [
+      {
+        "compute_C": 1e+18,
+        "N_star": 52737.53,
+        "D_star": 3160304511823.51,
+        "eml": 2,
+        "reason": "N* ~ C^{exponent}: power law in compute = EML-2"
+      },
+      {
+        "compute_C": 1e+20,
+        "N_star": 186426.19,
+        "D_star": 89400888376080.69,
+        "eml": 2,
+        "reason": "N* ~ C^{exponent}: power law in compute = EML-2"
+      },
+      {
+        "compute_C": 1e+22,
+        "N_star": 659013.05,
+        "D_star": 2529034405555028.5,
+        "eml": 2,
+        "reason": "N* ~ C^{exponent}: power law in compute = EML-2"
+      }
+    ],
+    "emergent_abilities": [
+      {
+        "ability": "Multi-digit arithmetic",
+        "threshold_approx_B_params": 6,
+        "eml_below": Infinity,
+        "eml_above": 3,
+        "description": "Below threshold: random guessing = EML-\u221e; above: algorithmic computation = EML-3"
+      },
+      {
+        "ability": "Chain-of-thought reasoning",
+        "threshold_approx_B_params": 100,
+        "eml_below": Infinity,
+        "eml_above": 3,
+        "description": "Below: incoherent chains = EML-\u221e; above: structured steps = EML-3"
+      },
+      {
+        "ability": "In-context learning (few-shot)",
+        "threshold_approx_B_params": 1,
+        "eml_below": Infinity,
+        "eml_above": 2,
+        "description": "Below: ignores context = EML-\u221e; above: linear extrapolation = EML-2"
+      }
+    ],
+    "eml_loss": 2,
+    "eml_irreducible": 0,
+    "eml_emergent_transition": Infinity
+  },
+  "double_descent": {
+    "phenomenon": "Double descent: risk curve has two humps",
+    "risk_curve": [
+      {
+        "N_params": 20,
+        "risk": 1.25,
+        "regime": "classical",
+        "eml": 2
+      },
+      {
+        "N_params": 50,
+        "risk": 2.0,
+        "regime": "classical",
+        "eml": 2
+      },
+      {
+        "N_params": 80,
+        "risk": 5.0,
+        "regime": "classical",
+        "eml": 2
+      },
+      {
+        "N_params": 95,
+        "risk": 20.0,
+        "regime": "classical",
+        "eml": 2
+      },
+      {
+        "N_params": 100,
+        "risk": "\u221e",
+        "regime": "interpolation",
+        "eml": "\u221e"
+      },
+      {
+        "N_params": 105,
+        "risk": 0.9524,
+        "regime": "overparameterized",
+        "eml": 2
+      },
+      {
+        "N_params": 120,
+        "risk": 0.8333,
+        "regime": "overparameterized",
+        "eml": 2
+      },
+      {
+        "N_params": 150,
+        "risk": 0.6667,
+        "regime": "overparameterized",
+        "eml": 2
+      },
+      {
+        "N_params": 200,
+        "risk": 0.5,
+        "regime": "overparameterized",
+        "eml": 2
+      },
+      {
+        "N_params": 500,
+        "risk": 0.2,
+        "regime": "overparameterized",
+        "eml": 2
+      }
+    ],
+    "eml_classical": 2,
+    "eml_threshold": Infinity,
+    "eml_overparameterized": 2,
+    "insight": "Double descent: the interpolation threshold is EML-\u221e (divergence), flanked by EML-2 regions. Same structure as a phase transition (EML-\u221e at critical point, EML-2 away)."
+  },
+  "eml_depth_summary": {
+    "EML-0": "Irreducible entropy E; integer token counts; discrete labels",
+    "EML-1": "Gradient descent loss decay exp(-t/\u03c4) (exponential convergence near minimum)",
+    "EML-2": "Scaling law L~N^{-\u03b1}; optimal compute allocation; GARCH-like ACF of training loss; VaR of test loss",
+    "EML-3": "Generalized Fourier features (grokking solution); attention patterns (sinusoidal PE); emergent structured reasoning",
+    "EML-\u221e": "Memorization regime; pre-emergence random guessing; interpolation threshold blowup"
+  },
+  "rabbit_hole_log": [
+    "Grokking and the EML depth transition: the model weight norm decreases at grokking. In EML terms, a smaller, more structured weight corresponds to a shallower EML tree. The grokking transition is the model 'discovering' a depth-3 Fourier solution after trying depth-\u221e memorization.",
+    "Emergent abilities are the ML analog of phase transitions (Session 57). Before threshold: EML-\u221e (random behavior). After: EML-3 (structured capability). The transition is sharp \u2192 EML-\u221e intermediate state.",
+    "Scaling law exponent \u03b1 \u2248 0.3-0.5: these are in (0,1), suggesting EML-2 (power law) with a non-integer, non-simple exponent. Unlike physics exponents (e.g., \u03bd=1/2 for mean field = rational), ML scaling exponents are EML-2 irrational-looking but empirically clean."
+  ],
+  "connections": {
+    "to_session_57": "Phase transitions = EML-\u221e. Grokking, emergence, double descent = EML-\u221e transitions in ML",
+    "to_session_84": "Wilson-Fisher: approach to fixed point = EML-1. Scaling law convergence to L=E = EML-1 asymptote"
+  }
+}
