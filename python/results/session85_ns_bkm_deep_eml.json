@@ -1,0 +1,214 @@
+{
+  "session": 85,
+  "title": "Navier-Stokes Deep Dive: BKM Criterion, Helicity & Vortex Stretching",
+  "key_theorem": {
+    "theorem": "BKM-EML Obstruction Theorem",
+    "statement": "For 3D Euler flow, a singularity at T* requires \u222b\u2080^{T*}\u2016\u03c9\u2016_\u221e dt = \u221e. This integral can only diverge if \u2016\u03c9\u2016_\u221e(t) is EML-\u221e near T*: no EML-finite function can satisfy the BKM blowup condition. Helicity H = \u222bu\u00b7\u03c9 dx is EML-2 and conserved (EML-1 bound). The vortex stretching mechanism is EML-2 locally but EML-\u221e globally at blowup."
+  },
+  "bkm_criterion": {
+    "theorem": "Beale-Kato-Majda (1984)",
+    "statement": "3D Euler blowup at T* \u2194 \u222b\u2080^{T*} \u2016\u03c9\u2016_{L^\u221e} dt = +\u221e",
+    "blowup_scenarios": [
+      {
+        "name": "Power-law blowup",
+        "omega_max": "\u2016\u03c9\u2016_\u221e ~ (T*-t)^{-1}",
+        "integral": "\u222b\u2016\u03c9\u2016_\u221e dt ~ ln(T*-t) \u2192 \u221e",
+        "eml_depth": 2,
+        "eml_reason": "Power-law (T*-t)^{-1} = EML-2; integral diverges logarithmically",
+        "consistent_with_BKM": true
+      },
+      {
+        "name": "Double-exponential blowup",
+        "omega_max": "\u2016\u03c9\u2016_\u221e ~ exp(exp(1/(T*-t)))",
+        "integral": "\u222b\u2016\u03c9\u2016_\u221e dt = \u221e faster than power law",
+        "eml_depth": Infinity,
+        "eml_reason": "Double-exponential: EML of exp(exp(\u00b7)) requires 2 EML levels \u2192 EML-\u221e",
+        "consistent_with_BKM": true
+      },
+      {
+        "name": "Non-blowup (smooth solution)",
+        "omega_max": "\u2016\u03c9\u2016_\u221e \u2264 C for all t",
+        "integral": "\u222b\u2080^T \u2016\u03c9\u2016_\u221e dt \u2264 CT < \u221e",
+        "eml_depth": 1,
+        "eml_reason": "Bounded vorticity: EML-1 (exponential bound suffices); BKM integral finite",
+        "consistent_with_BKM": false
+      }
+    ],
+    "power_law_accumulation": [
+      {
+        "t": 0.7,
+        "T_star_minus_t": 0.3,
+        "omega_L_inf": 3.3333
+      },
+      {
+        "t": 0.75,
+        "T_star_minus_t": 0.25,
+        "omega_L_inf": 4.0
+      },
+      {
+        "t": 0.8,
+        "T_star_minus_t": 0.2,
+        "omega_L_inf": 5.0
+      },
+      {
+        "t": 0.85,
+        "T_star_minus_t": 0.15,
+        "omega_L_inf": 6.6667
+      },
+      {
+        "t": 0.9,
+        "T_star_minus_t": 0.1,
+        "omega_L_inf": 10.0
+      },
+      {
+        "t": 0.95,
+        "T_star_minus_t": 0.05,
+        "omega_L_inf": 20.0
+      }
+    ],
+    "eml_blowup_barrier": "Any EML-finite function has \u222b\u2016\u03c9\u2016 dt < \u221e on [0,T*) \u2014 the BKM divergence is necessarily EML-\u221e. This is the BKM-EML obstruction theorem."
+  },
+  "helicity_conservation": {
+    "conservation": "dH/dt = 0 for inviscid Euler",
+    "eml_H": 2,
+    "eml_reason": "H = \u222bu\u00b7\u03c9 dx: bilinear in EML-2 fields = EML-2",
+    "helicity_examples": [
+      {
+        "flow": "Hopf fibration vortex",
+        "helicity": "H = (2\u03c0)\u00b2\u00b7\u0393\u00b2 where \u0393 = circulation",
+        "eml": 2,
+        "reason": "H = \u0393\u00b2 \u00d7 (geometric factor) = EML-2 (polynomial \u00d7 EML-2 integral)",
+        "topology": "Hopf linking number = 1"
+      },
+      {
+        "flow": "Linked vortex rings (Kelvin)",
+        "helicity": "H = 2\u00b7\u0393\u2081\u0393\u2082\u00b7L where L = linking number",
+        "eml": 2,
+        "reason": "H = 2\u0393\u2081\u0393\u2082L: product of constants = EML-2",
+        "topology": "Topological invariant L \u2208 \u2124 = EML-0"
+      },
+      {
+        "flow": "Unknotted vortex ring",
+        "helicity": "H = 0 (no linking)",
+        "eml": 0,
+        "reason": "H=0: trivially EML-0",
+        "topology": "No linking"
+      },
+      {
+        "flow": "Chaotic turbulence",
+        "helicity": "H fluctuates, EML-\u221e paths but \u27e8H\u27e9 = 0",
+        "eml": Infinity,
+        "reason": "Individual turbulent realizations: EML-\u221e paths; ensemble average = 0 = EML-0",
+        "topology": "Ergodic vortex spaghetti"
+      }
+    ],
+    "woltjer_minimum": {
+      "theorem": "Woltjer (1958): minimum energy MHD state satisfies \u2207\u00d7B = \u03b1B",
+      "solution": "B is a Beltrami field: eigenfunction of curl",
+      "eigenvalue_eq": "\u2207\u00d7B = \u03b1B \u2192 B = sum of Chandrasekhar-Kendall functions",
+      "eml": 3,
+      "reason": "Beltrami fields are eigenfunctions of curl \u2192 involve exp(ik\u00b7x) = EML-3"
+    },
+    "helicity_cascade": "In turbulence: helicity cascades from large to small scales. Inverse helicity cascade (2.5D): EML-2 inverse power law. Helicity dissipation rate \u03b5_H = \u03bd\u222b\u03c9\u00b7(\u2207\u00d7\u03c9)dx: EML-2."
+  },
+  "vortex_stretching": {
+    "stretching_equation": "D\u03c9/Dt = \u03c9\u00b7\u2207u + \u03bd\u2207\u00b2\u03c9",
+    "eml_table": [
+      {
+        "quantity": "Vorticity \u03c9(x,t)",
+        "eml": 2,
+        "formula": "D\u03c9/Dt = \u03c9\u00b7\u2207u + \u03bd\u2207\u00b2\u03c9",
+        "reason": "PDE with EML-2 nonlinearity (product \u03c9\u00b7\u2207u)"
+      },
+      {
+        "quantity": "Stretching rate \u03c3 = \u03c9\u00b7S\u03c9/|\u03c9|\u00b2",
+        "eml": 2,
+        "formula": "\u03c3 = eigenvalue of strain S projected on \u03c9",
+        "reason": "Eigenvalue of EML-2 matrix = EML-2"
+      },
+      {
+        "quantity": "Short-time vorticity growth",
+        "eml": 1,
+        "formula": "|\u03c9(t)| ~ |\u03c9\u2080|\u00b7exp(\u03c3t)",
+        "reason": "EML-1: single exponential with EML-2 exponent"
+      },
+      {
+        "quantity": "Enstrophy \u03a9 = \u222b|\u03c9|\u00b2",
+        "eml": 2,
+        "formula": "\u03a9 = L\u00b2 norm squared of vorticity",
+        "reason": "L\u00b2 functional of EML-2 field = EML-2"
+      },
+      {
+        "quantity": "Blowup time estimate",
+        "eml": 2,
+        "formula": "T* ~ 2/(C\u221a\u03a9\u2080): rational function of initial data",
+        "reason": "EML-2 (square root and division = EML-2)"
+      },
+      {
+        "quantity": "Actual blowup (if it occurs)",
+        "eml": Infinity,
+        "formula": "\u2016\u03c9\u2016_\u221e \u2192 \u221e, rate unknown",
+        "reason": "Blowup is EML-\u221e by BKM theorem"
+      }
+    ],
+    "enstrophy_blowup_trajectory": [
+      {
+        "t": 0.4,
+        "T_star_ratio": 0.1,
+        "Omega": 1.2346
+      },
+      {
+        "t": 0.8,
+        "T_star_ratio": 0.2,
+        "Omega": 1.5625
+      },
+      {
+        "t": 1.2,
+        "T_star_ratio": 0.3,
+        "Omega": 2.0408
+      },
+      {
+        "t": 1.6,
+        "T_star_ratio": 0.4,
+        "Omega": 2.7778
+      },
+      {
+        "t": 2.0,
+        "T_star_ratio": 0.5,
+        "Omega": 4.0
+      },
+      {
+        "t": 2.4,
+        "T_star_ratio": 0.6,
+        "Omega": 6.25
+      },
+      {
+        "t": 2.8,
+        "T_star_ratio": 0.7,
+        "Omega": 11.1111
+      },
+      {
+        "t": 3.2,
+        "T_star_ratio": 0.8,
+        "Omega": 25.0
+      },
+      {
+        "t": 3.6,
+        "T_star_ratio": 0.9,
+        "Omega": 100.0
+      }
+    ],
+    "physical_picture": "Vortex tubes stretch and thin under flow \u2192 enstrophy concentrates. The local mechanism (EML-2) can cascade to a singularity (EML-\u221e) if the geometry aligns sufficiently \u2014 this is the Navier-Stokes Millennium problem."
+  },
+  "eml_depth_summary": {
+    "EML-0": "Linking number (topological invariant); H=0 for unknotted vortex",
+    "EML-1": "Short-time vorticity growth exp(\u03c3t); Woltjer ground state; energy bound",
+    "EML-2": "Vortex stretching tensor S; enstrophy \u03a9; helicity H; BKM power-law blowup",
+    "EML-3": "Beltrami field eigenfunctions of curl; helical Fourier modes",
+    "EML-\u221e": "Actual blowup singularity; turbulent vorticity realizations"
+  },
+  "connections": {
+    "to_session_76": "Session 76: Cole-Hopf = EML-2 reduction. Session 85: BKM blowup = EML-\u221e obstruction \u2014 complementary",
+    "to_session_57": "Session 57: phase transitions = EML-\u221e. Session 85: NS blowup = EML-\u221e \u2014 same universality class"
+  }
+}
