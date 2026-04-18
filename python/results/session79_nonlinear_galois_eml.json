@@ -1,0 +1,207 @@
+{
+  "session": 79,
+  "title": "Differential Galois Theory: Nonlinear ODEs & Painlev\u00e9",
+  "key_theorem": {
+    "theorem": "Painlev\u00e9 Property = EML-Finite Singularity Structure",
+    "statement": "An ODE has the Painlev\u00e9 property (movable singularities are poles only) iff its movable singularities are EML-2 (Laurent poles = rational divergences). Movable branch points are EML-2 for algebraic exponents, EML-\u221e for transcendental. The general solution of a Painlev\u00e9-type ODE is EML-\u221e (transcendent); special solutions at special parameters are EML-2 or EML-3."
+  },
+  "painleve_equations": [
+    {
+      "name": "P_I",
+      "equation": "y'' = 6y\u00b2 + z",
+      "parameters": {},
+      "painleve_property": true,
+      "eml_generic": "\u221e",
+      "eml_special_cases": "\u221e",
+      "special_case": "No known elementary or EML-finite solutions. True Painlev\u00e9 transcendent.",
+      "known_solutions": [
+        "Asymptotic: y ~ \u00b1\u221a(-z/6) as z\u2192-\u221e (EML-2); y ~ P(z)/(z-z_0)\u00b2 near poles (EML-2 Laurent)"
+      ]
+    },
+    {
+      "name": "P_II",
+      "equation": "y'' = 2y\u00b3 + zy + \u03b1",
+      "parameters": {
+        "alpha": "complex"
+      },
+      "painleve_property": true,
+      "eml_generic": "\u221e",
+      "eml_special_cases": 3,
+      "special_case": "\u03b1=0: Riccati reduction to Airy equation y'' = zy \u2192 EML-3 (Airy Ai, Bi).",
+      "known_solutions": [
+        "\u03b1\u2208\u2124: rational solutions (EML-2)",
+        "\u03b1=0: Airy functions Ai(z), Bi(z) (EML-3)",
+        "General \u03b1: EML-\u221e"
+      ]
+    },
+    {
+      "name": "P_IV",
+      "equation": "y'' = (y')\u00b2/(2y) + 3y\u00b3/2 + 4zy\u00b2 + 2(z\u00b2-\u03b1)y + \u03b2/(2y)",
+      "parameters": {
+        "alpha": "complex",
+        "beta": "complex"
+      },
+      "painleve_property": true,
+      "eml_generic": "\u221e",
+      "eml_special_cases": 2,
+      "special_case": "Special parameters: rational solutions y=2z+c (EML-2), Hermite solutions.",
+      "known_solutions": [
+        "Rational solutions for integer \u03b1,\u03b2 (EML-2)",
+        "Weber parabolic cylinder functions (EML-3)",
+        "General: EML-\u221e"
+      ]
+    },
+    {
+      "name": "P_VI",
+      "equation": "y'' = \u00bd(1/y+1/(y-1)+1/(y-z))\u00b7(y')\u00b2 - (1/z+1/(z-1)+1/(y-z))\u00b7y' + ...",
+      "parameters": {
+        "alpha": "complex",
+        "beta": "complex",
+        "gamma": "complex",
+        "delta": "complex"
+      },
+      "painleve_property": true,
+      "eml_generic": "\u221e",
+      "eml_special_cases": 2,
+      "special_case": "Confluence limits give P_I through P_V. Algebraic solutions for special params \u2192 EML-2.",
+      "known_solutions": [
+        "Algebraic solutions for special params (EML-2)",
+        "Hypergeometric \u2082F\u2081 (EML-3)",
+        "General: EML-\u221e"
+      ]
+    },
+    {
+      "name": "Riccati equation (solvable NL ODE)",
+      "equation": "y' = P(z)\u00b7y\u00b2 + Q(z)\u00b7y + R(z)",
+      "parameters": {},
+      "painleve_property": false,
+      "eml_generic": 2,
+      "eml_special_cases": 2,
+      "special_case": "Riccati reduces to linear ODE if particular solution known \u2192 EML-2 general solution.",
+      "known_solutions": [
+        "y = -P^{-1}(u'/u)' where u'' + Qu' + PRu = 0",
+        "u solves linear ODE \u2192 EML-2"
+      ]
+    }
+  ],
+  "movable_singularities": {
+    "bernoulli": {
+      "equation": "y' + P(z)y = Q(z)y^n",
+      "substitution": "v = y^{1-n} \u2192 linear ODE for v",
+      "solution": "y = (e^{(1-n)\u222bP\u00b7dz} \u00b7 (C + (1-n)\u222bQ\u00b7e^{(1-n)\u222bP\u00b7dz}\u00b7dz))^{1/(1-n)}",
+      "eml_depth": 2,
+      "reason": "Reduces to linear \u2192 integral of EML-1/EML-2 \u2192 EML-2 solution"
+    },
+    "abel": {
+      "equation": "y' = f\u2083(z)y\u00b3 + f\u2082(z)y\u00b2 + f\u2081(z)y + f\u2080(z)",
+      "solvability": "Generally not integrable in elementary functions",
+      "special_cases": [
+        "f\u2083=0 \u2192 Riccati \u2192 EML-2",
+        "f\u2080=0, f\u2081=0 \u2192 Bernoulli \u2192 EML-2",
+        "Constant coefficients: explicit solution via elliptic integrals \u2192 EML-\u221e generally"
+      ],
+      "eml_generic": "\u221e",
+      "eml_special": 2,
+      "painleve_property": false,
+      "reason": "Movable branch points in generic case \u2192 not Painlev\u00e9 \u2192 EML-\u221e"
+    },
+    "singularity_types": {
+      "pole (algebraic, order m)": "EML-2: Laurent pole",
+      "algebraic branch point (z-z_0)^{p/q}": "EML-2: algebraic branch",
+      "logarithmic branch (ln(z-z_0))": "EML-2: log branch",
+      "essential singularity": "EML-\u221e: essential"
+    }
+  },
+  "nonlinear_kovacic": {
+    "theorem": "Nonlinear EML Kovacic (proposed)",
+    "statement": "For an autonomous ODE y' = f(y) with f \u2208 EML-k: the solution satisfies EML-depth \u2264 k+1 generically. Equality holds when the antiderivative \u222bdy/f(y) has no depth reduction. The Painlev\u00e9 transcendents (P_I\u2013P_VI) are EML-\u221e because their nonlinear structure prevents EML-finite integration.",
+    "examples": [
+      {
+        "ode": "y' = y",
+        "f": "y = EML-1",
+        "solution": "y = C\u00b7e^z",
+        "eml": 1,
+        "comment": "Simplest: EML-1 \u2192 EML-1 solution"
+      },
+      {
+        "ode": "y' = y\u00b2",
+        "f": "y\u00b2 = EML-2",
+        "solution": "y = 1/(C-z)",
+        "eml": 2,
+        "comment": "Movable pole at z=C; solution is rational = EML-2"
+      },
+      {
+        "ode": "y' = 1+y\u00b2",
+        "f": "1+y\u00b2 = EML-2",
+        "solution": "y = tan(z+C)",
+        "eml": 3,
+        "comment": "\u222bdy/(1+y\u00b2) = arctan(y) = EML-3; inverse of arctan is tan = EML-3"
+      },
+      {
+        "ode": "y' = y\u00b7(1-y)",
+        "f": "y(1-y) = EML-2",
+        "solution": "y = 1/(1+Ce^{-z})",
+        "eml": 2,
+        "comment": "Logistic equation: solution = sigmoid = EML-2 (rational in e^z)"
+      },
+      {
+        "ode": "y'' = 6y\u00b2+z (P_I)",
+        "f": "nonlinear",
+        "solution": "Painlev\u00e9 transcendent",
+        "eml": "\u221e",
+        "comment": "No EML-finite general solution; EML-\u221e"
+      }
+    ],
+    "open_question": "Is there an EML version of the Painlev\u00e9 test? I.e., can we predict EML-\u221e from the singularity type without solving the ODE?"
+  },
+  "composition_rules": {
+    "composition_rules": [
+      {
+        "operation": "f + g",
+        "depth": "max(depth(f), depth(g))",
+        "example": "e^x + ln x: max(1,2) = 2"
+      },
+      {
+        "operation": "f \u00b7 g",
+        "depth": "max(depth(f), depth(g))",
+        "example": "e^x \u00b7 x\u00b2: max(1,0) = 1"
+      },
+      {
+        "operation": "f \u2218 g",
+        "depth": "depth(f) + depth(g) - 1 (heuristic)",
+        "example": "ln(e^x) = x: 2+1-1=2\u21920"
+      },
+      {
+        "operation": "f'(x)",
+        "depth": "max(depth(f)-1, 0) or depth(f)",
+        "example": "(e^x)' = e^x: depth preserved"
+      },
+      {
+        "operation": "\u222bf dx",
+        "depth": "depth(f) or depth(f)+1",
+        "example": "\u222be^x dx = e^x: depth preserved; \u222b(1/x) = ln(x): 0\u21922"
+      },
+      {
+        "operation": "f^{-1}(x)",
+        "depth": "same or lower",
+        "example": "arctan = EML-3; (arctan)^{-1} = tan = EML-3"
+      },
+      {
+        "operation": "eml(f,g) = exp(f)-ln(g)",
+        "depth": "max(depth(f)+1, depth(g)+1)",
+        "example": "eml(0,e^x) = 1-x: max(1,2)=2"
+      }
+    ],
+    "key_insight": "EML depth is SUBadditive under composition: depth(f\u2218g) \u2264 depth(f) + depth(g). Cancellations can reduce depth (e.g., ln\u2218exp = id: depth 2+1=3 \u2192 0). This is why EML-k forms a filtration, not a grading."
+  },
+  "eml_depth_summary": {
+    "EML-2": "Riccati, Bernoulli solutions; rational solutions of Painlev\u00e9; movable poles",
+    "EML-3": "Airy solutions (P_II, \u03b1=0); Weber parabolic cylinder; elliptic-type specials",
+    "EML-\u221e": "General Painlev\u00e9 transcendents (P_I\u2013P_VI); Abel eq generic; y'=f(y) with EML-\u221e integral"
+  },
+  "connections": {
+    "to_session_59": "Session 59 Kovacic for linear ODEs; Session 79 extends to nonlinear",
+    "to_session_73": "Stokes phenomenon = EML-\u221e global; Painlev\u00e9 = EML-\u221e general solution",
+    "to_session_66": "Complex analysis monodromy; Painlev\u00e9 monodromy = nonlinear Stokes data"
+  }
+}
