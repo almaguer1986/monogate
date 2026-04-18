@@ -1,0 +1,37 @@
+{
+  "session": 862,
+  "title": "Birdsong Dialects as Mini-Speciation",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "BirdsongDialectsEML",
+    "analysis": {
+      "object": "T583: Birdsong Dialects as Mini-Speciation depth analysis",
+      "domains": {
+        "song_eml3": {
+          "description": "Birdsong: EML-3 oscillatory acoustic signal; species-specific frequency patterns",
+          "depth": "EML-3",
+          "reason": "Bird song is EML-3: temporal oscillatory structure with frequency modulation"
+        },
+        "dialect_boundary": {
+          "description": "Dialect boundaries between populations may be depth boundaries",
+          "depth": "EML-inf",
+          "reason": "Dialect formation = categorification of EML-3 song into distinct EML-inf cultural units"
+        },
+        "mini_speciation": {
+          "description": "Birdsong dialect formation is mini-speciation: categorification of acoustic EML-3",
+          "depth": "EML-inf",
+          "reason": "Dialect = acoustic Grimm's Law: EML-0 phoneme permutation creates new song family"
+        }
+      }
+    },
+    "distribution": {
+      "EML-3": 1,
+      "EML-inf": 2
+    },
+    "theorem": "T583: Birdsong Dialects as Mini-Speciation (S862)."
+  },
+  "key_theorem": "T583: Birdsong Dialects as Mini-Speciation (S862).",
+  "rabbit_hole_log": [
+    "T583: song_eml3 depth confirmed"
+  ]
+}
