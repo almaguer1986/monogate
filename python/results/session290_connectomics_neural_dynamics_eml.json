@@ -1,0 +1,125 @@
+{
+  "session": 290,
+  "title": "Whole-Brain Connectomics & Neural Dynamics",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "ConnectomicsNeuralDynamicsEML",
+    "structural": {
+      "object": "Structural connectome (white matter tracts)",
+      "eml_depth": 0,
+      "why": "Adjacency matrix A_{ij}: graph = EML-0 (algebraic connection strength)",
+      "semiring_test": {
+        "graph_laplacian": {
+          "L": "L = D - A: graph Laplacian",
+          "depth": 0,
+          "why": "Algebraic matrix operation = EML-0"
+        },
+        "rich_club": {
+          "depth": 2,
+          "why": "Rich-club coefficient: \u03c6(k) = E_>k / (N_>k(N_>k-1)): EML-2 (log-linear)"
+        },
+        "tensor_test": {
+          "operation": "Adjacency(EML-0) \u2297 RichClub(EML-2) = max(0,2) = 2",
+          "result": "Structural connectome: 0\u22972=2 \u2713"
+        }
+      }
+    },
+    "functional": {
+      "object": "Functional connectivity (fMRI BOLD signal correlations)",
+      "eml_depth": 2,
+      "why": "BOLD signal correlations: C_{ij} = cov(BOLD_i, BOLD_j) / \u03c3_i\u00b7\u03c3_j = EML-2",
+      "semiring_test": {
+        "bold_signal": {
+          "formula": "BOLD ~ h * neural_activity: convolution with HRF",
+          "depth": 2,
+          "why": "Hemodynamic response function h(t) = exp(-t/\u03c4): EML-2"
+        },
+        "resting_state_networks": {
+          "depth": 2,
+          "why": "DMN, salience: correlation matrices = EML-2"
+        },
+        "tensor_test": {
+          "operation": "FC(EML-2) \u2297 SC(EML-0) = max(2,0) = 2",
+          "result": "FC-SC coupling: 2\u22970=2 \u2713"
+        }
+      }
+    },
+    "oscillations": {
+      "object": "Neural oscillations (gamma, theta, alpha rhythms)",
+      "eml_depth": 3,
+      "why": "Oscillations: V(t) ~ exp(i\u03c9t): complex oscillatory = EML-3",
+      "semiring_test": {
+        "gamma_rhythm": {
+          "formula": "V_gamma ~ exp(i\u03c9_\u03b3 t): EML-3",
+          "depth": 3
+        },
+        "theta_gamma_coupling": {
+          "operation": "Theta(EML-3) \u2297 Gamma(EML-3) = max(3,3) = 3",
+          "result": "Phase-amplitude coupling: 3\u22973=3 \u2713"
+        },
+        "oscillation_x_fc": {
+          "operation": "Oscillation(EML-3) \u2297 FC(EML-2)",
+          "prediction": "Different types: EML-\u221e",
+          "result": "Dynamic FC (time-varying): EML-\u221e (cross-type: oscillatory \u00d7 measurement)"
+        }
+      }
+    },
+    "criticality": {
+      "object": "Neural criticality (brain near phase transition)",
+      "eml_depth": "\u221e",
+      "shadow": 2,
+      "semiring_test": {
+        "subcritical": {
+          "depth": 2,
+          "behavior": "Avalanche size distribution: exp(-s/\u03c3) = EML-2"
+        },
+        "critical_point": {
+          "depth": "\u221e",
+          "type": "TYPE 2 Horizon (power law at criticality)",
+          "shadow": 2,
+          "why": "P(s) ~ s^{-3/2}: power law = EML-2 shadow"
+        },
+        "branching_ratio_1": {
+          "\u03c3": "\u03c3 = 1: criticality condition",
+          "depth": "\u221e",
+          "shadow": 2
+        }
+      }
+    },
+    "spectrum": {
+      "object": "Connectome graph spectrum (brain network eigenvalues)",
+      "eml_depth": 2,
+      "semiring_test": {
+        "graph_eigenvalues": {
+          "depth": 2,
+          "formula": "\u03bb_i(L): Laplacian spectrum = EML-2 (quadratic form)"
+        },
+        "spectral_gap": {
+          "depth": 2,
+          "formula": "\u03bb_2: algebraic connectivity = EML-2"
+        },
+        "diffusion_on_connectome": {
+          "formula": "X(t) = exp(-L\u00b7t)\u00b7X\u2080: EML-2 (exp of EML-0 matrix)",
+          "depth": 2,
+          "why": "Matrix exponential of Laplacian = EML-2"
+        }
+      }
+    },
+    "semiring_verdicts": {
+      "SC_graph": "EML-0 (adjacency) \u2192 EML-2 (rich club, diffusion)",
+      "FC_correlations": "EML-2 \u2713 (HRF + BOLD = EML-2)",
+      "oscillations": "EML-3; theta\u2297gamma=3 (3\u22973=3)",
+      "dynamic_FC": "EML-\u221e (oscillation(3) \u2297 FC(2) = cross-type)",
+      "criticality": "TYPE 2 Horizon; power-law shadow=2",
+      "new_finding": "Dynamic FC = EML-\u221e (cross-type: oscillatory dynamics \u00d7 static correlations)"
+    }
+  },
+  "key_theorem": "Connectome Semiring Theorem (S290): Brain connectivity spans EML strata: SC(EML-0) \u2192 FC(EML-2) \u2192 oscillations(EML-3). Structural connectome: EML-0 (adjacency matrix) to EML-2 (diffusion dynamics). Functional connectivity (BOLD correlations): EML-2 (hemodynamic response). Neural oscillations (gamma/theta rhythms): EML-3 (complex oscillatory). Theta \u2297 gamma coupling: 3\u22973=3 (same-type, max rule \u2713). NEW FINDING: Dynamic functional connectivity = EML-\u221e \u2014 oscillatory neural dynamics (EML-3) \u2297 static FC (EML-2) = cross-type = EML-\u221e. This explains why dynamic FC analysis is so hard: it's a cross-type computation. Neural criticality: TYPE 2 Horizon with EML-2 shadow (power-law avalanches).",
+  "rabbit_hole_log": [
+    "SC adjacency: EML-0; diffusion on connectome: EML-2",
+    "FC (BOLD): EML-2 (HRF exponential decay = EML-2)",
+    "Neural oscillations: EML-3 (exp(i\u03c9t))",
+    "NEW: dynamic FC = EML-\u221e (oscillation(EML-3) \u2297 FC(EML-2) = cross-type)",
+    "Criticality: TYPE 2 Horizon; power-law = EML-2 shadow"
+  ]
+}
