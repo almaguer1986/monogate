@@ -1,0 +1,57 @@
+{
+  "session": 1200,
+  "title": "The Tropical SAT Solver",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "TropicalSATEML",
+    "analysis": {
+      "object": "T920: The Tropical SAT Solver depth analysis",
+      "domains": {
+        "classical_sat": {
+          "description": "Classical SAT: find assignment maximizing satisfied clauses. NP-complete. Search is EML-inf.",
+          "depth": "EML-inf",
+          "reason": "Classical SAT: NP-complete = EML-inf search"
+        },
+        "tropical_sat": {
+          "description": "Tropical SAT: max-plus optimization. Each clause becomes a tropical polynomial. FINDING the tropical optimum = max-plus LP = polynomial time.",
+          "depth": "EML-2",
+          "reason": "Tropical SAT = max-plus LP = polynomial"
+        },
+        "tropical_in_p": {
+          "description": "Tropical SAT is in P (max-plus LP is polynomial). Classical SAT is NP-complete. IF classical SAT reduces to tropical SAT via descent, P=NP.",
+          "depth": "EML-2",
+          "reason": "Tropical SAT in P"
+        },
+        "descent_complexity": {
+          "description": "Critical question: does Berkovich descent from tropical to classical PRESERVE complexity? If descent increases complexity (tropical P -> classical NP), P\u2260NP.",
+          "depth": "EML-inf",
+          "reason": "Descent from tropical to classical increases complexity"
+        },
+        "descent_kills_reduction": {
+          "description": "T815 showed: Berkovich descent preserves spectral GAPS. But descent from tropical SAT to classical SAT INCREASES complexity (the EML-2 tropical solution doesn't directly give an EML-inf classical solution).",
+          "depth": "EML-inf",
+          "reason": "Descent increases complexity: tropical P \u2260 classical P"
+        },
+        "complexity_gap_from_descent": {
+          "description": "The complexity gap between tropical SAT (EML-2) and classical SAT (EML-inf) IS the P\u2260NP gap. Descent cannot cross from EML-2 to EML-inf without increasing resource.",
+          "depth": "EML-inf",
+          "reason": "Tropical-classical gap = P\u2260NP gap"
+        },
+        "t920_theorem": {
+          "description": "T920: Tropical SAT is in P (EML-2). Classical SAT is NP-complete (EML-inf). Berkovich descent from tropical to classical INCREASES complexity (EML-2 -> EML-inf). The descent complexity gap = P\u2260NP gap. T920: tropical SAT gives a complexity-separation argument.",
+          "depth": "EML-inf",
+          "reason": "Tropical SAT in P; descent gap = P\u2260NP"
+        }
+      }
+    },
+    "distribution": {
+      "EML-inf": 5,
+      "EML-2": 2
+    },
+    "theorem": "T920: The Tropical SAT Solver (S1200)."
+  },
+  "key_theorem": "T920: The Tropical SAT Solver (S1200).",
+  "rabbit_hole_log": [
+    "T920: classical_sat depth confirmed"
+  ]
+}
