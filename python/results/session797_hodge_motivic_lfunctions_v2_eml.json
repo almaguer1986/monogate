@@ -1,0 +1,38 @@
+{
+  "session": 797,
+  "title": "Hodge Motivic L-Functions v2",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "HodgeMotivicV2",
+    "analysis": {
+      "object": "T518: Hodge Motivic L-Functions v2 depth analysis",
+      "domains": {
+        "selberg_class": {
+          "description": "Motivic L-functions satisfy Selberg axioms; EML-3 analytic continuation",
+          "depth": "EML-3",
+          "reason": "L-functions are EML-3 oscillatory Dirichlet series"
+        },
+        "grh_motives": {
+          "description": "GRH for motives = EML-inf; zeros on critical line unproven",
+          "depth": "EML-inf",
+          "reason": "GRH is EML-inf statement about EML-3 zeros"
+        },
+        "ecl_applies": {
+          "description": "ECL machinery applies to Hodge L-functions; shadow depth theorem active",
+          "depth": "EML-2",
+          "reason": "ECL shadow: EML-inf GRH casts EML-2 shadow via zero-free regions"
+        }
+      }
+    },
+    "distribution": {
+      "EML-3": 1,
+      "EML-inf": 1,
+      "EML-2": 1
+    },
+    "theorem": "T518: Hodge Motivic L-Functions v2 (S797)."
+  },
+  "key_theorem": "T518: Hodge Motivic L-Functions v2 (S797).",
+  "rabbit_hole_log": [
+    "T518: selberg_class depth confirmed"
+  ]
+}
