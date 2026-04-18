@@ -1,0 +1,50 @@
+{
+  "session": 858,
+  "title": "Avalanche Dynamics Depth Map",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "AvalancheDynamicsEML",
+    "analysis": {
+      "object": "T579: Avalanche Dynamics Depth Map depth analysis",
+      "domains": {
+        "snowpack_eml0": {
+          "description": "Snowpack: crystalline layers; EML-0",
+          "depth": "EML-0",
+          "reason": "Snow crystals are EML-0: discrete, ordered lattice structure"
+        },
+        "stress_buildup": {
+          "description": "Stress buildup: exponential with additional loading; EML-1",
+          "depth": "EML-1",
+          "reason": "Stress increase is EML-1: exponential with snowpack depth and slope angle"
+        },
+        "weak_layer": {
+          "description": "Weak layer failure threshold: EML-2 measurement of shear stress",
+          "depth": "EML-2",
+          "reason": "Failure criterion is EML-2: measurement of stress vs strength ratio"
+        },
+        "slab_release": {
+          "description": "Slab release: EML-3 oscillatory fracture propagation across weak layer",
+          "depth": "EML-3",
+          "reason": "Fracture propagation is EML-3: wave-like, oscillatory crack extension"
+        },
+        "full_avalanche": {
+          "description": "Full avalanche: EML-inf chaotic flow; unpredictable, irreversible",
+          "depth": "EML-inf",
+          "reason": "Avalanche is EML-inf: same categorification as earthquake (T211)"
+        }
+      }
+    },
+    "distribution": {
+      "EML-0": 1,
+      "EML-1": 1,
+      "EML-2": 1,
+      "EML-3": 1,
+      "EML-inf": 1
+    },
+    "theorem": "T579: Avalanche Dynamics Depth Map (S858)."
+  },
+  "key_theorem": "T579: Avalanche Dynamics Depth Map (S858).",
+  "rabbit_hole_log": [
+    "T579: snowpack_eml0 depth confirmed"
+  ]
+}
