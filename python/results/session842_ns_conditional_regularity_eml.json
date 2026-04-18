@@ -1,0 +1,38 @@
+{
+  "session": 842,
+  "title": "Conditional Regularity Results Depth Map",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "NSConditionalEML",
+    "analysis": {
+      "object": "T563: Conditional Regularity Results Depth Map depth analysis",
+      "domains": {
+        "eml3_conditions_work": {
+          "description": "All known working conditions are EML-3: Serrin, Prodi-Serrin, regularity criteria",
+          "depth": "EML-3",
+          "reason": "Pattern: conditional regularity proofs require EML-3 conditions; EML-2 insufficient"
+        },
+        "eml2_insufficient": {
+          "description": "EML-2 conditions (energy bounds alone) are insufficient for 3D regularity",
+          "depth": "EML-2",
+          "reason": "EML-2 energy bounds leave EML-inf gap; need additional EML-3 condition"
+        },
+        "eml3_gap": {
+          "description": "EML-3 conditions may also be insufficient; each proven condition shifts goalposts to EML-inf",
+          "depth": "EML-inf",
+          "reason": "Ladder: EML-2 -> EML-3 -> EML-inf; each rung proven but next rung at EML-inf"
+        }
+      }
+    },
+    "distribution": {
+      "EML-3": 1,
+      "EML-2": 1,
+      "EML-inf": 1
+    },
+    "theorem": "T563: Conditional Regularity Results Depth Map (S842)."
+  },
+  "key_theorem": "T563: Conditional Regularity Results Depth Map (S842).",
+  "rabbit_hole_log": [
+    "T563: eml3_conditions_work depth confirmed"
+  ]
+}
