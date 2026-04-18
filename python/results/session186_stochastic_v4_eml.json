@@ -1,0 +1,322 @@
+{
+  "session": 186,
+  "title": "Stochastic Processes Deep II: Path-Wise vs Expectation EML Depths",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "path_vs_expectation": {
+    "model": "PathVsExpectationEML",
+    "brownian_path": {
+      "0.5": {
+        "T": 0.5,
+        "E_B2": 0.5,
+        "E_exp_sigma_B": 1.0101,
+        "char_fn_xi1": 0.7788,
+        "eml_depth_single_path": "\u221e",
+        "eml_depth_E_B2": 0,
+        "eml_depth_E_exp": 1,
+        "eml_depth_char_fn": 1,
+        "eml_depth_path_measure": "\u221e",
+        "asymmetry": "path=EML-\u221e; E[exp(\u03c3B)]=EML-1; inverse (path from E)=EML-\u221e"
+      },
+      "1.0": {
+        "T": 1.0,
+        "E_B2": 1.0,
+        "E_exp_sigma_B": 1.0202,
+        "char_fn_xi1": 0.6065,
+        "eml_depth_single_path": "\u221e",
+        "eml_depth_E_B2": 0,
+        "eml_depth_E_exp": 1,
+        "eml_depth_char_fn": 1,
+        "eml_depth_path_measure": "\u221e",
+        "asymmetry": "path=EML-\u221e; E[exp(\u03c3B)]=EML-1; inverse (path from E)=EML-\u221e"
+      },
+      "2.0": {
+        "T": 2.0,
+        "E_B2": 2.0,
+        "E_exp_sigma_B": 1.0408,
+        "char_fn_xi1": 0.3679,
+        "eml_depth_single_path": "\u221e",
+        "eml_depth_E_B2": 0,
+        "eml_depth_E_exp": 1,
+        "eml_depth_char_fn": 1,
+        "eml_depth_path_measure": "\u221e",
+        "asymmetry": "path=EML-\u221e; E[exp(\u03c3B)]=EML-1; inverse (path from E)=EML-\u221e"
+      }
+    },
+    "sde_paths": {
+      "0.5": {
+        "mu": 0.05,
+        "sigma": 0.2,
+        "T": 0.5,
+        "X0": 100.0,
+        "E_X_T": 102.5315,
+        "Var_X_T": 212.3708,
+        "pathwise_no_noise": 101.5113,
+        "eml_depth_pathwise": 3,
+        "eml_depth_E_X": 1,
+        "eml_depth_Var_X": 1,
+        "eml_depth_implied_vol_inverse": "\u221e",
+        "asymmetry": "E[X]=EML-1; path=EML-3; implied vol inversion=EML-\u221e"
+      },
+      "1.0": {
+        "mu": 0.05,
+        "sigma": 0.2,
+        "T": 1.0,
+        "X0": 100.0,
+        "E_X_T": 105.1271,
+        "Var_X_T": 451.0288,
+        "pathwise_no_noise": 103.0455,
+        "eml_depth_pathwise": 3,
+        "eml_depth_E_X": 1,
+        "eml_depth_Var_X": 1,
+        "eml_depth_implied_vol_inverse": "\u221e",
+        "asymmetry": "E[X]=EML-1; path=EML-3; implied vol inversion=EML-\u221e"
+      },
+      "2.0": {
+        "mu": 0.05,
+        "sigma": 0.2,
+        "T": 2.0,
+        "X0": 100.0,
+        "E_X_T": 110.5171,
+        "Var_X_T": 1017.2705,
+        "pathwise_no_noise": 106.1837,
+        "eml_depth_pathwise": 3,
+        "eml_depth_E_X": 1,
+        "eml_depth_Var_X": 1,
+        "eml_depth_implied_vol_inverse": "\u221e",
+        "asymmetry": "E[X]=EML-1; path=EML-3; implied vol inversion=EML-\u221e"
+      }
+    },
+    "fokker_planck": {
+      "0.0": {
+        "x": 0.0,
+        "t": 0.5,
+        "mu": 0.0,
+        "sigma": 1.0,
+        "density_p": 0.56419,
+        "eml_depth_forward": 3,
+        "eml_depth_inverse": "\u221e",
+        "asymmetry": "Fokker-Planck forward=EML-3; parameter inversion=EML-\u221e"
+      },
+      "0.5": {
+        "x": 0.5,
+        "t": 0.5,
+        "mu": 0.0,
+        "sigma": 1.0,
+        "density_p": 0.439391,
+        "eml_depth_forward": 3,
+        "eml_depth_inverse": "\u221e",
+        "asymmetry": "Fokker-Planck forward=EML-3; parameter inversion=EML-\u221e"
+      },
+      "1.0": {
+        "x": 1.0,
+        "t": 0.5,
+        "mu": 0.0,
+        "sigma": 1.0,
+        "density_p": 0.207554,
+        "eml_depth_forward": 3,
+        "eml_depth_inverse": "\u221e",
+        "asymmetry": "Fokker-Planck forward=EML-3; parameter inversion=EML-\u221e"
+      },
+      "2.0": {
+        "x": 2.0,
+        "t": 0.5,
+        "mu": 0.0,
+        "sigma": 1.0,
+        "density_p": 0.010333,
+        "eml_depth_forward": 3,
+        "eml_depth_inverse": "\u221e",
+        "asymmetry": "Fokker-Planck forward=EML-3; parameter inversion=EML-\u221e"
+      }
+    },
+    "eml_depth": {
+      "single_path": "\u221e",
+      "E_B2": 0,
+      "E_exp": 1,
+      "pathwise_X": 3,
+      "E_X": 1,
+      "fp_forward": 3,
+      "fp_inverse": "\u221e"
+    },
+    "key_insight": "Path=EML-\u221e; E[exp]=EML-1; pathwise X(t)=EML-3; all inverses=EML-\u221e"
+  },
+  "large_deviations": {
+    "model": "LargeDeviationsAsymmetryEML",
+    "cramer": {
+      "-2.0": {
+        "x": -2.0,
+        "mu": 0.0,
+        "sigma": 1.0,
+        "rate_function_I": 2.0,
+        "ldp_prob_n10": 2.1e-09,
+        "eml_depth_I": 2,
+        "eml_depth_ldp_prob": 1,
+        "note": "Rate function = EML-2; LDP probability = EML-1; inversion = EML-\u221e"
+      },
+      "-1.0": {
+        "x": -1.0,
+        "mu": 0.0,
+        "sigma": 1.0,
+        "rate_function_I": 0.5,
+        "ldp_prob_n10": 0.006737947,
+        "eml_depth_I": 2,
+        "eml_depth_ldp_prob": 1,
+        "note": "Rate function = EML-2; LDP probability = EML-1; inversion = EML-\u221e"
+      },
+      "0.0": {
+        "x": 0.0,
+        "mu": 0.0,
+        "sigma": 1.0,
+        "rate_function_I": 0.0,
+        "ldp_prob_n10": 1.0,
+        "eml_depth_I": 2,
+        "eml_depth_ldp_prob": 1,
+        "note": "Rate function = EML-2; LDP probability = EML-1; inversion = EML-\u221e"
+      },
+      "1.0": {
+        "x": 1.0,
+        "mu": 0.0,
+        "sigma": 1.0,
+        "rate_function_I": 0.5,
+        "ldp_prob_n10": 0.006737947,
+        "eml_depth_I": 2,
+        "eml_depth_ldp_prob": 1,
+        "note": "Rate function = EML-2; LDP probability = EML-1; inversion = EML-\u221e"
+      },
+      "2.0": {
+        "x": 2.0,
+        "mu": 0.0,
+        "sigma": 1.0,
+        "rate_function_I": 2.0,
+        "ldp_prob_n10": 2.1e-09,
+        "eml_depth_I": 2,
+        "eml_depth_ldp_prob": 1,
+        "note": "Rate function = EML-2; LDP probability = EML-1; inversion = EML-\u221e"
+      }
+    },
+    "gartner_ellis": {
+      "-2": {
+        "lambda": -2,
+        "Lambda_log_mgf": 2.0,
+        "x_optimal": -2.0,
+        "I_at_x_opt": 2.0,
+        "eml_depth_Lambda": 2,
+        "eml_depth_legendre": 2,
+        "note": "Log-MGF = EML-2; Legendre transform preserves depth (EML-2 \u2192 EML-2)"
+      },
+      "-1": {
+        "lambda": -1,
+        "Lambda_log_mgf": 0.5,
+        "x_optimal": -1.0,
+        "I_at_x_opt": 0.5,
+        "eml_depth_Lambda": 2,
+        "eml_depth_legendre": 2,
+        "note": "Log-MGF = EML-2; Legendre transform preserves depth (EML-2 \u2192 EML-2)"
+      },
+      "0": {
+        "lambda": 0,
+        "Lambda_log_mgf": 0.0,
+        "x_optimal": 0.0,
+        "I_at_x_opt": 0.0,
+        "eml_depth_Lambda": 2,
+        "eml_depth_legendre": 2,
+        "note": "Log-MGF = EML-2; Legendre transform preserves depth (EML-2 \u2192 EML-2)"
+      },
+      "1": {
+        "lambda": 1,
+        "Lambda_log_mgf": 0.5,
+        "x_optimal": 1.0,
+        "I_at_x_opt": 0.5,
+        "eml_depth_Lambda": 2,
+        "eml_depth_legendre": 2,
+        "note": "Log-MGF = EML-2; Legendre transform preserves depth (EML-2 \u2192 EML-2)"
+      },
+      "2": {
+        "lambda": 2,
+        "Lambda_log_mgf": 2.0,
+        "x_optimal": 2.0,
+        "I_at_x_opt": 2.0,
+        "eml_depth_Lambda": 2,
+        "eml_depth_legendre": 2,
+        "note": "Log-MGF = EML-2; Legendre transform preserves depth (EML-2 \u2192 EML-2)"
+      }
+    },
+    "eml_depth": {
+      "rate_function": 2,
+      "ldp_probability": 1,
+      "log_mgf": 2,
+      "legendre_transform": 2
+    },
+    "key_insight": "LDP: rate function=EML-2, probability=EML-1; Legendre preserves EML-2"
+  },
+  "stochastic_asymmetry": {
+    "model": "StochasticAsymmetryTheorem",
+    "forward_inverse_pairs": {
+      "pairs": {
+        "E_exp_vs_recover_sigma": {
+          "forward": 1,
+          "inverse": "\u221e",
+          "delta": "\u221e",
+          "type": "moment \u2192 parameter"
+        },
+        "fokker_planck_fwd_inv": {
+          "forward": 3,
+          "inverse": "\u221e",
+          "delta": "\u221e",
+          "type": "PDE forward well-posed; inverse ill-posed"
+        },
+        "rate_legendre_dual": {
+          "forward": 2,
+          "inverse": 2,
+          "delta": 0,
+          "type": "self-dual (Legendre = depth-preserving)"
+        },
+        "gbm_implied_vol": {
+          "forward": 3,
+          "inverse": "\u221e",
+          "delta": "\u221e",
+          "type": "BS forward=EML-3; implied vol=EML-\u221e (no closed form)"
+        },
+        "char_fn_density": {
+          "forward": 1,
+          "inverse": 3,
+          "delta": 2,
+          "type": "char fn=EML-1; density via Fourier inversion=EML-3"
+        }
+      },
+      "delta_0_count": 1,
+      "delta_2_count": 1,
+      "delta_inf_count": 3,
+      "new_finding": "char fn \u2192 density has \u0394d=2 (new type! not 0,1,\u221e but 2)",
+      "note": "Stochastic: all \u0394d \u2208 {0, 2, \u221e}; no \u0394d=1 found here"
+    },
+    "eml_depth": {
+      "rate_legendre": 2,
+      "fokker_planck_fwd": 3,
+      "char_fn": 1,
+      "density": 3,
+      "all_inverses": "\u221e"
+    },
+    "key_insight": "Stochastic: \u0394d=0 (self-dual), \u0394d=2 (char fn\u2192density), \u0394d=\u221e (inverse problems)"
+  },
+  "eml_depth_summary": {
+    "EML-0": "E[B\u00b2]=T, variance quadratic",
+    "EML-1": "E[exp(\u03c3B)], LDP probability, characteristic function",
+    "EML-2": "Rate function I(x), log-MGF, Legendre transform, Fokker-Planck variance",
+    "EML-3": "GBM path, Fokker-Planck density, density via char fn inversion",
+    "EML-\u221e": "Single Brownian path, Wiener measure, all parameter inversions"
+  },
+  "key_theorem": "The EML Stochastic Asymmetry Theorem: Stochastic calculus splits sharply by EML depth: Individual paths = EML-\u221e (nowhere differentiable, infinite variation). Forward expectations = EML-0/1/3 (analytic formulas exist). Asymmetry: forward = EML-finite; inverse (parameter recovery) = EML-\u221e always. New finding: characteristic function \u2192 density has \u0394d=2 (char fn = EML-1; density via Fourier inversion = EML-3). This \u0394d=2 is a new type beyond the {0,1,\u221e} seen elsewhere. The Legendre transform is self-dual: EML-2 \u2194 EML-2 with \u0394d=0. Large deviations: rate function = EML-2 (variance-level); LDP probability = EML-1 (exponential). Two different depths from one LDP principle.",
+  "rabbit_hole_log": [
+    "NEW: char fn \u2192 density has \u0394d=2 (EML-1 \u2192 EML-3): not in the {0,1,\u221e} set!",
+    "Legendre transform = EML-2 self-dual: same as Fourier (EML-3 self-dual)",
+    "Single Brownian path = EML-\u221e: infinite variation = EML-\u221e (same as path integral)",
+    "LDP: rate I=EML-2, probability=EML-1: two depths from one principle",
+    "Fokker-Planck: forward=EML-3, inverse=EML-\u221e: Asymmetry Theorem perfectly instantiated",
+    "RG path was \u221e\u21922\u21921; stochastic path is \u221e\u21923\u21921\u21920 (different trajectory through strata)"
+  ],
+  "connections": {
+    "S176_stoch": "S176: It\u00f4=EML-2, Stratonovich=EML-3; S186 adds path vs expectation split",
+    "S111_asym": "NEW \u0394d=2: char fn\u2192density \u2014 extends asymmetry theorem beyond {0,1,\u221e}?",
+    "S185_qft": "RG path \u221e\u21922\u21921 vs stochastic \u221e\u21923\u21921\u21920: different strata trajectories"
+  }
+}
