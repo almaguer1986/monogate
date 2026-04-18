@@ -1,0 +1,104 @@
+{
+  "session": 228,
+  "title": "Horizon Map III: Undecidability, G\u00f6del & Phase Transition Shadows",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "undecidability_shadows": {
+    "model": "UndecidabilityShadowMap",
+    "halting": {
+      "problem": "Halting Problem (Turing 1936)",
+      "eml_depth": "\u221e",
+      "shadows": {
+        "busy_beaver_approx": {
+          "depth": 1,
+          "description": "BB(n) known for n\u22646: exp-growth (EML-1 shadow for small n)",
+          "note": "BB(5)=47176870, BB(6)>10^{15000}: EML-1 for known values"
+        },
+        "kolmogorov_complexity": {
+          "depth": 2,
+          "description": "K(x): approximated by compression; E[K(X)] = H(X) = EML-2",
+          "note": "K(x) \u2264 |x| + c: upper bound EML-2; exact = EML-\u221e"
+        },
+        "oracle_hierarchy": {
+          "depth": 2,
+          "description": "0' (first jump) = EML-2 (log structure of Turing jumps per S199)",
+          "note": "Turing jump: 0(EML-0)\u21920'(EML-1)\u21920''(EML-2): \u0394d=1 each step"
+        },
+        "rice_computable": {
+          "depth": 2,
+          "description": "Decidable properties of programs: EML-2 (index sets)",
+          "note": "Rice: non-trivial semantic = EML-\u221e; syntactic = EML-0/2"
+        }
+      },
+      "primary_shadow_depth": 2,
+      "shadow_measure": "Probability measure on programs (algorithmic probability)",
+      "note": "Halting: primary shadow = EML-2 (Kolmogorov/algorithmic probability)"
+    },
+    "godel": {
+      "problem": "G\u00f6del Incompleteness (first + second)",
+      "eml_depth": "\u221e",
+      "shadows": {
+        "provability_logic": {
+          "depth": 2,
+          "description": "GL (G\u00f6del-L\u00f6b) modal logic: Bew(\u2308\u03c6\u2309) = EML-2",
+          "note": "Provability predicate Bew = EML-2 (definable in PA)"
+        },
+        "herbrand_disjunctions": {
+          "depth": 2,
+          "description": "Herbrand theorem: if provable, has finite witness = EML-2",
+          "note": "Finite proof witnesses = EML-2 (finitary shadow)"
+        },
+        "truth_definition": {
+          "depth": "\u221e",
+          "description": "Tarski truth predicate = EML-\u221e (undefinable in own language)",
+          "note": "Truth = EML-\u221e: no shadow below \u221e"
+        },
+        "large_cardinal_shadow": {
+          "depth": "\u221e",
+          "description": "Consistency of ZFC + large cardinals: still EML-\u221e",
+          "note": "Each consistency strength step = \u0394d=1 (Turing jump analog)"
+        }
+      },
+      "primary_shadow_depth": 2,
+      "shadow_measure": "Probability over provable sentences (uniform measure on proofs)",
+      "note": "G\u00f6del: shadow = EML-2 (provability logic); truth = EML-\u221e"
+    },
+    "phase_transition": {
+      "T": 2.269,
+      "T_c": 2.2691,
+      "problem": "Ising Phase Transition",
+      "eml_depth_at_T_c": "\u221e",
+      "shadows": {
+        "below_Tc_order_param": {
+          "depth": 2,
+          "description": "m ~ (T_c-T)^\u03b2: power law order parameter = EML-2",
+          "value": 0.3162
+        },
+        "above_Tc_susceptibility": {
+          "depth": 2,
+          "description": "\u03c7 ~ (T-T_c)^{-\u03b3}: divergent power law = EML-2",
+          "note": "Divergent but EML-2 form: shadow accessible above transition"
+        },
+        "correlation_length": {
+          "depth": 2,
+          "description": "\u03be ~ |T-T_c|^{-\u03bd}: diverges as power law = EML-2",
+          "value": "\u221e"
+        }
+      },
+      "primary_shadow_depth": 2,
+      "note": "Phase transition: shadow = EML-2 (critical exponents = power laws)"
+    },
+    "shadow_table": {
+      "Halting": 2,
+      "G\u00f6del incompleteness": 2,
+      "Phase transitions": 2
+    },
+    "pattern": "All three = EML-2 primary shadow; all involve probabilistic/power-law measures",
+    "key_insight": "Undecidability shadow = EML-2; phase transitions shadow = EML-2 (critical exponents)"
+  },
+  "key_theorem": "The EML Undecidability Shadow Theorem (S228, Direction C): The accessible shadows of undecidability and incompleteness are EML-2: Halting: Kolmogorov complexity E[K] = H = EML-2; Turing jump 0''= EML-2. G\u00f6del: provability logic Bew = EML-2 (definable in PA). Phase transitions: critical exponents (power laws) = EML-2. All three EML-\u221e objects have EML-2 accessible shadows. Shadow measure in each case: a probability measure over the 'accessible' part (programs, provable sentences, configurations below/above T_c).",
+  "rabbit_hole_log": [
+    "G\u00f6del shadow = EML-2: provability logic Bew is definable in PA \u2014 the accessible part",
+    "Phase transition shadows = EML-2: critical exponents are EML-2 power laws",
+    "All undecidability shadows = EML-2: probability over accessible programs/proofs"
+  ]
+}
