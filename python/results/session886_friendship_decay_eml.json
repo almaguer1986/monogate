@@ -1,0 +1,42 @@
+{
+  "session": 886,
+  "title": "Friendship Decay and EML-3 Maintenance",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "FriendshipDecayEML",
+    "analysis": {
+      "object": "T607: Friendship Decay and EML-3 Maintenance depth analysis",
+      "domains": {
+        "new_friendship_eml1": {
+          "description": "New friendship intensity: EML-1 exponential growth in first months",
+          "depth": "EML-1",
+          "reason": "New friendship is EML-1: exponential novelty, dopamine, shared experience accumulation"
+        },
+        "maintained_eml3": {
+          "description": "Maintained friendship: EML-3 oscillatory contact pattern",
+          "depth": "EML-3",
+          "reason": "Sustained friendship is EML-3: rhythmic reaching out, responding, reciprocating"
+        },
+        "lapsed_eml1": {
+          "description": "Lapsed friendship: EML-1 exponential decay without EML-3 maintenance",
+          "depth": "EML-1",
+          "reason": "Friendship decay is EML-1: exponential forgetting curve without contact reinforcement"
+        },
+        "acquaintance_vs_lifelong": {
+          "description": "Lifelong friend = relationship reached EML-3 before EML-1 decay took over",
+          "depth": "EML-3",
+          "reason": "Friendship theorem: EML-3 threshold must be reached before decay; otherwise acquaintance only"
+        }
+      }
+    },
+    "distribution": {
+      "EML-1": 2,
+      "EML-3": 2
+    },
+    "theorem": "T607: Friendship Decay and EML-3 Maintenance (S886)."
+  },
+  "key_theorem": "T607: Friendship Decay and EML-3 Maintenance (S886).",
+  "rabbit_hole_log": [
+    "T607: new_friendship_eml1 depth confirmed"
+  ]
+}
