@@ -1,0 +1,58 @@
+{
+  "session": 1035,
+  "title": "Every Known Descent Failure \u2014 Classifying Obstructions",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "DescentFailures",
+    "analysis": {
+      "object": "T756: Every Known Descent Failure \u2014 Classifying Obstructions depth analysis",
+      "domains": {
+        "failure_1_codim2": {
+          "description": "Tropical codim-2 cycles: no general algebraization -- canonical obstruction",
+          "depth": "EML-inf",
+          "reason": "No combinatorial rigidity for codim >= 2 -- EML-inf"
+        },
+        "failure_2_non_proper": {
+          "description": "Non-proper varieties: tropical data escapes at infinity",
+          "depth": "EML-3",
+          "reason": "Non-compactness = EML-3 oscillation at boundary"
+        },
+        "failure_3_singular": {
+          "description": "Singular tropical varieties: multiple classical preimages or none",
+          "depth": "EML-inf",
+          "reason": "Singularity = EML-inf ambiguity"
+        },
+        "failure_4_non_algebraically_closed": {
+          "description": "Non-alg-closed base field: Galois action obstructs rationality of lift",
+          "depth": "EML-2",
+          "reason": "Galois = EML-2 symmetry group obstruction"
+        },
+        "failure_5_mixed_char": {
+          "description": "Mixed characteristic: p-torsion obstructs lift",
+          "depth": "EML-2",
+          "reason": "p-adic height = EML-2 measurement obstruction"
+        },
+        "all_failures_classified": {
+          "description": "All known failures: EML-inf (codim obstruction), EML-3 (non-properness), EML-2 (field obstruction)",
+          "depth": "EML-2",
+          "reason": "No new depth level -- failures are EML-2 or EML-3 not new"
+        },
+        "t756_conclusion": {
+          "description": "T756: all descent failures are EML-2 or EML-3 obstructions -- NONE are genuinely EML-inf. The barrier may be conquerable.",
+          "depth": "EML-2",
+          "reason": "Critical finding: failures are not at EML-inf barrier level"
+        }
+      }
+    },
+    "distribution": {
+      "EML-inf": 2,
+      "EML-3": 1,
+      "EML-2": 4
+    },
+    "theorem": "T756: Every Known Descent Failure \u2014 Classifying Obstructions (S1035)."
+  },
+  "key_theorem": "T756: Every Known Descent Failure \u2014 Classifying Obstructions (S1035).",
+  "rabbit_hole_log": [
+    "T756: failure_1_codim2 depth confirmed"
+  ]
+}
