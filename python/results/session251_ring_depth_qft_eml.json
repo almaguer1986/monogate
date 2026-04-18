@@ -1,0 +1,103 @@
+{
+  "session": 251,
+  "title": "Ring of Depth: QFT & Anomalous Dimensions",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "qft_ring": {
+    "model": "RGRingTestEML",
+    "rg": {
+      "rg_flow": {
+        "delta_d": -1,
+        "operation": "Integrating out UV modes: high-energy \u2192 low-energy",
+        "why": "Removes one oscillatory layer (UV momentum modes): \u0394d=-1"
+      },
+      "anomalous_dimension": {
+        "delta_d": 2,
+        "expression": "\u03b3(g) = \u03bc \u2202g/\u2202\u03bc log Z",
+        "why": "log of renormalization factor = EML-2 (Direction B)"
+      },
+      "beta_function": {
+        "delta_d": 2,
+        "expression": "\u03b2(g) = \u03bc \u2202g/\u2202\u03bc",
+        "why": "RG equation \u2202g/\u2202log \u03bc: derivative of EML-2 quantity w.r.t. log = EML-2"
+      }
+    },
+    "iterated_rg": {
+      "two_rg_steps_additive": {
+        "operation": "Two sequential RG integrations",
+        "delta_d_add": -2,
+        "result": "Removes 2 oscillatory layers: EML-3 \u2192 EML-1 (\u0394d=-2) \u2713"
+      },
+      "two_rg_steps_simultaneous": {
+        "operation": "Simultaneous RG at two scales (Wilsonian simultaneous band removal)",
+        "delta_d_mult_naive": 1,
+        "actual_delta_d": -1,
+        "why": "Simultaneous removal of two UV bands = removing a 2D slice of momentum space. Still one RG step in the depth sense: \u0394d=-1 (not \u0394d=(-1)\u00d7(-1)=+1). The depth semiring: (-1) \u2297 (-1) = -1 (idempotent at -1, not +1). You can't gain depth by removing layers twice simultaneously."
+      },
+      "infinite_rg_steps": {
+        "operation": "Full RG flow: UV\u2192IR (continuum of steps)",
+        "delta_d_total": "\u2212\u221e (TYPE 2: \u0394d=-\u221e, reaches EML-2 or EML-\u221e at IR fixed point)",
+        "ir_fixed_point_depth": 2,
+        "type": "Horizon shadow: UV theory (EML-\u221e) \u2192 IR fixed point (EML-2)"
+      }
+    },
+    "anomalous_dim": {
+      "single_gamma": {
+        "delta_d": 2,
+        "expression": "\u03b3 = \u2202 log Z/\u2202 log \u03bc"
+      },
+      "gamma_tensor_gamma": {
+        "setup": "Two fields \u03c6\u2081, \u03c6\u2082 with anomalous dimensions \u03b3\u2081, \u03b3\u2082",
+        "product_field": "\u03c6\u2081\u03c6\u2082: composite operator",
+        "delta_d_naive": 4,
+        "actual_formula": "\u03b3_{\u03c6\u2081\u03c6\u2082} = \u03b3\u2081 + \u03b3\u2082 (ADDITION, not multiplication)",
+        "key_insight": "Anomalous dimensions ADD when operators are multiplied: \u03b3_{AB} = \u03b3_A + \u03b3_B. This is the OPE rule: depth changes are ADDITIVE under operator products. The depth of a composite operator = sum of depths (additive group structure). NOT multiplicative: \u03b3\u2081\u2297\u03b3\u2082 \u2260 \u03b3\u2081\u00d7\u03b3\u2082 in the depth sense."
+      },
+      "ope_depth_rule": {
+        "rule": "depth(O\u2081 \u00b7 O\u2082) = depth(O\u2081) + depth(O\u2082) via \u0394d addition",
+        "example": "EML-2 operator \u00d7 EML-2 operator = EML-4? or EML-2?",
+        "answer": "OPE produces operators at all depths from |d\u2081-d\u2082| to d\u2081+d\u2082 in principle. But the LEADING term (most relevant at IR) = min depth = max(d\u2081,d\u2082). EML-2 \u00d7 EML-2 \u2192 leading OPE term = EML-2 (relevant operators dominate)."
+      }
+    },
+    "cft": {
+      "operator_dimension": {
+        "delta_depth": 2,
+        "expression": "\u0394 = d_classical + \u03b3: EML-0 classical + EML-2 anomalous = EML-2"
+      },
+      "ope_coefficients": {
+        "delta_d": 2,
+        "expression": "C_{12}^k: computed from crossing equations (log of 4-point function)"
+      },
+      "ope_multiplication": {
+        "O1_x_O2": "\u03a3_k C_{12}^k O_k: sum over ALL operators in spectrum",
+        "depth_of_sum": 2,
+        "why": "Sum of EML-2 operators with EML-2 coefficients = EML-2",
+        "ring_check": "2\u22972=2 in CFT (OPE preserves depth 2)"
+      },
+      "stress_tensor": {
+        "delta_d": 2,
+        "why": "T_{\u03bc\u03bd}: dimension=d+2 (anomalous dim=2 = EML-2)",
+        "conservation": "\u2202T=0: EML-0 conservation law (algebraic)"
+      },
+      "virasoro_algebra": {
+        "delta_d": 3,
+        "why": "L_n generators with oscillatory [L_m,L_n] commutator = EML-3",
+        "central_charge": {
+          "delta_d": 0,
+          "why": "c = rational number = EML-0"
+        }
+      }
+    },
+    "qft_ring_conclusions": {
+      "OPE_addition": "Anomalous dims ADD under OPE: \u03b3_{AB}=\u03b3_A+\u03b3_B (additive structure)",
+      "RG_idempotent": "Two simultaneous RG steps = one step: \u0394d=-1 idempotent",
+      "CFT_preserves_depth": "OPE of EML-2 operators = EML-2 (depth preserved)"
+    }
+  },
+  "key_theorem": "The QFT Ring Test (S251): Anomalous dimensions \u03b3 are \u0394d=+2 (canonical EML-2, Direction B). Under OPE (operator product), anomalous dimensions ADD: \u03b3_{AB}=\u03b3_A+\u03b3_B. This is the ADDITIVE structure \u2014 not multiplication. The OPE is the depth-ADDITION operation, not depth-multiplication. Simultaneous RG steps: two bands removed at once = \u0394d=-1 (not (-1)\u00b2=+1). The depth of a composite operator is the MAX of its factors' depths (CFT: leading OPE). CFT OPE ring: EML-2\u2297EML-2=EML-2 (depth preserved, not doubled). KEY STRUCTURAL INSIGHT: In QFT, COMPOSITION (sequential) uses ADDITIVE structure. PRODUCT (simultaneous/tensor) uses MULTIPLICATIVE structure (semiring \u2297). These are fundamentally different operations \u2014 the ring structure correctly assigns different behaviors to sequential vs. simultaneous application.",
+  "rabbit_hole_log": [
+    "OPE is ADDITIVE (not multiplicative): \u03b3_AB=\u03b3_A+\u03b3_B \u2014 the ring's additive law",
+    "CFT: EML-2 operator \u00d7 EML-2 operator \u2192 leading EML-2 (depth preserved by OPE)",
+    "Virasoro algebra = EML-3 (oscillatory): central charge = EML-0 (rational)",
+    "Simultaneous RG = \u0394d=-1 idempotent: can't gain depth by removing twice simultaneously"
+  ]
+}
