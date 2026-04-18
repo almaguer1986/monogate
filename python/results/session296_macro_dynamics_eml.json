@@ -1,0 +1,117 @@
+{
+  "session": 296,
+  "title": "Macroeconomic Dynamics & Monetary Policy",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "MacroDynamicsEML",
+    "phillips": {
+      "object": "New Keynesian Phillips curve",
+      "formula": "\u03c0_t = \u03b2\u00b7E_t[\u03c0_{t+1}] + \u03ba\u00b7x_t: inflation = discounted future + output gap",
+      "eml_depth": 2,
+      "why": "Expectation update: E_t[\u03c0] = EML-2 (Gaussian belief); output gap = EML-2",
+      "semiring_test": {
+        "expectations_tensor_gap": {
+          "operation": "Expectations(EML-2) \u2297 OutputGap(EML-2) = max(2,2) = 2",
+          "result": "Phillips curve: 2\u22972=2 \u2713"
+        },
+        "non_linear_PC": {
+          "depth": "\u221e",
+          "shadow": 2,
+          "type": "TYPE 2 Horizon (flattening at ZLB or high inflation)",
+          "why": "Threshold non-linearity = EML-\u221e; shadow=2 (still log-linear near anchor)"
+        }
+      }
+    },
+    "taylor": {
+      "object": "Taylor rule: i_t = r* + \u03c0* + 1.5(\u03c0_t - \u03c0*) + 0.5\u00b7x_t",
+      "eml_depth": 2,
+      "why": "Linear feedback rule: i = real_rate + deviation_terms = EML-2",
+      "semiring_test": {
+        "rule_tensor_reaction": {
+          "operation": "InflationGap(EML-2) \u2297 OutputGap(EML-2) = max(2,2) = 2",
+          "result": "Taylor rule: 2\u22972=2 \u2713"
+        },
+        "zero_lower_bound": {
+          "depth": "\u221e",
+          "shadow": 2,
+          "type": "TYPE 2 Horizon (non-linearity at i=0)",
+          "why": "ZLB kink = EML-\u221e; shadow=2 (deviation from anchor = EML-2)"
+        }
+      }
+    },
+    "fiscal": {
+      "object": "Fiscal multiplier: \u0394Y/\u0394G",
+      "eml_depth": 2,
+      "formula": "Multiplier = 1/(1 - c(1-t)): closed-form rational = EML-0 \u2192 EML-2 with dynamics",
+      "semiring_test": {
+        "static_multiplier": {
+          "depth": 0,
+          "why": "Static Keynesian: algebraic ratio = EML-0"
+        },
+        "dynamic_multiplier": {
+          "depth": 2,
+          "formula": "Y(t) = Y_0\u00b7exp(-t/\u03c4): decay toward new steady state = EML-2"
+        },
+        "tensor_test": {
+          "operation": "Static(EML-0) \u2297 Dynamic(EML-2) = max(0,2) = 2",
+          "result": "Fiscal dynamics: 0\u22972=2 \u2713"
+        }
+      }
+    },
+    "regime": {
+      "object": "Monetary policy regime shift (Volcker disinflation, ZLB)",
+      "eml_depth": "\u221e",
+      "shadow": 2,
+      "semiring_test": {
+        "pre_regime": {
+          "depth": 2,
+          "behavior": "Stable inflation expectations: EML-2"
+        },
+        "regime_change": {
+          "type": "TYPE 2 Horizon (sudden credibility shift)",
+          "depth": "\u221e",
+          "shadow": 2,
+          "why": "Volcker shock: exp(-\u03bb\u00b7\u0394I) = EML-2 shadow"
+        },
+        "sunspot_equilibria": {
+          "depth": "\u221e",
+          "shadow": 2,
+          "why": "Multiple equilibria (indeterminacy): EML-\u221e; shadow=2 (real-valued expectations)"
+        }
+      }
+    },
+    "dsge": {
+      "object": "DSGE model (Dynamic Stochastic General Equilibrium)",
+      "eml_depth": 2,
+      "semiring_test": {
+        "log_linearization": {
+          "depth": 2,
+          "why": "Log-linear approximation around SS: all variables log-deviations = EML-2"
+        },
+        "stochastic_shock": {
+          "formula": "a_t = \u03c1\u00b7a_{t-1} + \u03b5_t: AR(1) shock = EML-2",
+          "depth": 2
+        },
+        "tensor_test": {
+          "operation": "DSGE(EML-2) \u2297 Shock(EML-2) = max(2,2) = 2",
+          "result": "DSGE: 2\u22972=2 \u2713 (log-linearized = EML-2 closed)"
+        }
+      }
+    },
+    "semiring_verdicts": {
+      "phillips_curve": "2\u22972=2 \u2713; ZLB = TYPE2 Horizon, shadow=2",
+      "taylor_rule": "2\u22972=2 \u2713",
+      "dsge": "2\u22972=2 \u2713 (log-linearized macro = EML-2 closed)",
+      "regime_shifts": "TYPE 2 Horizon; shadow=2 (Volcker disinflation)",
+      "new_finding": "Static fiscal multiplier=EML-0; dynamic fiscal = EML-2 (EML-0\u2192EML-2 via dynamics)"
+    }
+  },
+  "key_theorem": "Macro Semiring Theorem (S296): Log-linearized macroeconomics = CLOSED EML-2 SUBRING. Phillips curve, Taylor rule, DSGE: 2\u22972=2. Static fiscal multiplier = EML-0 (algebraic ratio); dynamics lifts to EML-2. ZLB and regime shifts = TYPE 2 Horizons with shadow=2. Volcker disinflation = TYPE 2 Horizon: credibility jump = non-constructive EML-\u221e, but the inflation decay path = EML-2 shadow. Sunspot equilibria (indeterminacy) = EML-\u221e, shadow=2. MACRO DEPTH LADDER: Static(EML-0) \u2192 DSGE(EML-2) \u2192 Regime shifts(EML-\u221e,shadow=2).",
+  "rabbit_hole_log": [
+    "Phillips + Taylor + DSGE: EML-2 closed subring (log-linear macro)",
+    "Static multiplier: EML-0 (algebraic ratio); dynamics \u2192 EML-2",
+    "ZLB = TYPE 2 Horizon; Volcker = TYPE 2 Horizon; both shadow=2",
+    "Sunspot equilibria: EML-\u221e, shadow=2 (multiple equilibria = non-constructive)",
+    "Log-linearization = the KEY move that keeps macro in EML-2"
+  ]
+}
