@@ -1,0 +1,107 @@
+{
+  "session": 284,
+  "title": "Pragmatics & Language Evolution",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "PragmaticsLanguageEML",
+    "rsa": {
+      "object": "Rational Speech Act model (Frank & Goodman 2012)",
+      "formula": "P_S(w|m) \u221d exp(\u03b1\u00b7log P_L(m|w) - C(w)): speaker utility",
+      "eml_depth": 2,
+      "why": "exp(\u03b1\u00b7log P): Boltzmann over log-probability = EML-2",
+      "semiring_test": {
+        "literal_tensor_pragmatic": {
+          "operation": "L\u2080(EML-2) \u2297 S\u2081(EML-2) = max(2,2) = 2",
+          "result": "RSA recursion: 2\u22972=2 \u2713 (iterated pragmatic inference stays EML-2)"
+        },
+        "deep_recursion": {
+          "L0_S1_L1_S2": "All levels: max(2,2,...) = 2",
+          "result": "Arbitrary depth pragmatic recursion stays EML-2 \u2713"
+        }
+      }
+    },
+    "gricean": {
+      "object": "Gricean maxims (quantity, quality, relation, manner)",
+      "eml_depth": 2,
+      "why": "Maxim violation = information cost: H(speaker_intention) = EML-2",
+      "semiring_test": {
+        "quantity_x_quality": {
+          "operation": "Quantity(EML-2) \u2297 Quality(EML-2) = max(2,2) = 2",
+          "result": "All four maxims: same type = max rule = EML-2 \u2713"
+        },
+        "implicature_generation": {
+          "depth": "\u221e",
+          "shadow": 2,
+          "why": "Scalar implicature: non-constructive (context-dependent) = EML-\u221e; shadow=2"
+        }
+      }
+    },
+    "semantic_shift": {
+      "object": "Semantic shift over time (word2vec trajectories)",
+      "formula": "v_w(t) = v_w(0) + \u03a3\u1d62 \u0394v\u1d62(t): embedding drift",
+      "eml_depth": 2,
+      "semiring_test": {
+        "smooth_drift": {
+          "depth": 2,
+          "formula": "Semantic drift rate ~ exp(-|t\u2082-t\u2081|/\u03c4): EML-2"
+        },
+        "sudden_shift": {
+          "depth": "\u221e",
+          "type": "TYPE 2 Horizon (word meaning revolution)",
+          "shadow": 2,
+          "example": "'Gay' meaning shift: threshold transition = TYPE 2"
+        },
+        "metaphor_extension": {
+          "depth": "\u221e",
+          "shadow": 3,
+          "why": "Metaphor = category extension: Khovanov-type enrichment = TYPE 3; shadow=EML-3"
+        }
+      }
+    },
+    "zipf": {
+      "object": "Zipf's law P(w) ~ rank^{-\u03b1}",
+      "eml_depth": 2,
+      "semiring_test": {
+        "zipf_tensor_zipf": {
+          "operation": "Two language Zipf distributions: max(2,2) = 2",
+          "result": "Cross-lingual comparison: EML-2 \u2713"
+        },
+        "derivation": {
+          "note": "Zipf from RSA: P(w) \u221d exp(-\u03bb\u00b7rank): EML-2 (exp of linear = EML-2)",
+          "depth": 2
+        }
+      }
+    },
+    "grammaticalization": {
+      "object": "Grammaticalization (content word \u2192 function word \u2192 morpheme)",
+      "eml_depth": "\u221e",
+      "shadow": 2,
+      "semiring_test": {
+        "early_stage": {
+          "depth": 2,
+          "behavior": "Frequency increase: EML-2 (log-linear)"
+        },
+        "grammaticalization_event": {
+          "type": "TYPE 3 Categorification",
+          "depth": "\u221e",
+          "shadow": 2,
+          "why": "Grammaticalization = categorification: word (EML-2) \u2192 grammar (EML-\u221e). BUT: grammar decategorifies to phonological weight = real-valued = EML-2. Shadow of grammaticalization = EML-2 (frequency/phonological reduction)"
+        }
+      }
+    },
+    "semiring_verdicts": {
+      "RSA_recursion": "2\u22972=2 \u2713 (iterated pragmatic inference stays EML-2)",
+      "Gricean_maxims": "2\u22972=2 \u2713 (all maxims same type)",
+      "metaphor": "Shadow=EML-3 (TYPE 3: category extension)",
+      "grammaticalization": "TYPE 3 Horizon; shadow=EML-2 (phonological reduction)"
+    }
+  },
+  "key_theorem": "Language Semiring Theorem (S284): RSA model respects tropical semiring: 2\u22972=2 at all recursion depths. Gricean maxims: all EML-2 (information-theoretic); maxim violations = EML-2 cost. Scalar implicature: EML-\u221e (non-constructive); shadow=EML-2. METAPHOR: shadow=EML-3 \u2014 metaphor = TYPE 3 categorification (category extension). This is the FIRST linguistic phenomenon with EML-3 shadow. Grammaticalization = TYPE 3 (word\u2192grammar) but shadow=EML-2 (frequency/phonological). LINGUISTIC DEPTH LADDER: Zipf(EML-2) \u2192 RSA(EML-2) \u2192 Implicature(EML-\u221e,shadow=2) \u2192 Metaphor(EML-\u221e,shadow=3).",
+  "rabbit_hole_log": [
+    "RSA: 2\u22972=2 confirmed at arbitrary recursion depth",
+    "Metaphor = TYPE 3 categorification: shadow=EML-3 (first linguistic EML-3)",
+    "Grammaticalization = TYPE 3 (word\u2192grammar) but shadow=EML-2 (frequency reduction)",
+    "Scalar implicature: EML-\u221e (context-dependent); shadow=EML-2",
+    "Language is predominantly EML-2; metaphor is the EML-3 outlier"
+  ]
+}
