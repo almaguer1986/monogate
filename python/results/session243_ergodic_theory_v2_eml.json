@@ -1,0 +1,132 @@
+{
+  "session": 243,
+  "title": "Ergodic Theory & Dynamical Systems: Mixing, Entropy & Birkhoff",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "birkhoff": {
+    "model": "BirkhoffErgodicEML",
+    "birkhoff": {
+      "birkhoff_statement": "(1/N)\u03a3_{k=0}^{N-1} f(T^k x) \u2192 \u222bf d\u03bc  (\u03bc-a.e.)",
+      "time_average": {
+        "depth": 2,
+        "why": "Ces\u00e0ro mean with exp(-\u03bbN) convergence rate = EML-2"
+      },
+      "space_average": {
+        "depth": 2,
+        "why": "Lebesgue integral = EML-2 (log-integral equivalence, Direction B)"
+      },
+      "convergence_rate": {
+        "expression": "|time_avg - space_avg| ~ exp(-\u03bbN)",
+        "depth": 1,
+        "why": "Exponential convergence = EML-1 (single exp without log)"
+      },
+      "proof_depth": {
+        "maximal_ergodic": "EML-2 (L\u00b9 inequality via measure theory)",
+        "riesz_decomposition": "EML-2 (L\u00b2 projection onto invariant subspace)"
+      },
+      "delta_d_of_theorem": 0,
+      "type": "TYPE 1 \u0394d=0: time average self-maps within EML-2"
+    },
+    "mixing": {
+      "correlation_function": {
+        "expression": "C_n(f,g) = \u222bf\u00b7(g\u2218T^n)d\u03bc - \u222bf d\u03bc\u00b7\u222bg d\u03bc",
+        "depth": 2,
+        "why": "Difference of integrals = EML-2"
+      },
+      "exponential_mixing": {
+        "rate": "|C_n| \u2264 A\u00b7exp(-\u03bbn)",
+        "depth": 1,
+        "why": "EML-1: exponential bound without log partner (the bound itself, not C_n)"
+      },
+      "polynomial_mixing": {
+        "rate": "|C_n| ~ n^{-\u03b1}",
+        "depth": 2,
+        "why": "Power law = exp(-\u03b1 log n) = EML-2"
+      },
+      "weak_mixing": {
+        "depth": 2,
+        "statement": "(1/N)\u03a3|C_n| \u2192 0: Ces\u00e0ro average of correlations vanishes",
+        "why": "Ces\u00e0ro mean of EML-2 = EML-2"
+      }
+    },
+    "key_insight": "Birkhoff = \u0394d=0 EML-2 self-map; mixing rate = EML-1 bound; correlation = EML-2"
+  },
+  "ks_entropy": {
+    "model": "KSEntropyEML",
+    "ks_entropy": {
+      "shannon_entropy_of_partition": {
+        "expression": "H(P) = -\u03a3\u1d62 \u03bc(A\u1d62) log \u03bc(A\u1d62)",
+        "depth": 2,
+        "why": "Classic EML-2 object: -\u03a3p log p = -\u222bp log p d\u03bc = log-integral equivalence"
+      },
+      "ks_formula": {
+        "expression": "h(T,P) = lim_{n\u2192\u221e} (1/n) H(\u2228_{k=0}^{n-1} T^{-k}P)",
+        "depth": 2,
+        "why": "Limit of (1/n)\u00d7EML-2 = EML-2 (Ces\u00e0ro of entropy)"
+      },
+      "ks_entropy": {
+        "expression": "h(T) = sup_P h(T,P)",
+        "depth": 2,
+        "note": "For smooth systems: sup is achieved = EML-2. Non-constructive sup = EML-\u221e.",
+        "pesin_formula": "h(T) = \u222b \u03a3 max(\u03bb\u1d62,0) d\u03bc (sum of positive Lyapunov exponents)"
+      },
+      "pesin_entropy_formula": {
+        "expression": "h(T) = \u222b \u03a3\u1d62 max(\u03bb\u1d62, 0) d\u03bc",
+        "depth": 2,
+        "why": "Integral of Lyapunov exponents = EML-2",
+        "significance": "Pesin: entropy = measured Lyapunov = EML-2 bridge between dynamics and measure"
+      }
+    },
+    "lyapunov": {
+      "lyapunov_definition": {
+        "expression": "\u03bb = lim_{n\u2192\u221e} (1/n) log ||DT^n(x)||",
+        "depth": 2,
+        "why": "(1/n)log = Ces\u00e0ro of log = EML-2 (the log IS the EML-2 primitive)"
+      },
+      "oseledets_theorem": {
+        "statement": "Lyapunov exponents exist and are constant \u03bc-a.e. (multiplicative ergodic thm)",
+        "depth": "\u221e",
+        "type": "TYPE 2 Horizon: existence proved non-constructively via Furstenberg-Kesten"
+      },
+      "chaotic_regime": {
+        "criterion": "\u03bb > 0 (positive Lyapunov exponent)",
+        "depth": 2,
+        "transition": "\u03bb = 0 \u2192 EML-\u221e (bifurcation boundary = Horizon)"
+      }
+    },
+    "key_insight": "KS entropy = EML-2 (Shannon + Pesin); Lyapunov exponent = EML-2; existence = EML-\u221e"
+  },
+  "spectral": {
+    "model": "SpectralErgodicEML",
+    "koopman": {
+      "koopman": {
+        "definition": "U_T: L\u00b2(\u03bc) \u2192 L\u00b2(\u03bc), (U_T f)(x) = f(Tx)",
+        "depth": 2,
+        "why": "L\u00b2 operator = spectral theory = EML-2 (quadratic form)"
+      },
+      "categorification_step": {
+        "scalar_T": "EML-0 (map on points x \u21a6 Tx)",
+        "koopman_UT": "EML-2 (operator on functions)",
+        "delta_d": 2,
+        "type": "TYPE 1 \u0394d=+2: point map \u2192 function operator adds exp+log pair"
+      },
+      "spectral_measure": {
+        "expression": "\u03c3_f(E) = \u27e8P(E)f, f\u27e9 (spectral measure of f)",
+        "depth": 2,
+        "why": "Spectral projection measure = EML-2"
+      },
+      "deep_categorification": {
+        "koopman": "EML-2 (functions)",
+        "koopman_category": "EML-\u221e (natural transformations between Koopman operators)",
+        "type": "TYPE 3: Koopman operator (EML-2) \u2192 Koopman 2-category (EML-\u221e)"
+      }
+    },
+    "key_insight": "Koopman: scalar map (EML-0) \u2192(\u0394d=+2)\u2192 function operator (EML-2); categorifiable to EML-\u221e"
+  },
+  "key_theorem": "The Three Types in Ergodic Theory (S243): TYPE 1 (finite \u0394d): Birkhoff = \u0394d=0 (EML-2 self-map); Koopman lift = \u0394d=+2 (point\u2192function). TYPE 2 (Horizon): Oseledets theorem (Lyapunov existence = non-constructive = EML-\u221e); KS entropy = EML-2 computation but its sup over all partitions = EML-\u221e if non-smooth. TYPE 3 (Categorification): Koopman operator (EML-2) \u2192 Koopman 2-category (EML-\u221e). The universal pattern: scalar dynamics (EML-0) \u2192(\u0394d=+2)\u2192 Koopman (EML-2) \u2192(TYPE 3)\u2192 Koopman 2-category (EML-\u221e). All three depth-change types confirmed in ergodic theory. KS entropy = EML-2 is the canonical ergodic invariant: h(T) = \u222b\u03a3max(\u03bb\u1d62,0)d\u03bc (Pesin) = integral of Lyapunov = EML-2.",
+  "rabbit_hole_log": [
+    "Birkhoff = \u0394d=0 EML-2 self-map: time average = space average, same depth",
+    "KS entropy = EML-2 (Shannon of partition; Pesin = integral of Lyapunov exponents)",
+    "Koopman lift: scalar map (EML-0) \u2192(\u0394d=+2)\u2192 function operator (EML-2)",
+    "Oseledets: Lyapunov existence = TYPE 2 Horizon (non-constructive)"
+  ]
+}
