@@ -1,0 +1,65 @@
+{
+  "session": 489,
+  "title": "Plant Morphology & Phyllotaxis",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "PlantMorphologyPhyllotaxisEML",
+    "analysis": {
+      "object": "T210: EML depth analysis of plant morphology and phyllotaxis",
+      "domains": {
+        "fibonacci_numbers": {
+          "description": "Leaf counts: 1,1,2,3,5,8,13,... \u2014 Fibonacci sequence",
+          "depth": "EML-0",
+          "reason": "Integer sequence by linear recurrence \u2014 discrete combinatorics"
+        },
+        "golden_angle": {
+          "description": "Divergence angle \u03c6 = 137.5\u00b0 = 2\u03c0(1-1/\u03d5) where \u03d5 = golden ratio",
+          "depth": "EML-2",
+          "reason": "\u03d5 = (1+\u221a5)/2 \u2014 algebraic number (square root)"
+        },
+        "spiral_phyllotaxis": {
+          "description": "Leaf position r(n) = \u221an, \u03b8(n) = 2\u03c0n\u03d5",
+          "depth": "EML-3",
+          "reason": "exp(i\u03b8(n)) = exp(2\u03c0in\u03d5) \u2014 oscillatory exponential in n; EML-3"
+        },
+        "reaction_diffusion": {
+          "description": "Turing pattern formation: \u2202u/\u2202t = D\u0394u + f(u,v)",
+          "depth": "EML-3",
+          "reason": "Activator-inhibitor: oscillatory spatial patterns from exp instability"
+        },
+        "auxin_transport": {
+          "description": "Auxin polar transport: PIN protein directional flow",
+          "depth": "EML-2",
+          "reason": "Gradient-driven flow \u2014 algebraic steady state"
+        },
+        "branching_pattern": {
+          "description": "L-systems: iterative grammar \u2192 tree topology",
+          "depth": "EML-1",
+          "reason": "Exponential growth in node count at each iteration"
+        },
+        "fractal_leaf": {
+          "description": "Self-similar leaf venation patterns",
+          "depth": "EML-2",
+          "reason": "Power-law scaling: L(\u03b5) ~ \u03b5^{-D} \u2014 algebraic fractal dimension"
+        }
+      },
+      "circle_of_fifths_analog": "Is phyllotaxis a depth-3 traversal? Answer: YES. Spiral phyllotaxis = exp(2\u03c0in\u03d5) is EML-3 oscillation. The golden angle is the 'most irrational' angle \u2014 it maximizes packing = maximizes destructive interference between spirals. This is the same equal-weight cancellation structure as the critical line!"
+    },
+    "distribution": {
+      "EML-0": 1,
+      "EML-1": 1,
+      "EML-2": 3,
+      "EML-3": 2
+    },
+    "verdict": "Fibonacci: EML-0. Golden ratio: EML-2. Spirals: EML-3. Fractal venation: EML-2.",
+    "theorem": "T210: Phyllotaxis Depth Map \u2014 golden angle EML-2, spiral exp EML-3"
+  },
+  "key_theorem": "T210: Phyllotaxis Depth Map (S489). Fibonacci counts: EML-0. Golden angle (\u221a5): EML-2. Spiral position exp(2\u03c0in\u03d5): EML-3. Turing patterns: EML-3. Revelation: phyllotaxis = EML-3 oscillation, and golden angle maximizes destructive interference \u2014 the same equal-weight structure as the critical line.",
+  "rabbit_hole_log": [
+    "Fibonacci: EML-0 (pure integer recurrence)",
+    "Golden ratio \u03d5 = (1+\u221a5)/2: EML-2 (algebraic, degree 2)",
+    "Leaf position: exp(2\u03c0in\u03d5) \u2014 EML-3 oscillatory sequence",
+    "Golden angle = most irrational \u2192 maximizes packing = equal-weight cancellation",
+    "T210: Phyllotaxis and the critical line share the same EML-3 balance mechanism"
+  ]
+}
