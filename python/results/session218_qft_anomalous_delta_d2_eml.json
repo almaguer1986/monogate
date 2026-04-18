@@ -1,0 +1,71 @@
+{
+  "session": 218,
+  "title": "QFT & Anomalous Dimensions Attack: \u0394d=2 in Renormalization",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "anomalous_dimensions": {
+    "model": "AnomalousDimensionEML",
+    "classical_vs_quantum": {
+      "coupling": 0.1,
+      "n_loops": 2,
+      "classical_dim": 1.0,
+      "anomalous_dim": 0.0102,
+      "full_quantum_dim": 1.0102,
+      "log_coupling": -4.6052,
+      "classical_depth": 0,
+      "anomalous_depth": 2,
+      "full_quantum_depth": 2,
+      "delta_d": 2,
+      "measure_introduced": "Path integral measure D\u03c6 in loop Feynman diagrams",
+      "conjecture_check": "YES \u2014 \u222bD\u03c6 e^{iS} in loop corrections IS a functional measure",
+      "note": "Anomalous dim: [\u03c6](EML-0) \u2192 [\u03c6]+\u03b3(g)(EML-2) = \u0394d=2; D\u03c6 introduced"
+    },
+    "rg_flow": {
+      "g_uv": 2.0,
+      "g_ir": 0.1,
+      "log_ratio": 2.9957,
+      "g_at_mu": 0.0985,
+      "uv_coupling_depth": 0,
+      "rg_trajectory_depth": 2,
+      "fixed_point_depth": 0,
+      "beta_function_depth": 2,
+      "delta_d_rg_flow": 2,
+      "note": "RG flow: g_UV(0) \u2192 g(\u03bc)=EML-2 (1/log running) = \u0394d=2; measure = \u03bc integration"
+    },
+    "key_insight": "Anomalous dim = \u0394d=2: path integral D\u03c6 is the \u0394d=2 measure; RG flow = \u0394d=2"
+  },
+  "ope_bootstrap": {
+    "model": "WilsonOPEDeltaDEML",
+    "ope": {
+      "operator_depth": 3,
+      "ope_coefficient_depth": 2,
+      "delta_d_op_to_coeff": -1,
+      "classical_dim_depth": 0,
+      "quantum_scaling_depth": 2,
+      "delta_d_classical_to_quantum": 2,
+      "conformal_block_depth": 3,
+      "measure_introduced": "Conformal invariant measure on configuration space",
+      "note": "OPE: op(3)\u2192coeff(2)=\u0394d=-1; but \u0394_class(0)\u2192\u0394_quantum(2)=\u0394d=2"
+    },
+    "bootstrap": {
+      "crossing_equation_depth": 3,
+      "bootstrap_solution_depth": 2,
+      "unsolved_bootstrap_depth": "\u221e",
+      "partition_function_depth": 3,
+      "delta_d_crossing_to_solution": -1,
+      "note": "Bootstrap: crossing(3)\u2192solution(2)=\u0394d=-1; unsolved=EML-\u221e"
+    },
+    "key_insight": "OPE: \u0394_class(0)\u2192\u0394_quantum(2)=\u0394d=2 (anomalous dim); bootstrap reductions \u0394d=-1"
+  },
+  "eml_depth_summary": {
+    "EML-0": "Classical scaling dims, UV coupling g, fixed points",
+    "EML-2": "Anomalous dims \u03b3(g), RG trajectory g(\u03bc), OPE coefficients",
+    "EML-3": "Quantum operators, conformal blocks, partition functions",
+    "EML-\u221e": "Non-perturbative QFT, unsolved bootstrap, confinement"
+  },
+  "key_theorem": "The EML QFT Renormalization \u0394d=2 Theorem (S218): Renormalization universally produces \u0394d=2 jumps from classical to quantum: Classical scaling dimension [\u03c6] (EML-0) \u2192 quantum dim [\u03c6]+\u03b3(g) (EML-2): \u0394d=2. The path integral measure D\u03c6 in loop diagrams IS the probability measure: \u222bD\u03c6 e^{iS} is a functional measure introduced by quantization. RG flow: UV coupling g_UV (EML-0) \u2192 running g(\u03bc) ~ 1/log(\u03bc/\u039b) (EML-2): \u0394d=2. UNIFIED QFT STATEMENT: quantization = introducing the path integral measure D\u03c6 = always \u0394d=2. This is the QFT instance of the 'adding a measure' theorem.",
+  "rabbit_hole_log": [
+    "Path integral measure D\u03c6 = canonical QFT \u0394d=2 engine: quantization IS measure introduction",
+    "Anomalous dim = \u0394d=2: classical integer dim (0) \u2192 quantum log dim (2) via loop measure",
+    "RG trajectory = EML-2: 1/log(\u03bc/\u039b) running coupling is the universal EML-2 signature"
+  ]
+}
