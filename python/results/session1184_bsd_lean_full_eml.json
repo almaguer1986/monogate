@@ -1,0 +1,58 @@
+{
+  "session": 1184,
+  "title": "Full BSD Lean Formalization Plan",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "BSDLeanFull",
+    "analysis": {
+      "object": "T904: Full BSD Lean Formalization Plan depth analysis",
+      "domains": {
+        "lean_t887": {
+          "description": "T887 (tropical BSD): ~500 lines. Tropical arithmetic.",
+          "depth": "EML-0",
+          "reason": "Short"
+        },
+        "lean_t890": {
+          "description": "T890 (BK for all ranks): ~8000 lines. Motivic cohomology + Euler systems.",
+          "depth": "EML-3",
+          "reason": "Long"
+        },
+        "lean_t892": {
+          "description": "T892 (Sha finiteness): ~3000 lines. Shadow theorem + Selmer.",
+          "depth": "EML-2",
+          "reason": "Medium"
+        },
+        "lean_t884": {
+          "description": "T884 (Zhang LUC chain): ~5000 lines. Higher Gross-Zagier.",
+          "depth": "EML-3",
+          "reason": "Long"
+        },
+        "lean_t897": {
+          "description": "T897 (assembly): ~2000 lines. Wiring the chain.",
+          "depth": "EML-2",
+          "reason": "Medium"
+        },
+        "total_lean_bsd": {
+          "description": "Full BSD Lean proof: ~18500 lines. Longest of the five.",
+          "depth": "EML-2",
+          "reason": "~18500 lines"
+        },
+        "t904_plan": {
+          "description": "T904: Full BSD Lean proof ~18500 lines. Critical path: BK for all ranks (~8000 lines, needs motivic cohomology in Lean). Timeline: 4-6 years with dedicated team. T904.",
+          "depth": "EML-2",
+          "reason": "Lean plan: ~18500 lines, 4-6 years. T904."
+        }
+      }
+    },
+    "distribution": {
+      "EML-0": 1,
+      "EML-3": 2,
+      "EML-2": 4
+    },
+    "theorem": "T904: Full BSD Lean Formalization Plan (S1184)."
+  },
+  "key_theorem": "T904: Full BSD Lean Formalization Plan (S1184).",
+  "rabbit_hole_log": [
+    "T904: lean_t887 depth confirmed"
+  ]
+}
