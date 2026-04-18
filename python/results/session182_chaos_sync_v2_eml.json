@@ -1,0 +1,356 @@
+{
+  "session": 182,
+  "title": "Chaos & Control Deep III: Multi-Strata Synchronization & Asymmetry",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "asymmetry_control": {
+    "model": "AsymmetryDrivenControl",
+    "controllability_theorem": {
+      "theorem": "EML Controllability: system depth \u2192 target depth requires controller at target depth",
+      "examples": {
+        "log_feedback_exp_system": {
+          "system_depth": 1,
+          "required_depth_reduction": 1,
+          "controller_depth": 2,
+          "delta_d": 1,
+          "result": "controllable (exp/log asymmetry = \u0394d=1)",
+          "asymmetry": "exp \u2194 log"
+        },
+        "chaotic_lorenz_sync": {
+          "system_depth": 3,
+          "target_depth": 3,
+          "controller_depth": 3,
+          "delta_d": 0,
+          "result": "synchronizable (EML-3 \u2192 EML-3 same depth)",
+          "asymmetry": "\u0394d=0 (no depth change)"
+        },
+        "bifurcation_control": {
+          "system_depth": "\u221e",
+          "target_depth": 3,
+          "controller_depth": 3,
+          "delta_d": "\u221e",
+          "result": "sync to EML-3 achievable; transition itself stays EML-\u221e",
+          "asymmetry": "\u0394d=\u221e cannot be eliminated"
+        },
+        "qualia_binding": {
+          "system_depth": "\u221e",
+          "target_depth": 3,
+          "controller_depth": 3,
+          "delta_d": "\u221e",
+          "result": "NCC (EML-3) cannot control qualia (EML-\u221e)",
+          "asymmetry": "Hard Problem as control failure"
+        }
+      },
+      "unique_controllable_pair": "exp/log (\u0394d=1): log-feedback controls exp-systems",
+      "eml_depth_theorem": "\u221e"
+    },
+    "log_feedback": {
+      "0.1": {
+        "x": 0.1,
+        "x_target": 1.0,
+        "k": 1.0,
+        "control_u": 2.302585,
+        "system_drift": 1.1052,
+        "closed_loop": 3.4078,
+        "eml_depth_control": 2,
+        "eml_depth_system": 1,
+        "delta_d": 1,
+        "note": "Log-feedback exploits exp/log asymmetry \u0394d=1: EML-2 controls EML-1 system"
+      },
+      "0.5": {
+        "x": 0.5,
+        "x_target": 1.0,
+        "k": 1.0,
+        "control_u": 0.693147,
+        "system_drift": 1.6487,
+        "closed_loop": 2.3419,
+        "eml_depth_control": 2,
+        "eml_depth_system": 1,
+        "delta_d": 1,
+        "note": "Log-feedback exploits exp/log asymmetry \u0394d=1: EML-2 controls EML-1 system"
+      },
+      "1.0": {
+        "x": 1.0,
+        "x_target": 1.0,
+        "k": 1.0,
+        "control_u": -0.0,
+        "system_drift": 2.7183,
+        "closed_loop": 2.7183,
+        "eml_depth_control": 2,
+        "eml_depth_system": 1,
+        "delta_d": 1,
+        "note": "Log-feedback exploits exp/log asymmetry \u0394d=1: EML-2 controls EML-1 system"
+      },
+      "2.0": {
+        "x": 2.0,
+        "x_target": 1.0,
+        "k": 1.0,
+        "control_u": -0.693147,
+        "system_drift": 7.3891,
+        "closed_loop": 6.6959,
+        "eml_depth_control": 2,
+        "eml_depth_system": 1,
+        "delta_d": 1,
+        "note": "Log-feedback exploits exp/log asymmetry \u0394d=1: EML-2 controls EML-1 system"
+      }
+    },
+    "eml_depth": {
+      "log_controller": 2,
+      "exp_system": 1,
+      "chaotic_sync": 3,
+      "bifurcation_gap": "\u221e"
+    },
+    "key_insight": "Asymmetry \u0394d=1 predicts unique controllability of exp-systems via log-feedback"
+  },
+  "high_dim_chaos": {
+    "model": "HighDimensionalChaosEML",
+    "lorenz": {
+      "sigma": 10.0,
+      "rho": 28.0,
+      "beta": 2.6667,
+      "kaplan_yorke_dim": 3.833,
+      "max_lyapunov": 0.906,
+      "predictability_1step": 0.4041,
+      "eml_depth_attractor": 3,
+      "eml_depth_predictability": 1,
+      "eml_depth_bifurcation_rho": "\u221e",
+      "note": "Lorenz attractor = EML-3; predictability exp(-\u03bbt) = EML-1"
+    },
+    "tent_map": {
+      "1.5": {
+        "r": 1.5,
+        "lyapunov_exponent": 0.4055,
+        "orbit_sample": [
+          0.3,
+          0.45,
+          0.675,
+          0.4875,
+          0.73125,
+          0.403125
+        ],
+        "eml_depth_rule": 0,
+        "eml_depth_lyapunov": 2,
+        "eml_depth_orbit": 3,
+        "eml_depth_invariant": 0,
+        "note": "Tent map rule=EML-0; Lyapunov=EML-2; orbit=EML-3"
+      },
+      "1.8": {
+        "r": 1.8,
+        "lyapunov_exponent": 0.5878,
+        "orbit_sample": [
+          0.3,
+          0.54,
+          0.828,
+          0.3096,
+          0.55728,
+          0.796896
+        ],
+        "eml_depth_rule": 0,
+        "eml_depth_lyapunov": 2,
+        "eml_depth_orbit": 3,
+        "eml_depth_invariant": 0,
+        "note": "Tent map rule=EML-0; Lyapunov=EML-2; orbit=EML-3"
+      },
+      "2.0": {
+        "r": 2.0,
+        "lyapunov_exponent": 0.6931,
+        "orbit_sample": [
+          0.3,
+          0.6,
+          0.8,
+          0.4,
+          0.8,
+          0.4
+        ],
+        "eml_depth_rule": 0,
+        "eml_depth_lyapunov": 2,
+        "eml_depth_orbit": 3,
+        "eml_depth_invariant": 0,
+        "note": "Tent map rule=EML-0; Lyapunov=EML-2; orbit=EML-3"
+      }
+    },
+    "hyperchaos": {
+      "2": {
+        "n_positive_le": 2,
+        "positive_les": [
+          0.3,
+          0.15
+        ],
+        "kaplan_yorke_dim": 2.9,
+        "eml_depth_hyperchaos": 3,
+        "same_stratum_as_chaos": true,
+        "eml_depth_dimension": 2,
+        "eml_depth_sync": 3,
+        "insight": "Hyperchaos = EML-3 (same stratum as simple chaos \u2014 dimension is EML-2 detail)"
+      },
+      "3": {
+        "n_positive_le": 3,
+        "positive_les": [
+          0.44999999999999996,
+          0.3,
+          0.15
+        ],
+        "kaplan_yorke_dim": 4.8,
+        "eml_depth_hyperchaos": 3,
+        "same_stratum_as_chaos": true,
+        "eml_depth_dimension": 2,
+        "eml_depth_sync": 3,
+        "insight": "Hyperchaos = EML-3 (same stratum as simple chaos \u2014 dimension is EML-2 detail)"
+      },
+      "4": {
+        "n_positive_le": 4,
+        "positive_les": [
+          0.6,
+          0.44999999999999996,
+          0.3,
+          0.15
+        ],
+        "kaplan_yorke_dim": 7.0,
+        "eml_depth_hyperchaos": 3,
+        "same_stratum_as_chaos": true,
+        "eml_depth_dimension": 2,
+        "eml_depth_sync": 3,
+        "insight": "Hyperchaos = EML-3 (same stratum as simple chaos \u2014 dimension is EML-2 detail)"
+      }
+    },
+    "eml_depth": {
+      "lorenz_attractor": 3,
+      "predictability": 1,
+      "tent_rule": 0,
+      "tent_lyapunov": 2,
+      "hyperchaos": 3,
+      "dimension": 2
+    },
+    "key_insight": "Chaos and hyperchaos both = EML-3; complexity increases within EML-3"
+  },
+  "depth_collapse_sync": {
+    "model": "DepthCollapseSync",
+    "mutual_coupling": {
+      "0.0": {
+        "epsilon": 0.0,
+        "n_systems": 3,
+        "epsilon_c": 0.3,
+        "transverse_le": 0.9,
+        "synchronized": false,
+        "phase": "EML-\u221e independent",
+        "eml_before_sync": "\u221e",
+        "eml_after_sync": 3,
+        "depth_collapse": "no collapse yet",
+        "note": "Sync = depth collapse EML-\u221e (independent) \u2192 EML-3 (synchronized)"
+      },
+      "0.1": {
+        "epsilon": 0.1,
+        "n_systems": 3,
+        "epsilon_c": 0.3,
+        "transverse_le": 0.7,
+        "synchronized": false,
+        "phase": "EML-\u221e independent",
+        "eml_before_sync": "\u221e",
+        "eml_after_sync": 3,
+        "depth_collapse": "no collapse yet",
+        "note": "Sync = depth collapse EML-\u221e (independent) \u2192 EML-3 (synchronized)"
+      },
+      "0.2": {
+        "epsilon": 0.2,
+        "n_systems": 3,
+        "epsilon_c": 0.3,
+        "transverse_le": 0.5,
+        "synchronized": false,
+        "phase": "EML-\u221e independent",
+        "eml_before_sync": "\u221e",
+        "eml_after_sync": 3,
+        "depth_collapse": "no collapse yet",
+        "note": "Sync = depth collapse EML-\u221e (independent) \u2192 EML-3 (synchronized)"
+      },
+      "0.3": {
+        "epsilon": 0.3,
+        "n_systems": 3,
+        "epsilon_c": 0.3,
+        "transverse_le": 0.3,
+        "synchronized": false,
+        "phase": "EML-\u221e independent",
+        "eml_before_sync": "\u221e",
+        "eml_after_sync": 3,
+        "depth_collapse": "no collapse yet",
+        "note": "Sync = depth collapse EML-\u221e (independent) \u2192 EML-3 (synchronized)"
+      },
+      "0.4": {
+        "epsilon": 0.4,
+        "n_systems": 3,
+        "epsilon_c": 0.3,
+        "transverse_le": 0.1,
+        "synchronized": false,
+        "phase": "EML-\u221e independent",
+        "eml_before_sync": "\u221e",
+        "eml_after_sync": 3,
+        "depth_collapse": "no collapse yet",
+        "note": "Sync = depth collapse EML-\u221e (independent) \u2192 EML-3 (synchronized)"
+      },
+      "0.6": {
+        "epsilon": 0.6,
+        "n_systems": 3,
+        "epsilon_c": 0.3,
+        "transverse_le": -0.3,
+        "synchronized": true,
+        "phase": "EML-3 synchronized",
+        "eml_before_sync": "\u221e",
+        "eml_after_sync": 3,
+        "depth_collapse": "EML-\u221e \u2192 EML-3",
+        "note": "Sync = depth collapse EML-\u221e (independent) \u2192 EML-3 (synchronized)"
+      }
+    },
+    "reduction_comparison": {
+      "shor_reduction": {
+        "from_depth": 1,
+        "to_depth": 3,
+        "direction": "increase",
+        "type": "algorithmic speed-up (harder function faster)"
+      },
+      "sync_collapse": {
+        "from_depth": "\u221e",
+        "to_depth": 3,
+        "direction": "decrease",
+        "type": "coupling-induced collective order"
+      },
+      "ads_cft": {
+        "from_depth": "\u221e",
+        "to_depth": 3,
+        "direction": "decrease",
+        "type": "holographic duality (bulk to boundary)"
+      },
+      "eml2_skeleton": {
+        "from_depth": "\u221e",
+        "to_depth": 2,
+        "direction": "decrease",
+        "type": "information-theoretic projection"
+      },
+      "insight": "Three types of reduction: algorithmic (\u2191), physical (\u2193 via duality), statistical (\u2193 via info)"
+    },
+    "eml_depth": {
+      "independent_systems": "\u221e",
+      "transition_eps_c": "\u221e",
+      "synchronized": 3
+    },
+    "key_insight": "Sync = EML-\u221e \u2192 EML-3 collapse; three types of depth reduction identified"
+  },
+  "eml_depth_summary": {
+    "EML-0": "Tent map rule, invariant measure, constant parameters (\u03c3,\u03c1,\u03b2)",
+    "EML-1": "Predictability exp(-\u03bbt), log-feedback target system",
+    "EML-2": "Lyapunov exponent log(r), Kaplan-Yorke dimension (log terms), log-feedback controller",
+    "EML-3": "Strange attractors (Lorenz, tent, hyperchaos), synchronized manifold",
+    "EML-\u221e": "Bifurcation events, coupling threshold, independent N-system state"
+  },
+  "key_theorem": "The EML Synchronization Asymmetry Theorem: Synchronization is an EML-\u221e \u2192 EML-3 depth collapse driven by coupling. Before coupling: N independent EML-3 chaotic systems = EML-\u221e collective. After coupling (\u03b5 > \u03b5_c): EML-3 synchronized manifold. The Asymmetry Theorem governs controllability: \u0394d=1 pairs (exp/log) are uniquely controllable \u2014 log-feedback controls exp-systems. All other chaos (Lorenz, tent, hyperchaos) = EML-3 regardless of dimension. Three types of EML-\u221e \u2192 EML-finite reduction: algorithmic (Shor, \u2191depth), physical (AdS/CFT, sync, \u2193depth via coupling), statistical (EML-2 skeleton, \u2193via info). The asymmetry predicts: only \u0394d=1 pairs can be perfectly controlled by a finite controller.",
+  "rabbit_hole_log": [
+    "Log-feedback = EML-2 controller for EML-1 systems: unique (\u0394d=1 asymmetry exploited!)",
+    "Hyperchaos = EML-3: more positive LEs doesn't change depth \u2014 dimension is EML-2 detail",
+    "Sync collapse EML-\u221e\u2192EML-3: third type of reduction (coupling vs duality vs info)",
+    "Lorenz predictability = EML-1: exp(-\u03bbt) \u2014 same class as BCS, ISI, discount factor",
+    "Tent map Lyapunov = EML-2: log(r) \u2014 same depth class as running coupling, Shannon entropy",
+    "Three reduction types: algorithmic\u2191, physical\u2193, statistical\u2193 \u2014 new taxonomy from S182"
+  ],
+  "connections": {
+    "S172_chaos_sync": "S172 identified sync types; S182 adds asymmetry theorem + depth collapse taxonomy",
+    "S111_asymmetry": "\u0394d=1 uniqueness confirmed: log-feedback is the canonical \u0394d=1 controller",
+    "S180_grand": "Three reduction types: extends S180 catalog with directional classification"
+  }
+}
