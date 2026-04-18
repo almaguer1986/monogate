@@ -1,0 +1,384 @@
+{
+  "session": 124,
+  "title": "Graph Theory & Networks: Spectral Properties, Percolation & Dynamic Networks",
+  "key_theorem": {
+    "theorem": "EML Network Phase Transition Theorem",
+    "statement": "Path graph Laplacian eigenvalues \u03bb_k=2(1-cos(\u03c0k/n)) are EML-3 (trig of rational). Mixing time \u03c4~ln(n)/\u03bb\u2082 is EML-2. Heat kernel Tr(exp(-tL)) is EML-1 (sum of Boltzmann terms). ER percolation giant component S~(p-p_c) is EML-2 above threshold. Correlation length \u03be~|p-p_c|^{-\u03bd} is EML-2 (power law divergence). Percolation threshold p=p_c is EML-\u221e. Network epidemic threshold \u03b2_c=\u27e8k\u27e9/\u27e8k\u00b2\u27e9 is EML-2; scale-free \u03b2_c\u21920 is EML-\u221e. Kuramoto order parameter r=|\u03a3exp(i\u03b8)/N| is EML-3. Synchronization threshold K_c is EML-\u221e."
+  },
+  "spectral_graph_theory": {
+    "path_eigenvalues": [
+      {
+        "n": 5,
+        "eigenvalues": [
+          0.0,
+          0.382,
+          1.382,
+          2.618,
+          3.618
+        ],
+        "lambda_1_fiedler": 0.382,
+        "lambda_max": 3.618,
+        "eml": 3,
+        "reason": "\u03bb_k=2(1-cos(\u03c0k/n)): trig of rational argument = EML-3."
+      },
+      {
+        "n": 10,
+        "eigenvalues": [
+          0.0,
+          0.0979,
+          0.382,
+          0.8244,
+          1.382,
+          2.0,
+          2.618,
+          3.1756
+        ],
+        "lambda_1_fiedler": 0.0979,
+        "lambda_max": 3.9021,
+        "eml": 3,
+        "reason": "\u03bb_k=2(1-cos(\u03c0k/n)): trig of rational argument = EML-3."
+      },
+      {
+        "n": 20,
+        "eigenvalues": [
+          0.0,
+          0.0246,
+          0.0979,
+          0.218,
+          0.382,
+          0.5858,
+          0.8244,
+          1.092
+        ],
+        "lambda_1_fiedler": 0.0246,
+        "lambda_max": 3.9754,
+        "eml": 3,
+        "reason": "\u03bb_k=2(1-cos(\u03c0k/n)): trig of rational argument = EML-3."
+      }
+    ],
+    "mixing_time": [
+      {
+        "fiedler_lambda2": 0.1,
+        "n_vertices": 100,
+        "tau_mix_approx": 46.05,
+        "eml": 2,
+        "reason": "\u03c4~ln(n)/\u03bb\u2082: logarithm of n divided by eigenvalue = EML-2."
+      },
+      {
+        "fiedler_lambda2": 0.01,
+        "n_vertices": 1000,
+        "tau_mix_approx": 690.78,
+        "eml": 2,
+        "reason": "\u03c4~ln(n)/\u03bb\u2082: logarithm of n divided by eigenvalue = EML-2."
+      },
+      {
+        "fiedler_lambda2": 1.0,
+        "n_vertices": 50,
+        "tau_mix_approx": 3.91,
+        "eml": 2,
+        "reason": "\u03c4~ln(n)/\u03bb\u2082: logarithm of n divided by eigenvalue = EML-2."
+      }
+    ],
+    "heat_kernel_trace": [
+      {
+        "t": 0.1,
+        "n": 10,
+        "Tr_exp_minus_tL": 8.4342,
+        "eml": 1,
+        "reason": "Tr(e^{-tL})=\u03a3_k exp(-\u03bb_k t): sum of EML-1 heat terms = EML-1."
+      },
+      {
+        "t": 0.5,
+        "n": 10,
+        "Tr_exp_minus_tL": 5.0899,
+        "eml": 1,
+        "reason": "Tr(e^{-tL})=\u03a3_k exp(-\u03bb_k t): sum of EML-1 heat terms = EML-1."
+      },
+      {
+        "t": 1.0,
+        "n": 10,
+        "Tr_exp_minus_tL": 3.5759,
+        "eml": 1,
+        "reason": "Tr(e^{-tL})=\u03a3_k exp(-\u03bb_k t): sum of EML-1 heat terms = EML-1."
+      },
+      {
+        "t": 5.0,
+        "n": 10,
+        "Tr_exp_minus_tL": 1.7783,
+        "eml": 1,
+        "reason": "Tr(e^{-tL})=\u03a3_k exp(-\u03bb_k t): sum of EML-1 heat terms = EML-1."
+      }
+    ],
+    "cheeger": [
+      {
+        "lambda2": 0.01,
+        "h_lower_bound": 0.005,
+        "h_upper_bound": 0.1414,
+        "eml": 2,
+        "reason": "Cheeger: h~\u221a\u03bb\u2082: square root of EML-2 = EML-2."
+      },
+      {
+        "lambda2": 0.1,
+        "h_lower_bound": 0.05,
+        "h_upper_bound": 0.4472,
+        "eml": 2,
+        "reason": "Cheeger: h~\u221a\u03bb\u2082: square root of EML-2 = EML-2."
+      },
+      {
+        "lambda2": 0.5,
+        "h_lower_bound": 0.25,
+        "h_upper_bound": 1.0,
+        "eml": 2,
+        "reason": "Cheeger: h~\u221a\u03bb\u2082: square root of EML-2 = EML-2."
+      },
+      {
+        "lambda2": 1.0,
+        "h_lower_bound": 0.5,
+        "h_upper_bound": 1.4142,
+        "eml": 2,
+        "reason": "Cheeger: h~\u221a\u03bb\u2082: square root of EML-2 = EML-2."
+      }
+    ],
+    "eml_path_spectrum": 3,
+    "eml_mixing_time": 2,
+    "eml_heat_kernel": 1,
+    "eml_cheeger": 2
+  },
+  "percolation_theory": {
+    "er_percolation": [
+      {
+        "p": 0.1,
+        "p_c": 0.2,
+        "n": 1000,
+        "S_giant": 0.0,
+        "regime": "subcritical",
+        "eml": 1,
+        "reason_sub": "S=0: EML-0 (trivial). Reason_sup: S~(p-p_c): linear in excess = EML-2."
+      },
+      {
+        "p": 0.18,
+        "p_c": 0.2,
+        "n": 1000,
+        "S_giant": 0.0,
+        "regime": "subcritical",
+        "eml": 1,
+        "reason_sub": "S=0: EML-0 (trivial). Reason_sup: S~(p-p_c): linear in excess = EML-2."
+      },
+      {
+        "p": 0.199,
+        "p_c": 0.2,
+        "n": 1000,
+        "S_giant": 0.0,
+        "regime": "subcritical",
+        "eml": 1,
+        "reason_sub": "S=0: EML-0 (trivial). Reason_sup: S~(p-p_c): linear in excess = EML-2."
+      },
+      {
+        "p": 0.2,
+        "p_c": 0.2,
+        "n": 1000,
+        "S_giant": 0.1,
+        "regime": "critical",
+        "eml": "\u221e",
+        "reason_sub": "S=0: EML-0 (trivial). Reason_sup: S~(p-p_c): linear in excess = EML-2."
+      },
+      {
+        "p": 0.21,
+        "p_c": 0.2,
+        "n": 1000,
+        "S_giant": 0.1,
+        "regime": "supercritical",
+        "eml": 2,
+        "reason_sub": "S=0: EML-0 (trivial). Reason_sup: S~(p-p_c): linear in excess = EML-2."
+      },
+      {
+        "p": 0.3,
+        "p_c": 0.2,
+        "n": 1000,
+        "S_giant": 1.0,
+        "regime": "supercritical",
+        "eml": 2,
+        "reason_sub": "S=0: EML-0 (trivial). Reason_sup: S~(p-p_c): linear in excess = EML-2."
+      },
+      {
+        "p": 0.5,
+        "p_c": 0.2,
+        "n": 1000,
+        "S_giant": 1.0,
+        "regime": "supercritical",
+        "eml": 2,
+        "reason_sub": "S=0: EML-0 (trivial). Reason_sup: S~(p-p_c): linear in excess = EML-2."
+      }
+    ],
+    "epidemic_threshold": [
+      {
+        "k1_mean_degree": 4.0,
+        "k2_mean_sq_degree": 20.0,
+        "beta_c": 0.2,
+        "eml": 2,
+        "reason": "\u03b2_c=\u27e8k\u27e9/\u27e8k\u00b2\u27e9: ratio of moments = EML-2. Scale-free \u27e8k\u00b2\u27e9\u2192\u221e: \u03b2_c\u21920 = EML-\u221e."
+      },
+      {
+        "k1_mean_degree": 3.0,
+        "k2_mean_sq_degree": 1000.0,
+        "beta_c": 0.003,
+        "eml": 2,
+        "reason": "\u03b2_c=\u27e8k\u27e9/\u27e8k\u00b2\u27e9: ratio of moments = EML-2. Scale-free \u27e8k\u00b2\u27e9\u2192\u221e: \u03b2_c\u21920 = EML-\u221e."
+      },
+      {
+        "k1_mean_degree": 2.0,
+        "k2_mean_sq_degree": Infinity,
+        "beta_c": 0.0,
+        "eml": "\u221e",
+        "reason": "\u03b2_c=\u27e8k\u27e9/\u27e8k\u00b2\u27e9: ratio of moments = EML-2. Scale-free \u27e8k\u00b2\u27e9\u2192\u221e: \u03b2_c\u21920 = EML-\u221e."
+      }
+    ],
+    "correlation_length": [
+      {
+        "p": 0.1,
+        "p_c": 0.2,
+        "xi": 21.5443,
+        "eml": 2,
+        "reason": "\u03be~|p-p_c|^{-1.3333333333333333}: power law divergence = EML-2."
+      },
+      {
+        "p": 0.15,
+        "p_c": 0.2,
+        "xi": 54.2884,
+        "eml": 2,
+        "reason": "\u03be~|p-p_c|^{-1.3333333333333333}: power law divergence = EML-2."
+      },
+      {
+        "p": 0.199,
+        "p_c": 0.2,
+        "xi": 10000.0,
+        "eml": 2,
+        "reason": "\u03be~|p-p_c|^{-1.3333333333333333}: power law divergence = EML-2."
+      },
+      {
+        "p": 0.201,
+        "p_c": 0.2,
+        "xi": 10000.0,
+        "eml": 2,
+        "reason": "\u03be~|p-p_c|^{-1.3333333333333333}: power law divergence = EML-2."
+      },
+      {
+        "p": 0.3,
+        "p_c": 0.2,
+        "xi": 21.5443,
+        "eml": 2,
+        "reason": "\u03be~|p-p_c|^{-1.3333333333333333}: power law divergence = EML-2."
+      }
+    ],
+    "eml_subcritical": 0,
+    "eml_supercritical": 2,
+    "eml_critical": "\u221e",
+    "eml_scale_free_threshold": "\u221e"
+  },
+  "dynamic_networks": {
+    "kuramoto_order": [
+      {
+        "N": 10,
+        "r": 0.0,
+        "psi_rad": -2.7187,
+        "eml": 3,
+        "reason": "r=|\u03a3exp(i\u03b8_j)|/N: modulus of sum of complex exponentials = EML-3 (trig of phases)."
+      },
+      {
+        "N": 10,
+        "r": 0.0,
+        "psi_rad": 2.6376,
+        "eml": 3,
+        "reason": "r=|\u03a3exp(i\u03b8_j)|/N: modulus of sum of complex exponentials = EML-3 (trig of phases)."
+      },
+      {
+        "N": 10,
+        "r": 1.0,
+        "psi_rad": 0.0,
+        "eml": 3,
+        "reason": "r=|\u03a3exp(i\u03b8_j)|/N: modulus of sum of complex exponentials = EML-3 (trig of phases)."
+      }
+    ],
+    "sync_threshold": [
+      {
+        "g_omega_0": 0.1,
+        "K_c": 6.3662,
+        "eml_K_c": 2,
+        "eml_threshold": "\u221e",
+        "reason": "K_c=2/(\u03c0\u00b7g(0)): reciprocal of frequency density = EML-2. Crossing K_c = EML-\u221e."
+      },
+      {
+        "g_omega_0": 0.5,
+        "K_c": 1.2732,
+        "eml_K_c": 2,
+        "eml_threshold": "\u221e",
+        "reason": "K_c=2/(\u03c0\u00b7g(0)): reciprocal of frequency density = EML-2. Crossing K_c = EML-\u221e."
+      },
+      {
+        "g_omega_0": 1.0,
+        "K_c": 0.6366,
+        "eml_K_c": 2,
+        "eml_threshold": "\u221e",
+        "reason": "K_c=2/(\u03c0\u00b7g(0)): reciprocal of frequency density = EML-2. Crossing K_c = EML-\u221e."
+      }
+    ],
+    "inter_event_time": [
+      {
+        "tau": 0,
+        "lambda": 0.1,
+        "P_tau": 0.1,
+        "eml": 1,
+        "reason": "P(\u03c4)=\u03bbexp(-\u03bb\u03c4): EML-1 (Poisson process memory kernel)."
+      },
+      {
+        "tau": 5,
+        "lambda": 0.1,
+        "P_tau": 0.060653,
+        "eml": 1,
+        "reason": "P(\u03c4)=\u03bbexp(-\u03bb\u03c4): EML-1 (Poisson process memory kernel)."
+      },
+      {
+        "tau": 10,
+        "lambda": 0.1,
+        "P_tau": 0.036788,
+        "eml": 1,
+        "reason": "P(\u03c4)=\u03bbexp(-\u03bb\u03c4): EML-1 (Poisson process memory kernel)."
+      },
+      {
+        "tau": 20,
+        "lambda": 0.1,
+        "P_tau": 0.013534,
+        "eml": 1,
+        "reason": "P(\u03c4)=\u03bbexp(-\u03bb\u03c4): EML-1 (Poisson process memory kernel)."
+      },
+      {
+        "tau": 50,
+        "lambda": 0.1,
+        "P_tau": 0.000674,
+        "eml": 1,
+        "reason": "P(\u03c4)=\u03bbexp(-\u03bb\u03c4): EML-1 (Poisson process memory kernel)."
+      }
+    ],
+    "eml_kuramoto_order": 3,
+    "eml_sync_threshold": "\u221e",
+    "eml_temporal_motifs": 1,
+    "eml_cascade_collapse": "\u221e"
+  },
+  "eml_depth_summary": {
+    "EML-0": "Cascade threshold \u03c6_c=1/k_avg; complete/star graph spectra; trivial giant component S=0",
+    "EML-1": "Heat kernel Tr(exp(-tL)); inter-event time P(\u03c4)=\u03bbexp(-\u03bb\u03c4); post-collapse rebound",
+    "EML-2": "Mixing time ln(n)/\u03bb\u2082; Cheeger h~\u221a\u03bb\u2082; percolation S~(p-p_c); \u03be~|p-p_c|^{-\u03bd}; \u03b2_c=\u27e8k\u27e9/\u27e8k\u00b2\u27e9",
+    "EML-3": "Laplacian spectrum 2(1-cos(\u03c0k/n)); Kuramoto order r=|\u03a3exp(i\u03b8)|/N",
+    "EML-\u221e": "Percolation threshold p=p_c; sync threshold K_c; scale-free \u03b2_c\u21920; cascade collapse"
+  },
+  "rabbit_hole_log": [
+    "The graph Laplacian spectrum is EML-3 because the path graph is a discretized 1D Schr\u00f6dinger operator. The eigenvalues \u03bb_k = 2(1-cos(\u03c0k/n)) = 4sin\u00b2(\u03c0k/2n) are EML-3 (squared trig) \u2014 the same EML-3 as phonon dispersion |sin(ka/2)| on a crystal lattice (S108) and diffraction sinc\u00b2 patterns (S116). The discrete Fourier transform and the path graph Laplacian share the same EML-3 eigenvalue structure because both are instances of the discrete derivative operator on periodic domains.",
+    "The Kuramoto model synchronization transition is the social analog of the ferromagnetic phase transition: the order parameter r = |\u03a3 exp(i\u03b8_j)|/N is EML-3 (complex exponential modulus), and it undergoes an EML-\u221e transition at K=K_c. Below K_c: r=0 (incoherence = EML-0). Above K_c: r grows as \u221a(K-K_c) = EML-2 (same as Ising magnetization near T_c). The synchronization phase transition is EML-\u221e, exactly like Ising (S57), percolation (this session), and epidemic threshold (S113).",
+    "Scale-free networks (Barab\u00e1si-Albert, \u03b3<3) have \u27e8k\u00b2\u27e9\u2192\u221e as N\u2192\u221e. The epidemic threshold \u03b2_c=\u27e8k\u27e9/\u27e8k\u00b2\u27e9\u21920: any finite infection rate causes an epidemic. This is an EML-\u221e effect: the mean-field epidemic threshold vanishes because the degree heterogeneity (variance = \u27e8k\u00b2\u27e9-\u27e8k\u27e9\u00b2) diverges. The same EML-2 power law (P(k)~k^{-\u03b3}) that makes scale-free networks robust to random failures (high-degree hubs survive) makes them fragile to targeted attacks (remove hubs \u2192 percolation threshold p_c\u21920)."
+  ],
+  "connections": {
+    "to_session_104": "S104 covered ER, scale-free, PageRank at overview. S124 adds Laplacian spectra (EML-3), mixing times, percolation, Kuramoto.",
+    "to_session_57": "Kuramoto sync transition (EML-\u221e) = Ising phase transition (EML-\u221e): same universality class.",
+    "to_session_113": "Network \u03b2_c=\u27e8k\u27e9/\u27e8k\u00b2\u27e9 = S113 epidemic threshold. Scale-free \u03b2_c\u21920 = EML-\u221e epidemic spread."
+  }
+}
