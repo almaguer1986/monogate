@@ -1,0 +1,104 @@
+{
+  "session": 198,
+  "title": "\u0394d Charge Angle 7: Evolutionary & Biological Phase Transitions",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "coalescent_theory": {
+    "model": "CoalescentTheoryEML",
+    "kingman_coalescent": {
+      "N": 1000,
+      "n": 10,
+      "coalescence_rate_depth": 0,
+      "E_T_MRCA": 3600,
+      "E_T_MRCA_depth": 0,
+      "tmrca_distribution_depth": 1,
+      "tmrca_survival": {
+        "0.5": 0.6065,
+        "1.0": 0.3679,
+        "2.0": 0.1353
+      },
+      "watterson_theta_depth": 2,
+      "watterson_Hn": 2.829,
+      "E_to_distribution_delta_d": 1,
+      "note": "Coalescent: E[TMRCA]=EML-0; distribution=EML-1; \u03b8\u0302=EML-2; \u0394d=1 (E\u2192dist)"
+    },
+    "selective_sweep": {
+      "s": 0.01,
+      "N": 10000,
+      "fixation_prob": 0.02,
+      "fixation_prob_depth": 0,
+      "fixation_time": 1059.66,
+      "fixation_time_depth": 2,
+      "sweep_width": 0.01,
+      "sweep_width_depth": 0,
+      "background_selection": 0.0,
+      "background_depth": 1,
+      "delta_d_p_to_background": 1,
+      "note": "Sweep: p_fix=EML-0; T_fix=EML-2; background selection=EML-1"
+    },
+    "key_insight": "Coalescent: EML-0\u21921\u21922 ladder; \u0394d=1 (E\u2192distribution); selective sweep same"
+  },
+  "evo_devo": {
+    "model": "EvoDevoEML",
+    "hox_patterning": {
+      "gradient_depth": 1,
+      "boundary_depth": "\u221e",
+      "segment_depth": 0,
+      "combinatorial_code_depth": 0,
+      "gradient_values": {
+        "0.0": 1.0,
+        "0.2": 0.8187,
+        "0.5": 0.6065,
+        "0.8": 0.4493,
+        "1.0": 0.3679
+      },
+      "french_flag_delta_d": -1,
+      "note": "Hox: gradient=EML-1; threshold=EML-\u221e; segment=EML-0; French flag \u0394d=-1"
+    },
+    "turing_patterns": {
+      "steady_state_depth": 0,
+      "instability_depth": "\u221e",
+      "pattern_depth": 3,
+      "wavelength_depth": 2,
+      "k_max": 1.5174,
+      "pattern_wavelength": 4.1408,
+      "instability_to_pattern_direction": "EML-\u221e \u2192 EML-3 (depth reduction)",
+      "note": "Turing: steady=EML-0; instability=EML-\u221e; pattern=EML-3; reduction confirmed"
+    },
+    "major_transitions": {
+      "pre_transition_depth": 1,
+      "transition_threshold_depth": "\u221e",
+      "post_transition_depth": 0,
+      "error_threshold": {
+        "0.1": 0.9048,
+        "0.5": 0.6065,
+        "1.0": 0.3679,
+        "2.0": 0.1353
+      },
+      "quasispecies_depth": 3,
+      "delta_d_transition": "\u221e (through threshold)",
+      "depth_reduction": "pre(EML-1) \u2192 post(EML-0): reduction via EML-\u221e transition",
+      "note": "Major transitions: EML-1 precursor \u2192 EML-\u221e threshold \u2192 EML-0 new entity"
+    },
+    "key_insight": "Evo-devo: EML-1 gradients \u2192 EML-\u221e thresholds \u2192 EML-0/3 patterns"
+  },
+  "eml_depth_summary": {
+    "EML-0": "Fixation probability, molecular clock, segment identity, post-transition entity",
+    "EML-1": "TMRCA distribution, background selection, morphogen gradient, error threshold",
+    "EML-2": "Watterson \u03b8, fixation time log(2Ns), pattern wavelength",
+    "EML-3": "Quasispecies cloud, Turing spatial pattern, mutation-selection landscape",
+    "EML-\u221e": "Speciation threshold, Turing instability onset, major transition"
+  },
+  "key_theorem": "The EML Evolutionary Phase Transition Theorem (S198): Evolution reveals a universal depth sequence: EML-1 precursor state (exponential growth/survival) \u2192 EML-\u221e phase transition threshold (speciation, major transition) \u2192 EML-0 new entity (species, multicellular organism). Coalescent theory: E[TMRCA]=EML-0, distribution=EML-1, Watterson \u03b8=EML-2. \u0394d=1. Selective sweep: p_fix=EML-0, T_fix=EML-2, background=EML-1. Evo-devo: gradient=EML-1 \u2192 instability=EML-\u221e \u2192 pattern=EML-3 (depth reduction). No \u0394d=3 found. Evolution confirms Extended Asymmetry Theorem.",
+  "rabbit_hole_log": [
+    "Major transitions: EML-1 \u2192 EML-\u221e \u2192 EML-0: same pattern as physical phase transitions",
+    "Coalescent \u0394d=1: E[TMRCA](EML-0) \u2192 survival distribution(EML-1): Laplace analog",
+    "Turing instability = EML-\u221e: pattern formation is a depth reduction from EML-\u221e",
+    "Hox gradient: French flag \u0394d=-1 (gradient EML-1 \u2192 segment EML-0): depth reduction",
+    "Error threshold = EML-1: exp(-U) universally appears at evolutionary thresholds"
+  ],
+  "connections": {
+    "S191_breakthrough": "Evolution: \u0394d=1 instances (coalescent, sweep); no \u0394d=3",
+    "S194_stochastic": "TMRCA distribution = coalescent \u0394d=1 mirrors rough-path \u0394d=1",
+    "S198_turing": "Turing EML-\u221e\u21923: depth reduction joins RG, FK, AdS/CFT catalog"
+  }
+}
