@@ -1,0 +1,43 @@
+{
+  "session": 882,
+  "title": "Smell of Old Books as Sensory Portal",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "SmellOldBooksEML",
+    "analysis": {
+      "object": "T603: Smell of Old Books as Sensory Portal depth analysis",
+      "domains": {
+        "chemical_eml1": {
+          "description": "Lignin/cellulose degradation produces vanillin, benzaldehyde: EML-1 exponential",
+          "depth": "EML-1",
+          "reason": "Chemical aging is EML-1: exponential oxidative degradation of paper polymers"
+        },
+        "olfactory_blend_eml2": {
+          "description": "Complex olfactory signature: EML-2 measurement of chemical blend",
+          "depth": "EML-2",
+          "reason": "Smell detection is EML-2: logarithmic Weber-Fechner olfactory measurement"
+        },
+        "meaning_emlinf": {
+          "description": "Emotional association -- comfort, nostalgia, knowledge: EML-inf",
+          "depth": "EML-inf",
+          "reason": "Old book smell meaning is EML-inf: individual cultural-personal significance beyond finite description"
+        },
+        "sensory_portal": {
+          "description": "Old book smell is sensory portal: EML-1 chemistry -> EML-2 perception -> EML-inf meaning",
+          "depth": "EML-inf",
+          "reason": "Portal theorem: smell of old books traverses from EML-1 molecules to EML-inf significance"
+        }
+      }
+    },
+    "distribution": {
+      "EML-1": 1,
+      "EML-2": 1,
+      "EML-inf": 2
+    },
+    "theorem": "T603: Smell of Old Books as Sensory Portal (S882)."
+  },
+  "key_theorem": "T603: Smell of Old Books as Sensory Portal (S882).",
+  "rabbit_hole_log": [
+    "T603: chemical_eml1 depth confirmed"
+  ]
+}
