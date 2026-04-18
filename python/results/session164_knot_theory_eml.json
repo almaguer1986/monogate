@@ -1,0 +1,209 @@
+{
+  "session": 164,
+  "title": "Knot Theory: EML Depth of Topological Entanglement",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "classical_invariants": {
+    "model": "ClassicalKnotInvariants",
+    "rolfsen_table_subset": {
+      "unknot": {
+        "crossings": 0,
+        "eml": 0,
+        "notes": "trivial"
+      },
+      "trefoil_3_1": {
+        "crossings": 3,
+        "eml": 0,
+        "notes": "simplest nontrivial knot"
+      },
+      "figure_8_4_1": {
+        "crossings": 4,
+        "eml": 0,
+        "notes": "amphichiral"
+      },
+      "cinquefoil_5_1": {
+        "crossings": 5,
+        "eml": 0,
+        "notes": "torus knot T(2,5)"
+      },
+      "three_twist_5_2": {
+        "crossings": 5,
+        "eml": 0,
+        "notes": "hyperbolic"
+      }
+    },
+    "seifert_genus": {
+      "unknot": {
+        "knot": "unknot",
+        "genus": 0,
+        "eml_depth": 0,
+        "seifert_surface": "minimal genus = 0 (EML-0 integer)"
+      },
+      "trefoil": {
+        "knot": "trefoil",
+        "genus": 1,
+        "eml_depth": 0,
+        "seifert_surface": "minimal genus = 1 (EML-0 integer)"
+      },
+      "figure_8": {
+        "knot": "figure_8",
+        "genus": 1,
+        "eml_depth": 0,
+        "seifert_surface": "minimal genus = 1 (EML-0 integer)"
+      }
+    },
+    "linking_number_example": 1,
+    "eml_depth": {
+      "crossing_number": 0,
+      "seifert_genus": 0,
+      "linking_number": 0
+    },
+    "key_insight": "All classical knot invariants (crossing #, genus, linking #) = EML-0"
+  },
+  "alexander_polynomial": {
+    "model": "AlexanderPolynomial",
+    "trefoil_values": {
+      "-1.0": -3.0,
+      "1.0": 1.0,
+      "2.0": 1.5,
+      "0.5": 1.5
+    },
+    "figure8_values": {
+      "-1.0": 5.0,
+      "1.0": 1.0,
+      "2.0": 0.5,
+      "0.5": 0.5
+    },
+    "determinants": {
+      "trefoil": 3,
+      "figure_8": 5
+    },
+    "signatures": {
+      "trefoil": {
+        "knot": "trefoil",
+        "signature": -2,
+        "eml_depth": 0,
+        "alexander_from_seifert": "det(tS-S^T) = EML-0 (polynomial in t)"
+      },
+      "figure_8": {
+        "knot": "figure_8",
+        "signature": 0,
+        "eml_depth": 0,
+        "alexander_from_seifert": "det(tS-S^T) = EML-0 (polynomial in t)"
+      }
+    },
+    "eml_depth": {
+      "alexander_polynomial": 0,
+      "determinant": 0,
+      "signature": 0
+    },
+    "note": "Alexander polynomial = EML-0 (Laurent polynomial, no exp/log)",
+    "key_insight": "Alexander polynomial = EML-0 despite being a polynomial invariant"
+  },
+  "jones_polynomial": {
+    "model": "JonesPolynomial",
+    "jones_trefoil": {
+      "1.0": 1.0,
+      "-1.0": -3.0,
+      "2.0": 0.5625,
+      "0.5": -6.0
+    },
+    "jones_figure8": {
+      "1.0": 1.0,
+      "-1.0": 5.0,
+      "2.0": 2.75,
+      "0.5": 2.75
+    },
+    "writhe_contributions": {
+      "-2": 1.0,
+      "-1": -1.0,
+      "0": 1.0,
+      "1": -1.0,
+      "2": 1.0
+    },
+    "temperley_lieb_dimensions": {
+      "1": 1,
+      "2": 2,
+      "3": 5,
+      "4": 14,
+      "5": 42
+    },
+    "eml_depth": {
+      "jones_as_polynomial": 0,
+      "jones_at_root_unity": 3,
+      "writhe_power": 3,
+      "tl_dimension": 0
+    },
+    "key_insight": "Jones as Laurent polynomial = EML-0; evaluated at root-of-unity = EML-3"
+  },
+  "khovanov_homology": {
+    "model": "KhovanovHomology",
+    "categorification": {
+      "jones_as_euler_char": "V(K) = \u03a3_i q^i dim Kh^i(K)",
+      "khovanov_graded_homology": "Kh^{i,j}(K): bigraded abelian groups",
+      "eml_depth_jones": 0,
+      "eml_depth_khovanov": "\u221e",
+      "reason": "Khovanov detects more than Jones: unknot detection, slice genus bounds",
+      "rasmussen_s_invariant": "s(K) from Khovanov: slice genus bound (EML-\u221e invariant)"
+    },
+    "unknot_detection": {
+      "khovanov_detects_unknot": true,
+      "jones_detects_unknot": "Unknown (open problem)",
+      "eml_khovanov": "\u221e",
+      "eml_jones": 3,
+      "note": "Khovanov = EML-\u221e (detects unknot); Jones = EML-3 (may not)"
+    },
+    "invariant_hierarchy": {
+      "crossing_number": {
+        "depth": 0,
+        "distinguishes": "many knots"
+      },
+      "linking_number": {
+        "depth": 0,
+        "distinguishes": "links"
+      },
+      "alexander_poly": {
+        "depth": 0,
+        "distinguishes": "more knots"
+      },
+      "signature": {
+        "depth": 0,
+        "distinguishes": "concordance"
+      },
+      "jones_polynomial": {
+        "depth": 3,
+        "distinguishes": "most knots < 10 crossings"
+      },
+      "khovanov_homology": {
+        "depth": "\u221e",
+        "distinguishes": "detects unknot, more"
+      }
+    },
+    "eml_depth": {
+      "categorification_jones_to_khovanov": "\u221e",
+      "rasmussen_s": "\u221e",
+      "unknot_detection": "\u221e"
+    },
+    "key_insight": "Khovanov = EML-\u221e: categorification adds EML-\u221e power to EML-3 Jones"
+  },
+  "eml_depth_summary": {
+    "EML-0": "Crossing number, genus, signature, determinant, Alexander polynomial, TL dimension",
+    "EML-1": "Not present in standard knot theory",
+    "EML-2": "Fox calculus (Alexander via free differential calculus), Seifert matrices",
+    "EML-3": "Jones polynomial at roots of unity, writhe power (-A)^{-3w}",
+    "EML-\u221e": "Khovanov homology (categorification), unknot detection, Rasmussen s-invariant"
+  },
+  "key_theorem": "The EML Knot Invariant Depth Hierarchy: Classical invariants (crossing #, genus, signature) are EML-0 \u2014 pure integers. The Alexander polynomial is EML-0 (a Laurent polynomial). The Jones polynomial at generic q is EML-0; at roots of unity (q=exp(2\u03c0i/n)) it is EML-3. Khovanov homology \u2014 the categorification of Jones \u2014 is EML-\u221e: it detects the unknot (Jones cannot), bounds the slice genus, and cannot be expressed as any EML-finite invariant of the knot. The knot theory ladder is the clearest example of EML depth escalation within one field.",
+  "rabbit_hole_log": [
+    "Alexander polynomial = EML-0: Laurent polynomial, no transcendental content!",
+    "Jones at q=1: V(K)(1) = 1 for all knots \u2014 EML-0 (trivial)",
+    "Jones at root of unity exp(2\u03c0i/6): EML-3 (oscillatory evaluation)",
+    "Khovanov = EML-\u221e: same depth jump as going from Euler \u03c7 to full homology",
+    "Seifert genus = EML-0: integer that bounds unknotting complexity",
+    "Rasmussen s-invariant: slice genus bound from Khovanov = EML-\u221e application"
+  ],
+  "connections": {
+    "S157_anyons": "Jones polynomial = TQFT (Chern-Simons at level k): same EML-3 structure",
+    "S159_category_theory": "Khovanov = categorification: adds homological EML-\u221e to EML-3 Jones",
+    "S58_topology": "Seifert genus \u2194 Euler characteristic: both EML-0 topological counting"
+  }
+}
