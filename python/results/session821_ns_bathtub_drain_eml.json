@@ -1,0 +1,43 @@
+{
+  "session": 821,
+  "title": "Bathtub Drain Vortex Depth Map",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "NSBathtubDrainEML",
+    "analysis": {
+      "object": "T542: Bathtub Drain Vortex Depth Map depth analysis",
+      "domains": {
+        "laminar_entry": {
+          "description": "Water at rest is EML-0; laminar approach to drain is EML-2 (Poiseuille flow)",
+          "depth": "EML-2",
+          "reason": "Laminar flow: EML-2 parabolic velocity profile; depth stays finite"
+        },
+        "vortex_formation": {
+          "description": "Rotation begins: EML-3 oscillatory tangential velocity develops",
+          "depth": "EML-3",
+          "reason": "Drain vortex: EML-3 rotational structure; angular momentum conservation"
+        },
+        "turbulent_core": {
+          "description": "Core near drain: EML-inf turbulent mixing; unpredictable fine structure",
+          "depth": "EML-inf",
+          "reason": "Drain core: EML-inf turbulent; categorification of EML-3 vortex"
+        },
+        "laminar_to_turbulent": {
+          "description": "Transition is always a categorification event: EML-3 -> EML-inf at critical Re",
+          "depth": "EML-inf",
+          "reason": "Reynolds number threshold is the depth-transition control parameter"
+        }
+      }
+    },
+    "distribution": {
+      "EML-2": 1,
+      "EML-3": 1,
+      "EML-inf": 2
+    },
+    "theorem": "T542: Bathtub Drain Vortex Depth Map (S821)."
+  },
+  "key_theorem": "T542: Bathtub Drain Vortex Depth Map (S821).",
+  "rabbit_hole_log": [
+    "T542: laminar_entry depth confirmed"
+  ]
+}
