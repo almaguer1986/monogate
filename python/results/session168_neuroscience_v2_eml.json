@@ -1,0 +1,163 @@
+{
+  "session": 168,
+  "title": "Neuroscience Deep II: Neural Coding, Connectome & Criticality",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "spike_coding": {
+    "model": "SpikeTrainCoding",
+    "isi_exponential_pdf": {
+      "0.01": 26.812802,
+      "0.05": 5.413411,
+      "0.1": 0.732626,
+      "0.25": 0.001816,
+      "0.5": 0.0
+    },
+    "hh_threshold": {
+      "2": "subthreshold (EML-2 fixed point, I=2.00)",
+      "5": "subthreshold (EML-2 fixed point, I=5.00)",
+      "6.2": "near threshold (EML-\u221e bifurcation, I=6.20)",
+      "8": "spiking (EML-3 limit cycle, I=8.00)",
+      "15": "spiking (EML-3 limit cycle, I=15.00)"
+    },
+    "info_per_spike_bits": {
+      "1": 0.0,
+      "5": 2.3219,
+      "10": 3.3219,
+      "40": 5.3219,
+      "100": 6.6439
+    },
+    "gamma_burst": {
+      "0": 1.0,
+      "0.005": 0.3089,
+      "0.01": -0.8082,
+      "0.025": 0.9975,
+      "0.05": 0.995
+    },
+    "eml_depth": {
+      "isi_distribution": 1,
+      "subthreshold": 2,
+      "spiking_limit_cycle": 3,
+      "hh_threshold": "\u221e"
+    },
+    "key_insight": "ISI = EML-1; subthreshold = EML-2; spiking = EML-3; threshold = EML-\u221e"
+  },
+  "population_code": {
+    "model": "PopulationCodeEML",
+    "n_neurons": 100,
+    "fisher_information": {
+      "5.0": 4.0,
+      "10.0": 1.0,
+      "20.0": 0.25,
+      "50.0": 0.04
+    },
+    "mutual_information": {
+      "5.0": 460.522,
+      "10.0": 460.522,
+      "20.0": 460.522,
+      "50.0": 460.522
+    },
+    "decoding_accuracy_sigma": {
+      "5.0": 0.05,
+      "10.0": 0.1,
+      "20.0": 0.2,
+      "50.0": 0.5
+    },
+    "neural_manifold": {
+      "n_neurons": 100,
+      "intrinsic_dim": 10,
+      "compression_ratio": 0.1,
+      "eml_depth_dim": 0,
+      "eml_depth_manifold_geometry": 2,
+      "note": "Neural manifold dimension = EML-0; its geometry = EML-2"
+    },
+    "eml_depth": {
+      "fisher_info": 0,
+      "mutual_info": 2,
+      "manifold_dim": 0,
+      "manifold_geometry": 2
+    },
+    "key_insight": "Fisher info = EML-0; MI = EML-2; manifold dim = EML-0; geometry = EML-2"
+  },
+  "neural_criticality": {
+    "model": "NeuralCriticalityEML",
+    "branching_ratio_phases": {
+      "0.5": {
+        "sigma": 0.5,
+        "phase": "subcritical",
+        "mean_avalanche": 1.0,
+        "eml_depth": 2,
+        "critical_exponent": null
+      },
+      "0.9": {
+        "sigma": 0.9,
+        "phase": "subcritical",
+        "mean_avalanche": 9.0,
+        "eml_depth": 2,
+        "critical_exponent": null
+      },
+      "1.0": {
+        "sigma": 1.0,
+        "phase": "critical",
+        "mean_avalanche": 1000000.0,
+        "eml_depth": "\u221e",
+        "critical_exponent": 1.5
+      },
+      "1.1": {
+        "sigma": 1.1,
+        "phase": "supercritical",
+        "mean_avalanche": 1000000.0,
+        "eml_depth": 2,
+        "critical_exponent": null
+      }
+    },
+    "avalanche_distribution": {
+      "exponent_tau": 1.5,
+      "power_law": {
+        "1": 1.0,
+        "2": 0.353553,
+        "4": 0.125,
+        "8": 0.044194,
+        "16": 0.015625,
+        "32": 0.005524,
+        "64": 0.001953,
+        "128": 0.000691
+      },
+      "eml_depth": 2,
+      "note": "Same power law as sandpile (S165): brain = neural sandpile"
+    },
+    "dynamic_range": {
+      "subcritical_dB": 10.0,
+      "critical_dB": 30.0,
+      "enhancement": 20.0,
+      "eml_depth": 2,
+      "note": "Dynamic range = EML-2 (log); maximized at EML-\u221e critical point"
+    },
+    "eml_depth": {
+      "subcritical": 2,
+      "critical_attractor": "\u221e",
+      "power_law": 2,
+      "dynamic_range": 2
+    },
+    "key_insight": "Neural avalanche power law = EML-2; critical brain state = EML-\u221e attractor"
+  },
+  "eml_depth_summary": {
+    "EML-0": "Firing rate (mean), intrinsic manifold dimension, Fisher information",
+    "EML-1": "ISI exponential distribution exp(-\u03bbt), Poisson spike count",
+    "EML-2": "Mutual information, population code MI, power law P(s)~s^{-3/2}",
+    "EML-3": "Spiking limit cycle (HH), gamma oscillations, burst = exp\u00d7cos",
+    "EML-\u221e": "HH threshold (Hopf bifurcation), critical brain state (\u03c3=1), connectome"
+  },
+  "key_theorem": "The EML Neural Coding Depth Theorem: Neural computation spans all EML depths: firing rates = EML-0, ISI distributions = EML-1, information measures = EML-2, oscillations = EML-3. The brain operates at criticality (\u03c3=1 branching): an EML-\u221e attractor. This is the neural instantiation of SOC (S165): the brain is a biological sandpile, self-organized to the EML-\u221e critical state that maximizes dynamic range, information transmission, and computational power.",
+  "rabbit_hole_log": [
+    "ISI distribution = EML-1: exp(-\u03bb*ISI) \u2014 same as Boltzmann, Kondo, instanton!",
+    "HH threshold = EML-\u221e: Hopf bifurcation (same as S152 chaos control!)",
+    "Gamma oscillations = EML-3: exp(-\u03b1t)*cos(2\u03c0ft) = EML-1 \u00d7 EML-3 = EML-3",
+    "Fisher info = EML-0: N/\u03c3\u00b2 (no exp/log in formula)",
+    "Neural avalanches P(s)~s^{-3/2}: brain = neural sandpile (SOC from S165)",
+    "Critical brain = EML-\u221e attractor: same structure as protein folding funnel"
+  ],
+  "connections": {
+    "S165_soc": "Neural avalanches = same power law as sandpile: brain self-tunes to EML-\u221e",
+    "S101_cognition": "HH action potential = EML-3; binding = EML-\u221e from S101",
+    "S153_music": "Gamma oscillations = EML-3: same depth as musical tones (40 Hz!)"
+  }
+}
