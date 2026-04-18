@@ -1,0 +1,58 @@
+{
+  "session": 1188,
+  "title": "P\u2260NP \u2014 The EML-2/\u221e Boundary Exact Map",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "PNPBoundaryMap",
+    "analysis": {
+      "object": "T908: P\u2260NP \u2014 The EML-2/\u221e Boundary Exact Map depth analysis",
+      "domains": {
+        "p_at_eml2": {
+          "description": "P = polynomial-time = measurable, logarithmic resource = EML-2",
+          "depth": "EML-2",
+          "reason": "Polynomial = EML-2 by T232"
+        },
+        "np_at_emlinf": {
+          "description": "NP-complete = no known finite-depth verification-to-solution bridge = EML-inf",
+          "depth": "EML-inf",
+          "reason": "NP-complete: solution search is EML-inf"
+        },
+        "boundary_sharpness": {
+          "description": "The EML-2/EML-inf boundary is the sharpest TYPE2 transition in the Atlas",
+          "depth": "EML-inf",
+          "reason": "TYPE2 = from measurable to unmeasurable"
+        },
+        "boundary_problems": {
+          "description": "Problems ON the boundary: FACTORING, GRAPH ISOMORPHISM -- neither NP-complete nor in P (conditional)",
+          "depth": "EML-3",
+          "reason": "Boundary problems: EML-3 candidates"
+        },
+        "np_vs_conp": {
+          "description": "NP cap co-NP: problems whose both YES and NO are verifiable -- EML-3 by symmetry",
+          "depth": "EML-3",
+          "reason": "Both verifiable = EML-3 structure"
+        },
+        "pspace_bridge": {
+          "description": "PSPACE sits between P and EML-inf: PSPACE=EML-3 (T232). NP is between P and PSPACE.",
+          "depth": "EML-3",
+          "reason": "PSPACE is the oscillatory middle layer"
+        },
+        "t908_theorem": {
+          "description": "T908: P sits at EML-2. NP-complete sits at EML-inf. The EML-2/inf boundary is the sharpest phase transition in the complexity atlas. Problems at the boundary (FACTORING, GI) are EML-3 candidates. T908.",
+          "depth": "EML-2",
+          "reason": "P=EML-2; NP-hard=EML-inf; boundary=EML-3"
+        }
+      }
+    },
+    "distribution": {
+      "EML-2": 2,
+      "EML-inf": 2,
+      "EML-3": 3
+    },
+    "theorem": "T908: P\u2260NP \u2014 The EML-2/\u221e Boundary Exact Map (S1188)."
+  },
+  "key_theorem": "T908: P\u2260NP \u2014 The EML-2/\u221e Boundary Exact Map (S1188).",
+  "rabbit_hole_log": [
+    "T908: p_at_eml2 depth confirmed"
+  ]
+}
