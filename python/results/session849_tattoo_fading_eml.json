@@ -1,0 +1,37 @@
+{
+  "session": 849,
+  "title": "Tattoo Fading and Skin Aging Depth",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "TattooFadingEML",
+    "analysis": {
+      "object": "T570: Tattoo Fading and Skin Aging Depth depth analysis",
+      "domains": {
+        "fresh_tattoo": {
+          "description": "Fresh tattoo: EML-2 precise measurement of intent in dermis",
+          "depth": "EML-2",
+          "reason": "New ink is EML-2: discrete pigment particles in precise arrangement"
+        },
+        "aging_decay": {
+          "description": "Tattoo fades exponentially over decades: EML-1 decay",
+          "depth": "EML-1",
+          "reason": "Ink diffusion through dermis is EML-1 exponential spreading"
+        },
+        "perception": {
+          "description": "Color perception is logarithmic: Weber-Fechner; faded tattoo is EML-2 measurement of EML-1 decay",
+          "depth": "EML-2",
+          "reason": "EML-2 perception of EML-1 physical process: depth mismatch creates aesthetic aging"
+        }
+      }
+    },
+    "distribution": {
+      "EML-2": 2,
+      "EML-1": 1
+    },
+    "theorem": "T570: Tattoo Fading and Skin Aging Depth (S849)."
+  },
+  "key_theorem": "T570: Tattoo Fading and Skin Aging Depth (S849).",
+  "rabbit_hole_log": [
+    "T570: fresh_tattoo depth confirmed"
+  ]
+}
