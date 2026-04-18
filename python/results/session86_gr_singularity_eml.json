@@ -1,0 +1,280 @@
+{
+  "session": 86,
+  "title": "GR Full Singularity: Penrose-Hawking, Trapped Surfaces & Cauchy Horizon",
+  "key_theorem": {
+    "theorem": "Penrose-EML Singularity Classification",
+    "statement": "In GR, trapped surfaces are EML-2 (locally computable: \u03b8 < 0 from metric derivatives). Event horizons are EML-\u221e (teleological). The Penrose singularity blowup time \u03bb* = 2/|\u03b8\u2080| is EML-2; the singularity itself (\u03bb \u2192 \u03bb*) is EML-\u221e. BKL chaotic oscillations near spacelike singularities are EML-\u221e (Gauss/continued fraction map = ergodic). The Cauchy horizon C^+ is an EML-\u221e barrier (SCC)."
+  },
+  "trapped_surfaces": {
+    "definition": "Trapped surface: compact 2-surface with \u03b8_\u00b1 < 0",
+    "schwarzschild_expansion": [
+      {
+        "r": 0.5,
+        "M": 1.0,
+        "r_s": 2.0,
+        "is_trapped": true,
+        "theta_outgoing": -6.928203,
+        "theta_ingoing": -4.0,
+        "eml_theta": 2,
+        "eml_trapped_condition": 0
+      },
+      {
+        "r": 1.0,
+        "M": 1.0,
+        "r_s": 2.0,
+        "is_trapped": true,
+        "theta_outgoing": -2.0,
+        "theta_ingoing": -2.0,
+        "eml_theta": 2,
+        "eml_trapped_condition": 0
+      },
+      {
+        "r": 1.5,
+        "M": 1.0,
+        "r_s": 2.0,
+        "is_trapped": true,
+        "theta_outgoing": -0.7698,
+        "theta_ingoing": -1.333333,
+        "eml_theta": 2,
+        "eml_trapped_condition": 0
+      },
+      {
+        "r": 2.0,
+        "M": 1.0,
+        "r_s": 2.0,
+        "is_trapped": false,
+        "theta_outgoing": "undefined",
+        "theta_ingoing": "undefined",
+        "eml_theta": 2,
+        "eml_trapped_condition": 0
+      },
+      {
+        "r": 2.5,
+        "M": 1.0,
+        "r_s": 2.0,
+        "is_trapped": false,
+        "theta_outgoing": 0.357771,
+        "theta_ingoing": -0.8,
+        "eml_theta": 2,
+        "eml_trapped_condition": 0
+      },
+      {
+        "r": 3.0,
+        "M": 1.0,
+        "r_s": 2.0,
+        "is_trapped": false,
+        "theta_outgoing": 0.3849,
+        "theta_ingoing": -0.666667,
+        "eml_theta": 2,
+        "eml_trapped_condition": 0
+      }
+    ],
+    "apparent_horizon": "\u03b8 = 0 at r = 2M: EML-2 (zero of EML-2 function)",
+    "event_horizon": "r = 2M globally: EML-\u221e (teleological \u2014 requires full spacetime knowledge)",
+    "eml_depth_apparent_vs_event": {
+      "apparent_horizon": 2,
+      "event_horizon": Infinity,
+      "distinction": "Apparent horizon is locally computable (EML-2); event horizon requires knowing all future (EML-\u221e)"
+    }
+  },
+  "penrose_theorem": {
+    "theorem": "Penrose Singularity Theorem (1965)",
+    "hypotheses": [
+      "NEC",
+      "non-compact Cauchy surface",
+      "trapped surface"
+    ],
+    "conclusion": "Geodesic incompleteness (singularity)",
+    "raychaudhuri": {
+      "theta0": -1.0,
+      "lambda_star": 2.0,
+      "lambda_star_formula": "-2/\u03b8\u2080: EML-2 (rational in \u03b8\u2080)",
+      "trajectory": [
+        {
+          "lambda": 0.2,
+          "lambda_over_lambda_star": 0.1,
+          "theta": -1.1111
+        },
+        {
+          "lambda": 0.4,
+          "lambda_over_lambda_star": 0.2,
+          "theta": -1.25
+        },
+        {
+          "lambda": 0.6,
+          "lambda_over_lambda_star": 0.3,
+          "theta": -1.4286
+        },
+        {
+          "lambda": 0.8,
+          "lambda_over_lambda_star": 0.4,
+          "theta": -1.6667
+        },
+        {
+          "lambda": 1.0,
+          "lambda_over_lambda_star": 0.5,
+          "theta": -2.0
+        },
+        {
+          "lambda": 1.2,
+          "lambda_over_lambda_star": 0.6,
+          "theta": -2.5
+        },
+        {
+          "lambda": 1.4,
+          "lambda_over_lambda_star": 0.7,
+          "theta": -3.3333
+        },
+        {
+          "lambda": 1.6,
+          "lambda_over_lambda_star": 0.8,
+          "theta": -5.0
+        },
+        {
+          "lambda": 1.8,
+          "lambda_over_lambda_star": 0.9,
+          "theta": -10.0
+        }
+      ],
+      "singularity": "\u03b8 \u2192 -\u221e at \u03bb* \u2014 EML-\u221e"
+    },
+    "energy_conditions": [
+      {
+        "name": "Null Energy Condition (NEC)",
+        "statement": "R_{\u03bc\u03bd}l^\u03bcl^\u03bd \u2265 0 for all null l^\u03bc",
+        "classical_matter": true,
+        "quantum_violations": "Casimir effect, Hawking radiation",
+        "eml": 2,
+        "reason": "R_{\u03bc\u03bd}l^\u03bcl^\u03bd: EML-2 (Riemann tensor = EML-2 of metric)"
+      },
+      {
+        "name": "Strong Energy Condition (SEC)",
+        "statement": "R_{\u03bc\u03bd}v^\u03bcv^\u03bd \u2265 0 for all timelike v^\u03bc",
+        "classical_matter": true,
+        "quantum_violations": "Positive cosmological constant (dark energy)",
+        "eml": 2,
+        "reason": "Same: EML-2 curvature contraction"
+      },
+      {
+        "name": "Dominant Energy Condition (DEC)",
+        "statement": "T_{\u03bc\u03bd}v^\u03bc w^\u03bd \u2265 0 for future-directed v^\u03bc, w^\u03bd",
+        "classical_matter": true,
+        "quantum_violations": "Less common than NEC/SEC violations",
+        "eml": 2,
+        "reason": "T_{\u03bc\u03bd}: EML-2 stress-energy tensor"
+      }
+    ],
+    "eml_blowup": Infinity,
+    "eml_lambda_star": 2,
+    "eml_insight": "The singularity time \u03bb* is EML-2 (computable from \u03b8\u2080); the singularity itself is EML-\u221e"
+  },
+  "bkl_oscillations": {
+    "conjecture": "BKL: approach to spacelike singularity = chaotic Kasner oscillations",
+    "kasner_solution": "ds\u00b2 = -dt\u00b2 + \u03a3 t^{2p\u1d62} dx_i\u00b2 with \u03a3p\u1d62=1, \u03a3p\u1d62\u00b2=1",
+    "kasner_eml": 1,
+    "kasner_reason": "t^{2p} = exp(2p\u00b7ln t): EML-1 (single exp atom)",
+    "kasner_exponents": [
+      {
+        "u": 0.5,
+        "p1": -0.285714,
+        "p2": 0.857143,
+        "p3": 0.428571,
+        "sum_p": 1.0,
+        "sum_p2": 1.0,
+        "constraints_satisfied": true
+      },
+      {
+        "u": 1.0,
+        "p1": -0.333333,
+        "p2": 0.666667,
+        "p3": 0.666667,
+        "sum_p": 1.0,
+        "sum_p2": 1.0,
+        "constraints_satisfied": true
+      },
+      {
+        "u": 1.5,
+        "p1": -0.315789,
+        "p2": 0.526316,
+        "p3": 0.789474,
+        "sum_p": 1.0,
+        "sum_p2": 1.0,
+        "constraints_satisfied": true
+      },
+      {
+        "u": 2.0,
+        "p1": -0.285714,
+        "p2": 0.428571,
+        "p3": 0.857143,
+        "sum_p": 1.0,
+        "sum_p2": 1.0,
+        "constraints_satisfied": true
+      },
+      {
+        "u": 3.0,
+        "p1": -0.230769,
+        "p2": 0.307692,
+        "p3": 0.923077,
+        "sum_p": 1.0,
+        "sum_p2": 1.0,
+        "constraints_satisfied": true
+      }
+    ],
+    "bkl_chaos": {
+      "initial_u": 2.7,
+      "bkl_orbit": [
+        2.7,
+        1.7,
+        0.7,
+        1.428571,
+        0.428571,
+        2.333333,
+        1.333333,
+        0.333333,
+        3.0
+      ],
+      "map": "u \u2192 u-1 if u\u22651; u \u2192 1/u if u<1 (Gauss/continued fraction map)",
+      "eml": Infinity,
+      "reason": "Gauss map = EML-\u221e: ergodic, mixing, generates continued fractions (generically EML-\u221e)"
+    },
+    "mixmaster_chaos": "Mixmaster universe: Bianchi IX near singularity = BKL chaos = EML-\u221e. This is the GR analog of the logistic map: simple rule, chaotic orbits."
+  },
+  "strong_cosmic_censorship": {
+    "conjecture": "SCC: Generic spacetimes have inextendible maximal Cauchy development",
+    "motivation": "Physics cannot propagate past a Cauchy horizon \u2014 determinism requires SCC",
+    "horizon_stability": {
+      "schwarzschild": {
+        "Cauchy_horizon": "None (spacelike singularity inside)",
+        "SCC_status": "Trivially satisfied",
+        "eml": 2
+      },
+      "reissner_nordstrom": {
+        "Cauchy_horizon": "Exists at r = r_- = M - \u221a(M\u00b2-Q\u00b2)",
+        "r_minus_formula": "M - \u221a(M\u00b2-Q\u00b2): EML-2 (square root of polynomial)",
+        "SCC_status": "Violated in exact RN \u2014 fields can pass through C^+",
+        "perturbation_blowup": "Generic perturbations blow up at C^+",
+        "eml": Infinity,
+        "reason": "C^+ is an EML-\u221e barrier for generic perturbations"
+      },
+      "kerr": {
+        "Cauchy_horizon": "r_- = M - \u221a(M\u00b2-a\u00b2)",
+        "Dafermos_Luk_2017": "C^0 extension exists but curvature blows up",
+        "SCC_status": "Borderline \u2014 topology changes but C^+ survives in L^2",
+        "eml": Infinity,
+        "reason": "Curvature blow-up at C^+ is EML-\u221e even if C^+ exists as C^0"
+      }
+    },
+    "eml_insight": "The Cauchy horizon C^+ is an EML-\u221e barrier in EML terms: the curvature invariants blow up at C^+ for generic data, matching the EML Phase Transition Theorem (singularity = EML-\u221e)."
+  },
+  "eml_depth_summary": {
+    "EML-0": "Topological charges (linking number, Euler characteristic of horizon)",
+    "EML-1": "Kasner metric t^{2p} = exp(2p\u00b7ln t); Hawking temperature T_H \u221d 1/(8\u03c0M) = EML-0 \u00d7 mass",
+    "EML-2": "Trapped surface condition (\u03b8 < 0); apparent horizon; Penrose blowup time \u03bb*; RN/Kerr Cauchy horizon radius",
+    "EML-3": "Hawking radiation spectrum (Planckian: involves exp and sin via Bose-Einstein)",
+    "EML-\u221e": "Spacetime singularity; BKL chaos; event horizon (teleological); Cauchy horizon curvature blowup"
+  },
+  "connections": {
+    "to_session_77": "Session 77: Penrose singularity intro + Kerr. Session 86: full BKL chaos + SCC + trapped surfaces",
+    "to_session_57": "Phase transitions = EML-\u221e. Session 86: spacetime singularities = EML-\u221e \u2014 same universality"
+  }
+}
