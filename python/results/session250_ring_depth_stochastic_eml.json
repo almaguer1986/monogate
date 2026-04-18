@@ -1,0 +1,112 @@
+{
+  "session": 250,
+  "title": "Ring of Depth: Stochastic & Path Integrals",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "stochastic_ring": {
+    "model": "StochasticRingTestEML",
+    "iterated_expectation": {
+      "tower_property": {
+        "statement": "E[E[X|F\u2081]] = E[X] when F\u2081\u2286 full \u03c3-algebra",
+        "interpretation": "Applying expectation twice = same as once",
+        "delta_d_naive": 4,
+        "delta_d_actual": 2,
+        "reason": "E[E[X]] = E[X]: the outer expectation is idempotent on already-averaged quantities. \u0394d(E\u2218E) = \u0394d(E) = 2, NOT 4. This is the stochastic confirmation of EML-2 idempotency: expectation composed with expectation = one expectation (depth does not double)."
+      },
+      "conditional_expectation": {
+        "E_given_F": "E[X|F]: still \u0394d=+2 (conditional measure is still a measure)",
+        "iterated_conditional": "E[E[X|G]|F] = E[X|F\u2229G]: \u0394d=+2 total",
+        "ring_check": "2\u22972=2 confirmed again"
+      },
+      "law_of_total_expectation": {
+        "statement": "E[X] = E[E[X|Y]]",
+        "delta_d": 2,
+        "verdict": "E applied twice = E applied once: idempotency throughout probability"
+      }
+    },
+    "wick": {
+      "wick_1D": {
+        "delta_d": -2,
+        "operation": "t \u2192 -it: oscillatory \u2192 exponential decay"
+      },
+      "wick_2D": {
+        "operation": "t \u2192 -it AND x \u2192 -ix (both coordinates)",
+        "question": "Is \u0394d=-4 or -2?",
+        "answer": -2,
+        "why": "Wick in two coordinates: e^{it}\u00b7e^{ix} \u2192 e^{-\u03c4}\u00b7e^{-\u03be} = e^{-(\u03c4+\u03be)}. This is STILL a single exponential decay (one real exp = EML-1 output). The two Wick rotations together produce ONE exponential damping. \u0394d=-2 (not -4): Wick is idempotent in the saturation sense. (-2) \u2297 (-2) = -2 in the saturation semiring."
+      },
+      "wick_x_inverse_wick": {
+        "operation": "Wick(\u0394d=-2) followed by analytic continuation(\u0394d=+2)",
+        "result_delta_d": 0,
+        "ring_check": "-2 + 2 = 0 (additive inverse \u2713)"
+      },
+      "wick_x_fourier": {
+        "operation": "Wick rotation AND Fourier transform simultaneously",
+        "wick_delta_d": -2,
+        "fourier_delta_d": 2,
+        "simultaneous_delta_d": "0? or \u221e?",
+        "answer": "\u221e",
+        "why": "Wick(\u0394d=-2) and Fourier(\u0394d=+2): additively they cancel to 0. But SIMULTANEOUSLY: real-exponential suppression \u00d7 complex-oscillation = mixed-type exponential = EML-\u221e (neither real nor imaginary, non-analytic). The additive and multiplicative structures differ: (-2) + 2 = 0 (addition); (-2) \u2297 2 = \u221e (multiplication saturation)."
+      }
+    },
+    "ito_stratonovich": {
+      "ito_single": {
+        "delta_d": 2,
+        "expression": "\u222b\u2080^T f dB_t: It\u00f4 integral = EML-2 (stochastic measure)"
+      },
+      "ito_double": {
+        "expression": "I\u2082(f) = \u222b\u2080^T \u222b\u2080^t f(s,t) dB_s dB_t",
+        "delta_d": 2,
+        "why": "The double It\u00f4 integral I\u2082 is a multiple stochastic integral of order 2. By It\u00f4 isometry: E[I\u2082(f)\u00b2] = 2\u222b\u222bf\u00b2 ds dt. I\u2082 maps L\u00b2([0,T]\u00b2) \u2192 L\u00b2(\u03a9): still an L\u00b2-map = EML-2. The order-2 chaos lives at EML-2 (same depth as order-1). 2\u22972=2: stochastic confirmation."
+      },
+      "wiener_chaos": {
+        "description": "Wiener chaos decomposition: L\u00b2(\u03a9) = \u2295_{n=0}^\u221e H_n",
+        "H_n_depth": 2,
+        "why": "Each chaos H_n = span{I_n(f): f\u2208L\u00b2}: still EML-2 (L\u00b2 projection)",
+        "full_chaos_depth": 2,
+        "insight": "All levels of Wiener chaos are EML-2: no matter how many iterated integrals, depth stays 2"
+      },
+      "malliavins_D": {
+        "delta_d": 0,
+        "why": "Malliavin derivative D: L\u00b2(\u03a9)\u2192L\u00b2([0,T]\u00d7\u03a9): self-map on L\u00b2 spaces = \u0394d=0",
+        "ring_check": "0\u22972=2 confirmed (D applied to chaos = same chaos level)"
+      }
+    },
+    "path_integral": {
+      "single_path_integral": {
+        "delta_d": 2,
+        "expression": "Z = \u222bD\u03c6 exp(iS[\u03c6])"
+      },
+      "product_path_integral": {
+        "expression": "Z[J]\u00b7Z[K] = \u222bD\u03c6 D\u03c7 exp(i(S[\u03c6]+S[\u03c7]))",
+        "delta_d": 2,
+        "why": "Product of path integrals = path integral over product field: \u0394d=+2 total",
+        "ring_check": "2\u22972=2 (path integral is idempotent in depth)"
+      },
+      "coupled_fields": {
+        "expression": "Z = \u222bD\u03c6 D\u03c7 exp(i(S[\u03c6]+S[\u03c7]+g\u00b7\u03c6\u00b7\u03c7))",
+        "delta_d": 2,
+        "why": "Coupling doesn't add new exponential type",
+        "but": "If g\u2192\u221e (strong coupling): theory becomes EML-\u221e (non-perturbative)"
+      },
+      "non_perturbative": {
+        "delta_d": "\u221e",
+        "why": "Strong coupling path integral = EML-\u221e: instanton sum non-constructive",
+        "type": "TYPE 2 Horizon: perturbative EML-2 \u2192 non-perturbative EML-\u221e"
+      }
+    },
+    "stochastic_ring_summary": {
+      "tower_property": "E\u2218E=E: 2\u22972=2 confirmed",
+      "wiener_chaos": "All chaos levels EML-2: 2\u22972\u2297...=2",
+      "wick_2D": "Wick\u2297Wick=-2: idempotent at -2",
+      "wick_x_fourier": "-2\u22972=\u221e (not 0): multiplication \u2260 addition for same elements",
+      "path_integral": "Z\u2297Z=\u0394d+2: field product = one integration"
+    }
+  },
+  "key_theorem": "The Stochastic Ring Test (S250): All stochastic tests confirm semiring saturation. Tower property (E[E[X]]=E[X]): 2\u22972=2 \u2014 expectation is idempotent. Wiener chaos: all orders (I_1, I_2, I_n) live at EML-2 \u2014 2\u22972\u2297...=2. Wick rotation 2D: \u0394d=-2 (not -4) \u2014 (-2)\u2297(-2)=-2. CRITICAL DISTINCTION: (-2)+2=0 (additive) but (-2)\u22972=\u221e (multiplicative). Wick and Fourier are additive inverses but their PRODUCT is EML-\u221e, not EML-0. This confirms the semiring has DIFFERENT addition and multiplication behaviors: it is NOT a ring (multiplication and addition interact differently than in Z). Path integrals: Z\u2297Z=\u0394d+2 (product of partition functions = one measure). Non-perturbative: strong coupling drives EML-2 \u2192 EML-\u221e (TYPE 2 Horizon).",
+  "rabbit_hole_log": [
+    "Tower property: E[E[X]]=E[X] is the stochastic proof of EML-2 idempotency",
+    "Wiener chaos: all orders I_n live at EML-2 \u2014 infinite stochastic complexity stays EML-2",
+    "(-2)\u22972=\u221e \u2260 (-2)+2=0: multiplication and addition diverge \u2014 NOT a ring",
+    "Non-perturbative path integral: EML-2 (perturbative) \u2192 EML-\u221e (strong coupling) = TYPE 2"
+  ]
+}
