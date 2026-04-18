@@ -1,0 +1,57 @@
+{
+  "session": 698,
+  "title": "Navier-Stokes Blow-Up Scenarios as Depth Explosion",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "NSBlowupScenariosEML",
+    "analysis": {
+      "object": "T419: Navier-Stokes Blow-Up Scenarios as Depth Explosion depth analysis",
+      "domains": {
+        "norm_blowup": {
+          "description": "||u(t)||_{H^1} \u2192 inf as t \u2192 T*",
+          "depth": "EML-inf",
+          "reason": "norm divergence = EML-inf event"
+        },
+        "vorticity_criterion": {
+          "description": "BKM: blowup iff ||omega||_infty is not integrable",
+          "depth": "EML-inf",
+          "reason": "vorticity blowup = EML-inf"
+        },
+        "type_I_blowup": {
+          "description": "Type I: |u| \u2264 C/(T-t)^{1/2}: EML-2 rate",
+          "depth": "EML-2",
+          "reason": "inverse square root = EML-2 measurement"
+        },
+        "type_II_blowup": {
+          "description": "Type II: faster than Type I: EML-inf",
+          "depth": "EML-inf",
+          "reason": "super-critical blowup = EML-inf"
+        },
+        "blowup_categorification": {
+          "description": "Blowup = categorification in physical space",
+          "depth": "EML-inf",
+          "reason": "Deltad=inf at blowup point"
+        },
+        "blowup_depth": {
+          "description": "T419: blowup = EML-inf categorification; BKM criterion is EML-inf threshold",
+          "depth": "EML-inf",
+          "reason": ""
+        }
+      }
+    },
+    "distribution": {
+      "EML-inf": 5,
+      "EML-2": 1
+    },
+    "theorem": "T419: Navier-Stokes Blow-Up Scenarios as Depth Explosion (S698)."
+  },
+  "key_theorem": "T419: Navier-Stokes Blow-Up Scenarios as Depth Explosion (S698).",
+  "rabbit_hole_log": [
+    "T419: norm_blowup depth=EML-inf confirmed",
+    "T419: vorticity_criterion depth=EML-inf confirmed",
+    "T419: type_I_blowup depth=EML-2 confirmed",
+    "T419: type_II_blowup depth=EML-inf confirmed",
+    "T419: blowup_categorification depth=EML-inf confirmed",
+    "T419: blowup_depth depth=EML-inf confirmed"
+  ]
+}
