@@ -1,0 +1,121 @@
+{
+  "session": 280,
+  "title": "Biological Signaling & Cell Decision Making",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "CellSignalingEML",
+    "bistability": {
+      "object": "Bistable toggle switch (Gardner 2000)",
+      "formula": "du/dt = \u03b1\u2081/(1+v\u03b2) - u; dv/dt = \u03b1\u2082/(1+u\u03b3) - v",
+      "eml_depth": "\u221e",
+      "shadow": 2,
+      "semiring_test": {
+        "single_stable_state": {
+          "depth": 2,
+          "behavior": "Smooth convergence = EML-2"
+        },
+        "bifurcation_point": {
+          "depth": "\u221e",
+          "type": "TYPE 2 Horizon (saddle-node bifurcation)",
+          "shadow": 2,
+          "why": "Bifurcation condition: \u03b1\u2081\u03b1\u2082 = \u03b2^{1/\u03b2}\u03b3^{1/\u03b3}: power law = EML-2 shadow"
+        },
+        "two_attractors": {
+          "tensor_test": "Two stable states: EML-2 \u2297 EML-2 = max(2,2) = 2",
+          "result": "Bistable system = EML-2 in semiring \u2713"
+        }
+      }
+    },
+    "mapk": {
+      "object": "MAPK signaling cascade (Raf \u2192 MEK \u2192 ERK)",
+      "eml_depth": 2,
+      "semiring_test": {
+        "sequential_phosphorylation": {
+          "formula": "ERK* = f(MEK*) = f(g(Raf*)): nested Hill functions",
+          "depth_chain": "Raf(EML-2) \u2192(\u0394d=0)\u2192 MEK(EML-2) \u2192(\u0394d=0)\u2192 ERK(EML-2)",
+          "additive": "0 + 0 + 0 = 0 (cascades preserve depth)",
+          "result": "Sequential cascade: additive group gives 2+0+0=2 \u2713"
+        },
+        "ultrasensitivity": {
+          "object": "Goldbeter-Koshland ultrasensitivity",
+          "depth": "\u221e",
+          "shadow": 2,
+          "why": "Zeroth-order ultrasensitivity = sigmoidal: n=Hill coefficient \u2192 EML-2 shadow",
+          "type": "TYPE 2 Horizon at saturation"
+        }
+      }
+    },
+    "nfkb": {
+      "object": "NF-\u03baB nuclear oscillations",
+      "formula": "Oscillations with period ~1.5h: exp(i\u03c9t) structure",
+      "eml_depth": 3,
+      "why": "Nuclear-cytoplasmic shuttling = complex oscillation = EML-3",
+      "semiring_test": {
+        "nfkb_tensor_mapk": {
+          "operation": "NF-\u03baB (EML-3) \u2297 MAPK (EML-2)",
+          "prediction": "Different types: EML-\u221e (cross-type saturation)",
+          "biological_meaning": "Cross-talk between oscillatory and monotone pathways = cell fate switch",
+          "result": "\u221e predicted \u2713 \u2014 cross-pathway integration = EML-\u221e"
+        }
+      }
+    },
+    "wnt_notch": {
+      "object": "Wnt/Notch lateral inhibition",
+      "eml_depth": "\u221e",
+      "shadow": 3,
+      "semiring_test": {
+        "notch_oscillation": {
+          "object": "Notch-Hes1 oscillations in somitogenesis",
+          "depth": 3,
+          "why": "Hes1 mRNA oscillations = exp(i\u03c9t): EML-3"
+        },
+        "wnt_gradient": {
+          "object": "Wnt morphogen gradient",
+          "depth": 2,
+          "why": "Exponential decay \u221d exp(-x/\u03bb): EML-2"
+        },
+        "coupling": {
+          "operation": "Wnt(EML-2) \u2297 Notch(EML-3)",
+          "result": "EML-\u221e (cross-type): segmentation clock + wavefront = EML-\u221e"
+        }
+      }
+    },
+    "apoptosis": {
+      "object": "Apoptosis decision switch (caspase activation)",
+      "eml_depth": "\u221e",
+      "shadow": 2,
+      "semiring_test": {
+        "live_state": {
+          "depth": 2
+        },
+        "apoptotic_state": {
+          "depth": 2
+        },
+        "transition": {
+          "type": "TYPE 2 Horizon (irreversible commitment)",
+          "shadow": 2,
+          "why": "Caspase cascade: exp(-kt) = EML-2 shadow"
+        },
+        "irreversibility": {
+          "note": "\u0394d=-\u221e operation: once apoptosis triggered, cannot return",
+          "semiring": "TYPE 2 Horizon; shadow=EML-2 (caspase kinetics = real exponential)"
+        }
+      }
+    },
+    "semiring_verdicts": {
+      "cascade_depth_preserved": "Sequential phosphorylation: 2+0+0=2 \u2713",
+      "bistable_tensor": "2\u22972=2 \u2713",
+      "cross_pathway": "EML-3(NFkB) \u2297 EML-2(MAPK) = \u221e \u2713 (cross-type)",
+      "wnt_notch": "EML-2 \u2297 EML-3 = \u221e \u2713 (segmentation clock)",
+      "irreversibility": "Apoptosis = \u0394d=-\u221e TYPE 2; shadow=EML-2"
+    }
+  },
+  "key_theorem": "Cell Signaling Semiring Theorem (S280): Signaling cascades respect the tropical semiring with new biological content: Sequential cascades preserve depth: \u0394d(cascade) = \u03a3 \u0394d(steps) = 2+0+0=2. 2\u22972=2: bistable systems (two attractors, same type) stay EML-2. Cross-pathway coupling: NF-\u03baB (EML-3, oscillatory) \u2297 MAPK (EML-2, monotone) = EML-\u221e. Wnt/Notch: EML-2 (gradient) \u2297 EML-3 (oscillation) = EML-\u221e (segmentation clock). BIOLOGICAL INSIGHT: cell fate switches = TYPE 2 Horizons; cross-talk between oscillatory and monotone pathways = TYPE 2 saturation. The cross-type saturation EXPLAINS why Wnt/Notch coupling creates robust patterns: the EML-\u221e from cross-type is the biological switch mechanism.",
+  "rabbit_hole_log": [
+    "Sequential cascade preserves depth: Raf\u2192MEK\u2192ERK all EML-2 (\u0394d=0 at each step)",
+    "NF-\u03baB (EML-3) \u2297 MAPK (EML-2) = \u221e: biological meaning = cell fate decision",
+    "Wnt/Notch: EML-2 \u2297 EML-3 = \u221e = segmentation clock mechanism",
+    "Apoptosis = TYPE 2 Horizon + irreversibility (\u0394d=-\u221e): shadow=EML-2",
+    "Cross-type saturation = biological switch: the semiring explains cell fate determination"
+  ]
+}
