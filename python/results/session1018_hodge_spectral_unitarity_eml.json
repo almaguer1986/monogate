@@ -1,0 +1,58 @@
+{
+  "session": 1018,
+  "title": "Spectral Unitarity for Hodge \u2014 Can Degeneration Force Surjectivity?",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "HodgeSpectralUnitarity",
+    "analysis": {
+      "object": "T739: Spectral Unitarity for Hodge \u2014 Can Degeneration Force Surjectivity? depth analysis",
+      "domains": {
+        "hodge_spectral_sequence": {
+          "description": "Hodge spectral sequence E_1^{p,q} = H^q(X,Omega^p) => H^{p+q}(X,C)",
+          "depth": "EML-2",
+          "reason": "Spectral sequence = EML-2 filtered algebra"
+        },
+        "e1_degeneration": {
+          "description": "For K\u00e4hler X: spectral sequence degenerates at E_1",
+          "depth": "EML-2",
+          "reason": "Degeneration theorem -- EML-2 algebraic result"
+        },
+        "degeneration_and_hodge": {
+          "description": "E_1 degeneration forces Hodge decomposition H^n = direct sum H^{p,n-p}",
+          "depth": "EML-3",
+          "reason": "Decomposition is oscillatory -- EML-3"
+        },
+        "unitarity_condition": {
+          "description": "Weil operator C: acts on H^{p,q} by i^{p-q} -- unitary",
+          "depth": "EML-3",
+          "reason": "Unitary action -- EML-3 complex structure"
+        },
+        "unitarity_forces_surjectivity": {
+          "description": "If unitary action on Hodge classes extends to algebraic cycles, surjectivity follows",
+          "depth": "EML-inf",
+          "reason": "Unitarity does not force algebraic representability"
+        },
+        "spectral_gap": {
+          "description": "Spectral degeneration is EML-2; Hodge surjectivity is EML-inf -- different levels",
+          "depth": "EML-inf",
+          "reason": "Degeneration proves decomposition not surjectivity"
+        },
+        "t739_conclusion": {
+          "description": "Spectral unitarity is a DESCRIPTION of Hodge classes, not a SOURCE of algebraic cycles -- T739",
+          "depth": "EML-inf",
+          "reason": "Approach blocked; spectral methods are insufficient"
+        }
+      }
+    },
+    "distribution": {
+      "EML-2": 2,
+      "EML-3": 2,
+      "EML-inf": 3
+    },
+    "theorem": "T739: Spectral Unitarity for Hodge \u2014 Can Degeneration Force Surjectivity? (S1018)."
+  },
+  "key_theorem": "T739: Spectral Unitarity for Hodge \u2014 Can Degeneration Force Surjectivity? (S1018).",
+  "rabbit_hole_log": [
+    "T739: hodge_spectral_sequence depth confirmed"
+  ]
+}
