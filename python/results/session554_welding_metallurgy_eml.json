@@ -1,0 +1,65 @@
+{
+  "session": 554,
+  "title": "Welding Metallurgy Phase Transitions Heat EML Depth",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "WeldingMetallurgyEML",
+    "analysis": {
+      "object": "T275: Welding Metallurgy Phase Transitions Heat EML Depth depth analysis",
+      "domains": {
+        "heat_input": {
+          "description": "exponential temperature rise",
+          "depth": "EML-1",
+          "reason": "exponential thermal = EML-1"
+        },
+        "cooling_rate": {
+          "description": "TTT diagram logarithmic",
+          "depth": "EML-2",
+          "reason": "TTT = EML-2 log measurement"
+        },
+        "grain_oscillation": {
+          "description": "solidification grain boundary oscillation",
+          "depth": "EML-3",
+          "reason": "grain oscillation = EML-3"
+        },
+        "phase_diagram": {
+          "description": "Fe-C discrete regions",
+          "depth": "EML-0",
+          "reason": "discrete phase = EML-0"
+        },
+        "critical_temp": {
+          "description": "austenite-martensite transition",
+          "depth": "EML-inf",
+          "reason": "phase transition = EML-inf"
+        },
+        "haz_depth": {
+          "description": "heat affected zone log profile",
+          "depth": "EML-2",
+          "reason": "HAZ = EML-2"
+        },
+        "weld_quality": {
+          "description": "quality from depth signature",
+          "depth": "EML-2",
+          "reason": "EML depth classifies weld quality"
+        },
+        "failure_prediction": {
+          "description": "catastrophic failure unpredictable",
+          "depth": "EML-inf",
+          "reason": "catastrophic = EML-inf T275"
+        }
+      }
+    },
+    "distribution": {
+      "EML-1": 1,
+      "EML-2": 3,
+      "EML-3": 1,
+      "EML-0": 1,
+      "EML-inf": 2
+    },
+    "theorem": "T275: Welding Metallurgy Phase Transitions Heat EML Depth"
+  },
+  "key_theorem": "T275: Welding Metallurgy Phase Transitions Heat EML Depth (S554).",
+  "rabbit_hole_log": [
+    "T275: Welding Metallurgy Phase Transitions Heat EML Depth"
+  ]
+}
