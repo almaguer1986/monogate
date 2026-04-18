@@ -1,0 +1,209 @@
+{
+  "session": 421,
+  "title": "Atlas Expansion II: Domains 436-465 (Analysis & Geometry)",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "AtlasExpansion2EML",
+    "analysis": {
+      "object": "EML classification: Analysis domains 436-450",
+      "D436": {
+        "name": "Functional analysis: Banach spaces",
+        "depth": "EML-2",
+        "reason": "Norms \u2016f\u2016: real measurement; bounded operators = EML-2"
+      },
+      "D437": {
+        "name": "Spectral theory of bounded operators",
+        "depth": "EML-2",
+        "reason": "Spectrum \u03c3(T) \u2282 R or C; eigenvalues = EML-2 (real) or EML-3 (complex)"
+      },
+      "D438": {
+        "name": "Operator algebras (C*-algebras)",
+        "depth": "EML-3",
+        "reason": "GNS representation; complex Hilbert space = EML-3"
+      },
+      "D439": {
+        "name": "Von Neumann algebras",
+        "depth": "EML-3",
+        "reason": "Weak closure; factors classification = EML-3"
+      },
+      "D440": {
+        "name": "Free probability theory (Voiculescu)",
+        "depth": "EML-3",
+        "reason": "Free entropy; R-transform = EML-3 (complex analytic)"
+      },
+      "D441": {
+        "name": "Noncommutative geometry (Connes)",
+        "depth": "EML-3",
+        "reason": "Spectral triples; Dirac operator = EML-3"
+      },
+      "D442": {
+        "name": "Index theory (Atiyah-Singer)",
+        "depth": "EML-3",
+        "reason": "Index = dim ker - dim coker; K-theory + elliptic ops = EML-3"
+      },
+      "D443": {
+        "name": "Elliptic partial differential equations",
+        "depth": "EML-2",
+        "reason": "Sobolev spaces; energy estimates = EML-2 real"
+      },
+      "D444": {
+        "name": "Parabolic PDEs (heat equation)",
+        "depth": "EML-1",
+        "reason": "u_t = \u0394u: exp(-\u03bbt) solutions; EML-1 decay"
+      },
+      "D445": {
+        "name": "Hyperbolic PDEs (wave equation)",
+        "depth": "EML-3",
+        "reason": "exp(i(kx-\u03c9t)) solutions: complex oscillatory = EML-3"
+      },
+      "D446": {
+        "name": "Schr\u00f6dinger equation",
+        "depth": "EML-3",
+        "reason": "\u03c8_t = iH\u03c8: complex oscillatory; quantum = EML-3"
+      },
+      "D447": {
+        "name": "Dirac equation",
+        "depth": "EML-3",
+        "reason": "Spinor field; complex oscillatory = EML-3"
+      },
+      "D448": {
+        "name": "Navier-Stokes equations",
+        "depth": "EML-\u221e",
+        "reason": "Regularity unknown; singularities = EML-\u221e (Millennium problem)"
+      },
+      "D449": {
+        "name": "Stochastic PDEs (SPDE)",
+        "depth": "EML-\u221e",
+        "reason": "White noise forcing; non-constructive solutions = EML-\u221e"
+      },
+      "D450": {
+        "name": "Rough paths theory (Lyons)",
+        "depth": "EML-2",
+        "reason": "p-variation regularity: real measurement = EML-2"
+      }
+    },
+    "geometry": {
+      "object": "EML classification: Geometry domains 451-465",
+      "D451": {
+        "name": "Riemannian geometry",
+        "depth": "EML-2",
+        "reason": "Curvature tensor components: real measurements = EML-2"
+      },
+      "D452": {
+        "name": "Complex geometry (K\u00e4hler manifolds)",
+        "depth": "EML-3",
+        "reason": "K\u00e4hler form \u03c9: complex structure = EML-3"
+      },
+      "D453": {
+        "name": "Symplectic geometry",
+        "depth": "EML-3",
+        "reason": "\u03c9^n volume; Gromov-Witten theory = EML-3"
+      },
+      "D454": {
+        "name": "Contact geometry",
+        "depth": "EML-2",
+        "reason": "Contact form \u03b1: real differential = EML-2"
+      },
+      "D455": {
+        "name": "Sub-Riemannian geometry",
+        "depth": "EML-2",
+        "reason": "Carnot-Carath\u00e9odory distance: real = EML-2"
+      },
+      "D456": {
+        "name": "Geometric measure theory",
+        "depth": "EML-2",
+        "reason": "Hausdorff measure; currents = EML-2 real"
+      },
+      "D457": {
+        "name": "Minimal surfaces",
+        "depth": "EML-2",
+        "reason": "Mean curvature H=0: real condition = EML-2"
+      },
+      "D458": {
+        "name": "Pseudo-holomorphic curves (Gromov)",
+        "depth": "EML-3",
+        "reason": "J-holomorphic: complex structure = EML-3"
+      },
+      "D459": {
+        "name": "Mirror symmetry (SYZ conjecture)",
+        "depth": "EML-3",
+        "reason": "Calabi-Yau mirror pair: complex oscillatory = EML-3"
+      },
+      "D460": {
+        "name": "Gromov-Witten invariants",
+        "depth": "EML-3",
+        "reason": "Virtual fundamental class; quantum cohomology = EML-3"
+      },
+      "D461": {
+        "name": "Donaldson theory (4-manifolds)",
+        "depth": "EML-3",
+        "reason": "Yang-Mills instantons: complex gauge theory = EML-3"
+      },
+      "D462": {
+        "name": "Seiberg-Witten theory",
+        "depth": "EML-3",
+        "reason": "Monopole equations; spinor bundle = EML-3"
+      },
+      "D463": {
+        "name": "Floer homology",
+        "depth": "EML-3",
+        "reason": "Pseudo-holomorphic strips; Morse theory on loop space = EML-3"
+      },
+      "D464": {
+        "name": "Perelman's Ricci flow",
+        "depth": "EML-2",
+        "reason": "\u2202g/\u2202t = -2Ric: real tensor PDE; entropy functional = EML-2"
+      },
+      "D465": {
+        "name": "Geometric Langlands program",
+        "depth": "EML-3",
+        "reason": "D-modules \u2194 local systems; complex algebraic = EML-3"
+      }
+    },
+    "summary": {
+      "object": "Depth distribution for domains 436-465",
+      "EML_1": [
+        "D444 heat equation"
+      ],
+      "EML_2": [
+        "D436 Banach",
+        "D437 spectral",
+        "D443 elliptic PDE",
+        "D450 rough paths",
+        "D451 Riemannian",
+        "D454 contact",
+        "D455 sub-Riem",
+        "D456 GMT",
+        "D457 minimal surfaces",
+        "D464 Ricci flow"
+      ],
+      "EML_3": [
+        "D438-D442 operator algebras + NC geom + index",
+        "D445-D447 wave/Schr\u00f6dinger/Dirac",
+        "D452-D453 K\u00e4hler/symplectic",
+        "D458-D465 pseudo-hol/mirror/GW/Donaldson/SW/Floer/Langlands"
+      ],
+      "EML_inf": [
+        "D448 Navier-Stokes",
+        "D449 SPDE"
+      ],
+      "violations": 0,
+      "new_theorem": "T141: Atlas Batch 2 (S421): 30 new domains; analysis/geometry classified"
+    },
+    "verdicts": {
+      "pde": "PDE depth ladder: heat(EML-1) < elliptic(EML-2) < wave/Schr\u00f6dinger(EML-3) < NS(EML-\u221e)",
+      "geometry": "Real geometry (Riemannian, contact, sub-Riem): EML-2; complex geometry: EML-3",
+      "operator_algebras": "C*, von Neumann, free probability, NC geometry: all EML-3",
+      "violations": 0,
+      "new_theorem": "T141: Atlas Batch 2 (S421)"
+    }
+  },
+  "key_theorem": "Atlas Batch 2 (T141, S421): 30 new domains. PDE depth ladder: heat(EML-1) < elliptic(EML-2) < wave/Schr\u00f6dinger/Dirac(EML-3) < NS(EML-\u221e). Geometry: real (Riemannian, contact) = EML-2; complex (K\u00e4hler, symplectic, mirror) = EML-3. Operator algebras + NC geometry + index theory: all EML-3. Navier-Stokes and SPDE: EML-\u221e (non-constructive regularity). 0 violations. Total domains: 475.",
+  "rabbit_hole_log": [
+    "PDE ladder: heat EML-1, elliptic EML-2, wave EML-3, NS EML-\u221e",
+    "Riemannian geometry EML-2 (real); K\u00e4hler/symplectic EML-3 (complex)",
+    "Donaldson/SW/Floer: all EML-3 (complex gauge theory)",
+    "Geometric Langlands: EML-3 (D-modules \u2194 local systems)",
+    "NEW: T141 Atlas Batch 2 \u2014 30 domains, 0 violations, total 475"
+  ]
+}
