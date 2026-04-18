@@ -1,0 +1,297 @@
+{
+  "session": 126,
+  "title": "Linguistics & Semantics: Compositional Meaning, Ambiguity & Semantic Shift",
+  "key_theorem": {
+    "theorem": "EML Semantic Compositionality Theorem",
+    "statement": "Montague compositional semantics (lambda calculus, type theory) is EML-0. Distributional semantics (cosine similarity, PMI, GloVe loss) is EML-2. Skip-gram softmax P(w_o|w_c)=exp(u\u00b7v)/Z is EML-1 (Boltzmann). Semantic ambiguity entropy H=-\u03a3p log p is EML-2. Meaning decay P(old|t)=exp(-t/\u03c4) is EML-1 (semantic half-life). Neologism creation and live metaphor are EML-\u221e (irreducible creative act). Garden-path reparse is EML-\u221e (non-analytic structural reanalysis = insight). BERT attention is EML-1; GELU is EML-3."
+  },
+  "compositional_semantics": {
+    "type_composition": [
+      {
+        "type": "e (entity)",
+        "eml": 0,
+        "example": "John"
+      },
+      {
+        "type": "t (truth value)",
+        "eml": 0,
+        "example": "True/False"
+      },
+      {
+        "type": "e\u2192t (predicate)",
+        "eml": 0,
+        "example": "\u03bbx.run(x)"
+      },
+      {
+        "type": "\u27e8e,t\u27e9\u2192t (quantifier)",
+        "eml": 0,
+        "example": "\u2200, \u2203"
+      },
+      {
+        "type": "functional application f(a)",
+        "eml": 0,
+        "example": "run(John)"
+      },
+      {
+        "type": "P(s|w) (Bayesian)",
+        "eml": 2,
+        "example": "P(bank=river|context)"
+      },
+      {
+        "type": "H(meanings) (ambiguity)",
+        "eml": 2,
+        "example": "-\u03a3p log p"
+      }
+    ],
+    "ambiguity": [
+      {
+        "sense_probabilities": [
+          0.9,
+          0.1
+        ],
+        "n_senses": 2,
+        "ambiguity_entropy_nats": 0.3251,
+        "max_entropy_nats": 0.6931,
+        "eml": 2,
+        "reason": "H=-\u03a3p log p: Shannon entropy of sense distribution = EML-2."
+      },
+      {
+        "sense_probabilities": [
+          0.5,
+          0.5
+        ],
+        "n_senses": 2,
+        "ambiguity_entropy_nats": 0.6931,
+        "max_entropy_nats": 0.6931,
+        "eml": 2,
+        "reason": "H=-\u03a3p log p: Shannon entropy of sense distribution = EML-2."
+      },
+      {
+        "sense_probabilities": [
+          0.33,
+          0.33,
+          0.34
+        ],
+        "n_senses": 3,
+        "ambiguity_entropy_nats": 1.0985,
+        "max_entropy_nats": 1.0986,
+        "eml": 2,
+        "reason": "H=-\u03a3p log p: Shannon entropy of sense distribution = EML-2."
+      },
+      {
+        "sense_probabilities": [
+          0.25,
+          0.25,
+          0.25,
+          0.25
+        ],
+        "n_senses": 4,
+        "ambiguity_entropy_nats": 1.3863,
+        "max_entropy_nats": 1.3863,
+        "eml": 2,
+        "reason": "H=-\u03a3p log p: Shannon entropy of sense distribution = EML-2."
+      }
+    ],
+    "garden_path": {
+      "example": "The horse raced past the barn fell.",
+      "initial_parse_eml": 2,
+      "reparse_event_eml": "\u221e",
+      "post_reparse_eml": 0,
+      "reason": "Garden-path: initial parse proceeds EML-2 (incremental left-to-right). At 'fell': EML-\u221e structural reanalysis (non-analytic backtrack = insight). Correct parse: 'the horse [that was] raced past the barn fell' = EML-0 structure."
+    },
+    "eml_montague": 0,
+    "eml_bayesian_semantics": 2,
+    "eml_ambiguity_entropy": 2,
+    "eml_garden_path_reparse": "\u221e"
+  },
+  "distributional_semantics": {
+    "cosine_similarity": [
+      {
+        "u": [
+          1.0,
+          0.5,
+          -0.3
+        ],
+        "v": [
+          0.8,
+          0.6,
+          -0.2
+        ],
+        "dot_product": 1.16,
+        "cos_similarity": 0.9826,
+        "eml": 2,
+        "reason": "cos=u\u00b7v/(|u||v|): inner product / product of norms = EML-2."
+      }
+    ],
+    "pmi": [
+      {
+        "p_wc": 0.01,
+        "p_w": 0.1,
+        "p_c": 0.05,
+        "PMI": 0.6931,
+        "eml": 2,
+        "reason": "PMI=log(P(w,c)/P(w)P(c)): log of probability ratio = EML-2."
+      },
+      {
+        "p_wc": 0.001,
+        "p_w": 0.1,
+        "p_c": 0.05,
+        "PMI": -1.6094,
+        "eml": 2,
+        "reason": "PMI=log(P(w,c)/P(w)P(c)): log of probability ratio = EML-2."
+      }
+    ],
+    "analogy": {
+      "king": [
+        0.9,
+        0.5,
+        0.1
+      ],
+      "man": [
+        0.8,
+        0.3,
+        0.2
+      ],
+      "woman": [
+        0.1,
+        0.9,
+        0.3
+      ],
+      "queen_approx": [
+        0.2,
+        1.1,
+        0.2
+      ],
+      "eml": 2,
+      "reason": "Vector analogy = linear arithmetic on EML-2 embeddings = EML-2."
+    },
+    "glove_loss": {
+      "dot": 1.16,
+      "log_X_ij": 2.3,
+      "residual": -0.94,
+      "loss": 0.8836,
+      "eml": 2,
+      "reason": "GloVe: (dot + bias - log X_ij)\u00b2: quadratic of (inner product + log) = EML-2."
+    },
+    "eml_cosine": 2,
+    "eml_pmi": 2,
+    "eml_analogy": 2,
+    "eml_glove": 2,
+    "eml_skip_gram_softmax": 1,
+    "eml_bert_attention": 1,
+    "eml_bert_gelu": 3
+  },
+  "semantic_change": {
+    "meaning_decay": [
+      {
+        "t_years": 0,
+        "tau_years": 50.0,
+        "P_old_sense": 1.0,
+        "P_new_sense": 0.0,
+        "eml": 1,
+        "reason": "P(old|t)=exp(-t/\u03c4): EML-1 (exponential forgetting = meaning half-life)."
+      },
+      {
+        "t_years": 10,
+        "tau_years": 50.0,
+        "P_old_sense": 0.8187,
+        "P_new_sense": 0.1813,
+        "eml": 1,
+        "reason": "P(old|t)=exp(-t/\u03c4): EML-1 (exponential forgetting = meaning half-life)."
+      },
+      {
+        "t_years": 25,
+        "tau_years": 50.0,
+        "P_old_sense": 0.6065,
+        "P_new_sense": 0.3935,
+        "eml": 1,
+        "reason": "P(old|t)=exp(-t/\u03c4): EML-1 (exponential forgetting = meaning half-life)."
+      },
+      {
+        "t_years": 50,
+        "tau_years": 50.0,
+        "P_old_sense": 0.3679,
+        "P_new_sense": 0.6321,
+        "eml": 1,
+        "reason": "P(old|t)=exp(-t/\u03c4): EML-1 (exponential forgetting = meaning half-life)."
+      },
+      {
+        "t_years": 100,
+        "tau_years": 50.0,
+        "P_old_sense": 0.1353,
+        "P_new_sense": 0.8647,
+        "eml": 1,
+        "reason": "P(old|t)=exp(-t/\u03c4): EML-1 (exponential forgetting = meaning half-life)."
+      },
+      {
+        "t_years": 200,
+        "tau_years": 50.0,
+        "P_old_sense": 0.0183,
+        "P_new_sense": 0.9817,
+        "eml": 1,
+        "reason": "P(old|t)=exp(-t/\u03c4): EML-1 (exponential forgetting = meaning half-life)."
+      }
+    ],
+    "semantic_shifts": [
+      {
+        "eml": 2,
+        "example": "bird (now includes penguins)",
+        "mechanism": "prototype extension = EML-2 (prototype similarity = cosine = EML-2)",
+        "shift_type": "broadening"
+      },
+      {
+        "eml": 2,
+        "example": "meat (all food \u2192 animal flesh)",
+        "mechanism": "frequency selection = EML-2",
+        "shift_type": "narrowing"
+      },
+      {
+        "eml": 1,
+        "example": "very (extremely \u2192 intensifier)",
+        "mechanism": "exponential decay of semantic force = EML-1",
+        "shift_type": "bleaching"
+      },
+      {
+        "eml": 1,
+        "example": "deadline (literal \u2192 schedule term)",
+        "mechanism": "EML-\u221e creative act \u2192 EML-1 routine use",
+        "shift_type": "metaphor_freeze"
+      },
+      {
+        "eml": "\u221e",
+        "example": "googling, unfriend",
+        "mechanism": "novel meaning creation = EML-\u221e (not derivable from prior semantics)",
+        "shift_type": "neologism"
+      },
+      {
+        "eml": 2,
+        "example": "villain (farm worker \u2192 criminal)",
+        "mechanism": "social connotation drift = EML-2",
+        "shift_type": "pejoration"
+      }
+    ],
+    "eml_decay": 1,
+    "eml_broadening": 2,
+    "eml_bleaching": 1,
+    "eml_neologism": "\u221e",
+    "eml_metaphor_live": "\u221e",
+    "eml_metaphor_dead": 1
+  },
+  "eml_depth_summary": {
+    "EML-0": "Montague lambda calculus; type composition; truth conditions; quantifiers",
+    "EML-1": "Softmax word distribution; meaning decay exp(-t/\u03c4); bleaching; BERT attention",
+    "EML-2": "Cosine similarity; PMI log ratio; GloVe quadratic loss; analogy arithmetic; ambiguity entropy; broadening/narrowing",
+    "EML-3": "BERT GELU activation; contextual embedding compositionality",
+    "EML-\u221e": "Garden-path reparse; live metaphor; neologism; creative semantic invention; polysemy explosion"
+  },
+  "rabbit_hole_log": [
+    "Distributional semantics is EML-2: PMI = log P(w,c)/P(w)P(c) = log ratio of probabilities = EML-2 (log of ratio = EML-2 by the same argument as Shannon entropy, KL divergence, and CO\u2082 forcing 5.35\u00b7ln(C/C\u2080)). The entire word2vec/GloVe/PMI tradition implicitly operates at EML-2. The vector arithmetic of analogy (king-man+woman\u2248queen) is EML-2 linear algebra. Meaning IN distributional space is EML-2.",
+    "Semantic change is EML-1 in the smooth case (bleaching, decay) and EML-\u221e in the discontinuous case (neologism, live metaphor). The metaphor life cycle is: creative insight (EML-\u221e) \u2192 propagation in community (EML-1, epidemic spreading) \u2192 conventionalization (EML-2, frequency-meaning correlation) \u2192 dead metaphor (EML-1, exponential routine use). A word's semantic history traverses {\u221e, 1, 2, 1} \u2014 the EML ladder in non-monotone order.",
+    "The garden-path effect is the linguistic analog of the insight aha moment (S121): incremental left-to-right parsing proceeds EML-2 (Bayesian inference updating probability of parse), hits an EML-\u221e barrier at the disambiguating word ('fell'), and undergoes a non-analytic reparse. The resulting correct parse structure is EML-0 (syntactic tree). Parsing is an EML-\u221e problem in general (chart parsing = O(n\u00b3) = EML-2 complexity for CFG, but NLP ambiguity resolution = EML-\u221e)."
+  ],
+  "connections": {
+    "to_session_106": "S106 covered Zipf (EML-2), skip-gram (EML-1), perplexity (EML-3) at overview. S126 adds compositional semantics (EML-0), semantic change (EML-1/EML-\u221e), garden-path (EML-\u221e).",
+    "to_session_121": "Garden-path reparse (EML-\u221e) = insight aha moment (EML-\u221e): same non-analytic restructuring.",
+    "to_session_60": "PMI = log ratio = EML-2, same as KL divergence and all log-ratio information measures."
+  }
+}
