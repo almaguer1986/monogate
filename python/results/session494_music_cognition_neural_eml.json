@@ -1,0 +1,70 @@
+{
+  "session": 494,
+  "title": "Music Cognition & Neural Correlates of Harmony",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "MusicCognitionNeuralEML",
+    "analysis": {
+      "object": "T215: EML depth analysis of music cognition",
+      "domains": {
+        "pitch_frequencies": {
+          "description": "Frequency ratios: octave=2:1, fifth=3:2, etc.",
+          "depth": "EML-0",
+          "reason": "Simple integer ratios \u2014 discrete counting"
+        },
+        "equal_temperament": {
+          "description": "f_n = f\u2080\u00b72^{n/12} \u2014 equal-tempered scale",
+          "depth": "EML-2",
+          "reason": "2^{n/12} = exp((n/12)ln2) \u2014 algebraic root (depth-2 algebraic number)"
+        },
+        "sound_wave": {
+          "description": "Pure tone: A\u00b7sin(2\u03c0ft + \u03c6)",
+          "depth": "EML-3",
+          "reason": "Sinusoidal = explicit EML-3 oscillation"
+        },
+        "harmonic_series": {
+          "description": "Overtones: f, 2f, 3f, 4f, ... \u2014 Fourier decomposition",
+          "depth": "EML-3",
+          "reason": "\u03a3 a\u2099 sin(2\u03c0nft) \u2014 sum of EML-3 oscillations = EML-3"
+        },
+        "dissonance": {
+          "description": "Roughness from beating: |f\u2081-f\u2082| ~ interference",
+          "depth": "EML-3",
+          "reason": "Amplitude modulation: cos((f\u2081-f\u2082)t)\u00b7cos((f\u2081+f\u2082)t) \u2014 product of oscillations"
+        },
+        "emotional_response": {
+          "description": "Chills, tension, release \u2014 neurological response to music",
+          "depth": "EML-\u221e",
+          "reason": "Subjective experience of music \u2014 the qualia Horizon"
+        },
+        "musical_expectation": {
+          "description": "IDYOM model: information content of melodic events",
+          "depth": "EML-2",
+          "reason": "Surprisal = -log P(note|context) \u2014 information-theoretic (EML-2)"
+        },
+        "key_modulation": {
+          "description": "Modulation between musical keys",
+          "depth": "EML-3",
+          "reason": "Key = equivalence class of EML-3 oscillation modes; modulation = phase shift"
+        }
+      },
+      "circle_of_fifths_revelation": "Is the circle of fifths a depth-1 traversal? Answer: NO \u2014 it is a depth-3 structure. Each fifth = multiply by 3/2 = EML-2 ratio step. But the circle closes at 12 steps: (3/2)^12 \u2248 2^7 (Pythagorean comma). The circle = exponential oscillation of EML-3 closing on itself. Atonality (Schoenberg): removes the EML-3 tonal center \u2192 not EML-\u221e, but EML-3 without anchor."
+    },
+    "distribution": {
+      "EML-0": 1,
+      "EML-2": 2,
+      "EML-3": 4,
+      "EML-\u221e": 1
+    },
+    "verdict": "Music is overwhelmingly EML-3. Harmony = EML-3. Emotion = EML-\u221e.",
+    "theorem": "T215: Music Cognition Depth \u2014 sound/harmony/keys EML-3, emotion EML-\u221e"
+  },
+  "key_theorem": "T215: Music Cognition Depth (S494). Music IS EML-3: pure tones, harmonics, dissonance, key modulation all oscillatory. Circle of fifths: EML-3 oscillation that closes on itself (12 steps = octave). Emotion/qualia: EML-\u221e. Revelation: music cognition = perception of EML-3 structure by an EML-3 brain.",
+  "rabbit_hole_log": [
+    "Pure tone sin(2\u03c0ft): explicit EML-3",
+    "Equal temperament 2^{n/12}: EML-2 (algebraic root)",
+    "Circle of fifths: (3/2)^12 \u2248 2^7 = EML-3 cycling back",
+    "Emotional response: qualia Horizon = EML-\u221e",
+    "T215: Music = EML-3 all the way down; brain perceiving EML-3"
+  ]
+}
