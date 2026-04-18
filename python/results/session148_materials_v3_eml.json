@@ -1,0 +1,96 @@
+{
+  "session": 148,
+  "title": "Materials Science Deep III: Quantum Materials & Emergent Phenomena",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "strongly_correlated": {
+    "model": "StronglyCorrelatedElectrons",
+    "kondo_temperature": "1.6196e-06",
+    "kondo_resistivity_vs_T": {
+      "0.01": 1.0,
+      "0.1": 1.0,
+      "1.0": 1.0,
+      "10.0": 1.0,
+      "100.0": 1.0
+    },
+    "heavy_fermion_gap": "2.0612e-09",
+    "fractionalization": {
+      "electron": "c_{\u03c3} = f_{\u03c3} \u00d7 b (spinon \u00d7 holon)",
+      "spinon": "EML-\u221e (non-Abelian statistics in frustrated magnets)",
+      "holon": "EML-\u221e (charge without spin \u2014 not in any EML-finite Fock space)",
+      "fractionalization_depth": "\u221e",
+      "reason": "Topological order: cannot be reduced to product state (EML-finite)"
+    },
+    "eml_depth": {
+      "kondo_temperature": 1,
+      "kondo_resistivity": 2,
+      "fractionalization": "\u221e"
+    },
+    "key_insight": "Kondo T_K = EML-1; fractionalized particles = EML-\u221e"
+  },
+  "fqhe": {
+    "model": "FractionalQuantumHall",
+    "filling_factor": 0.3333333333333333,
+    "laughlin_m": 3,
+    "hall_conductance_nu_e2h": 0.3333,
+    "anyonic_statistics": {
+      "type": "Abelian anyons",
+      "charge": "e* = 0.3333333333333333*e",
+      "berry_phase": "\u03b8 = \u03c0*0.3333333333333333",
+      "statistics_depth": "3 (\u03c0 from winding)"
+    },
+    "topological_order": "Ground state degeneracy = 3^genus (EML-0 count); topological order = EML-\u221e",
+    "eml_depth": {
+      "hall_conductance": 0,
+      "laughlin_wavefunction": 3,
+      "topological_order": "\u221e",
+      "non_abelian_anyons": "\u221e"
+    },
+    "key_insight": "FQHE: Hall conductance = EML-0; Laughlin WF = EML-3; topological order = EML-\u221e"
+  },
+  "quantum_spin_liquids": {
+    "model": "QuantumSpinLiquids",
+    "frustration_ratio_J2J1": 0.45,
+    "spin_liquid_regime": true,
+    "spinon_dispersion": {
+      "0.1": 0.1005,
+      "0.5": 0.5001,
+      "1.0": 1.0,
+      "2.0": 2.0,
+      "3.0": 3.0
+    },
+    "emergent_gauge": {
+      "z2_gauge_field": "EML-\u221e (topological, emergent from frustrated spins)",
+      "u1_gauge_field": "EML-\u221e (deconfined photons in 3D pyrochlore)",
+      "vison_excitations": "EML-\u221e (Z\u2082 flux \u2014 no single-particle analog)",
+      "spinon_excitations": "EML-2 (linear dispersion, EML-finite description)",
+      "fractionalization_depth": "\u221e"
+    },
+    "eml_depth": {
+      "frustration_ratio": 0,
+      "spinon_dispersion": 2,
+      "emergent_gauge": "\u221e",
+      "topological_order": "\u221e"
+    },
+    "key_insight": "Spinon dispersion = EML-2; emergent gauge field = EML-\u221e (genuine emergence)"
+  },
+  "eml_depth_summary": {
+    "EML-0": "Hall conductance \u03bd*e\u00b2/h, frustration ratio J2/J1, topological degeneracy",
+    "EML-1": "Kondo temperature exp(-1/JN\u2080)",
+    "EML-2": "Kondo resistivity, spinon dispersion E(k)=\u221a((v_s k)\u00b2+\u0394\u00b2)",
+    "EML-3": "Laughlin wavefunction (Gaussian \u00d7 power = EML-3)",
+    "EML-\u221e": "Fractionalization, topological order, emergent gauge fields, non-Abelian anyons"
+  },
+  "key_theorem": "The EML Quantum Materials Emergence Theorem: Single-particle physics is EML-2 (band structure, effective mass). Kondo physics is EML-1 (exponential in 1/coupling). All genuine many-body emergent phenomena \u2014 fractionalization, topological order, non-Abelian anyons, emergent gauge fields \u2014 are EML-\u221e: they cannot be expressed as EML-finite functions of single-particle operators.",
+  "rabbit_hole_log": [
+    "Kondo T_K = exp(-1/JN\u2080) = EML-1: same structure as BCS gap!",
+    "Fractionalization: electron splits into holon + spinon = EML-\u221e (beyond Fock space)",
+    "FQHE Hall conductance \u03bd*e\u00b2/h = EML-0: topological invariant",
+    "Non-Abelian anyons = EML-\u221e: topological quantum computing would run on EML-\u221e substrate",
+    "Emergent gauge field in spin liquid = EML-\u221e: not in any EML-finite Hamiltonian"
+  ],
+  "connections": {
+    "S138_materials_v2": "Extends S138: BCS\u2192Kondo, Chern\u2192FQHE, Mott\u2192fractionalization",
+    "S58_topology": "Topological order = EML-0 invariants + EML-\u221e ground state",
+    "S131_cognition_v3": "Emergence (quantum materials) \u2194 binding (consciousness): both EML-\u221e"
+  }
+}
