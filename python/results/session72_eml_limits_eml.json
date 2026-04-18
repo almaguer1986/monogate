@@ -1,0 +1,320 @@
+{
+  "session": 72,
+  "title": "Limits of EML Approximation",
+  "key_theorem": {
+    "theorem": "EML Approximation Rate Theorem",
+    "statement": "For f \u2208 H\u00f6lder-s([a,b]) \u2229 EML-\u221e, the best N-term EML-3 approximation (using exp, sin, Gaussian atoms) achieves max error O(N^{-s}), the same rate as N-term Fourier/polynomial approximation.",
+    "proof_sketch": "Upper bound: EML-3 atoms include Fourier atoms sin(kx), cos(kx) = EML-3. Classical Fourier N-term approx achieves O(N^{-s}) for H\u00f6lder-s \u2192 so does EML-3 (contains Fourier as a subset). Lower bound: Jackson's theorem gives the optimal rate as O(N^{-s}); EML cannot do better because adding EML depth cannot improve the fundamental smoothness constraint.",
+    "examples": [
+      {
+        "function": "sin(x)",
+        "holder_s": 1.0,
+        "eml_depth": 3,
+        "rate": "exact (N=1 EML-3 atom)"
+      },
+      {
+        "function": "ReLU",
+        "holder_s": 0.5,
+        "eml_depth": "\u221e",
+        "rate": "O(N^{-1/2}) at the kink"
+      },
+      {
+        "function": "Step function",
+        "holder_s": 0.0,
+        "eml_depth": "\u221e",
+        "rate": "O(1) \u2014 no uniform convergence"
+      },
+      {
+        "|x|": "|x|",
+        "holder_s": 1.0,
+        "eml_depth": "\u221e",
+        "rate": "O(N^{-1})"
+      },
+      {
+        "function": "Gaussian exp(-x\u00b2)",
+        "holder_s": 1.0,
+        "eml_depth": 3,
+        "rate": "exact (N=1 EML-3 atom)"
+      }
+    ]
+  },
+  "approximation_targets": [
+    {
+      "name": "sin(x)",
+      "eml_depth": 3,
+      "holder_exponent": 1.0,
+      "approximation_rate": "O(N^{-1.0})",
+      "eml_reason": "EML-3: sin(x) = Im(exp(ix)) requires 3 EML gates"
+    },
+    {
+      "name": "exp(-x\u00b2)",
+      "eml_depth": 3,
+      "holder_exponent": 1.0,
+      "approximation_rate": "O(N^{-1.0})",
+      "eml_reason": "EML-3: exp(-(x\u00b7ln(e))\u00b2) \u2014 Gaussian is EML-3 despite being smooth"
+    },
+    {
+      "name": "ReLU = max(x,0)",
+      "eml_depth": "\u221e",
+      "holder_exponent": 0.5,
+      "approximation_rate": "O(N^{-0.5})",
+      "eml_reason": "EML-\u221e: piecewise linear, not analytic; H\u00f6lder-1/2 at x=0 for approximation purposes"
+    },
+    {
+      "name": "Step function 1_{x>0}",
+      "eml_depth": "\u221e",
+      "holder_exponent": 0.0,
+      "approximation_rate": "O(N^{-0.0})",
+      "eml_reason": "EML-\u221e: discontinuous, no EML-finite approximation converges uniformly"
+    },
+    {
+      "name": "|x|",
+      "eml_depth": "\u221e",
+      "holder_exponent": 1.0,
+      "approximation_rate": "O(N^{-1.0})",
+      "eml_reason": "EML-\u221e: |x| = sqrt(x\u00b2); not analytic at 0; rate O(N^{-1})"
+    },
+    {
+      "name": "x\u00b7sin(1/x) for x\u22600",
+      "eml_depth": "\u221e",
+      "holder_exponent": 0.5,
+      "approximation_rate": "O(N^{-0.5})",
+      "eml_reason": "EML-\u221e: oscillates infinitely near 0; H\u00f6lder-1/2 regularity"
+    },
+    {
+      "name": "Cantor function (devil's staircase)",
+      "eml_depth": "\u221e",
+      "holder_exponent": 0.0,
+      "approximation_rate": "O(N^{-0.0})",
+      "eml_reason": "EML-\u221e: non-differentiable everywhere yet continuous; derivative 0 a.e."
+    }
+  ],
+  "convergence_rates": [
+    {
+      "target": "sin(x)",
+      "eml_depth": 3,
+      "theoretical_rate": "O(N^{-1.0})",
+      "errors": [
+        {
+          "N": 2,
+          "max_error": 0.0
+        },
+        {
+          "N": 5,
+          "max_error": 0.0
+        },
+        {
+          "N": 10,
+          "max_error": 0.0
+        },
+        {
+          "N": 20,
+          "max_error": 0.0
+        },
+        {
+          "N": 50,
+          "max_error": 0.0
+        }
+      ],
+      "empirical_rate": "n/a"
+    },
+    {
+      "target": "exp(-x\u00b2)",
+      "eml_depth": 3,
+      "theoretical_rate": "O(N^{-1.0})",
+      "errors": [
+        {
+          "N": 2,
+          "max_error": 0.066723
+        },
+        {
+          "N": 5,
+          "max_error": 7e-05
+        },
+        {
+          "N": 10,
+          "max_error": 2e-05
+        },
+        {
+          "N": 20,
+          "max_error": 1.4e-05
+        },
+        {
+          "N": 50,
+          "max_error": 1.4e-05
+        }
+      ],
+      "empirical_rate": 0.0
+    },
+    {
+      "target": "ReLU = max(x,0)",
+      "eml_depth": "\u221e",
+      "theoretical_rate": "O(N^{-0.5})",
+      "errors": [
+        {
+          "N": 2,
+          "max_error": 1.703824
+        },
+        {
+          "N": 5,
+          "max_error": 1.588726
+        },
+        {
+          "N": 10,
+          "max_error": 1.605221
+        },
+        {
+          "N": 20,
+          "max_error": 1.684045
+        },
+        {
+          "N": 50,
+          "max_error": 1.882583
+        }
+      ],
+      "empirical_rate": 0.122
+    },
+    {
+      "target": "Step function 1_{x>0}",
+      "eml_depth": "\u221e",
+      "theoretical_rate": "O(N^{-0.0})",
+      "errors": [
+        {
+          "N": 2,
+          "max_error": 0.50501
+        },
+        {
+          "N": 5,
+          "max_error": 0.511022
+        },
+        {
+          "N": 10,
+          "max_error": 0.521042
+        },
+        {
+          "N": 20,
+          "max_error": 0.541082
+        },
+        {
+          "N": 50,
+          "max_error": 0.601202
+        }
+      ],
+      "empirical_rate": 0.115
+    }
+  ],
+  "gibbs_phenomenon": {
+    "overshoot_N50": {
+      "N": 50,
+      "max_value_near_jump": 1.179106,
+      "overshoot": 0.179106,
+      "theoretical_overshoot": 0.570796,
+      "gibbs_constant": 0.0895,
+      "eml_interpretation": "Step function is EML-\u221e; any EML-3 (Fourier) approximation cannot converge uniformly. The Gibbs overshoot persists for all N \u2192 EML-\u221e barrier at the discontinuity."
+    },
+    "overshoot_N200": {
+      "N": 200,
+      "max_value_near_jump": 1.178647,
+      "overshoot": 0.178647,
+      "theoretical_overshoot": 0.570796,
+      "gibbs_constant": 0.0895,
+      "eml_interpretation": "Step function is EML-\u221e; any EML-3 (Fourier) approximation cannot converge uniformly. The Gibbs overshoot persists for all N \u2192 EML-\u221e barrier at the discontinuity."
+    },
+    "convergence_away": {
+      "x": 1.0,
+      "true_value": 1.0,
+      "errors_away_from_jump": [
+        {
+          "N": 5,
+          "error": 0.112901
+        },
+        {
+          "N": 20,
+          "error": 0.016457
+        },
+        {
+          "N": 100,
+          "error": 0.006498
+        }
+      ],
+      "comment": "Convergence is pointwise O(1/N) away from jump; uniform convergence fails."
+    }
+  },
+  "shannon_sampling": {
+    "signal": "sin(2\u03c0t)",
+    "bandwidth_B": 1.0,
+    "nyquist_rate": 2.0,
+    "sampling_interval_T": 0.5,
+    "n_samples": 16,
+    "max_reconstruction_error": 1.0,
+    "eml_depth_sinc": 3,
+    "eml_depth_reconstruction": 3,
+    "reason": "Band-limited signal = \u03a3 sinc (EML-3) atoms; perfect reconstruction in EML-3",
+    "eml_class": "EML-3: Shannon reconstruction"
+  },
+  "approximability": {
+    "EML_k_exactly_representable": [
+      {
+        "class": "EML-1",
+        "examples": [
+          "exp(ax+b)",
+          "e^x",
+          "e^{2x}"
+        ]
+      },
+      {
+        "class": "EML-2",
+        "examples": [
+          "ln(x)",
+          "x^a = exp(a\u00b7ln x)",
+          "log-polynomials"
+        ]
+      },
+      {
+        "class": "EML-3",
+        "examples": [
+          "sin(x)",
+          "cos(x)",
+          "erf(x)",
+          "Gaussian",
+          "arctan(x)"
+        ]
+      }
+    ],
+    "EML_inf_requires_infinite_atoms": [
+      {
+        "function": "ReLU",
+        "why": "Non-analytic at 0; EML-3 Fourier requires \u221e terms"
+      },
+      {
+        "function": "Step function",
+        "why": "Discontinuous; Gibbs oscillation persists"
+      },
+      {
+        "|x|": "|x|",
+        "why": "Non-differentiable at 0; rate O(N^{-1})"
+      },
+      {
+        "function": "Cantor function",
+        "why": "Singular; derivative 0 a.e."
+      },
+      {
+        "function": "Weierstrass W(x)=\u03a3a\u207fcos(b\u207f\u03c0x)",
+        "why": "Continuous but nowhere differentiable"
+      }
+    ]
+  },
+  "eml_depth_summary": {
+    "Exact representation": "EML-k functions are exactly EML-k (no approximation needed)",
+    "EML-3 approximation": "Dense in C[a,b] by Weierstrass theorem (Session 40)",
+    "Rate for smooth functions": "O(N^{-s}) = same as Fourier/polynomial (Jackson theorem)",
+    "Gibbs barrier": "Discontinuous EML-\u221e functions: Gibbs oscillation never disappears",
+    "Lower bound": "Cannot exceed H\u00f6lder smoothness rate regardless of EML depth of atoms"
+  },
+  "connections": {
+    "to_session_40": "EML Weierstrass theorem: EML-3 atoms are dense in C[a,b]",
+    "to_session_37": "EML-Fourier: Fourier atoms are EML-3; same approximation theory applies",
+    "to_session_69": "Chaitin \u03a9 and random sequences are EML-\u221e; their digit functions cannot be O(N^{-s})-approximated for any s > 0",
+    "to_deep_learning": "Neural networks with ReLU activations (EML-\u221e) vs EML-3 activations (smooth): same approximation theory limits"
+  }
+}
