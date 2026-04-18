@@ -1,0 +1,396 @@
+{
+  "session": 127,
+  "title": "Climate & Earth Systems: Coupled Models & Tipping Point Dynamics",
+  "key_theorem": {
+    "theorem": "EML Climate Tipping Theorem",
+    "statement": "Planck feedback -4\u03c3T\u00b3 is EML-2 (cubic power law). ECS = F\u2082\u2093/|\u03bb| is EML-2. ECS log-normal distribution is EML-2. Saddle-node bifurcation fixed points \u00b1\u221a(r/3) are EML-2; bifurcation point is EML-\u221e. Critical slowing down recovery rate ~|\u0394r|^{1/2} is EML-2 (vanishes at tipping). Permafrost Q\u2081\u2080 respiration Q\u2081\u2080^{T/10} is EML-1 (exponential). Orbital (Milankovitch) forcing \u03a3 cos(2\u03c0t/T) is EML-3. Red climate noise P(f)~f^{-\u03b2} is EML-2. Dansgaard-Oeschger events and AMOC collapse are EML-\u221e (saddle-node phase transitions)."
+  },
+  "climate_feedbacks": {
+    "planck": [
+      {
+        "T_K": 255,
+        "alpha_P_Wm2K": -3.7607,
+        "eml": 2,
+        "reason": "-4\u03c3T\u00b3: cubic power law = EML-2."
+      },
+      {
+        "T_K": 275,
+        "alpha_P_Wm2K": -4.7167,
+        "eml": 2,
+        "reason": "-4\u03c3T\u00b3: cubic power law = EML-2."
+      },
+      {
+        "T_K": 288,
+        "alpha_P_Wm2K": -5.4178,
+        "eml": 2,
+        "reason": "-4\u03c3T\u00b3: cubic power law = EML-2."
+      },
+      {
+        "T_K": 310,
+        "alpha_P_Wm2K": -6.7566,
+        "eml": 2,
+        "reason": "-4\u03c3T\u00b3: cubic power law = EML-2."
+      }
+    ],
+    "ecs_estimate": [
+      {
+        "F_2x_Wm2": 3.7,
+        "lambda_Wm2K": -0.5,
+        "ECS_K": 7.4,
+        "eml": 2,
+        "reason": "ECS=F\u2082\u2093/|\u03bb|: ratio of forcing to feedback = EML-2."
+      },
+      {
+        "F_2x_Wm2": 3.7,
+        "lambda_Wm2K": -0.8,
+        "ECS_K": 4.62,
+        "eml": 2,
+        "reason": "ECS=F\u2082\u2093/|\u03bb|: ratio of forcing to feedback = EML-2."
+      },
+      {
+        "F_2x_Wm2": 3.7,
+        "lambda_Wm2K": -1.2,
+        "ECS_K": 3.08,
+        "eml": 2,
+        "reason": "ECS=F\u2082\u2093/|\u03bb|: ratio of forcing to feedback = EML-2."
+      },
+      {
+        "F_2x_Wm2": 3.7,
+        "lambda_Wm2K": -2.0,
+        "ECS_K": 1.85,
+        "eml": 2,
+        "reason": "ECS=F\u2082\u2093/|\u03bb|: ratio of forcing to feedback = EML-2."
+      }
+    ],
+    "ecs_distribution": [
+      {
+        "ECS": 1.0,
+        "P_ECS": 0.022734,
+        "eml": 2,
+        "reason": "Log-normal: P=exp(-\u00bd((ln S-\u03bc)/\u03c3)\u00b2)/(S\u03c3\u221a2\u03c0): Gaussian of log = EML-2."
+      },
+      {
+        "ECS": 2.0,
+        "P_ECS": 0.297282,
+        "eml": 2,
+        "reason": "Log-normal: P=exp(-\u00bd((ln S-\u03bc)/\u03c3)\u00b2)/(S\u03c3\u221a2\u03c0): Gaussian of log = EML-2."
+      },
+      {
+        "ECS": 3.0,
+        "P_ECS": 0.33245,
+        "eml": 2,
+        "reason": "Log-normal: P=exp(-\u00bd((ln S-\u03bc)/\u03c3)\u00b2)/(S\u03c3\u221a2\u03c0): Gaussian of log = EML-2."
+      },
+      {
+        "ECS": 4.5,
+        "P_ECS": 0.133058,
+        "eml": 2,
+        "reason": "Log-normal: P=exp(-\u00bd((ln S-\u03bc)/\u03c3)\u00b2)/(S\u03c3\u221a2\u03c0): Gaussian of log = EML-2."
+      },
+      {
+        "ECS": 6.0,
+        "P_ECS": 0.037261,
+        "eml": 2,
+        "reason": "Log-normal: P=exp(-\u00bd((ln S-\u03bc)/\u03c3)\u00b2)/(S\u03c3\u221a2\u03c0): Gaussian of log = EML-2."
+      }
+    ],
+    "eml_planck_feedback": 2,
+    "eml_ecs": 2,
+    "eml_ecs_distribution": 2
+  },
+  "tipping_points": {
+    "saddle_node": [
+      {
+        "r": -0.5,
+        "r_critical": -0.3849,
+        "fixed_points_approx": [
+          1.0,
+          -1.0
+        ],
+        "regime": "bistable",
+        "eml": 2,
+        "reason": "Saddle-node: fixed point \u221a(r/3): EML-2 (square root). Bifurcation at r_c: EML-\u221e."
+      },
+      {
+        "r": -0.39,
+        "r_critical": -0.3849,
+        "fixed_points_approx": [
+          -0.577
+        ],
+        "regime": "at saddle-node bifurcation",
+        "eml": "\u221e",
+        "reason": "Saddle-node: fixed point \u221a(r/3): EML-2 (square root). Bifurcation at r_c: EML-\u221e."
+      },
+      {
+        "r": -0.385,
+        "r_critical": -0.3849,
+        "fixed_points_approx": [
+          -0.577
+        ],
+        "regime": "at saddle-node bifurcation",
+        "eml": "\u221e",
+        "reason": "Saddle-node: fixed point \u221a(r/3): EML-2 (square root). Bifurcation at r_c: EML-\u221e."
+      },
+      {
+        "r": -0.3,
+        "r_critical": -0.3849,
+        "fixed_points_approx": [
+          1.0,
+          -1.0
+        ],
+        "regime": "bistable",
+        "eml": 2,
+        "reason": "Saddle-node: fixed point \u221a(r/3): EML-2 (square root). Bifurcation at r_c: EML-\u221e."
+      },
+      {
+        "r": 0.0,
+        "r_critical": -0.3849,
+        "fixed_points_approx": [
+          1.0,
+          -1.0
+        ],
+        "regime": "bistable",
+        "eml": 2,
+        "reason": "Saddle-node: fixed point \u221a(r/3): EML-2 (square root). Bifurcation at r_c: EML-\u221e."
+      }
+    ],
+    "critical_slowing": [
+      {
+        "delta_r": 0.0,
+        "recovery_rate": 0.0,
+        "eml": "\u221e"
+      },
+      {
+        "delta_r_to_tipping": 0.01,
+        "recovery_rate": 0.1,
+        "eml": 2,
+        "reason": "Recovery rate ~ |\u0394r|^{1/2}: EML-2 square root diverges (\u21920) at tipping."
+      },
+      {
+        "delta_r_to_tipping": 0.1,
+        "recovery_rate": 0.3162,
+        "eml": 2,
+        "reason": "Recovery rate ~ |\u0394r|^{1/2}: EML-2 square root diverges (\u21920) at tipping."
+      },
+      {
+        "delta_r_to_tipping": 0.5,
+        "recovery_rate": 0.7071,
+        "eml": 2,
+        "reason": "Recovery rate ~ |\u0394r|^{1/2}: EML-2 square root diverges (\u21920) at tipping."
+      },
+      {
+        "delta_r_to_tipping": 1.0,
+        "recovery_rate": 1.0,
+        "eml": 2,
+        "reason": "Recovery rate ~ |\u0394r|^{1/2}: EML-2 square root diverges (\u21920) at tipping."
+      }
+    ],
+    "permafrost": [
+      {
+        "T_anomaly_K": 0,
+        "Q10": 2.0,
+        "respiration_multiplier": 1.0,
+        "eml": 1,
+        "reason": "R=Q\u2081\u2080^{T/10}=exp((T/10)\u00b7ln Q\u2081\u2080): EML-1 (exponential in temperature)."
+      },
+      {
+        "T_anomaly_K": 1,
+        "Q10": 2.0,
+        "respiration_multiplier": 1.0718,
+        "eml": 1,
+        "reason": "R=Q\u2081\u2080^{T/10}=exp((T/10)\u00b7ln Q\u2081\u2080): EML-1 (exponential in temperature)."
+      },
+      {
+        "T_anomaly_K": 2,
+        "Q10": 2.0,
+        "respiration_multiplier": 1.1487,
+        "eml": 1,
+        "reason": "R=Q\u2081\u2080^{T/10}=exp((T/10)\u00b7ln Q\u2081\u2080): EML-1 (exponential in temperature)."
+      },
+      {
+        "T_anomaly_K": 3,
+        "Q10": 2.0,
+        "respiration_multiplier": 1.2311,
+        "eml": 1,
+        "reason": "R=Q\u2081\u2080^{T/10}=exp((T/10)\u00b7ln Q\u2081\u2080): EML-1 (exponential in temperature)."
+      },
+      {
+        "T_anomaly_K": 4,
+        "Q10": 2.0,
+        "respiration_multiplier": 1.3195,
+        "eml": 1,
+        "reason": "R=Q\u2081\u2080^{T/10}=exp((T/10)\u00b7ln Q\u2081\u2080): EML-1 (exponential in temperature)."
+      },
+      {
+        "T_anomaly_K": 6,
+        "Q10": 2.0,
+        "respiration_multiplier": 1.5157,
+        "eml": 1,
+        "reason": "R=Q\u2081\u2080^{T/10}=exp((T/10)\u00b7ln Q\u2081\u2080): EML-1 (exponential in temperature)."
+      }
+    ],
+    "cascade": [
+      {
+        "n_tipping_elements": 1,
+        "coupling": 0.3,
+        "P_cascade": 0.2592,
+        "eml_each_tipping": "\u221e",
+        "eml_cascade_probability": 2,
+        "reason": "P=1-exp(-\u03bbn): EML-2 (complementary exponential). Each individual tip = EML-\u221e."
+      },
+      {
+        "n_tipping_elements": 3,
+        "coupling": 0.3,
+        "P_cascade": 0.5934,
+        "eml_each_tipping": "\u221e",
+        "eml_cascade_probability": 2,
+        "reason": "P=1-exp(-\u03bbn): EML-2 (complementary exponential). Each individual tip = EML-\u221e."
+      },
+      {
+        "n_tipping_elements": 5,
+        "coupling": 0.3,
+        "P_cascade": 0.7769,
+        "eml_each_tipping": "\u221e",
+        "eml_cascade_probability": 2,
+        "reason": "P=1-exp(-\u03bbn): EML-2 (complementary exponential). Each individual tip = EML-\u221e."
+      },
+      {
+        "n_tipping_elements": 9,
+        "coupling": 0.3,
+        "P_cascade": 0.9328,
+        "eml_each_tipping": "\u221e",
+        "eml_cascade_probability": 2,
+        "reason": "P=1-exp(-\u03bbn): EML-2 (complementary exponential). Each individual tip = EML-\u221e."
+      },
+      {
+        "n_tipping_elements": 15,
+        "coupling": 0.3,
+        "P_cascade": 0.9889,
+        "eml_each_tipping": "\u221e",
+        "eml_cascade_probability": 2,
+        "reason": "P=1-exp(-\u03bbn): EML-2 (complementary exponential). Each individual tip = EML-\u221e."
+      }
+    ],
+    "eml_stable_state": 2,
+    "eml_bifurcation": "\u221e",
+    "eml_permafrost_q10": 1,
+    "eml_cascade_prob": 2
+  },
+  "paleoclimate": {
+    "orbital_forcing": [
+      {
+        "t_kyr": 0,
+        "F_forcing": 1.0,
+        "periods_kyr": [
+          100.0,
+          41.0,
+          23.0
+        ],
+        "eml": 3,
+        "reason": "F=\u03a3A\u1d62cos(2\u03c0t/T\u1d62): Fourier trig sum = EML-3."
+      },
+      {
+        "t_kyr": 25,
+        "F_forcing": -0.0606,
+        "periods_kyr": [
+          100.0,
+          41.0,
+          23.0
+        ],
+        "eml": 3,
+        "reason": "F=\u03a3A\u1d62cos(2\u03c0t/T\u1d62): Fourier trig sum = EML-3."
+      },
+      {
+        "t_kyr": 50,
+        "F_forcing": -0.3509,
+        "periods_kyr": [
+          100.0,
+          41.0,
+          23.0
+        ],
+        "eml": 3,
+        "reason": "F=\u03a3A\u1d62cos(2\u03c0t/T\u1d62): Fourier trig sum = EML-3."
+      },
+      {
+        "t_kyr": 100,
+        "F_forcing": 0.1064,
+        "periods_kyr": [
+          100.0,
+          41.0,
+          23.0
+        ],
+        "eml": 3,
+        "reason": "F=\u03a3A\u1d62cos(2\u03c0t/T\u1d62): Fourier trig sum = EML-3."
+      },
+      {
+        "t_kyr": 200,
+        "F_forcing": 0.6492,
+        "periods_kyr": [
+          100.0,
+          41.0,
+          23.0
+        ],
+        "eml": 3,
+        "reason": "F=\u03a3A\u1d62cos(2\u03c0t/T\u1d62): Fourier trig sum = EML-3."
+      }
+    ],
+    "red_noise": [
+      {
+        "f_per_kyr": 0.01,
+        "beta": 1.5,
+        "P_f": 1000.0,
+        "eml": 2,
+        "reason": "P(f)~f^{-\u03b2}: power law spectrum = EML-2 (red noise = EML-2)."
+      },
+      {
+        "f_per_kyr": 0.1,
+        "beta": 1.5,
+        "P_f": 31.622777,
+        "eml": 2,
+        "reason": "P(f)~f^{-\u03b2}: power law spectrum = EML-2 (red noise = EML-2)."
+      },
+      {
+        "f_per_kyr": 1.0,
+        "beta": 1.5,
+        "P_f": 1.0,
+        "eml": 2,
+        "reason": "P(f)~f^{-\u03b2}: power law spectrum = EML-2 (red noise = EML-2)."
+      },
+      {
+        "f_per_kyr": 10.0,
+        "beta": 1.5,
+        "P_f": 0.031623,
+        "eml": 2,
+        "reason": "P(f)~f^{-\u03b2}: power law spectrum = EML-2 (red noise = EML-2)."
+      }
+    ],
+    "do_events": {
+      "event": "Dansgaard-Oeschger",
+      "amplitude_K": 15,
+      "duration_years": 50,
+      "eml_gradual_baseline": 2,
+      "eml_abrupt_event": "\u221e",
+      "reason": "DO events: \u0394TNH~10-15K in ~50 years \u2014 abrupt, non-analytic warming. = EML-\u221e (AMOC reorganization = saddle-node bifurcation = EML-\u221e phase transition)."
+    },
+    "eml_orbital_forcing": 3,
+    "eml_red_noise": 2,
+    "eml_do_events": "\u221e"
+  },
+  "eml_depth_summary": {
+    "EML-0": "Albedo difference \u0394\u03b1=const; dimension d=3; latitude \u03bb (constant parameter)",
+    "EML-1": "Clausius-Clapeyron exp(-L/RT); permafrost Q\u2081\u2080^{T/10}; water vapor feedback geometric series",
+    "EML-2": "Planck -4\u03c3T\u00b3; ECS=F\u2082\u2093/\u03bb; ECS log-normal; saddle-node fixed points; critical slowing \u221a|\u0394r|; red noise f^{-\u03b2}; CO\u2082 forcing 5.35 ln(C/C\u2080)",
+    "EML-3": "Orbital forcing \u03a3cos(2\u03c0t/T); ENSO oscillation; Milankovitch quasi-periodic signal",
+    "EML-\u221e": "AMOC collapse; ice sheet collapse; permafrost cascade; DO events; saddle-node bifurcation"
+  },
+  "rabbit_hole_log": [
+    "The tipping point is an EML-\u221e event by the saddle-node bifurcation theorem: at the critical parameter value r_c, the stable and unstable fixed points collide and annihilate. The system's eigenvalue passes through zero \u2014 infinite relaxation time = EML-\u221e. Critical slowing down (the observable precursor) sees the recovery rate shrink as \u221a|r-r_c| = EML-2 approaching zero. The tipping itself (eigenvalue=0) is EML-\u221e. This is the same structure as ALL EML-\u221e phase transitions: Ising T_c (eigenvalue of transfer matrix \u2192 1), laser threshold (gain = loss), epidemic R\u2080=1 (SIR Jacobian eigenvalue \u2192 0).",
+    "Climate sensitivity has a fat-tailed log-normal distribution because it is a ratio of sums: ECS = F\u2082\u2093/|\u03bb| where \u03bb = \u03a3\u03bb\u1d62 (sum of feedbacks). When feedback components are uncertain, their sum is Gaussian in log-space (central limit theorem applied to log-normally distributed feedbacks) \u2192 log-normal ECS. The fat upper tail (P(ECS>4.5\u00b0C) > 0) means the ECS distribution is EML-2 (log-normal) with a tail that never reaches EML-\u221e probability \u2014 rare but not singular.",
+    "Dansgaard-Oeschger events are the paleoclimate analog of phase transitions: in 50 years, \u0394TNH~15K \u2014 ten times faster than forced anthropogenic warming. The mechanism is AMOC reorganization (EML-\u221e saddle-node). The Greenland ice core \u03b4\u00b9\u2078O record shows 25 DO events in the last 120 kyr, each a saw-tooth: rapid warming (EML-\u221e phase transition), slow cooling (EML-1 exponential return toward baseline). The asymmetric saw-tooth = EML-\u221e up + EML-1 down = the same asymmetry as the Asymmetry Theorem (S111): d(exp)=1 < d(inverse)=\u221e."
+  ],
+  "connections": {
+    "to_session_107": "S107 covered EBM, CO\u2082 forcing, tipping overview. S127 adds saddle-node (EML-\u221e structure), critical slowing, DO events, paleoclimate.",
+    "to_session_57": "Saddle-node bifurcation (EML-\u221e) = Ising phase transition (EML-\u221e): both have eigenvalue\u21920 at criticality.",
+    "to_session_111": "DO saw-tooth: EML-\u221e up + EML-1 down = EML Asymmetry Theorem applied to climate dynamics."
+  }
+}
