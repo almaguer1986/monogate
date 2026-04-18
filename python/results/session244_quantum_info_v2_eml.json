@@ -1,0 +1,127 @@
+{
+  "session": 244,
+  "title": "Quantum Information: Entanglement, Channels & the Three Types",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "entanglement": {
+    "model": "EntanglementEntropyV2EML",
+    "entropy_measures": {
+      "shannon": {
+        "expression": "H(p) = -\u03a3 p\u1d62 log p\u1d62",
+        "depth": 2,
+        "why": "Canonical EML-2: -\u03a3p log p = \u222bp log(1/p)d\u03bc = log-integral pair"
+      },
+      "von_neumann": {
+        "expression": "S(\u03c1) = -Tr(\u03c1 log \u03c1)",
+        "depth": 2,
+        "why": "Matrix generalization of Shannon: -Tr(\u03c1 log \u03c1) = EML-2"
+      },
+      "renyi": {
+        "expression": "S_\u03b1(\u03c1) = log Tr(\u03c1^\u03b1) / (1-\u03b1)",
+        "depth": 2,
+        "why": "log of power = EML-2; reduces to von Neumann at \u03b1\u21921"
+      },
+      "relative_entropy": {
+        "expression": "S(\u03c1||\u03c3) = Tr(\u03c1(log \u03c1 - log \u03c3))",
+        "depth": 2,
+        "why": "Difference of log traces = EML-2"
+      },
+      "universal_depth": 2,
+      "reason": "ALL entropy measures are EML-2 by Direction B theorem (log-integral equivalence)"
+    },
+    "entanglement": {
+      "entanglement_of_formation": {
+        "expression": "E_F(\u03c1) = min_{p_i,|\u03c8\u1d62\u27e9} \u03a3 p\u1d62 S(Tr_B|\u03c8\u1d62\u27e9\u27e8\u03c8\u1d62|)",
+        "depth": 2,
+        "why": "Minimization of entropy = EML-2 (entropy is EML-2; minimization is classical)",
+        "computation": "EML-\u221e for mixed states: no general algorithm"
+      },
+      "distillable_entanglement": {
+        "expression": "E_D(\u03c1) = sup {R : \u039b(\u03c1^{\u2297n}) \u2248 |\u03a6\u27e9^{\u2297Rn}}",
+        "depth": 2,
+        "why": "Rate = log of compression ratio = EML-2",
+        "computation": "EML-\u221e for general mixed states"
+      },
+      "three_types_entanglement": {
+        "TYPE_1": "Entropy computations: \u0394d=0 or \u0394d=\u00b12 (EML-2 self-maps)",
+        "TYPE_2": "Entanglement phase transitions (EML-2 \u2192 EML-\u221e at critical systems)",
+        "TYPE_3": "Entanglement theory as resource category (EML-\u221e via categorification)"
+      }
+    },
+    "area_law": {
+      "area_law": {
+        "expression": "S(A) ~ |\u2202A| for gapped systems",
+        "depth_S": 2,
+        "depth_area": 0,
+        "combined_depth": 2,
+        "why": "entropy(EML-2) = const \u00d7 area(EML-0) = EML-2 expression"
+      },
+      "critical_violation": {
+        "expression": "S(A) ~ (c/3) log(L) for 1D CFT",
+        "depth": 2,
+        "why": "Log L = EML-2; central charge c = EML-0",
+        "significance": "CFT violates area law; still EML-2 (log is the depth-2 primitive)"
+      },
+      "holographic_RT": {
+        "expression": "S(A) = Area(\u03b3_A) / (4G_N) (Ryu-Takayanagi formula)",
+        "depth": 2,
+        "significance": "Holography: entanglement = geometry = EML-2 bridge"
+      }
+    },
+    "key_insight": "All entanglement measures = EML-2; computation = EML-\u221e; area law = EML-2"
+  },
+  "channels": {
+    "model": "QuantumChannelsEML",
+    "capacity": {
+      "holevo_chi": {
+        "expression": "\u03c7 = S(\u03a3 p\u1d62\u03c1\u1d62) - \u03a3 p\u1d62 S(\u03c1\u1d62)",
+        "depth": 2,
+        "why": "Difference of entropies = EML-2"
+      },
+      "classical_capacity": {
+        "expression": "C = max_{p_i,\u03c1_i} \u03c7({p\u1d62,\u03c1\u1d62})",
+        "depth": 2,
+        "why": "Max of EML-2 = EML-2 (for smooth input set)"
+      },
+      "quantum_capacity": {
+        "expression": "Q = max_\u03c1 I_c(\u03c1, N) (coherent information)",
+        "depth": 2,
+        "why": "Coherent information = conditional entropy = EML-2",
+        "additivity": "Non-additive in general: Q \u2260 lim (1/n) Q^{(n)} in general"
+      },
+      "noisy_channel": {
+        "three_types": {
+          "TYPE_1": "Single use capacity: \u0394d=0 (EML-2 \u2192 EML-2)",
+          "TYPE_2": "Capacity formula existence for general channels: EML-\u221e (non-constructive)",
+          "TYPE_3": "Channel theory categorified: channels \u2192 \u221e-categories of quantum processes"
+        }
+      }
+    },
+    "qec": {
+      "logical_error_rate": {
+        "expression": "P_L ~ (p/p_th)^{2^k} (exponential suppression)",
+        "depth": 1,
+        "why": "EML-1: exponential suppression without log = single exp primitive"
+      },
+      "threshold_transition": {
+        "depth": "\u221e",
+        "type": "TYPE 2 Horizon: p = p_th is a phase transition (EML-\u221e)",
+        "below": "EML-1 suppression (sub-threshold: exponential decay)",
+        "above": "EML-\u221e failure (super-threshold: error accumulation)"
+      },
+      "stabilizer_codes": {
+        "syndrome_depth": 0,
+        "why": "Syndrome = bit string = EML-0",
+        "decoding_depth": 2,
+        "why_decoding": "ML decoding = probability maximization = EML-2"
+      }
+    },
+    "key_insight": "Channel capacities = EML-2; QEC threshold = EML-\u221e Horizon; P_logical = EML-1"
+  },
+  "key_theorem": "The Quantum Information Depth Ladder (S244): EML-0: syndrome bits, stabilizer checks, pure state computations. EML-1: logical error rate suppression P_L ~ exp(-(p/p_th)^k) \u2014 single exponential. EML-2: ALL entropies (Shannon, von Neumann, R\u00e9nyi, relative), ALL channel capacities, entanglement measures, area laws, Holevo bound. EML-\u221e: QEC threshold transition (phase transition = TYPE 2 Horizon), entanglement of formation for general mixed states (no algorithm), channel capacity for non-additive channels. The Three Types in quantum information: TYPE 1 (finite): entropy computations = \u0394d=0 (EML-2 self-maps). TYPE 2 (Horizon): QEC threshold = EML-\u221e phase transition; entanglement phase transitions in critical systems. TYPE 3 (Categorification): quantum channel theory \u2192 \u221e-category of quantum processes. Key insight: ALL quantum information measures are EML-2 \u2014 this confirms the Universal EML-2 Theorem across the quantum domain.",
+  "rabbit_hole_log": [
+    "ALL quantum entropies = EML-2: von Neumann, R\u00e9nyi, relative \u2014 universal EML-2 theorem confirmed",
+    "QEC threshold = TYPE 2 Horizon (phase transition); P_logical = EML-1 (below threshold)",
+    "Area law: S~|\u2202A| = EML-2; CFT violation S~(c/3)log L = still EML-2 (log is EML-2 primitive)",
+    "Channel capacities = EML-2; non-additive channels = EML-\u221e (no general formula)"
+  ]
+}
