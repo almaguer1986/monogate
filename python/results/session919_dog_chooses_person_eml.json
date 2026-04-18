@@ -1,0 +1,37 @@
+{
+  "session": 919,
+  "title": "Mathematics of a Dog Choosing Its Person",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "DogChoosesPersonEML",
+    "analysis": {
+      "object": "T640: Mathematics of a Dog Choosing Its Person depth analysis",
+      "domains": {
+        "dog_eml2": {
+          "description": "Dog operates at EML-2 (T267): measures human emotional states",
+          "depth": "EML-2",
+          "reason": "Dogs are EML-2: excellent measurement of human emotional signatures, body language, pheromones"
+        },
+        "pattern_match": {
+          "description": "Dog chooses owner: EML-2 pattern match against internal emotional template",
+          "depth": "EML-2",
+          "reason": "Dog selection is EML-2: measuring human against template of safe, bonded human signature"
+        },
+        "depth_lock": {
+          "description": "Bond: mutual depth lock; dog EML-2 measurement syncs to human EML-3 emotional oscillation",
+          "depth": "EML-3",
+          "reason": "Human-dog bond is cross-depth coupling: EML-2 dog measurement resonates with EML-3 human emotion"
+        }
+      }
+    },
+    "distribution": {
+      "EML-2": 2,
+      "EML-3": 1
+    },
+    "theorem": "T640: Mathematics of a Dog Choosing Its Person (S919)."
+  },
+  "key_theorem": "T640: Mathematics of a Dog Choosing Its Person (S919).",
+  "rabbit_hole_log": [
+    "T640: dog_eml2 depth confirmed"
+  ]
+}
