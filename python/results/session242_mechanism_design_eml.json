@@ -1,0 +1,142 @@
+{
+  "session": 242,
+  "title": "Mechanism Design & Game Theory: Auctions, Incentives & \u0394d Types",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "auctions": {
+    "model": "AuctionTheoryEML",
+    "primitives": {
+      "valuation": {
+        "expression": "v_i \u2208 [0, 1] (private value, drawn from F_i)",
+        "depth": 0,
+        "why": "Real number, drawn from known distribution = EML-0 object"
+      },
+      "bid_function": {
+        "expression": "\u03b2(v): valuation \u2192 bid",
+        "depth": 1,
+        "why": "In symmetric BNE: \u03b2(v) = v - \u222b\u2080^v F^{n-1}(t)dt / F^{n-1}(v) = exp-type"
+      },
+      "expected_revenue": {
+        "expression": "R = E[max bid] = n\u222b\u2080^1 v F^{n-1}(v) f(v) dv",
+        "depth": 2,
+        "why": "Expectation = \u222b...dF = exp+log paired = EML-2"
+      },
+      "revenue_equivalence": {
+        "statement": "All efficient auctions yield same expected revenue",
+        "depth": 2,
+        "why": "Equivalence proved via envelope theorem: \u2202/\u2202v E[revenue] = EML-2 calculation",
+        "delta_d": 0,
+        "type": "TYPE 1 \u0394d=0: revenue equivalence = EML-2 self-map"
+      }
+    },
+    "myerson": {
+      "virtual_value": {
+        "expression": "\u03c8(v) = v - (1-F(v))/f(v)",
+        "depth": 2,
+        "why": "Involves ratio of CDF and density = log-integral = EML-2"
+      },
+      "optimal_mechanism": {
+        "rule": "Allocate to argmax \u03c8(v_i); charge virtual value threshold",
+        "depth": 2,
+        "why": "Expected revenue = \u222b\u03c8(v)\u00b7x(v)dF = EML-2"
+      },
+      "existence_of_optimal": {
+        "depth": "\u221e",
+        "why": "General existence via fixed point (Kakutani) = EML-\u221e non-constructive",
+        "type": "TYPE 2 Horizon: existence is EML-\u221e; construction is EML-2"
+      }
+    },
+    "key_insight": "Auction computations = EML-2; optimal mechanism existence = EML-\u221e (Horizon)"
+  },
+  "incentives": {
+    "model": "IncentiveCompatibilityEML",
+    "vcg": {
+      "social_welfare": {
+        "expression": "W(x) = \u03a3\u1d62 v_i(x)",
+        "depth": 0,
+        "why": "Sum of valuations = linear = EML-0"
+      },
+      "vcg_transfer": {
+        "expression": "t_i(v) = \u03a3_{j\u2260i} v_j(x*(v)) - h_i(v_{-i})",
+        "depth": 2,
+        "why": "Sum over others' values, welfare-maximizing = EML-2 expectation"
+      },
+      "truthfulness_proof": {
+        "depth": 0,
+        "why": "Algebraic verification: dominant strategy = EML-0 algebraic argument"
+      },
+      "efficiency_vs_revenue": {
+        "vcg": "EML-2 transfers; EML-0 allocation; EML-0 truthfulness",
+        "myerson": "EML-2 throughout",
+        "tension": "EML-0 efficiency (VCG) vs EML-2 revenue (Myerson) = fundamental tradeoff"
+      }
+    },
+    "nash": {
+      "pure_strategy": {
+        "depth": 0,
+        "description": "Deterministic action choice = EML-0"
+      },
+      "mixed_strategy": {
+        "depth": 2,
+        "description": "Probability distribution \u03c3_i \u2208 \u0394(A_i) over actions",
+        "why": "Probability measure = EML-2 (integration over action space)"
+      },
+      "nash_existence": {
+        "depth": "\u221e",
+        "proof": "Kakutani: best-response correspondence has fixed point",
+        "type": "TYPE 2 Horizon: existence non-constructive (no efficient algorithm in general)"
+      },
+      "correlated_equilibrium": {
+        "depth": 2,
+        "description": "Joint distribution over action profiles",
+        "why": "Linear programming characterization = EML-2",
+        "note": "CE is EML-2; NE is EML-\u221e \u2014 CE is computationally easier by one level"
+      },
+      "price_of_anarchy": {
+        "depth": 2,
+        "expression": "PoA = max over equilibria of [OPT/W(NE)]",
+        "why": "Ratio of EML-0 optimum to EML-2 equilibrium welfare = EML-2"
+      }
+    },
+    "arrow": {
+      "arrow_conditions": {
+        "depth": 0,
+        "description": "Unanimity, IIA, non-dictatorship: algebraic conditions on orderings"
+      },
+      "impossibility_result": {
+        "depth": "\u221e",
+        "type": "TYPE 2 Horizon: the satisfying function does NOT exist",
+        "insight": "Arrow: EML-\u221e impossibility proved via EML-0 logical argument"
+      },
+      "gibbard_satterthwaite": {
+        "depth": "\u221e",
+        "statement": "Every strategy-proof social choice function is dictatorial",
+        "type": "TYPE 2 Horizon: no non-dictatorial strategy-proof rule = EML-\u221e impossibility"
+      }
+    },
+    "depth_catalog": {
+      "EML-0": [
+        "pure strategies",
+        "Arrow conditions",
+        "social welfare"
+      ],
+      "EML-2": [
+        "mixed strategies",
+        "correlated equilibrium",
+        "transfers",
+        "PoA"
+      ],
+      "EML-inf": [
+        "Nash existence",
+        "Arrow impossibility",
+        "Gibbard-Satterthwaite"
+      ]
+    }
+  },
+  "key_theorem": "The Game-Theoretic Depth Catalog (S242): EML-0: pure strategies, valuation integers, social welfare sums, Arrow conditions. EML-2: mixed strategies (probability measures), expected revenue, VCG transfers, correlated equilibria, price of anarchy, Myerson virtual values. EML-\u221e: Nash equilibrium existence (Kakutani), Arrow impossibility, Gibbard-Satterthwaite, optimal mechanism existence. Pattern: COMPUTATIONS are EML-2; EXISTENCE is EML-\u221e (TYPE 2 Horizon). The game-theoretic EML-\u221e objects are all impossibility/existence results \u2014 they are provable but non-constructive. This is the standard Horizon pattern: EML-\u221e via undecidability/non-constructive argument, not singularity. Correlated equilibrium is computationally easier than Nash equilibrium: CE=EML-2 (linear programming) vs NE=EML-\u221e (fixed point) \u2014 one depth level difference.",
+  "rabbit_hole_log": [
+    "Computations=EML-2, Existence=EML-\u221e: the universal game-theory pattern",
+    "CE=EML-2 vs NE=EML-\u221e: correlated equilibrium is one depth easier than Nash",
+    "Arrow impossibility = EML-\u221e proved by EML-0 logical argument: impossibility = Horizon",
+    "VCG: EML-0 allocation + EML-2 transfers = efficiency-revenue tradeoff"
+  ]
+}
