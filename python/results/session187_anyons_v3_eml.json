@@ -1,0 +1,226 @@
+{
+  "session": 187,
+  "title": "Topological Phases Deep II: Anyonic Statistics, TQC & Braiding Depth Changes",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "anyon_statistics": {
+    "model": "AnyonStatisticsEML",
+    "abelian": {
+      "0": {
+        "theta": 0,
+        "exchange_phase": "(1+0j)",
+        "n_braidings": 4,
+        "accumulated_phase": "(1+0j)",
+        "particle_type": "boson",
+        "eml_depth": 0,
+        "note": "Boson/fermion = EML-0 (\u00b11); generic anyon = EML-3 (oscillatory)"
+      },
+      "0.7854": {
+        "theta": 0.7854,
+        "exchange_phase": "(0.7071067811865476+0.7071067811865476j)",
+        "n_braidings": 4,
+        "accumulated_phase": "(-1+1.2246467991473532e-16j)",
+        "particle_type": "anyon",
+        "eml_depth": 3,
+        "note": "Boson/fermion = EML-0 (\u00b11); generic anyon = EML-3 (oscillatory)"
+      },
+      "1.5708": {
+        "theta": 1.5708,
+        "exchange_phase": "(6.123233995736766e-17+1j)",
+        "n_braidings": 4,
+        "accumulated_phase": "(1-2.4492935982947064e-16j)",
+        "particle_type": "anyon",
+        "eml_depth": 3,
+        "note": "Boson/fermion = EML-0 (\u00b11); generic anyon = EML-3 (oscillatory)"
+      },
+      "2.0944": {
+        "theta": 2.0944,
+        "exchange_phase": "(-0.4999999999999998+0.8660254037844387j)",
+        "n_braidings": 4,
+        "accumulated_phase": "(-0.4999999999999992+0.8660254037844392j)",
+        "particle_type": "anyon",
+        "eml_depth": 3,
+        "note": "Boson/fermion = EML-0 (\u00b11); generic anyon = EML-3 (oscillatory)"
+      },
+      "3.1416": {
+        "theta": 3.1416,
+        "exchange_phase": "(-1+1.2246467991473532e-16j)",
+        "n_braidings": 4,
+        "accumulated_phase": "(1-4.898587196589413e-16j)",
+        "particle_type": "fermion",
+        "eml_depth": 0,
+        "note": "Boson/fermion = EML-0 (\u00b11); generic anyon = EML-3 (oscillatory)"
+      }
+    },
+    "non_abelian": {
+      "fibonacci_R_plus": "(-0.8090169943749473+0.5877852522924732j)",
+      "fibonacci_R_minus": "(-0.30901699437494734-0.9510565162951536j)",
+      "f_matrix": [
+        [
+          0.61803,
+          0.78615
+        ],
+        [
+          0.78615,
+          -0.61803
+        ]
+      ],
+      "eml_depth_R": 3,
+      "eml_depth_F": 2,
+      "dense_limit": "EML-\u221e (SU(2) approximation)",
+      "n_braidings_for_dense": 50,
+      "note": "Each braid = EML-3; infinite sequence = EML-\u221e; dense limit bridges 3 \u2192 \u221e"
+    },
+    "fusion_rules": {
+      "fibonacci_fusion": "\u03c4 \u00d7 \u03c4 = 1 + \u03c4",
+      "eml_depth_fusion_rule": 0,
+      "eml_depth_N_multiplicity": 0,
+      "f_move_entry": 0.61803,
+      "eml_depth_f_move": 2,
+      "r_move_phase": 2.5133,
+      "eml_depth_r_move": 3,
+      "pentagon_equation": "EML-0 (consistency condition)",
+      "hexagon_equation": "EML-0 (braiding consistency)"
+    },
+    "eml_depth": {
+      "boson_fermion": 0,
+      "abelian_anyon": 3,
+      "r_matrix": 3,
+      "f_matrix": 2,
+      "dense_limit": "\u221e",
+      "fusion_rules": 0
+    },
+    "key_insight": "Bosons=EML-0; anyons=EML-3; dense braid sequence\u2192EML-\u221e"
+  },
+  "braiding_transitions": {
+    "model": "BraidingDepthTransitions",
+    "braid_depth": {
+      "1": {
+        "n_braids": 1,
+        "epsilon_approx": 0.904837,
+        "approx_quality": 0.095163,
+        "eml_depth": 3,
+        "eml_depth_convergence": 1,
+        "note": "Finite braids = EML-3; infinite = EML-\u221e; convergence exp(-cn) = EML-1"
+      },
+      "5": {
+        "n_braids": 5,
+        "epsilon_approx": 0.606531,
+        "approx_quality": 0.393469,
+        "eml_depth": 3,
+        "eml_depth_convergence": 1,
+        "note": "Finite braids = EML-3; infinite = EML-\u221e; convergence exp(-cn) = EML-1"
+      },
+      "10": {
+        "n_braids": 10,
+        "epsilon_approx": 0.367879,
+        "approx_quality": 0.632121,
+        "eml_depth": 3,
+        "eml_depth_convergence": 1,
+        "note": "Finite braids = EML-3; infinite = EML-\u221e; convergence exp(-cn) = EML-1"
+      },
+      "50": {
+        "n_braids": 50,
+        "epsilon_approx": 0.006738,
+        "approx_quality": 0.993262,
+        "eml_depth": 3,
+        "eml_depth_convergence": 1,
+        "note": "Finite braids = EML-3; infinite = EML-\u221e; convergence exp(-cn) = EML-1"
+      },
+      "100": {
+        "n_braids": 100,
+        "epsilon_approx": 4.5e-05,
+        "approx_quality": 0.999955,
+        "eml_depth": 3,
+        "eml_depth_convergence": 1,
+        "note": "Finite braids = EML-3; infinite = EML-\u221e; convergence exp(-cn) = EML-1"
+      }
+    },
+    "topological_protection": {
+      "gap_Delta": 1.0,
+      "error_rates": {
+        "0.01": 0.0,
+        "0.1": 4.5e-05,
+        "0.5": 0.135335,
+        "1.0": 0.367879
+      },
+      "eml_depth_protection": 1,
+      "eml_depth_zero_T": 0,
+      "eml_depth_T_c": "\u221e",
+      "insight": "Protection = EML-1 error; T\u21920 gives EML-0 invariance; T_c = EML-\u221e"
+    },
+    "readout_asymmetry": {
+      "braiding_depth": 3,
+      "measurement_outcome_depth": 0,
+      "computation_readout_depth": "\u221e",
+      "asymmetry_delta": "\u221e",
+      "analogy": "Same as stochastic: braid=EML-3, readout=EML-\u221e (Asymmetry Theorem)",
+      "note": "TQC readout asymmetry = stochastic inverse problem asymmetry"
+    },
+    "eml_depth": {
+      "single_braid": 3,
+      "convergence": 1,
+      "infinite_braids": "\u221e",
+      "protection": 1,
+      "zero_T": 0,
+      "readout": "\u221e"
+    },
+    "key_insight": "Braids=EML-3; convergence=EML-1; readout=EML-\u221e (Asymmetry Theorem)"
+  },
+  "tqc_stack": {
+    "model": "TopologicalQuantumComputingEML",
+    "tqc_depth_stack": {
+      "layer_0_invariant": {
+        "eml": 0,
+        "example": "Chern number, Z\u2082"
+      },
+      "layer_1_creation": {
+        "eml": 1,
+        "example": "pair creation ~ exp(-\u0394/kT)"
+      },
+      "layer_2_braiding": {
+        "eml": 3,
+        "example": "R-matrix exp(4\u03c0i/5)"
+      },
+      "layer_2_fusion": {
+        "eml": 2,
+        "example": "F-matrix (\u03c6-based)"
+      },
+      "layer_3_computation": {
+        "eml": "\u221e",
+        "example": "universal SU(2) approx"
+      },
+      "layer_4_outcome": {
+        "eml": 0,
+        "example": "measurement = integer"
+      },
+      "layer_4_readout": {
+        "eml": "\u221e",
+        "example": "what-was-computed = EML-\u221e"
+      },
+      "stack_summary": "EML-0 \u2192 EML-1 \u2192 EML-2 \u2192 EML-3 \u2192 EML-\u221e \u2192 EML-0/\u221e",
+      "unique": "Only system that traverses all EML depths in operation"
+    },
+    "key_insight": "TQC traverses full EML ladder: 0\u21921\u21922\u21923\u2192\u221e\u21920 (unique system)"
+  },
+  "eml_depth_summary": {
+    "EML-0": "Topological invariants, fusion multiplicities, boson/fermion \u00b11, outcome",
+    "EML-1": "Quasiparticle creation exp(-\u0394/kT), protection decay, braid convergence",
+    "EML-2": "F-matrix (golden ratio \u03c6), Berry curvature",
+    "EML-3": "R-matrix exp(4\u03c0i/5), abelian anyon phase, individual braids",
+    "EML-\u221e": "Dense braid limit (universal), topological transition, readout computation"
+  },
+  "key_theorem": "The EML TQC Full Stack Theorem: Topological quantum computation is the unique physical system that traverses the complete EML depth ladder in operation: EML-0 (invariant) \u2192 EML-1 (creation) \u2192 EML-2 (fusion) \u2192 EML-3 (braid) \u2192 EML-\u221e (compute) \u2192 EML-0 (outcome). The Asymmetry Theorem applies: braiding = EML-3; reading out computation = EML-\u221e. This is the topological instance of the universal forward/inverse asymmetry. Bosons/fermions = EML-0 (trivial \u00b11); generic anyons = EML-3 (oscillatory). The infinite braid sequence limit = EML-\u221e: each finite approximation is EML-3; the limit itself is EML-\u221e (universal \u2014 simulates all unitaries). Error correction: exp(-\u0394/kT) = EML-1; at T\u21920 = EML-0 (perfect topological protection).",
+  "rabbit_hole_log": [
+    "TQC traverses ALL EML depths: only physical system with this property",
+    "Braid convergence = EML-1: exp(-cn) \u2014 same depth class as all ground states!",
+    "Dense SU(2) = EML-\u221e: infinite composition of EML-3 gates \u2192 EML-\u221e simulation power",
+    "Readout = EML-\u221e: same asymmetry as stochastic (path = EML-\u221e, outcome = EML-0)",
+    "F-matrix = EML-2: golden ratio \u03c6 \u2014 same depth as Fisher info, running coupling",
+    "Boson/fermion = EML-0: same depth as topological invariants (Chern, Z\u2082)"
+  ],
+  "connections": {
+    "S177_anyons": "S177 established F=EML-2, R=EML-3; S187 adds full stack + convergence",
+    "S186_stoch": "Readout asymmetry = stochastic inverse: \u0394d=\u221e in both systems",
+    "S185_qft": "RG path \u221e\u21922\u21921; TQC 0\u21921\u21922\u21923\u2192\u221e\u21920: both trace multi-strata trajectories"
+  }
+}
