@@ -1,0 +1,72 @@
+{
+  "session": 216,
+  "title": "Information Geometry & Statistics Attack: \u0394d=2 Confirmed Universal",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "divergences": {
+    "model": "DivergenceDeltaDEML",
+    "f_divergences": {
+      "kl_depth": 2,
+      "kl": 0.0823,
+      "tv_depth": 0,
+      "tv": 0.2,
+      "hellinger_depth": 2,
+      "hellinger_sq": 0.0422,
+      "chi_sq_depth": 2,
+      "chi_sq": 0.16,
+      "alpha_divergence_depth": 2,
+      "delta_d_from_param_to_divergence": 2,
+      "note": "f-divergences from \u03b8(EML-0) = \u0394d=2; TV from densities = EML-0 (special case)"
+    },
+    "fisher": {
+      "theta": 0.5,
+      "fisher_info": 4.0,
+      "cramer_rao": 0.25,
+      "theta_depth": 0,
+      "log_density_depth": 2,
+      "fisher_depth": 2,
+      "delta_d_theta_to_fisher": 2,
+      "measure_introduced": "Probability measure P_\u03b8 in expectation E_\u03b8[\u00b7]",
+      "conjecture_check": "YES \u2014 E_\u03b8[\u00b7] introduces measure P_\u03b8",
+      "note": "Fisher info: \u03b8(EML-0) \u2192 I(\u03b8)(EML-2) = \u0394d=2; E_\u03b8 introduces measure P_\u03b8"
+    },
+    "key_insight": "All f-divergences from \u03b8 = \u0394d=2 (except TV from densities = EML-0); Fisher = \u0394d=2"
+  },
+  "exponential_family": {
+    "model": "ExponentialFamilyDeltaDEML",
+    "natural_params": {
+      "eta": 1.0,
+      "log_partition": 0.5,
+      "mean_param": 1.0,
+      "fisher_info": 1.0,
+      "eta_depth": 0,
+      "log_partition_depth": 2,
+      "mean_depth": 2,
+      "fisher_depth": 2,
+      "delta_d_eta_to_A": 2,
+      "measure_introduced": "Base measure h(x)d\u03bc(x) in \u222bh(x)exp(\u03b7\u00b7T)d\u03bc",
+      "conjecture_check": "YES \u2014 base measure \u03bc is introduced in log-partition integral",
+      "note": "\u03b7(EML-0) \u2192 A(\u03b7)(EML-2) = \u0394d=2; base measure \u03bc is the \u0394d=2 engine"
+    },
+    "legendre_duality": {
+      "eta": 1.5,
+      "A_eta": 1.125,
+      "mu": 1.5,
+      "A_star": 1.125,
+      "A_depth": 2,
+      "A_star_depth": 2,
+      "delta_d_legendre": 0,
+      "note": "Legendre duality: EML-2 \u2194 EML-2 = \u0394d=0 (self-map); information geometry self-dual"
+    },
+    "key_insight": "Exp family: \u03b7(0)\u2192A(\u03b7)(2)=\u0394d=2; Legendre duality: EML-2\u2194EML-2=\u0394d=0"
+  },
+  "eml_depth_summary": {
+    "EML-0": "Natural parameter \u03b7, TV distance (from densities)",
+    "EML-2": "All f-divergences from \u03b8, Fisher info, log-partition A(\u03b7), mean param, Legendre dual"
+  },
+  "key_theorem": "The EML Information Geometry \u0394d=2 Theorem (S216): In information geometry, the canonical \u0394d=2 operation is: natural parameter \u03b7 (EML-0) \u2192 log-partition A(\u03b7) (EML-2). The base measure d\u03bc in A(\u03b7) = log \u222b h(x) exp(\u03b7\u00b7T)d\u03bc is the \u0394d=2 engine. Fisher information = \u0394d=2 from \u03b8 (via E_\u03b8[\u00b7] measure). ALL f-divergences from \u03b8 = \u0394d=2 (via probability measure P_\u03b8). Legendre duality A \u2194 A* = \u0394d=0 (EML-2 self-duality of information geometry). Unified: information geometry is the EML-2 stratum because it IS measure-based statistics.",
+  "rabbit_hole_log": [
+    "Log-partition A(\u03b7): the base measure \u03bc in \u222bh(x)exp(\u03b7\u00b7T)d\u03bc IS the \u0394d=2 engine",
+    "Legendre duality = \u0394d=0: information geometry is self-dual within EML-2",
+    "TV distance from densities = EML-0: the only divergence that escapes EML-2 (no log)"
+  ]
+}
