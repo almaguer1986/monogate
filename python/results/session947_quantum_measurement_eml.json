@@ -1,0 +1,43 @@
+{
+  "session": 947,
+  "title": "Quantum Measurement and Wavefunction Collapse",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "QuantumMeasurementEML",
+    "analysis": {
+      "object": "T668: Quantum Measurement and Wavefunction Collapse depth analysis",
+      "domains": {
+        "wavefunction_eml3": {
+          "description": "Wavefunction: EML-3 oscillatory probability amplitude (complex oscillatory function)",
+          "depth": "EML-3",
+          "reason": "Wavefunction is EML-3: complex-valued oscillatory function on configuration space"
+        },
+        "collapse_eml2": {
+          "description": "Collapse: EML-3 -> EML-2 depth reduction; definite outcome from probability distribution",
+          "depth": "EML-2",
+          "reason": "Measurement collapse is EML-3->EML-2: oscillatory probability -> definite measurement value"
+        },
+        "decoherence": {
+          "description": "Decoherence: EML-3 quantum superposition decays to EML-2 classical mixture via environment",
+          "depth": "EML-2",
+          "reason": "Decoherence is EML-3->EML-2: environment collapses quantum oscillation into classical probability"
+        },
+        "observer_emlinf": {
+          "description": "Observer role: EML-inf (T784); conscious observer may be required for true collapse",
+          "depth": "EML-inf",
+          "reason": "Observer is EML-inf: T784 confirmed; whether EML-2 machine observer suffices is open"
+        }
+      }
+    },
+    "distribution": {
+      "EML-3": 1,
+      "EML-2": 2,
+      "EML-inf": 1
+    },
+    "theorem": "T668: Quantum Measurement and Wavefunction Collapse (S947)."
+  },
+  "key_theorem": "T668: Quantum Measurement and Wavefunction Collapse (S947).",
+  "rabbit_hole_log": [
+    "T668: wavefunction_eml3 depth confirmed"
+  ]
+}
