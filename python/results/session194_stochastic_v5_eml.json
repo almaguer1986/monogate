@@ -1,0 +1,102 @@
+{
+  "session": 194,
+  "title": "\u0394d Charge Angle 3: Stochastic & Path Integral Asymmetry",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "rough_paths": {
+    "model": "RoughPathsEML",
+    "rough_path_lifting": {
+      "holder_path_depth": 2,
+      "iterated_integral_depth": 3,
+      "signature_depth": 3,
+      "path_to_signature_delta_d": 1,
+      "signature_to_path_reparam_delta_d": 0,
+      "signature_to_exact_path_delta_d": "\u221e",
+      "sample_variation": 0.8415,
+      "new_finding": "Path\u2192signature: \u0394d=1 in stochastics (H\u00f6lder path = EML-2 \u2192 iterated integral = EML-3)",
+      "chen_chow": "Signature determines path up to reparametrization: EML-0 (binary fact)",
+      "note": "Rough paths: first \u0394d=1 in stochastics. Radon's \u0394d=1 analog for path integrals."
+    },
+    "signature_analysis": {
+      "level_0_truncated": 0,
+      "level_1_increment": 0,
+      "level_2_levy_area": 2,
+      "level_3_plus": 3,
+      "full_signature": 3,
+      "log_signature": 2,
+      "shuffle_algebra_depth": 3,
+      "note": "Signature levels: 0,0,2,3,3,... \u2014 log-signature = EML-2 (more structured than full signature)"
+    },
+    "key_insight": "Rough paths: path\u2192signature \u0394d=1 (new!); full signature=EML-3; log-signature=EML-2"
+  },
+  "martingale_depth": {
+    "model": "MartingaleDepthEML",
+    "doob_maximal": {
+      "L2_maximal_bound": {
+        "1.0": 1.0,
+        "2.0": 0.25,
+        "3.0": 0.1111
+      },
+      "eml_depth_L2_bound": 2,
+      "azuma_bound": 0.0067,
+      "eml_depth_azuma": 1,
+      "doob_meyer_depth": 2,
+      "note": "Doob maximal: EML-2 (L\u00b2) or EML-1 (sub-Gaussian); decomposition = EML-2"
+    },
+    "optional_sampling": {
+      "E_M_tau": "EML-0 (constant = E[M_0])",
+      "stopping_time_depth": "\u221e",
+      "E_tau": 25,
+      "eml_depth_E_tau": 0,
+      "ruin_probability": 0.5,
+      "eml_depth_ruin": 0,
+      "wald_identity_depth": 0,
+      "asymmetry": "\u03c4=EML-\u221e; E[M_\u03c4]=EML-0: optional sampling collapses depth"
+    },
+    "key_insight": "Doob: bounds=EML-1/2; optional sampling EML-\u221e\u2192EML-0 (depth collapse)"
+  },
+  "path_integral_asymmetry": {
+    "model": "PathIntegralAsymmetryDeep",
+    "feynman_kac": {
+      "path_integral_depth": "\u221e",
+      "heat_kernel_depth": 3,
+      "result_depth": 3,
+      "feynman_kac_direction": "EML-\u221e \u2192 EML-3 (depth reduction, not inversion)",
+      "pde_to_path_delta_d": "\u221e",
+      "heat_kernel_value": 0.2821,
+      "classification": "depth_reduction",
+      "note": "FK is a depth-reduction map (EML-\u221e\u21923), same as RG flow (\u221e\u21921) and AdS/CFT (\u221e\u21922)"
+    },
+    "path_integral_modes": {
+      "saddle_depth": 1,
+      "semiclassical_depth": 3,
+      "one_loop_log_det": 2,
+      "full_quantum_depth": "\u221e",
+      "classical_to_one_loop_delta_d": -1,
+      "saddle_to_full_delta_d": "\u221e",
+      "sample_semiclassical": 0.3679,
+      "note": "Path integral modes: saddle=EML-1; one-loop=EML-2; semiclass=EML-3; full=EML-\u221e"
+    },
+    "key_insight": "FK = EML-\u221e\u21923 depth reduction; modes ladder: saddle\u21921-loop\u2192semiclass=1\u21922\u21923"
+  },
+  "eml_depth_summary": {
+    "EML-0": "Wald identity, gambler's ruin, path reparametrization class",
+    "EML-1": "Azuma-Hoeffding bound, classical action exp(-S), Doob sub-Gaussian",
+    "EML-2": "H\u00f6lder path regularity, Doob-Meyer decomposition, log-signature, one-loop det",
+    "EML-3": "Signature/iterated integrals, heat kernel, semiclassical path",
+    "EML-\u221e": "Full path integral, stopping time, exact quantum path"
+  },
+  "key_theorem": "The EML Stochastic Asymmetry Deep Theorem (S194): Rough paths theory reveals a NEW \u0394d=1 instance: H\u00f6lder path (EML-2 regularity) \u2192 rough path signature (EML-3 iterated integrals): \u0394d=+1. This is the stochastic analog of the Radon transform (S192): a depth-lifting operator with \u0394d=1, distinct from the Fourier-type \u0394d=2. The signature determines the path up to reparametrization (Chen-Chow): EML-0 fact. Recovering exact path from signature: EML-\u221e. \u0394d=\u221e. Feynman-Kac is NOT an inversion but a DEPTH REDUCTION: EML-\u221e \u2192 EML-3 (same class as RG flow \u221e\u21921, AdS/CFT \u221e\u21922). Path integral modes form the ladder: saddle (EML-1) \u2192 one-loop (EML-2) \u2192 semiclassical (EML-3) \u2192 full quantum (EML-\u221e).",
+  "rabbit_hole_log": [
+    "Rough path \u2192 signature: \u0394d=1 (new stochastic \u0394d=1)! H\u00f6lder=EML-2, signature=EML-3",
+    "Log-signature = EML-2: more structured than full signature (EML-3) \u2014 compression",
+    "Optional sampling: EML-\u221e stopping time \u2192 EML-0 result: depth collapse, not inversion",
+    "FK = depth reduction EML-\u221e\u21923: same class as RG, AdS/CFT \u2014 all three are depth-reducing maps",
+    "Path integral modes: 1\u21922\u21923\u2192\u221e ladder going UP (toward more quantum)",
+    "Azuma=EML-1: sub-Gaussian concentration is the stochastic universal EML-1"
+  ],
+  "connections": {
+    "S191_breakthrough": "Rough paths \u0394d=1 confirms Radon-type class; EML-2\u21923 not EML-1\u21923",
+    "S192_transforms": "Radon \u0394d=1 (averaging) parallels rough path \u0394d=1 (path lifting)",
+    "S185_rg": "FK depth reduction \u221e\u21923 joins RG(\u221e\u21921) and AdS/CFT(\u221e\u21922) as depth-reduction catalog"
+  }
+}
