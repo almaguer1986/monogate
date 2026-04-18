@@ -1,0 +1,101 @@
+{
+  "session": 240,
+  "title": "Neural Scaling & Emergence: Chinchilla, Grokking & the \u0394d=2 Lens",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "scaling_laws": {
+    "model": "ChinchillaScalingEML",
+    "chinchilla": {
+      "loss_formula": "L(N,D) = E + A\u00b7N^{-\u03b1} + B\u00b7D^{-\u03b2}",
+      "depth": 2,
+      "why_eml2": "Power law = exp(\u2212\u03b1\u00b7log N): each term = EML-2 by log-integral equivalence",
+      "chinchilla_alpha": 0.34,
+      "chinchilla_beta": 0.28,
+      "irreducible_loss": 1.69,
+      "optimal_compute": {
+        "rule": "N* \u221d C^{0.5}, D* \u221d C^{0.5} (equal parameter and token budget)",
+        "depth": 2,
+        "why": "Power law of compute = EML-2"
+      },
+      "delta_d_from_theory": {
+        "true_data_distribution": "EML-\u221e (unknown, non-constructive)",
+        "empirical_scaling_law": "EML-2 (power law fit = Horizon shadow)",
+        "delta_d": "-\u221e (TYPE 2 Horizon shadow at EML-2)"
+      }
+    },
+    "kaplan": {
+      "kaplan_alpha_N": -0.076,
+      "kaplan_alpha_D": -0.095,
+      "depth": 2,
+      "unified_claim": "ALL neural scaling laws are EML-2: power law = log-log = exp+log paired. This is the universal fingerprint of \u0394d=2 (Direction B theorem). The true generalization process (EML-\u221e) has an EML-2 shadow: the scaling law."
+    },
+    "key_insight": "All neural scaling laws = EML-2: power law = Horizon shadow of true learning dynamics"
+  },
+  "emergence_grokking": {
+    "model": "EmergenceGrokkingEML",
+    "emergence": {
+      "below_threshold": {
+        "depth": 2,
+        "description": "Loss follows smooth power law; capabilities absent or EML-0 level"
+      },
+      "at_threshold": {
+        "depth": "\u221e",
+        "description": "Phase transition: discontinuous capability jump",
+        "type": "TYPE 2 Horizon crossing (EML-2 \u2192 EML-\u221e via phase transition)"
+      },
+      "above_threshold": {
+        "depth": "2 or 3 (capability-dependent)",
+        "description": "New capability has its own EML depth",
+        "example": "Chain-of-thought = EML-2 (reasoning chain = Markov process); formal proof = EML-3 (symbolic oscillatory)"
+      },
+      "is_emergence_controlled_d2": {
+        "answer": "NO \u2014 emergence is TYPE 2 Horizon, not a controlled \u0394d=2 inversion",
+        "reason": "\u0394d=2 inversion (Fourier, E[\u00b7]) is SMOOTH and predictable. Emergence is DISCONTINUOUS: no warning from scaling law. The sharp transition = Horizon crossing, not an inversion. Exception: if emergence is predicted by loss curvature changes (EML-2 precursor), then it may be a soft Horizon where EML-2 precedes the EML-\u221e jump."
+      }
+    },
+    "grokking": {
+      "memorization_phase": {
+        "depth": 1,
+        "description": "Network memorizes training set via exponential memorization map",
+        "loss": "Training loss \u2192 0, test loss stays high",
+        "why_eml1": "Memorization = lookup table = exp(\u2212loss\u00b7scale): EML-1 (no log normalization)"
+      },
+      "grokking_transition": {
+        "delta_d": 1,
+        "type": "TYPE 1 finite depth change: EML-1 \u2192 EML-2",
+        "description": "Sudden generalization: model finds the true distribution (adds log-normalization)",
+        "why_d1": "Adding the normalization/log step = one primitive added = \u0394d=+1"
+      },
+      "generalization_phase": {
+        "depth": 2,
+        "description": "Model computes true posterior/marginal distribution",
+        "loss": "Both train and test loss low",
+        "why_eml2": "Generalization = statistical estimation = exp+log paired = EML-2"
+      },
+      "eml_insight": "Grokking = delayed EML-1 \u2192 EML-2 transition. The delay = the time it takes the network to find the log-normalization partner. Weight decay accelerates grokking because it penalizes the EML-1 memorization regime, forcing the network to find the EML-2 solution faster. This is a TYPE 1 controlled \u0394d=+1 transition, NOT a Horizon crossing."
+    },
+    "double_descent": {
+      "classical_u_curve": {
+        "depth": 2,
+        "description": "Bias-variance tradeoff: EML-2 (variance = integration over noise)"
+      },
+      "interpolation_threshold": {
+        "depth": "\u221e",
+        "description": "At N=n (parameters=data points): benign overfitting regime begins",
+        "type": "TYPE 2 Horizon: smooth EML-2 \u2192 EML-\u221e interpolation"
+      },
+      "second_descent": {
+        "depth": 2,
+        "description": "Beyond interpolation: loss decreases again to EML-2 regime"
+      },
+      "pattern": "EML-2 \u2192 EML-\u221e (interpolation threshold) \u2192 EML-2 (overparameterized generalization)"
+    },
+    "key_insight": "Three distinct transitions in neural networks: (1) Emergence: TYPE 2 Horizon (EML-2\u2192EML-\u221e, discontinuous). (2) Grokking: TYPE 1 \u0394d=+1 (EML-1\u2192EML-2, controlled). (3) Double descent: EML-2\u2192EML-\u221e\u2192EML-2 (Horizon crossing then return)."
+  },
+  "key_theorem": "The \u0394d=2 Lens Applied to Neural Scaling (S240): ALL neural scaling laws (Kaplan, Chinchilla) are EML-2: power laws = exp(\u2212\u03b1\u00b7log N) = log-integral equivalence (Direction B). Emergence thresholds are NOT controlled \u0394d=2 inversions \u2014 they are TYPE 2 Horizon crossings: discontinuous jumps from EML-2 (scaling law regime) to EML-\u221e (capability phase transition). Grokking IS a controlled transition: TYPE 1 \u0394d=+1 (EML-1 memorization \u2192 EML-2 generalization). The key distinction: Emergence = TYPE 2 Horizon (discontinuous, unpredictable from EML-2 scaling). Grokking = TYPE 1 finite (controlled, predictable from the EML-1/EML-2 boundary). Double descent: EML-2 \u2192 EML-\u221e \u2192 EML-2 (Horizon crossed and returned).",
+  "rabbit_hole_log": [
+    "All scaling laws = EML-2 power laws: universal Horizon shadow of true learning dynamics",
+    "Emergence = TYPE 2 Horizon crossing (EML-2\u2192EML-\u221e): NOT a controlled \u0394d=2 inversion",
+    "Grokking = TYPE 1 \u0394d=+1 (EML-1 memorization \u2192 EML-2 generalization): delayed but controlled",
+    "Double descent: EML-2 \u2192 EML-\u221e \u2192 EML-2 (brief Horizon excursion)"
+  ]
+}
