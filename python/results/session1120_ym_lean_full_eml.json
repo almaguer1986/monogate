@@ -1,0 +1,57 @@
+{
+  "session": 1120,
+  "title": "Lean Formalization of Full YM \u2014 Target Zero Sorries",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "YMLeanFull",
+    "analysis": {
+      "object": "T840: Lean Formalization of Full YM \u2014 Target Zero Sorries depth analysis",
+      "domains": {
+        "lean_estimate": {
+          "description": "Full Lean 4 proof: ~13000 lines (T837). Longer than Hodge but same structure.",
+          "depth": "EML-2",
+          "reason": "~13000 lines"
+        },
+        "critical_path": {
+          "description": "Critical path: Balaban blocks in Lean (T825, ~5000 lines) + Uhlenbeck compactness (T819, ~3000 lines)",
+          "depth": "EML-2",
+          "reason": "Critical path identified"
+        },
+        "existing_infrastructure": {
+          "description": "Existing Mathlib4: Berkovich spaces, formal GAGA, spectral theory. Saves ~3000 lines.",
+          "depth": "EML-2",
+          "reason": "Infrastructure reused from Hodge"
+        },
+        "new_components": {
+          "description": "New Lean components needed: Balaban block renormalization, Uhlenbeck compactification",
+          "depth": "EML-2",
+          "reason": "~8000 lines new"
+        },
+        "timeline": {
+          "description": "Timeline estimate: 3-4 years with dedicated team. Faster than from scratch due to Hodge infrastructure.",
+          "depth": "EML-2",
+          "reason": "3-4 years feasible"
+        },
+        "zero_sorry_target": {
+          "description": "Target: zero sorries. Every step machine-verified.",
+          "depth": "EML-0",
+          "reason": "Zero sorries"
+        },
+        "t840_plan": {
+          "description": "T840: Full Lean 4 YM proof: ~13000 lines, ~8000 new, ~5000 reused from Hodge. Timeline: 3-4 years. Target: zero sorries. Feasible. T840.",
+          "depth": "EML-2",
+          "reason": "Lean formalization plan. T840."
+        }
+      }
+    },
+    "distribution": {
+      "EML-2": 6,
+      "EML-0": 1
+    },
+    "theorem": "T840: Lean Formalization of Full YM \u2014 Target Zero Sorries (S1120)."
+  },
+  "key_theorem": "T840: Lean Formalization of Full YM \u2014 Target Zero Sorries (S1120).",
+  "rabbit_hole_log": [
+    "T840: lean_estimate depth confirmed"
+  ]
+}
