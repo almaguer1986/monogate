@@ -1,0 +1,69 @@
+{
+  "session": 517,
+  "title": "Poetry & Meter",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "PoetryMeterEML",
+    "analysis": {
+      "object": "T238: Poetry and meter depth analysis",
+      "domains": {
+        "syllable_counting": {
+          "description": "Syllable count per line: 10 in iambic pentameter",
+          "depth": "EML-0",
+          "reason": "Integer counting of discrete units"
+        },
+        "stress_pattern": {
+          "description": "da-DUM da-DUM da-DUM pattern \u2014 iambic",
+          "depth": "EML-3",
+          "reason": "Periodic stress oscillation = sin(2\u03c0\u00b7position/foot) = EML-3"
+        },
+        "rhyme_scheme": {
+          "description": "ABAB CDCD EFEF GG \u2014 rhyme structure",
+          "depth": "EML-3",
+          "reason": "Rhyme = phonological oscillation \u2014 recurring sound patterns"
+        },
+        "metaphor": {
+          "description": "Mapping one domain to another: 'love is a rose'",
+          "depth": "EML-2",
+          "reason": "Metaphor = measurement across domains \u2014 EML-2 cross-domain comparison"
+        },
+        "free_verse": {
+          "description": "No fixed meter \u2014 unconstrained line length",
+          "depth": "EML-3",
+          "reason": "Freed oscillation: still EML-3 but without periodic constraint"
+        },
+        "sonnet_structure": {
+          "description": "14 lines, volta at line 9 or 13",
+          "depth": "EML-0",
+          "reason": "Fixed line count \u2014 discrete structure"
+        },
+        "alliteration": {
+          "description": "Repeated initial consonants: 'she sells seashells'",
+          "depth": "EML-3",
+          "reason": "Periodic phoneme recurrence = oscillation"
+        },
+        "haiku": {
+          "description": "5-7-5 syllable structure",
+          "depth": "EML-0",
+          "reason": "Fixed integer syllable counts"
+        }
+      },
+      "verse_evolution_question": "Is the evolution from formal to free verse a depth reduction? Answer: NO \u2014 it is a phase transition within EML-3. Formal verse: constrained EML-3 (periodic with fixed period). Free verse: unconstrained EML-3 (aperiodic oscillation). Depth stays at 3; the constraint is removed. This is a TYPE1 change within EML-3 \u2014 analogous to atonality in music. Metaphor IS EML-2: it creates a logarithmic measurement of similarity across domains."
+    },
+    "distribution": {
+      "EML-0": 3,
+      "EML-2": 1,
+      "EML-3": 4
+    },
+    "verdict": "Meter/rhyme: EML-3. Syllable count: EML-0. Metaphor: EML-2.",
+    "theorem": "T238: Poetry Depth \u2014 meter is EML-3; formal\u2192free = TYPE1 within EML-3"
+  },
+  "key_theorem": "T238: Poetry Depth (S517). Meter/stress patterns: EML-3 (periodic phonological oscillation). Syllable counting: EML-0. Metaphor: EML-2 (cross-domain measurement). Formal\u2192free verse = TYPE1 within EML-3, not depth reduction. Rhyme scheme = EML-3 oscillation with period = stanza length.",
+  "rabbit_hole_log": [
+    "Iambic stress: da-DUM da-DUM = periodic oscillation \u2192 EML-3",
+    "Syllable count: integer count \u2192 EML-0",
+    "Metaphor: cross-domain measurement \u2192 EML-2",
+    "Free verse: unconstrained EML-3 oscillation",
+    "T238: Formal\u2192free = TYPE1 within EML-3"
+  ]
+}
