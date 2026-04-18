@@ -1,0 +1,37 @@
+{
+  "session": 831,
+  "title": "Euler vs Navier-Stokes Depth Comparison",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "NSEulerVsNSEML",
+    "analysis": {
+      "object": "T552: Euler vs Navier-Stokes Depth Comparison depth analysis",
+      "domains": {
+        "euler_blowup": {
+          "description": "Euler (inviscid) has known blow-up in 3D; no EML-2 damping term",
+          "depth": "EML-inf",
+          "reason": "Euler is EML-inf prone: no depth reducer; categorification unchecked"
+        },
+        "ns_viscosity": {
+          "description": "NS has viscosity nu*Laplacian(u); this is EML-3->EML-2 depth reducer",
+          "depth": "EML-2",
+          "reason": "Viscous term is explicit EML-3 to EML-2 depth reduction in PDE"
+        },
+        "depth_comparison": {
+          "description": "Euler >= EML-inf; NS may be EML-3 (regular) or EML-inf (blow-up) depending on Re",
+          "depth": "EML-inf",
+          "reason": "Viscosity shifts NS toward EML-3; but at high Re, EML-inf may still emerge"
+        }
+      }
+    },
+    "distribution": {
+      "EML-inf": 2,
+      "EML-2": 1
+    },
+    "theorem": "T552: Euler vs Navier-Stokes Depth Comparison (S831)."
+  },
+  "key_theorem": "T552: Euler vs Navier-Stokes Depth Comparison (S831).",
+  "rabbit_hole_log": [
+    "T552: euler_blowup depth confirmed"
+  ]
+}
