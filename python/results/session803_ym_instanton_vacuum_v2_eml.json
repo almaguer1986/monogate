@@ -1,0 +1,37 @@
+{
+  "session": 803,
+  "title": "Yang-Mills Instanton Vacuum v2",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "YMInstantonV2",
+    "analysis": {
+      "object": "T524: Yang-Mills Instanton Vacuum v2 depth analysis",
+      "domains": {
+        "topological_charge": {
+          "description": "Topological charge Q is EML-0 (discrete integer, Pontryagin index)",
+          "depth": "EML-0",
+          "reason": "Q in Z is the canonical EML-0 topological quantum number"
+        },
+        "theta_vacuum": {
+          "description": "Theta-vacuum = Fourier sum over Q-sectors; EML-3 oscillatory superposition",
+          "depth": "EML-3",
+          "reason": "exp(i*theta*Q) sum over EML-0 sectors creates EML-3 oscillation"
+        },
+        "strong_cp": {
+          "description": "Strong CP: theta~0 is EML-2 fine-tuning; axion is EML-3 oscillatory solution",
+          "depth": "EML-3",
+          "reason": "Peccei-Quinn axion is EML-3 remedy for EML-2 fine-tuning"
+        }
+      }
+    },
+    "distribution": {
+      "EML-0": 1,
+      "EML-3": 2
+    },
+    "theorem": "T524: Yang-Mills Instanton Vacuum v2 (S803)."
+  },
+  "key_theorem": "T524: Yang-Mills Instanton Vacuum v2 (S803).",
+  "rabbit_hole_log": [
+    "T524: topological_charge depth confirmed"
+  ]
+}
