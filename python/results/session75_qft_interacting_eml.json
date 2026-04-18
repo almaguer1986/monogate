@@ -1,0 +1,245 @@
+{
+  "session": 75,
+  "title": "QFT & Path Integrals: Interacting Theories",
+  "key_theorem": {
+    "theorem": "QFT Confinement = EML Phase Transition Theorem",
+    "statement": "The confinement transition in QCD is an EML-\u221e transition: the running coupling g(\u03bc) is EML-2 for \u03bc > \u039b_QCD (perturbative regime) and EML-\u221e at \u03bc = \u039b_QCD (coupling diverges). This is exactly the EML Phase Transition Theorem (Session 57) applied to QFT: the free energy analog (effective potential V_eff) becomes EML-\u221e at the confinement scale.",
+    "corollary_instantons": "Non-perturbative QFT effects (instantons) are EML-\u221e in the coupling g: exp(-8\u03c0\u00b2/g\u00b2) has an essential singularity at g=0 \u2014 it is invisible to all orders of perturbation theory (Taylor expansion in g). The EML-\u221e barrier separates perturbative (EML-2) from non-perturbative physics."
+  },
+  "phi4_theory": {
+    "theory": "\u03c6\u2074 scalar field theory",
+    "mass": 1.0,
+    "coupling": 0.1,
+    "propagator_values": {
+      "0.1": 0.990099,
+      "0.5": 0.8,
+      "1.0": 0.5,
+      "2.0": 0.2,
+      "5.0": 0.038462
+    },
+    "one_loop_integral": {
+      "Lambda": 100.0,
+      "quadratic_divergence": 10000.0,
+      "log_divergence_coefficient": 9.2103,
+      "finite_part": -1.0,
+      "eml_log_divergence": 2,
+      "reason": "ln(\u039b/m) = EML-2 (ln gate); \u039b\u00b2 = EML-0 (polynomial in cutoff)"
+    },
+    "mass_correction": {
+      "delta_m_squared": 6.3267,
+      "eml_depth": 2,
+      "reason": "\u03bb\u00b7ln(\u039b/m) \u2014 coupling times EML-2 log = EML-2"
+    },
+    "action_eml_depth": 2,
+    "propagator_eml_depth": 2,
+    "vertex_eml_depth": 0,
+    "loop_divergence_eml_depth": 2
+  },
+  "running_coupling_phi4": {
+    "lambda_0": 0.1,
+    "beta_0": 0.01899772,
+    "landau_pole_mu": 4.012843887325249e+228,
+    "formula": "\u03bb(\u03bc) = \u03bb\u2080/(1 - \u03b2\u2080\u03bb\u2080ln(\u03bc/\u03bc\u2080)) [EML-2]",
+    "coupling_vs_scale": [
+      {
+        "mu": 0.1,
+        "lambda_mu": 0.099564,
+        "eml_depth": 2
+      },
+      {
+        "mu": 0.5,
+        "lambda_mu": 0.099868,
+        "eml_depth": 2
+      },
+      {
+        "mu": 1.0,
+        "lambda_mu": 0.1,
+        "eml_depth": 2
+      },
+      {
+        "mu": 2.0,
+        "lambda_mu": 0.100132,
+        "eml_depth": 2
+      },
+      {
+        "mu": 10.0,
+        "lambda_mu": 0.100439,
+        "eml_depth": 2
+      },
+      {
+        "mu": 100.0,
+        "lambda_mu": 0.100883,
+        "eml_depth": 2
+      }
+    ],
+    "eml_perturbative": "EML-2 (rational function of ln(\u03bc))",
+    "eml_landau_pole": "EML-\u221e (coupling diverges \u2192 EML Phase Transition)"
+  },
+  "qcd_asymptotic_freedom": {
+    "n_f": 6,
+    "b_0": 7.0,
+    "g_sq_0": 0.5,
+    "mu_0_GeV": 91.2,
+    "lambda_qcd_GeV": 0.0,
+    "coupling_vs_scale": [
+      {
+        "mu_GeV": 0.5,
+        "g_squared": 0.65001,
+        "alpha_s": 0.051726,
+        "eml_depth": 2
+      },
+      {
+        "mu_GeV": 1.0,
+        "g_squared": 0.625043,
+        "alpha_s": 0.049739,
+        "eml_depth": 2
+      },
+      {
+        "mu_GeV": 5.0,
+        "g_squared": 0.573863,
+        "alpha_s": 0.045667,
+        "eml_depth": 2
+      },
+      {
+        "mu_GeV": 10.0,
+        "g_squared": 0.554315,
+        "alpha_s": 0.044111,
+        "eml_depth": 2
+      },
+      {
+        "mu_GeV": 91.2,
+        "g_squared": 0.5,
+        "alpha_s": 0.039789,
+        "eml_depth": 2
+      },
+      {
+        "mu_GeV": 1000.0,
+        "g_squared": 0.452017,
+        "alpha_s": 0.03597,
+        "eml_depth": 2
+      }
+    ],
+    "eml_uv": "EML-2: g\u00b2(\u03bc)\u21920 as \u03bc\u2192\u221e (asymptotic freedom = EML-2 running)",
+    "eml_ir": "EML-\u221e: g\u00b2(\u03bc)\u2192\u221e as \u03bc\u2192\u039b_QCD (confinement = EML Phase Transition)",
+    "theorem": "Confinement EML Theorem: The confinement transition in QCD occurs at \u03bc=\u039b_QCD where g(\u03bc)\u2192\u221e. This is an EML-\u221e transition in exactly the sense of the EML Phase Transition Theorem (Session 57): the coupling g(\u03bc) as a function of \u03bc becomes EML-\u221e at \u03bc=\u039b_QCD."
+  },
+  "feynman_diagram_eml": [
+    {
+      "diagram_type": "tree",
+      "contribution_structure": "\u03a0 propagators \u00d7 vertices",
+      "divergence": "finite",
+      "eml_depth": "EML-2: tree-level"
+    },
+    {
+      "diagram_type": "1-loop",
+      "contribution_structure": "\u222bd\u2074k \u00d7 propagators \u00d7 vertices",
+      "divergence": "polynomial in ln(\u039b) of degree 1",
+      "eml_depth": "EML-2: 1-loop"
+    },
+    {
+      "diagram_type": "2-loop",
+      "contribution_structure": "\u222bd\u2074k \u00d7 propagators \u00d7 vertices",
+      "divergence": "polynomial in ln(\u039b) of degree 2",
+      "eml_depth": "EML-2: 2-loop"
+    },
+    {
+      "diagram_type": "3-loop",
+      "contribution_structure": "\u222bd\u2074k \u00d7 propagators \u00d7 vertices",
+      "divergence": "polynomial in ln(\u039b) of degree 3",
+      "eml_depth": "EML-2: 3-loop"
+    },
+    {
+      "diagram_type": "instanton",
+      "contribution_structure": "exp(-8\u03c0\u00b2/g\u00b2) \u00d7 polynomial corrections",
+      "divergence": "essential singularity at g=0 (non-perturbative)",
+      "eml_depth": "EML-\u221e: non-perturbative (instanton)"
+    }
+  ],
+  "instanton_amplitude": {
+    "formula": "A_instanton = exp(-8\u03c0\u00b2/g\u00b2) [EML-\u221e in g as g\u21920]",
+    "values": [
+      {
+        "g_sq": 0.5,
+        "amplitude": 0.0
+      },
+      {
+        "g_sq": 1.0,
+        "amplitude": 0.0
+      },
+      {
+        "g_sq": 2.0,
+        "amplitude": 0.0
+      },
+      {
+        "g_sq": 4.0,
+        "amplitude": 0.0
+      }
+    ],
+    "eml_class": "EML-\u221e",
+    "reason": "exp(-8\u03c0\u00b2/g\u00b2) has an essential singularity at g=0 \u2014 not expandable in powers of g"
+  },
+  "taxonomy": {
+    "phi4_action": {
+      "eml_depth": 2,
+      "description": "\u03c6\u2074 action S[\u03c6] = \u222b[\u00bd(\u2202\u03c6)\u00b2+\u00bdm\u00b2\u03c6\u00b2+\u03bb\u03c6\u2074/4!]d\u2074x",
+      "reason": "Polynomial in \u03c6 up to degree 4 \u2192 EML-2"
+    },
+    "feynman_propagator": {
+      "eml_depth": 2,
+      "description": "\u0394(p) = 1/(p\u00b2+m\u00b2)",
+      "reason": "Rational function of p \u2192 EML-2"
+    },
+    "vertex_factor": {
+      "eml_depth": 0,
+      "description": "Coupling -\u03bb at 4-point vertex",
+      "reason": "Constant = EML-0"
+    },
+    "loop_integral_log": {
+      "eml_depth": 2,
+      "description": "\u222bd\u2074k/((k\u00b2+m\u00b2)\u00b2) ~ ln(\u039b/m)",
+      "reason": "Logarithmic UV divergence: ln gate \u2192 EML-2"
+    },
+    "running_coupling": {
+      "eml_depth": 2,
+      "description": "\u03bb(\u03bc) = \u03bb\u2080/(1-\u03b2\u2080\u03bb\u2080ln(\u03bc/\u03bc\u2080))",
+      "reason": "Rational function of ln(\u03bc) \u2192 EML-2"
+    },
+    "landau_pole": {
+      "eml_depth": "\u221e",
+      "description": "\u03bb(\u03bc*)\u2192\u221e at Landau pole \u03bc* = \u03bc\u2080exp(1/(\u03b2\u2080\u03bb\u2080))",
+      "reason": "EML Phase Transition: coupling diverges \u2192 EML-\u221e"
+    },
+    "asymptotic_freedom": {
+      "eml_depth": 2,
+      "description": "QCD: g\u00b2(\u03bc)\u21920 as \u03bc\u2192\u221e",
+      "reason": "g\u00b2(\u03bc) = g\u00b2\u2080/(1+b\u2080g\u00b2\u2080ln(\u03bc/\u03bc\u2080)/(8\u03c0\u00b2)) \u2014 EML-2 rational-in-log"
+    },
+    "qcd_confinement": {
+      "eml_depth": "\u221e",
+      "description": "g(\u03bc)\u2192\u221e as \u03bc\u2192\u039b_QCD",
+      "reason": "EML Phase Transition: g diverges at \u039b_QCD \u2014 same EML-\u221e class as phase transitions (Session 57)"
+    },
+    "instanton_amplitude": {
+      "eml_depth": "\u221e",
+      "description": "A ~ exp(-8\u03c0\u00b2/g\u00b2) \u2014 non-perturbative",
+      "reason": "Essential singularity at g=0: cannot be expressed as EML-finite function of g"
+    },
+    "renormalized_mass": {
+      "eml_depth": 2,
+      "description": "m_R\u00b2 = m\u00b2 + \u03b4m\u00b2 where \u03b4m\u00b2 ~ \u03bbln(\u039b/m)",
+      "reason": "Linear in \u03bb times EML-2 (log) = EML-2"
+    }
+  },
+  "eml_depth_summary": {
+    "EML-0": "Coupling constants \u03bb, g at vertices; color factors",
+    "EML-2": "Propagators, loop integrals, running coupling, renormalized parameters",
+    "EML-3": "Path integral in position space: exp(-S) = EML-1; full propagator \u222bdk \u2192 EML-3 (Green's function)",
+    "EML-\u221e": "Landau pole (\u03bb\u2192\u221e), confinement (g\u2192\u221e at \u039b_QCD), instantons exp(-1/g\u00b2)"
+  },
+  "connections": {
+    "to_session_57": "Confinement = EML Phase Transition (same theorem as Ising at T_c)",
+    "to_session_61": "Session 61 free field QFT: EML-1 amplitudes. Session 75: interactions add EML-2 corrections.",
+    "to_session_60": "Running coupling A(\u03bc) = EML-2 = same class as log partition function A(\u03b8) in info theory",
+    "to_session_64": "Feynman-Kac (Session 64): same EML-1 \u2192 EML-3 bridge via path integral"
+  }
+}
