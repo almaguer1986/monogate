@@ -1,0 +1,376 @@
+{
+  "session": 123,
+  "title": "Cosmology Deep: Inflation, Singularities & Quantum Gravity Signatures",
+  "key_theorem": {
+    "theorem": "EML Cosmological Singularity Theorem",
+    "statement": "Slow-roll exponential potential V=\u039b\u2074exp(-\u03c6/f) is EML-1. Slow-roll parameters \u03b5=(M_pl/2)(V'/V)\u00b2 are EML-2. Number of e-folds N~(\u03c6\u1d62\u00b2-\u03c6_f\u00b2)/2n is EML-2. Primordial power spectrum P(k)~k^{n_s-1} is EML-2. Hawking temperature T_H=1/8\u03c0M is EML-1 as formula. Bekenstein-Hawking entropy S_BH=4\u03c0M\u00b2 is EML-2. Planck spectrum n(\u03c9)=1/(exp(\u03c9/T)-1) is EML-1 (Bose-Einstein). Big Bang singularity a\u21920 is EML-\u221e. Trans-Planckian physics and quantum gravity divergences are EML-\u221e."
+  },
+  "slow_roll_inflation": {
+    "exp_potential": [
+      {
+        "phi": 0.5,
+        "f": 1.0,
+        "V": 0.606531,
+        "dV_dphi": -0.606531,
+        "eml": 1,
+        "reason": "V=\u039b\u2074exp(-\u03c6/f): single exponential = EML-1 (Boltzmann-like inflationary potential)."
+      },
+      {
+        "phi": 1.0,
+        "f": 1.0,
+        "V": 0.367879,
+        "dV_dphi": -0.367879,
+        "eml": 1,
+        "reason": "V=\u039b\u2074exp(-\u03c6/f): single exponential = EML-1 (Boltzmann-like inflationary potential)."
+      },
+      {
+        "phi": 2.0,
+        "f": 1.0,
+        "V": 0.135335,
+        "dV_dphi": -0.135335,
+        "eml": 1,
+        "reason": "V=\u039b\u2074exp(-\u03c6/f): single exponential = EML-1 (Boltzmann-like inflationary potential)."
+      },
+      {
+        "phi": 5.0,
+        "f": 1.0,
+        "V": 0.006738,
+        "dV_dphi": -0.006738,
+        "eml": 1,
+        "reason": "V=\u039b\u2074exp(-\u03c6/f): single exponential = EML-1 (Boltzmann-like inflationary potential)."
+      }
+    ],
+    "slow_roll": [
+      {
+        "phi": 3.0,
+        "n_potential": 2.0,
+        "epsilon": 0.2222,
+        "eta": 0.2222,
+        "n_s": 0.1111,
+        "r": 3.5556,
+        "eml": 2,
+        "reason": "\u03b5=(M_pl\u00b2/2)(V'/V)\u00b2: ratio squared of potential derivatives = EML-2."
+      },
+      {
+        "phi": 5.0,
+        "n_potential": 2.0,
+        "epsilon": 0.08,
+        "eta": 0.08,
+        "n_s": 0.68,
+        "r": 1.28,
+        "eml": 2,
+        "reason": "\u03b5=(M_pl\u00b2/2)(V'/V)\u00b2: ratio squared of potential derivatives = EML-2."
+      },
+      {
+        "phi": 10.0,
+        "n_potential": 2.0,
+        "epsilon": 0.02,
+        "eta": 0.02,
+        "n_s": 0.92,
+        "r": 0.32,
+        "eml": 2,
+        "reason": "\u03b5=(M_pl\u00b2/2)(V'/V)\u00b2: ratio squared of potential derivatives = EML-2."
+      },
+      {
+        "phi": 15.0,
+        "n_potential": 2.0,
+        "epsilon": 0.0089,
+        "eta": 0.0089,
+        "n_s": 0.9644,
+        "r": 0.1422,
+        "eml": 2,
+        "reason": "\u03b5=(M_pl\u00b2/2)(V'/V)\u00b2: ratio squared of potential derivatives = EML-2."
+      }
+    ],
+    "efolds": [
+      {
+        "phi_i": 5.0,
+        "phi_f": 1.0,
+        "n_potential": 2.0,
+        "N_efolds": 6.0,
+        "eml": 2,
+        "reason": "N=\u222bV/V'd\u03c6~(\u03c6\u1d62\u00b2-\u03c6_f\u00b2)/2n: quadratic in \u03c6 = EML-2 for power-law inflation."
+      },
+      {
+        "phi_i": 10.0,
+        "phi_f": 1.0,
+        "n_potential": 2.0,
+        "N_efolds": 24.75,
+        "eml": 2,
+        "reason": "N=\u222bV/V'd\u03c6~(\u03c6\u1d62\u00b2-\u03c6_f\u00b2)/2n: quadratic in \u03c6 = EML-2 for power-law inflation."
+      },
+      {
+        "phi_i": 15.0,
+        "phi_f": 1.0,
+        "n_potential": 2.0,
+        "N_efolds": 56.0,
+        "eml": 2,
+        "reason": "N=\u222bV/V'd\u03c6~(\u03c6\u1d62\u00b2-\u03c6_f\u00b2)/2n: quadratic in \u03c6 = EML-2 for power-law inflation."
+      }
+    ],
+    "primordial_spectrum": [
+      {
+        "k": 0.1,
+        "k_pivot": 1.0,
+        "P_s": 2.385e-09,
+        "n_s": 0.965,
+        "eml": 2,
+        "reason": "P(k)~k^{n_s-1}: power law = EML-2."
+      },
+      {
+        "k": 1.0,
+        "k_pivot": 1.0,
+        "P_s": 2.2e-09,
+        "n_s": 0.965,
+        "eml": 2,
+        "reason": "P(k)~k^{n_s-1}: power law = EML-2."
+      },
+      {
+        "k": 10.0,
+        "k_pivot": 1.0,
+        "P_s": 2.03e-09,
+        "n_s": 0.965,
+        "eml": 2,
+        "reason": "P(k)~k^{n_s-1}: power law = EML-2."
+      }
+    ],
+    "eml_exp_potential": 1,
+    "eml_slow_roll_params": 2,
+    "eml_efolds": 2,
+    "eml_primordial_spectrum": 2
+  },
+  "black_holes_singularities": {
+    "hawking_temperature": [
+      {
+        "M_Planck_units": 1.0,
+        "T_H": 0.039789,
+        "eml_formula": 1,
+        "eml_derivation": "\u221e",
+        "reason": "T_H=1/(8\u03c0M): linear formula = EML-1 (reciprocal of EML-0 = EML-1). But derivation requires Bogoliubov transformation across event horizon = EML-\u221e."
+      },
+      {
+        "M_Planck_units": 10.0,
+        "T_H": 0.003979,
+        "eml_formula": 1,
+        "eml_derivation": "\u221e",
+        "reason": "T_H=1/(8\u03c0M): linear formula = EML-1 (reciprocal of EML-0 = EML-1). But derivation requires Bogoliubov transformation across event horizon = EML-\u221e."
+      },
+      {
+        "M_Planck_units": 100.0,
+        "T_H": 0.000398,
+        "eml_formula": 1,
+        "eml_derivation": "\u221e",
+        "reason": "T_H=1/(8\u03c0M): linear formula = EML-1 (reciprocal of EML-0 = EML-1). But derivation requires Bogoliubov transformation across event horizon = EML-\u221e."
+      },
+      {
+        "M_Planck_units": 1000000.0,
+        "T_H": 0.0,
+        "eml_formula": 1,
+        "eml_derivation": "\u221e",
+        "reason": "T_H=1/(8\u03c0M): linear formula = EML-1 (reciprocal of EML-0 = EML-1). But derivation requires Bogoliubov transformation across event horizon = EML-\u221e."
+      }
+    ],
+    "bh_entropy": [
+      {
+        "M": 1.0,
+        "S_BH": 12.5664,
+        "eml": 2,
+        "reason": "S_BH=4\u03c0M\u00b2: quadratic in M = EML-2 (area law)."
+      },
+      {
+        "M": 10.0,
+        "S_BH": 1256.6371,
+        "eml": 2,
+        "reason": "S_BH=4\u03c0M\u00b2: quadratic in M = EML-2 (area law)."
+      },
+      {
+        "M": 100.0,
+        "S_BH": 125663.7061,
+        "eml": 2,
+        "reason": "S_BH=4\u03c0M\u00b2: quadratic in M = EML-2 (area law)."
+      },
+      {
+        "M": 1000000.0,
+        "S_BH": 12566370614359.172,
+        "eml": 2,
+        "reason": "S_BH=4\u03c0M\u00b2: quadratic in M = EML-2 (area law)."
+      }
+    ],
+    "evaporation_time": [
+      {
+        "M": 1.0,
+        "t_evap_Planck": 16084.95,
+        "eml": 2,
+        "reason": "t~M\u00b3: power law in mass = EML-2."
+      },
+      {
+        "M": 10.0,
+        "t_evap_Planck": 16084954.39,
+        "eml": 2,
+        "reason": "t~M\u00b3: power law in mass = EML-2."
+      },
+      {
+        "M": 100.0,
+        "t_evap_Planck": 16084954386.38,
+        "eml": 2,
+        "reason": "t~M\u00b3: power law in mass = EML-2."
+      },
+      {
+        "M": 1000000.0,
+        "t_evap_Planck": 1.6084954386379741e+22,
+        "eml": 2,
+        "reason": "t~M\u00b3: power law in mass = EML-2."
+      }
+    ],
+    "information_paradox": {
+      "bh_entropy_eml": 2,
+      "hawking_radiation_eml": 1,
+      "entanglement_after_page_eml": "\u221e",
+      "paradox": "EML-2 area law vs EML-\u221e entanglement entropy after Page time",
+      "resolution_holography": "AdS/CFT maps EML-\u221e bulk to EML-2 boundary CFT \u2014 depth reduction",
+      "resolution_islands": "Island formula adds EML-2 term restoring unitarity \u2014 EML-\u221e \u2192 EML-2",
+      "eml_resolution": 2
+    },
+    "big_bang": {
+      "a_t_0": 0,
+      "T_planck": Infinity,
+      "rho_planck": Infinity,
+      "eml": "\u221e",
+      "reason": "Big Bang: a\u21920, T\u2192\u221e, \u03c1\u2192\u221e. Curvature diverges. GR breaks down. = EML-\u221e (phase transition at t=0; not analytically continuable through the singularity).",
+      "quantum_gravity_hope": "Loop quantum cosmology: bounce at Planck density = EML-\u221e \u2192 EML-1 rebound"
+    }
+  },
+  "quantum_gravity_signatures": {
+    "graviton_propagator": [
+      {
+        "k": 0.1,
+        "G_k": 100.0,
+        "eml": 2,
+        "reason": "1/k\u00b2: EML-2 (power law in momentum = same as photon propagator)."
+      },
+      {
+        "k": 0.5,
+        "G_k": 4.0,
+        "eml": 2,
+        "reason": "1/k\u00b2: EML-2 (power law in momentum = same as photon propagator)."
+      },
+      {
+        "k": 1.0,
+        "G_k": 1.0,
+        "eml": 2,
+        "reason": "1/k\u00b2: EML-2 (power law in momentum = same as photon propagator)."
+      },
+      {
+        "k": 2.0,
+        "G_k": 0.25,
+        "eml": 2,
+        "reason": "1/k\u00b2: EML-2 (power law in momentum = same as photon propagator)."
+      }
+    ],
+    "planck_spectrum": [
+      {
+        "omega": 0.1,
+        "T": 1.0,
+        "n_omega": 9.508332,
+        "eml": 1,
+        "reason": "n=1/(exp(\u03c9/T)-1): rational function of EML-1 = EML-1 (Bose-Einstein)."
+      },
+      {
+        "omega": 0.5,
+        "T": 1.0,
+        "n_omega": 1.541494,
+        "eml": 1,
+        "reason": "n=1/(exp(\u03c9/T)-1): rational function of EML-1 = EML-1 (Bose-Einstein)."
+      },
+      {
+        "omega": 1.0,
+        "T": 1.0,
+        "n_omega": 0.581977,
+        "eml": 1,
+        "reason": "n=1/(exp(\u03c9/T)-1): rational function of EML-1 = EML-1 (Bose-Einstein)."
+      },
+      {
+        "omega": 2.0,
+        "T": 1.0,
+        "n_omega": 0.156518,
+        "eml": 1,
+        "reason": "n=1/(exp(\u03c9/T)-1): rational function of EML-1 = EML-1 (Bose-Einstein)."
+      },
+      {
+        "omega": 5.0,
+        "T": 1.0,
+        "n_omega": 0.006784,
+        "eml": 1,
+        "reason": "n=1/(exp(\u03c9/T)-1): rational function of EML-1 = EML-1 (Bose-Einstein)."
+      }
+    ],
+    "holographic_bound": [
+      {
+        "area": 1.0,
+        "G": 1.0,
+        "S_max": 0.25,
+        "eml": 2,
+        "reason": "S\u2264A/4G: area law = EML-2 (quadratic area of boundary surface)."
+      },
+      {
+        "area": 12.566370614359172,
+        "G": 1.0,
+        "S_max": 3.1416,
+        "eml": 2,
+        "reason": "S\u2264A/4G: area law = EML-2 (quadratic area of boundary surface)."
+      },
+      {
+        "area": 100.0,
+        "G": 1.0,
+        "S_max": 25.0,
+        "eml": 2,
+        "reason": "S\u2264A/4G: area law = EML-2 (quadratic area of boundary surface)."
+      }
+    ],
+    "de_sitter_entropy": [
+      {
+        "Lambda": 0.01,
+        "G": 1.0,
+        "S_dS": 314.1593,
+        "eml": 2,
+        "reason": "S_dS=\u03c0/(G\u039b): reciprocal of \u039b = EML-2 (\u039b is EML-0, 1/\u039b is EML-2 via ln(1/\u039b)\u2192power)."
+      },
+      {
+        "Lambda": 0.1,
+        "G": 1.0,
+        "S_dS": 31.4159,
+        "eml": 2,
+        "reason": "S_dS=\u03c0/(G\u039b): reciprocal of \u039b = EML-2 (\u039b is EML-0, 1/\u039b is EML-2 via ln(1/\u039b)\u2192power)."
+      },
+      {
+        "Lambda": 1.0,
+        "G": 1.0,
+        "S_dS": 3.1416,
+        "eml": 2,
+        "reason": "S_dS=\u03c0/(G\u039b): reciprocal of \u039b = EML-2 (\u039b is EML-0, 1/\u039b is EML-2 via ln(1/\u039b)\u2192power)."
+      }
+    ],
+    "eml_graviton_propagator": 2,
+    "eml_planck_spectrum": 1,
+    "eml_holographic_bound": 2,
+    "eml_trans_planckian": "\u221e",
+    "eml_quantum_gravity_loop": "\u221e"
+  },
+  "eml_depth_summary": {
+    "EML-0": "Cosmological constant \u039b (simplest constant); dimension d=4",
+    "EML-1": "Exponential inflation V~exp(-\u03c6/f); Hawking T_H=1/8\u03c0M; Planck spectrum; de Sitter exp(Ht)",
+    "EML-2": "Slow-roll \u03b5~(V'/V)\u00b2; e-folds N~\u03c6\u00b2/2n; P(k)~k^{n_s}; S_BH~M\u00b2; t_evap~M\u00b3; holographic S\u2264A/4G",
+    "EML-3": "Reheating parametric resonance; CMB acoustic peaks; gravitational wave ringdown",
+    "EML-\u221e": "Big Bang a\u21920; Schwarzschild r=0; trans-Planckian modes; 2-loop quantum gravity divergence; information paradox"
+  },
+  "rabbit_hole_log": [
+    "The Hawking temperature T_H=\u210fc\u00b3/(8\u03c0GMk_B) is EML-1 as a formula (reciprocal of mass = linear-fractional = EML-1), but the derivation is EML-\u221e: it requires computing the Bogoliubov transformation between modes defined by an infalling observer and a static observer across the event horizon \u2014 a global calculation involving two incompatible vacua. The formula is EML-1; the physics behind it is EML-\u221e. This gap \u2014 formula EML-depth vs derivation EML-depth \u2014 is one of the deepest structural features of theoretical physics.",
+    "The information paradox is an EML-2 vs EML-\u221e conflict: the Bekenstein-Hawking entropy S_BH=A/4G is EML-2 (area law), while the entanglement entropy of Hawking radiation after the Page time grows without bound \u2014 EML-\u221e. The recent resolution via 'islands' adds an EML-2 contribution to the entropy formula (the island term) that saturates the growth, reducing EML-\u221e back to EML-2. Holography maps EML-\u221e bulk to EML-2 boundary CFT. Both solutions reduce EML-\u221e to EML-2: a depth-reduction theorem for quantum gravity.",
+    "Trans-Planckian problem: inflationary modes with k > M_pl/H were initially subplanckian. We have no theory of physics at k > M_pl, so inflation's predictions depend on unknown EML-\u221e UV physics. This is the cosmological analog of the EML-\u221e barrier in foundations (S109): we can compute EML-2 predictions (n_s, r) but their derivation rests on EML-\u221e unknowns."
+  ],
+  "connections": {
+    "to_session_103": "S103 covered de Sitter EML-1 and CMB EML-3 at overview level. S123 adds slow-roll EML-2, quantum gravity EML-\u221e.",
+    "to_session_63": "S63 Schwarzschild singularity EML-\u221e. S123 adds Hawking radiation (EML-1 formula, EML-\u221e derivation), information paradox.",
+    "to_session_109": "Trans-Planckian EML-\u221e \u2194 G\u00f6del EML-\u221e: both are genuine EML-\u221e barriers at the edge of formal reach."
+  }
+}
