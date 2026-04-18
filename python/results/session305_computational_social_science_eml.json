@@ -1,0 +1,120 @@
+{
+  "session": 305,
+  "title": "Computational Social Science & Opinion Dynamics",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "ComputationalSocialScienceEML",
+    "voter_model": {
+      "object": "Voter model (Clifford-Sudbury)",
+      "eml_depth": 2,
+      "why": "Consensus probability: P(consensus) ~ exp(-t/N): EML-2",
+      "semiring_test": {
+        "consensus_time": {
+          "formula": "\u03c4_consensus ~ N\u00b7ln(N): EML-2 (log-linear)",
+          "depth": 2
+        },
+        "fixation_prob": {
+          "formula": "P_fix = 1/N: EML-0 (algebraic ratio, like neutral drift)",
+          "depth": 0
+        },
+        "tensor_test": {
+          "operation": "ConsensusTime(EML-2) \u2297 Fixation(EML-0) = max(2,0) = 2",
+          "result": "Voter model: 2\u22970=2 \u2713"
+        }
+      }
+    },
+    "polarization": {
+      "object": "Opinion polarization and echo chambers",
+      "eml_depth": "\u221e",
+      "shadow": 2,
+      "semiring_test": {
+        "bounded_confidence": {
+          "depth": 2,
+          "formula": "dx_i/dt = \u03a3_{j:|x_j-x_i|<\u03b5} (x_j - x_i): EML-2"
+        },
+        "polarization_transition": {
+          "type": "TYPE 2 Horizon (fragmentation at \u03b5 < \u03b5_c)",
+          "depth": "\u221e",
+          "shadow": 2,
+          "why": "Cluster formation: exp(-|x_i-x_j|\u00b2/\u03b5) = EML-2 shadow"
+        },
+        "echo_chamber": {
+          "depth": "\u221e",
+          "shadow": 2,
+          "why": "Echo chamber = stable EML-\u221e state; shadow=2 (opinion = real-valued)"
+        }
+      }
+    },
+    "cascade": {
+      "object": "Information cascade (Banerjee, Bikhchandani 1992)",
+      "eml_depth": "\u221e",
+      "shadow": 2,
+      "semiring_test": {
+        "private_signal": {
+          "formula": "P(a|s) ~ exp(\u03bb\u00b7s): logistic = EML-2",
+          "depth": 2
+        },
+        "cascade_onset": {
+          "type": "TYPE 2 Horizon (public signal overwhelms private)",
+          "depth": "\u221e",
+          "shadow": 2,
+          "why": "Once cascade starts: non-constructive = EML-\u221e; shadow=2 (signal real)"
+        }
+      }
+    },
+    "contagion": {
+      "object": "Social contagion (simple vs complex contagion)",
+      "eml_depth": 2,
+      "semiring_test": {
+        "simple_contagion": {
+          "formula": "Follows SIR: EML-2 (like S297 but social)",
+          "depth": 2
+        },
+        "complex_contagion": {
+          "depth": 3,
+          "why": "Complex contagion: threshold reinforcement from multiple exposures ~ exp(i\u00b7n\u00b7\u03c6) cumulative phase = EML-3"
+        },
+        "simple_tensor_complex": {
+          "operation": "Simple(EML-2) \u2297 Complex(EML-3)",
+          "prediction": "Cross-type: EML-\u221e",
+          "result": "Social network information spread: EML-\u221e when mixing contagion types \u2713"
+        }
+      }
+    },
+    "arrow": {
+      "object": "Arrow's impossibility theorem (social choice)",
+      "eml_depth": 0,
+      "why": "Arrow's theorem: logical impossibility over finite alternatives = EML-0 (algebraic)",
+      "semiring_test": {
+        "arrow_theorem": {
+          "depth": 0,
+          "why": "Arrow = combinatorial impossibility: finite preferences = EML-0",
+          "note": "First social science EML-0 impossibility result"
+        },
+        "gibbard_satterthwaite": {
+          "depth": 0,
+          "why": "Manipulation impossibility: algebraic = EML-0"
+        },
+        "tensor_test": {
+          "operation": "Arrow(EML-0) \u2297 VoterModel(EML-2) = max(0,2) = 2",
+          "result": "Social choice + dynamics: 0\u22972=2 \u2713"
+        }
+      }
+    },
+    "semiring_verdicts": {
+      "voter_model": "2\u22970=2 \u2713 (consensus time EML-2; fixation EML-0)",
+      "polarization": "TYPE 2 Horizon; shadow=2",
+      "complex_contagion": "EML-3 (reinforcement threshold = oscillatory phase)",
+      "Arrow_theorem": "EML-0 \u2713 (algebraic impossibility = first social EML-0)",
+      "new_finding": "Arrow's impossibility = EML-0; complex social contagion = EML-3 (new finding)"
+    }
+  },
+  "key_theorem": "Social Science Semiring Theorem (S305): Voter model fixation = EML-0 (1/N = algebraic, paralleling neutral drift). Opinion cascades and polarization = TYPE 2 Horizons, shadow=2. NEW FINDING 1: Arrow's Impossibility Theorem = EML-0 \u2014 the first social science phenomenon classified as pure EML-0 (algebraic impossibility). NEW FINDING 2: Complex social contagion = EML-3 \u2014 reinforcement from multiple exposures creates cumulative phase = EML-3. Simple(EML-2) \u2297 Complex(EML-3) = EML-\u221e: mixing contagion types = unpredictable. SOCIAL DEPTH LADDER: Arrow(EML-0) \u2192 VoterModel(EML-2) \u2192 Polarization(TYPE2) \u2192 ComplexContagion(EML-3).",
+  "rabbit_hole_log": [
+    "Voter fixation: EML-0 (1/N = algebraic, parallels neutral drift)",
+    "Polarization: TYPE 2 Horizon (fragmentation at \u03b5 < \u03b5_c); shadow=2",
+    "NEW: Arrow impossibility = EML-0 (first social science EML-0)",
+    "NEW: Complex contagion = EML-3 (reinforcement threshold = oscillatory phase)",
+    "Simple\u2297Complex contagion = \u221e: explains why info spread is unpredictable in mixed regimes"
+  ]
+}
