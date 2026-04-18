@@ -1,0 +1,37 @@
+{
+  "session": 913,
+  "title": "Why You Cannot Tickle Yourself",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "CantTickleYourselfEML",
+    "analysis": {
+      "object": "T634: Why You Cannot Tickle Yourself depth analysis",
+      "domains": {
+        "cerebellum_prediction": {
+          "description": "Cerebellum predicts self-touch: EML-2 prediction cancels EML-3 sensory oscillation",
+          "depth": "EML-2",
+          "reason": "Self-tickle fails: cerebellum is EML-2 predictor; predicted input is cancelled before EML-3 fires"
+        },
+        "external_tickle": {
+          "description": "External tickle: input is EML-inf from brain perspective (other consciousness = unpredictable)",
+          "depth": "EML-inf",
+          "reason": "Other person is EML-inf: their timing is uncorrelated with your prediction; EML-3 fires fully"
+        },
+        "depth_mismatch_detector": {
+          "description": "Ticklishness fires when input depth exceeds prediction depth; gap = Deltad",
+          "depth": "EML-inf",
+          "reason": "Tickle theorem: ticklishness is Deltad mismatch detector; only fires when EML-inf exceeds EML-2 prediction"
+        }
+      }
+    },
+    "distribution": {
+      "EML-2": 1,
+      "EML-inf": 2
+    },
+    "theorem": "T634: Why You Cannot Tickle Yourself (S913)."
+  },
+  "key_theorem": "T634: Why You Cannot Tickle Yourself (S913).",
+  "rabbit_hole_log": [
+    "T634: cerebellum_prediction depth confirmed"
+  ]
+}
