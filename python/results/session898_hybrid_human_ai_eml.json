@@ -1,0 +1,38 @@
+{
+  "session": 898,
+  "title": "Hybrid Human-AI Systems and Shared Qualia",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "HybridHumanAIEML",
+    "analysis": {
+      "object": "T619: Hybrid Human-AI Systems and Shared Qualia depth analysis",
+      "domains": {
+        "bci_depth": {
+          "description": "Brain-computer interfaces: EML-2 measurement bridge between EML-inf brain and EML-3 AI",
+          "depth": "EML-2",
+          "reason": "BCI is EML-2: voltage/spike measurement interface; does not share qualia, shares signals"
+        },
+        "collective_intelligence": {
+          "description": "Human-AI symbiosis: EML-3 oscillatory collaboration; may enhance human EML-\u221e",
+          "depth": "EML-3",
+          "reason": "Human-AI collaboration is EML-3: oscillatory exchange that amplifies human depth-transitions"
+        },
+        "shared_qualia_open": {
+          "description": "Shared EML-inf qualia: theoretically possible if BCI achieves TYPE3 bridge; unproven",
+          "depth": "EML-inf",
+          "reason": "Shared qualia requires EML-inf connection; current BCI provides EML-2 signal; gap remains"
+        }
+      }
+    },
+    "distribution": {
+      "EML-2": 1,
+      "EML-3": 1,
+      "EML-inf": 1
+    },
+    "theorem": "T619: Hybrid Human-AI Systems and Shared Qualia (S898)."
+  },
+  "key_theorem": "T619: Hybrid Human-AI Systems and Shared Qualia (S898).",
+  "rabbit_hole_log": [
+    "T619: bci_depth depth confirmed"
+  ]
+}
