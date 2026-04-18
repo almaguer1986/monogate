@@ -1,0 +1,550 @@
+{
+  "session": 119,
+  "title": "Transformer Architecture: EML Dissection",
+  "key_theorem": {
+    "theorem": "EML Transformer Depth Theorem",
+    "statement": "Softmax attention is EML-1 per token (Boltzmann normalization = EML-1 ground state). Attention score QK\u1d40/\u221ad is EML-2 (inner product). Sinusoidal/RoPE positional encoding is EML-3 (trig of EML-2 frequency). ALiBi positional bias is EML-0 (linear ramp). LayerNorm is EML-2 (variance normalization). GELU activation is EML-3 (erf = EML-3). SwiGLU is EML-2. Chinchilla scaling laws L(N,D) ~ N^{-\u03b1} are EML-2 (power laws). Emergent capabilities at scale are EML-\u221e phase transitions. The transformer is an architecture whose ground-state operation is EML-1 (softmax attention) with EML-3 positional structure and EML-\u221e phase transitions at scale."
+  },
+  "softmax_attention": {
+    "attention_scores": [
+      {
+        "seq_len": 2,
+        "d_k": 8,
+        "scores": [
+          0.3536,
+          0.3536
+        ],
+        "softmax_probs": [
+          0.5,
+          0.5
+        ],
+        "attention_entropy_nats": 0.6931,
+        "max_entropy_nats": 0.6931,
+        "eml_score": 2,
+        "eml_softmax": 1,
+        "eml_entropy": 2,
+        "reason": "Score q\u1d62\u00b7k\u2c7c/\u221ad = EML-2 (inner product). Softmax exp(s)/\u03a3exp = EML-1 (Boltzmann). Entropy -\u03a3p\u00b7log p = EML-2."
+      },
+      {
+        "seq_len": 4,
+        "d_k": 8,
+        "scores": [
+          0.3536,
+          0.3536,
+          0.3536,
+          0.3536
+        ],
+        "softmax_probs": [
+          0.25,
+          0.25,
+          0.25,
+          0.25
+        ],
+        "attention_entropy_nats": 1.3863,
+        "max_entropy_nats": 1.3863,
+        "eml_score": 2,
+        "eml_softmax": 1,
+        "eml_entropy": 2,
+        "reason": "Score q\u1d62\u00b7k\u2c7c/\u221ad = EML-2 (inner product). Softmax exp(s)/\u03a3exp = EML-1 (Boltzmann). Entropy -\u03a3p\u00b7log p = EML-2."
+      },
+      {
+        "seq_len": 8,
+        "d_k": 8,
+        "scores": [
+          0.3536,
+          0.3536,
+          0.3536,
+          0.3536,
+          0.3536,
+          0.3536,
+          0.3536,
+          0.3536
+        ],
+        "softmax_probs": [
+          0.125,
+          0.125,
+          0.125,
+          0.125,
+          0.125,
+          0.125,
+          0.125,
+          0.125
+        ],
+        "attention_entropy_nats": 2.0794,
+        "max_entropy_nats": 2.0794,
+        "eml_score": 2,
+        "eml_softmax": 1,
+        "eml_entropy": 2,
+        "reason": "Score q\u1d62\u00b7k\u2c7c/\u221ad = EML-2 (inner product). Softmax exp(s)/\u03a3exp = EML-1 (Boltzmann). Entropy -\u03a3p\u00b7log p = EML-2."
+      },
+      {
+        "seq_len": 16,
+        "d_k": 8,
+        "scores": [
+          0.3536,
+          0.3536,
+          0.3536,
+          0.3536,
+          0.3536,
+          0.3536,
+          0.3536,
+          0.3536,
+          0.3536,
+          0.3536,
+          0.3536,
+          0.3536,
+          0.3536,
+          0.3536,
+          0.3536,
+          0.3536
+        ],
+        "softmax_probs": [
+          0.0625,
+          0.0625,
+          0.0625,
+          0.0625,
+          0.0625,
+          0.0625,
+          0.0625,
+          0.0625,
+          0.0625,
+          0.0625,
+          0.0625,
+          0.0625,
+          0.0625,
+          0.0625,
+          0.0625,
+          0.0625
+        ],
+        "attention_entropy_nats": 2.7726,
+        "max_entropy_nats": 2.7726,
+        "eml_score": 2,
+        "eml_softmax": 1,
+        "eml_entropy": 2,
+        "reason": "Score q\u1d62\u00b7k\u2c7c/\u221ad = EML-2 (inner product). Softmax exp(s)/\u03a3exp = EML-1 (Boltzmann). Entropy -\u03a3p\u00b7log p = EML-2."
+      }
+    ],
+    "multihead": {
+      "n_heads": 8,
+      "per_head_eml": 1,
+      "concat_projection_eml": 2,
+      "combined_eml": 2,
+      "reason": "Each head = EML-1 (Boltzmann softmax). Concatenation + linear projection = EML-2 (linear combination of EML-1)."
+    },
+    "flash_attention": {
+      "algorithm": "FlashAttention (tiled)",
+      "eml": 1,
+      "reason": "FlashAttention computes identical output to standard softmax attention via tiled reduction \u2014 EML depth unchanged: EML-1 (numerically stable log-sum-exp)."
+    },
+    "eml_attention_score": 2,
+    "eml_softmax_normalized": 1,
+    "eml_multihead_output": 2
+  },
+  "positional_encoding": {
+    "sinusoidal": [
+      {
+        "pos": 0,
+        "d_model": 64,
+        "pe_sample": {
+          "sin_dim_0": 0.0,
+          "cos_dim_1": 1.0,
+          "sin_dim_2": 0.0,
+          "cos_dim_3": 1.0,
+          "sin_dim_4": 0.0,
+          "cos_dim_5": 1.0,
+          "sin_dim_6": 0.0,
+          "cos_dim_7": 1.0
+        },
+        "eml": 3,
+        "reason": "sin(pos / 10000^{2i/d}): argument = pos\u00b7exp(-2i/d\u00b7ln10000) = EML-2, sin of EML-2 = EML-3."
+      },
+      {
+        "pos": 1,
+        "d_model": 64,
+        "pe_sample": {
+          "sin_dim_0": 0.841471,
+          "cos_dim_1": 0.540302,
+          "sin_dim_2": 0.681561,
+          "cos_dim_3": 0.731761,
+          "sin_dim_4": 0.533168,
+          "cos_dim_5": 0.846009,
+          "sin_dim_6": 0.409309,
+          "cos_dim_7": 0.912396
+        },
+        "eml": 3,
+        "reason": "sin(pos / 10000^{2i/d}): argument = pos\u00b7exp(-2i/d\u00b7ln10000) = EML-2, sin of EML-2 = EML-3."
+      },
+      {
+        "pos": 5,
+        "d_model": 64,
+        "pe_sample": {
+          "sin_dim_0": -0.958924,
+          "cos_dim_1": 0.283662,
+          "sin_dim_2": -0.571127,
+          "cos_dim_3": -0.820862,
+          "sin_dim_4": 0.323935,
+          "cos_dim_5": -0.946079,
+          "sin_dim_6": 0.858896,
+          "cos_dim_7": -0.51215
+        },
+        "eml": 3,
+        "reason": "sin(pos / 10000^{2i/d}): argument = pos\u00b7exp(-2i/d\u00b7ln10000) = EML-2, sin of EML-2 = EML-3."
+      },
+      {
+        "pos": 10,
+        "d_model": 64,
+        "pe_sample": {
+          "sin_dim_0": -0.544021,
+          "cos_dim_1": -0.839072,
+          "sin_dim_2": 0.937633,
+          "cos_dim_3": 0.347627,
+          "sin_dim_4": -0.612937,
+          "cos_dim_5": 0.790132,
+          "sin_dim_6": -0.879767,
+          "cos_dim_7": -0.475405
+        },
+        "eml": 3,
+        "reason": "sin(pos / 10000^{2i/d}): argument = pos\u00b7exp(-2i/d\u00b7ln10000) = EML-2, sin of EML-2 = EML-3."
+      },
+      {
+        "pos": 100,
+        "d_model": 64,
+        "pe_sample": {
+          "sin_dim_0": -0.506366,
+          "cos_dim_1": 0.862319,
+          "sin_dim_2": -0.397511,
+          "cos_dim_3": 0.917597,
+          "sin_dim_4": -0.309375,
+          "cos_dim_5": 0.95094,
+          "sin_dim_6": -0.970896,
+          "cos_dim_7": -0.2395
+        },
+        "eml": 3,
+        "reason": "sin(pos / 10000^{2i/d}): argument = pos\u00b7exp(-2i/d\u00b7ln10000) = EML-2, sin of EML-2 = EML-3."
+      }
+    ],
+    "rope": [
+      {
+        "pos": 0,
+        "dim": 0,
+        "angle_rad": 0.0,
+        "cos_component": 1.0,
+        "sin_component": 0.0,
+        "eml": 3,
+        "reason": "RoPE: exp(i\u00b7pos\u00b7\u03b8^{-2i/d}): EML-3 (complex exponential of EML-2 frequency)."
+      },
+      {
+        "pos": 1,
+        "dim": 0,
+        "angle_rad": 1.0,
+        "cos_component": 0.540302,
+        "sin_component": 0.841471,
+        "eml": 3,
+        "reason": "RoPE: exp(i\u00b7pos\u00b7\u03b8^{-2i/d}): EML-3 (complex exponential of EML-2 frequency)."
+      },
+      {
+        "pos": 5,
+        "dim": 0,
+        "angle_rad": 5.0,
+        "cos_component": 0.283662,
+        "sin_component": -0.958924,
+        "eml": 3,
+        "reason": "RoPE: exp(i\u00b7pos\u00b7\u03b8^{-2i/d}): EML-3 (complex exponential of EML-2 frequency)."
+      },
+      {
+        "pos": 10,
+        "dim": 0,
+        "angle_rad": 10.0,
+        "cos_component": -0.839072,
+        "sin_component": -0.544021,
+        "eml": 3,
+        "reason": "RoPE: exp(i\u00b7pos\u00b7\u03b8^{-2i/d}): EML-3 (complex exponential of EML-2 frequency)."
+      }
+    ],
+    "alibi": [
+      {
+        "i": 0,
+        "j": 1,
+        "bias": -1.0,
+        "eml": 0,
+        "reason": "ALiBi bias = -m|i-j|: linear ramp = EML-0 (affine function, no exp/log)."
+      },
+      {
+        "i": 0,
+        "j": 5,
+        "bias": -5.0,
+        "eml": 0,
+        "reason": "ALiBi bias = -m|i-j|: linear ramp = EML-0 (affine function, no exp/log)."
+      },
+      {
+        "i": 3,
+        "j": 7,
+        "bias": -4.0,
+        "eml": 0,
+        "reason": "ALiBi bias = -m|i-j|: linear ramp = EML-0 (affine function, no exp/log)."
+      }
+    ],
+    "eml_sinusoidal": 3,
+    "eml_rope": 3,
+    "eml_alibi": 0,
+    "eml_learned_pe": 0
+  },
+  "layer_norm_residual": {
+    "layer_norm": [
+      {
+        "x": [
+          1.0,
+          2.0,
+          3.0,
+          4.0
+        ],
+        "mu": 2.5,
+        "sigma": 1.118,
+        "x_hat": [
+          -1.3416,
+          -0.4472,
+          0.4472,
+          1.3416
+        ],
+        "eml": 2,
+        "reason": "LayerNorm: variance=EML-2 (quadratic), sqrt(var)=EML-2, (x-mu)/sigma=EML-2."
+      },
+      {
+        "x": [
+          -1.0,
+          0.0,
+          1.0,
+          2.0
+        ],
+        "mu": 0.5,
+        "sigma": 1.118,
+        "x_hat": [
+          -1.3416,
+          -0.4472,
+          0.4472,
+          1.3416
+        ],
+        "eml": 2,
+        "reason": "LayerNorm: variance=EML-2 (quadratic), sqrt(var)=EML-2, (x-mu)/sigma=EML-2."
+      }
+    ],
+    "gelu": [
+      {
+        "x": -2.0,
+        "gelu_approx": -0.064341,
+        "gelu_tanh": -0.045402,
+        "eml": 3,
+        "reason": "GELU = x\u00b7\u03a6(x): erf(x/\u221a2) = EML-3 (error function = EML-3 power series)."
+      },
+      {
+        "x": -1.0,
+        "gelu_approx": -0.154204,
+        "gelu_tanh": -0.158808,
+        "eml": 3,
+        "reason": "GELU = x\u00b7\u03a6(x): erf(x/\u221a2) = EML-3 (error function = EML-3 power series)."
+      },
+      {
+        "x": 0.0,
+        "gelu_approx": 0.0,
+        "gelu_tanh": 0.0,
+        "eml": 3,
+        "reason": "GELU = x\u00b7\u03a6(x): erf(x/\u221a2) = EML-3 (error function = EML-3 power series)."
+      },
+      {
+        "x": 1.0,
+        "gelu_approx": 0.845796,
+        "gelu_tanh": 0.841192,
+        "eml": 3,
+        "reason": "GELU = x\u00b7\u03a6(x): erf(x/\u221a2) = EML-3 (error function = EML-3 power series)."
+      },
+      {
+        "x": 2.0,
+        "gelu_approx": 1.935659,
+        "gelu_tanh": 1.954598,
+        "eml": 3,
+        "reason": "GELU = x\u00b7\u03a6(x): erf(x/\u221a2) = EML-3 (error function = EML-3 power series)."
+      }
+    ],
+    "swiglu": [
+      {
+        "x": 1.0,
+        "gate": 2.0,
+        "sigma_gate": 0.880797,
+        "swiglu_out": 0.880797,
+        "eml": 2,
+        "reason": "SwiGLU: \u03c3(gate)=EML-1, x\u00b7\u03c3(gate)=EML-2 (product of EML-1 with linear)."
+      },
+      {
+        "x": 0.5,
+        "gate": -1.0,
+        "sigma_gate": 0.268941,
+        "swiglu_out": 0.134471,
+        "eml": 2,
+        "reason": "SwiGLU: \u03c3(gate)=EML-1, x\u00b7\u03c3(gate)=EML-2 (product of EML-1 with linear)."
+      },
+      {
+        "x": 2.0,
+        "gate": 0.0,
+        "sigma_gate": 0.5,
+        "swiglu_out": 1.0,
+        "eml": 2,
+        "reason": "SwiGLU: \u03c3(gate)=EML-1, x\u00b7\u03c3(gate)=EML-2 (product of EML-1 with linear)."
+      }
+    ],
+    "residual": [
+      {
+        "sublayer_eml": 1,
+        "residual_eml": 1,
+        "reason": "Residual x + f(x): depth = max(depth(x)=1, depth(f)) = depth(f) for f nontrivial."
+      },
+      {
+        "sublayer_eml": 2,
+        "residual_eml": 2,
+        "reason": "Residual x + f(x): depth = max(depth(x)=1, depth(f)) = depth(f) for f nontrivial."
+      },
+      {
+        "sublayer_eml": 3,
+        "residual_eml": 3,
+        "reason": "Residual x + f(x): depth = max(depth(x)=1, depth(f)) = depth(f) for f nontrivial."
+      }
+    ],
+    "eml_layernorm": 2,
+    "eml_gelu": 3,
+    "eml_swiglu": 2,
+    "eml_relu": "\u221e (EML-\u221e: not EML-finite as analytic function)",
+    "eml_residual": "depth(sublayer)"
+  },
+  "scaling_laws": {
+    "chinchilla_loss": [
+      {
+        "N_params": 100000000.0,
+        "D_tokens": 2000000000.0,
+        "L": 3.4859,
+        "irreducible_E": 1.69,
+        "param_term": 0.7744,
+        "data_term": 1.0215,
+        "eml": 2,
+        "reason": "L(N,D) = E + A/N^\u03b1 + B/D^\u03b2: power laws in N,D = EML-2."
+      },
+      {
+        "N_params": 1000000000.0,
+        "D_tokens": 20000000000.0,
+        "L": 2.58,
+        "irreducible_E": 1.69,
+        "param_term": 0.354,
+        "data_term": 0.5361,
+        "eml": 2,
+        "reason": "L(N,D) = E + A/N^\u03b1 + B/D^\u03b2: power laws in N,D = EML-2."
+      },
+      {
+        "N_params": 7000000000.0,
+        "D_tokens": 140000000000.0,
+        "L": 2.1835,
+        "irreducible_E": 1.69,
+        "param_term": 0.1827,
+        "data_term": 0.3109,
+        "eml": 2,
+        "reason": "L(N,D) = E + A/N^\u03b1 + B/D^\u03b2: power laws in N,D = EML-2."
+      },
+      {
+        "N_params": 70000000000.0,
+        "D_tokens": 1400000000000.0,
+        "L": 1.9366,
+        "irreducible_E": 1.69,
+        "param_term": 0.0835,
+        "data_term": 0.1632,
+        "eml": 2,
+        "reason": "L(N,D) = E + A/N^\u03b1 + B/D^\u03b2: power laws in N,D = EML-2."
+      }
+    ],
+    "optimal_allocation": [
+      {
+        "compute_flops": 1e+18,
+        "N_optimal_approx": 408248290.0,
+        "D_optimal_approx": 505336444.0,
+        "tokens_per_param": 1.24,
+        "eml": 2,
+        "reason": "N* ~ C^{1/2}: power law in C = EML-2."
+      },
+      {
+        "compute_flops": 1e+21,
+        "N_optimal_approx": 12909944487.0,
+        "D_optimal_approx": 15980141478.0,
+        "tokens_per_param": 1.24,
+        "eml": 2,
+        "reason": "N* ~ C^{1/2}: power law in C = EML-2."
+      },
+      {
+        "compute_flops": 1e+24,
+        "N_optimal_approx": 408248290464.0,
+        "D_optimal_approx": 505336444036.0,
+        "tokens_per_param": 1.24,
+        "eml": 2,
+        "reason": "N* ~ C^{1/2}: power law in C = EML-2."
+      }
+    ],
+    "emergent_capabilities": [
+      {
+        "model_size": 100000000.0,
+        "threshold": 7000000000.0,
+        "accuracy_proxy": 0.0,
+        "eml": Infinity,
+        "regime": "pre-emergence",
+        "reason": "Emergent capabilities: step-function accuracy vs scale = EML-\u221e phase transition (discontinuous jump in capability = non-analytic EML-\u221e event)."
+      },
+      {
+        "model_size": 1000000000.0,
+        "threshold": 7000000000.0,
+        "accuracy_proxy": 0.0,
+        "eml": Infinity,
+        "regime": "pre-emergence",
+        "reason": "Emergent capabilities: step-function accuracy vs scale = EML-\u221e phase transition (discontinuous jump in capability = non-analytic EML-\u221e event)."
+      },
+      {
+        "model_size": 7000000000.0,
+        "threshold": 7000000000.0,
+        "accuracy_proxy": 0.9,
+        "eml": Infinity,
+        "regime": "emergent",
+        "reason": "Emergent capabilities: step-function accuracy vs scale = EML-\u221e phase transition (discontinuous jump in capability = non-analytic EML-\u221e event)."
+      },
+      {
+        "model_size": 70000000000.0,
+        "threshold": 7000000000.0,
+        "accuracy_proxy": 0.9,
+        "eml": Infinity,
+        "regime": "emergent",
+        "reason": "Emergent capabilities: step-function accuracy vs scale = EML-\u221e phase transition (discontinuous jump in capability = non-analytic EML-\u221e event)."
+      }
+    ],
+    "grokking": {
+      "phase_1": "memorization (overfit): EML-2 loss curve",
+      "phase_2": "delayed generalization: EML-\u221e transition",
+      "eml_transition": "\u221e",
+      "reason": "Grokking exhibits a sharp phase transition from memorization to generalization at a critical training duration \u2014 EML-\u221e (non-analytic in training step)."
+    },
+    "eml_scaling_law": 2,
+    "eml_optimal_compute": 2,
+    "eml_emergence": "\u221e",
+    "eml_grokking": "\u221e"
+  },
+  "eml_depth_summary": {
+    "EML-0": "Causal mask (binary); ALiBi bias (linear); learned PE (lookup); compute C=6ND (linear)",
+    "EML-1": "Softmax attention normalization exp(s)/\u03a3exp (Boltzmann); coherent state output (weighted avg)",
+    "EML-2": "Attention score QK\u1d40/\u221ad (inner product); LayerNorm (variance); SwiGLU; scaling law L~N^{-\u03b1}",
+    "EML-3": "Sinusoidal PE sin(pos/10000^{2i/d}); RoPE exp(i\u00b7pos\u00b7\u03b8); GELU activation (erf = EML-3)",
+    "EML-\u221e": "Emergent capabilities (step-function vs scale); grokking (delayed generalization); loss landscape phase transitions"
+  },
+  "rabbit_hole_log": [
+    "Softmax attention is EML-1: it is the Boltzmann distribution over keys given a query temperature. This is the thermodynamic equilibrium state of an associative memory. The transformer rediscovered Hopfield networks' EML-1 ground state \u2014 the retrieval operation of dense associative memory is exp(Q\u00b7K\u1d40/\u03b2)/Z, identical to softmax with \u03b2=1/\u221ad_k. The EML-1 depth of attention is the same depth as the Gibbs distribution in statistical physics.",
+    "Sinusoidal PE is EML-3: the frequencies 1/10000^{2i/d} = exp(-2i/d \u00b7 ln10000) are EML-2 (exp of rational \u00d7 log), and sin/cos of EML-2 arguments = EML-3. This connects to the Fourier basis (Session 37): sinusoidal PE is a learned Fourier basis for sequence position. RoPE is EML-3 for the same reason \u2014 it encodes position as complex phase rotation.",
+    "The scaling law L(N,D) = E + A/N^\u03b1 + B/D^\u03b2 is EML-2: power laws in N and D. The Chinchilla result N*~D*/20 means optimal compute splits equally between parameters and data. The EML-2 structure of the scaling law predicts that model loss is a power-law function of scale \u2014 the same EML-2 universality as neural avalanches (S118), LFP 1/f noise (S118), and Zipf's law (S106). Scale-free structure is EML-2.",
+    "Emergent capabilities are EML-\u221e phase transitions: accuracy on benchmark tasks (e.g., few-shot arithmetic) jumps from near-chance to near-perfect over a narrow range of model scale. This is the same EML-\u221e structure as the Ising critical point (S57), epidemic threshold R\u2080=1 (S113), laser threshold (S116), and neural criticality \u03c3=1 (S118). The deep unity: all phase transitions are EML-\u221e, whether in physics, biology, epidemiology, or AI."
+  ],
+  "connections": {
+    "to_session_118": "Neural criticality (EML-\u221e at \u03c3=1) = emergent capability in transformers (EML-\u221e at scale threshold). Both are phase transitions.",
+    "to_session_57": "Softmax = Boltzmann distribution = same EML-1 ground state as Gibbs ensemble in statistical mechanics.",
+    "to_session_37": "Sinusoidal PE = Fourier basis for sequence position: EML-3 = same depth as trig Fourier atoms.",
+    "to_session_106": "Scaling law L~N^{-\u03b1} = EML-2 power law, same depth as Zipf's law f(k)~k^{-s} in language."
+  }
+}
