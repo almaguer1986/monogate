@@ -1,0 +1,37 @@
+{
+  "session": 826,
+  "title": "Hele-Shaw Flow and Depth Transition",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "NSHeleShawEML",
+    "analysis": {
+      "object": "T547: Hele-Shaw Flow and Depth Transition depth analysis",
+      "domains": {
+        "quasi_two_d": {
+          "description": "Hele-Shaw: fluid between plates; quasi-2D with small gap h",
+          "depth": "EML-2",
+          "reason": "Hele-Shaw is EML-2: Darcy flow, Laplace equation, no inertia"
+        },
+        "saffman_taylor": {
+          "description": "As gap widens, Saffman-Taylor instability develops; EML-3 fingering",
+          "depth": "EML-3",
+          "reason": "Fingering instability: EML-3 oscillatory pattern at EML-2/EML-3 boundary"
+        },
+        "transition_sharp": {
+          "description": "Transition from EML-2 (Darcy) to EML-3 (Saffman-Taylor) is sharp at critical Pe",
+          "depth": "EML-3",
+          "reason": "Peclet number Pe is the depth-transition control parameter in Hele-Shaw"
+        }
+      }
+    },
+    "distribution": {
+      "EML-2": 1,
+      "EML-3": 2
+    },
+    "theorem": "T547: Hele-Shaw Flow and Depth Transition (S826)."
+  },
+  "key_theorem": "T547: Hele-Shaw Flow and Depth Transition (S826).",
+  "rabbit_hole_log": [
+    "T547: quasi_two_d depth confirmed"
+  ]
+}
