@@ -1,0 +1,37 @@
+{
+  "session": 854,
+  "title": "Perfect Pitch as Depth Reduction",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "PerfectPitchEML",
+    "analysis": {
+      "object": "T575: Perfect Pitch as Depth Reduction depth analysis",
+      "domains": {
+        "relative_pitch": {
+          "description": "Normal hearing: relative pitch; EML-2 (comparing, measuring frequency ratios)",
+          "depth": "EML-2",
+          "reason": "Relative pitch is EML-2: logarithmic comparison of frequency pairs"
+        },
+        "perfect_pitch": {
+          "description": "Perfect pitch: absolute frequency labeling; EML-0 (discrete classification)",
+          "depth": "EML-0",
+          "reason": "Perfect pitch is EML-0: direct discrete labeling without comparison"
+        },
+        "depth_reduction_genius": {
+          "description": "Perfect pitch = depth reduction 2->0; lower depth, not higher; contrary to intuition",
+          "depth": "EML-0",
+          "reason": "Musical genius can be depth reduction: operating at EML-0 while others need EML-2"
+        }
+      }
+    },
+    "distribution": {
+      "EML-2": 1,
+      "EML-0": 2
+    },
+    "theorem": "T575: Perfect Pitch as Depth Reduction (S854)."
+  },
+  "key_theorem": "T575: Perfect Pitch as Depth Reduction (S854).",
+  "rabbit_hole_log": [
+    "T575: relative_pitch depth confirmed"
+  ]
+}
