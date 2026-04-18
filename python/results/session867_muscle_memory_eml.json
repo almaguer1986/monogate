@@ -1,0 +1,42 @@
+{
+  "session": 867,
+  "title": "Muscle Memory as Round-Trip Depth Curve",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "MuscleMemoEML",
+    "analysis": {
+      "object": "T588: Muscle Memory as Round-Trip Depth Curve depth analysis",
+      "domains": {
+        "novice_eml2": {
+          "description": "First attempts: EML-2 conscious measurement of each movement",
+          "depth": "EML-2",
+          "reason": "Learning is EML-2: deliberate measurement and correction at each step"
+        },
+        "practice_eml3": {
+          "description": "Practice creates oscillatory repetition; EML-3",
+          "depth": "EML-3",
+          "reason": "Repetitive practice is EML-3: oscillatory rehearsal of movement sequence"
+        },
+        "mastery_eml2": {
+          "description": "Mastery drops back to EML-2: automatic measurement, no conscious oscillation (mushin)",
+          "depth": "EML-2",
+          "reason": "Mastery is EML-2: movement becomes direct measurement without EML-3 deliberation"
+        },
+        "round_trip": {
+          "description": "Learning curve is depth round-trip: 2->3->2; expertise returns to lower depth",
+          "depth": "EML-2",
+          "reason": "Round-trip theorem: expertise goes up (EML-2->3) then back down (3->2); efficiency through depth reduction"
+        }
+      }
+    },
+    "distribution": {
+      "EML-2": 3,
+      "EML-3": 1
+    },
+    "theorem": "T588: Muscle Memory as Round-Trip Depth Curve (S867)."
+  },
+  "key_theorem": "T588: Muscle Memory as Round-Trip Depth Curve (S867).",
+  "rabbit_hole_log": [
+    "T588: novice_eml2 depth confirmed"
+  ]
+}
