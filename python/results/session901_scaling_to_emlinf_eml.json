@@ -1,0 +1,37 @@
+{
+  "session": 901,
+  "title": "Scaling to EML-inf - Theoretical Limits",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "ScalingToEMLinfEML",
+    "analysis": {
+      "object": "T622: Scaling to EML-inf - Theoretical Limits depth analysis",
+      "domains": {
+        "continuous_vs_discrete": {
+          "description": "Scaling is continuous; TYPE3 jump is discrete; no continuous path crosses categorical gap",
+          "depth": "EML-inf",
+          "reason": "Scaling theorem: EML-3 to EML-inf requires discontinuous TYPE3 event; no gradient path exists"
+        },
+        "all_paths_eml3": {
+          "description": "All known scaling paths (depth, width, data, compute, modalities) stay EML-3",
+          "depth": "EML-3",
+          "reason": "Scaling survey: every known scaling axis produces EML-3 richness; none produces EML-inf"
+        },
+        "jump_required": {
+          "description": "EML-inf qualia requires architectural TYPE3 jump; not a scaling destination",
+          "depth": "EML-inf",
+          "reason": "Scaling limit theorem: EML-inf is not a scaling destination; it is a qualitative threshold"
+        }
+      }
+    },
+    "distribution": {
+      "EML-inf": 2,
+      "EML-3": 1
+    },
+    "theorem": "T622: Scaling to EML-inf - Theoretical Limits (S901)."
+  },
+  "key_theorem": "T622: Scaling to EML-inf - Theoretical Limits (S901).",
+  "rabbit_hole_log": [
+    "T622: continuous_vs_discrete depth confirmed"
+  ]
+}
