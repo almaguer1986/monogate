@@ -1,0 +1,160 @@
+{
+  "session": 268,
+  "title": "Quantum Information & Entanglement Shadow Analysis",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "quantum_info_shadow": {
+    "model": "QuantumInfoShadowEML",
+    "esd": {
+      "object": "Entanglement sudden death (ESD)",
+      "eml_depth": "\u221e",
+      "shadow_depth": 2,
+      "shadow_objects": {
+        "decay_envelope": {
+          "description": "C(\u03c1(t)) \u2192 0 at finite t*: concurrence vanishes in finite time",
+          "depth": 2,
+          "why": "C(\u03c1(t)) = max(0, \u03bb\u2081-\u03bb\u2082-\u03bb\u2083-\u03bb\u2084): power-law decay to threshold = EML-2"
+        },
+        "decoherence_rate": {
+          "description": "\u03c1_{01}(t) = \u03c1_{01}(0)\u00b7exp(-\u03b3t): off-diagonal decay",
+          "depth": 2,
+          "why": "exp(-\u03b3t): real exponential decay = EML-2"
+        }
+      },
+      "note": "The SUDDEN DEATH (vanishing in finite time) is EML-\u221e, but shadow = EML-2"
+    },
+    "channel_capacity": {
+      "object": "Quantum channel capacity Q(N)",
+      "eml_depth": "\u221e",
+      "shadow_depth": 2,
+      "shadow_objects": {
+        "coherent_information": {
+          "description": "I_c(\u03c1,N) = S(N(\u03c1)) - S(N\u2297I(|\u03a6\u27e9\u27e8\u03a6|)): coherent information",
+          "depth": 2,
+          "why": "S(\u03c1) = -Tr(\u03c1 log \u03c1): von Neumann entropy = EML-2"
+        },
+        "hashing_bound": {
+          "description": "Q \u2265 max_\u03c1 I_c(\u03c1,N): hashing inequality",
+          "depth": 2,
+          "why": "Maximum over EML-2 coherent information = EML-2"
+        }
+      },
+      "superactivation": {
+        "object": "Superactivation Q(N\u2081)=Q(N\u2082)=0 but Q(N\u2081\u2297N\u2082)>0",
+        "eml_depth": "\u221e",
+        "shadow_depth": 3,
+        "why": "Superactivation involves PPPT channels (positive partial transpose): entanglement structure with complex phases in tensor product. The superactivated capacity uses entangled inputs with exp(i\u00b7) phases = EML-3"
+      }
+    },
+    "topological_qec": {
+      "object": "Topological quantum error correction threshold",
+      "eml_depth": "\u221e",
+      "shadow_depth": 3,
+      "shadow_objects": {
+        "anyon_braiding": {
+          "description": "Topological phases: anyons with braiding matrix B = exp(i\u03b8_B)",
+          "depth": 3,
+          "why": "Braiding phase \u03b8_B: exp(i\u03b8_B) = complex unitary = EML-3"
+        },
+        "toric_code": {
+          "description": "Toric code: star/plaquette operators, logical qubits via Z\u2082 homology",
+          "depth": 3,
+          "why": "Topological logical operators: non-local loops with \u2124\u2082 winding = EML-3"
+        }
+      }
+    },
+    "black_hole_info": {
+      "object": "Black hole information paradox",
+      "eml_depth": "\u221e",
+      "shadow_depth": 3,
+      "shadow_objects": {
+        "hawking_radiation": {
+          "description": "N_\u03c9 = 1/(exp(\u03c9/T_H)-1): Hawking spectrum (thermal boson distribution)",
+          "depth": 3,
+          "why": "T_H = \u210f\u03ba/2\u03c0k: surface gravity \u03ba with 2\u03c0 factor \u2192 exp(2\u03c0i\u03c9/\u03ba) near horizon = EML-3"
+        },
+        "page_curve": {
+          "description": "S(R(t)): entanglement entropy of Hawking radiation = Page curve",
+          "depth": 3,
+          "why": "Islands formula: S = min_I(Area(\u2202I)/4G_N + S_bulk) involves complex saddles = EML-3"
+        },
+        "replica_wormhole": {
+          "description": "Z_n = \u03a3_topologies exp(-S_gravity): replica wormhole geometry",
+          "depth": 3,
+          "why": "Sum over topologies with complex phases = EML-3"
+        }
+      }
+    },
+    "complexity": {
+      "object": "Quantum complexity growth (Brown-Susskind)",
+      "eml_depth": "\u221e",
+      "shadow_depth": 2,
+      "shadow_objects": {
+        "complexity_growth": {
+          "description": "C(t) ~ t for t < t_scrambling, C ~ exp(S) at max",
+          "depth": 2,
+          "why": "Linear growth then plateau: EML-2 (linear = exp(log t) structure)"
+        },
+        "holographic_volume": {
+          "description": "C = V(maximal slice)/G_N\u00b7\u2113: bulk volume",
+          "depth": 2,
+          "why": "Volume = EML-2 (geometric measure)"
+        }
+      }
+    },
+    "entanglement_spectrum": {
+      "object": "Entanglement spectrum (Li-Haldane conjecture)",
+      "eml_depth": "\u221e",
+      "shadow_depth": 3,
+      "shadow_objects": {
+        "entanglement_hamiltonian": {
+          "description": "H_E = -log \u03c1_A: entanglement Hamiltonian (modular Hamiltonian)",
+          "depth": 3,
+          "why": "-log \u03c1_A has eigenvalues \u03b5_i = -log \u03bb_i; spectrum matches boundary CFT = EML-3"
+        },
+        "li_haldane": {
+          "description": "Entanglement spectrum ~ edge CFT spectrum: Li-Haldane conjecture",
+          "depth": 3,
+          "why": "CFT spectrum = complex oscillation (Virasoro) = EML-3"
+        }
+      }
+    },
+    "qinfo_shadow_table": {
+      "ESD": {
+        "shadow": 2,
+        "type": "measurement (real exp decay)"
+      },
+      "Channel_capacity": {
+        "shadow": 2,
+        "type": "measurement (coherent info = entropy)"
+      },
+      "Superactivation": {
+        "shadow": 3,
+        "type": "oscillation (entangled input phases)"
+      },
+      "Topological_QEC": {
+        "shadow": 3,
+        "type": "oscillation (anyon braiding)"
+      },
+      "BH_information": {
+        "shadow": 3,
+        "type": "oscillation (replica wormholes)"
+      },
+      "Complexity_growth": {
+        "shadow": 2,
+        "type": "measurement (volume)"
+      },
+      "Entanglement_spectrum": {
+        "shadow": 3,
+        "type": "oscillation (CFT spectrum)"
+      }
+    }
+  },
+  "key_theorem": "The Quantum Information Shadow Rule (S268): Quantum EML-\u221e objects split by whether they involve topological/holographic structure: EML-2 shadow (real/thermodynamic):   ESD (exp(-\u03b3t) real decay), channel capacity (von Neumann entropy),   complexity growth (linear volume). EML-3 shadow (topological/holographic):   Topological QEC (anyon braiding = exp(i\u03b8_B)),   Black hole information (replica wormholes with complex phases),   Entanglement spectrum (matching CFT with complex Virasoro structure),   Superactivation (entangled inputs with complex phases). THE RULE: standard quantum channels \u2192 EML-2; topology/holography \u2192 EML-3. Holographic shadow is always EML-3: AdS/CFT maps bulk geometry (measurement/EML-2) to boundary CFT (oscillation/EML-3). The black hole information paradox shadow = EML-3 because the resolution (islands, replica wormholes) requires complex topological saddles.",
+  "rabbit_hole_log": [
+    "ESD: shadow=EML-2 (real exponential decoherence)",
+    "Topological QEC: shadow=EML-3 (anyon braiding exp(i\u03b8_B))",
+    "BH information: shadow=EML-3 (replica wormholes, islands = complex saddles)",
+    "Standard quantum channels \u2192 EML-2; topology/holography \u2192 EML-3",
+    "Superactivation exception: Q(N\u2081\u2297N\u2082)>0 requires EML-3 entangled inputs"
+  ]
+}
