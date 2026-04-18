@@ -1,0 +1,56 @@
+{
+  "session": 625,
+  "title": "EML-3 Time Oscillatory Rhythm Music and Dance",
+  "eml_operator": "eml(x,y) = exp(x) - ln(y)",
+  "analysis": {
+    "model": "EML3TimeOscillatoryRhythmEML",
+    "analysis": {
+      "object": "T346: EML-3 Time Oscillatory Rhythm Music and Dance depth analysis",
+      "domains": {
+        "musical_beat": {
+          "description": "Periodic pulse: EML-3 oscillation",
+          "depth": "EML-3",
+          "reason": "rhythmic oscillation = EML-3 time"
+        },
+        "dance": {
+          "description": "Body movement synchronized to beat",
+          "depth": "EML-3",
+          "reason": "embodied EML-3 temporal oscillation"
+        },
+        "heartbeat": {
+          "description": "Cardiac rhythm: biological EML-3",
+          "depth": "EML-3",
+          "reason": "life-sustaining oscillation"
+        },
+        "breathing": {
+          "description": "Respiratory cycle: EML-3",
+          "depth": "EML-3",
+          "reason": "breath as temporal EML-3 anchor"
+        },
+        "sleep_cycle": {
+          "description": "REM/non-REM 90-minute cycle",
+          "depth": "EML-3",
+          "reason": "macroscopic oscillation of consciousness"
+        },
+        "ritual_time": {
+          "description": "Ceremony creates EML-3 temporal structure",
+          "depth": "EML-3",
+          "reason": "T346: all rhythmic time is EML-3"
+        }
+      }
+    },
+    "distribution": {
+      "EML-3": 6
+    },
+    "theorem": "T346: EML-3 Time Oscillatory Rhythm Music and Dance (S625)."
+  },
+  "key_theorem": "T346: EML-3 Time Oscillatory Rhythm Music and Dance (S625).",
+  "rabbit_hole_log": [
+    "T346: musical_beat depth=EML-3 confirmed",
+    "T346: dance depth=EML-3 confirmed",
+    "T346: heartbeat depth=EML-3 confirmed",
+    "T346: breathing depth=EML-3 confirmed",
+    "T346: sleep_cycle depth=EML-3 confirmed",
+    "T346: ritual_time depth=EML-3 confirmed"
+  ]
+}
