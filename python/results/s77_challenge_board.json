@@ -1,0 +1,19 @@
+{
+  "session": "S77",
+  "updates": [
+    {
+      "id": "i-strict",
+      "name": "i-Constructibility (Strict Grammar)",
+      "description": "Under strict principal-branch EML grammar (ln defined only on \u211d\u207a, terminal {1}), prove or disprove that i = \u221a(\u22121) is constructible.",
+      "status": "closed",
+      "solution_session": "S70",
+      "solution_summary": "T19 (proved): 3-line induction. Strict grammar types all values as \u211d. Since i \u2209 \u211d, i is not constructible. Lean verified in S74 (0 sorries)."
+    }
+  ],
+  "result": {
+    "success": false,
+    "stdout": "",
+    "stderr": "D:\\monogate\\challenge\\node_modules\\@supabase\\supabase-js\\dist\\index.cjs:146\n\tif (!trimmedUrl) throw new Error(\"supabaseUrl is required.\");\n\t                 ^\n\nError: supabaseUrl is required.\n    at validateSupabaseUrl (D:\\monogate\\challenge\\node_modules\\@supabase\\supabase-js\\dist\\index.cjs:146:25)\n    at new SupabaseClient (D:\\monogate\\challenge\\node_modules\\@supabase\\supabase-js\\dist\\index.cjs:362:19)\n    at createClient (D:\\monogate\\challenge\\node_modules\\@supabase\\supabase-js\\dist\\index.cjs:582:9)\n    at Object.<anonymous> (D:\\monogate\\challenge\\_s77_update.js:4:18)\n    at Module._compile (node:internal/modules/cjs/loader:1829:14)\n    at Object..js (node:internal/modules/cjs/loader:1969:10)\n    at Module.load (node:internal/modules/cjs/loader:1552:32)\n    at Module._load (node:internal/modules/cjs/loader:1354:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n\nNode.js v25.8.1"
+  },
+  "note": "T_i (extended grammar) remains OPEN on challenge board."
+}
