@@ -34,12 +34,15 @@ mutated (immutable pattern — see common/coding-style.md).
 
 from __future__ import annotations
 
+import hashlib
 import math
 import random
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
 from typing import Any, Callable
+
+from monogate.search.cache import EvalCache
 
 
 # ── Types & constants ─────────────────────────────────────────────────────────
@@ -92,6 +95,17 @@ def _size(node: Node) -> int:
     if node["op"] in ("leaf", "?"):
         return 0
     return 1 + _size(node["left"]) + _size(node["right"])
+
+
+def _tree_hash(node: Node) -> str:
+    """Return a stable hex digest of a tree's structure."""
+    if node["op"] == "leaf":
+        raw = f"L:{node['val']}"
+    elif node["op"] == "?":
+        raw = "?"
+    else:
+        raw = f"E:{_tree_hash(node['left'])}|{_tree_hash(node['right'])}"
+    return hashlib.md5(raw.encode(), usedforsecurity=False).hexdigest()
 
 
 def _formula(node: Node) -> str:
@@ -215,9 +229,12 @@ def _expand_options(node: Node, max_depth: int) -> list[Node]:
 
 
 def _random_complete(partial: Node, depth_budget: int, rng: random.Random) -> Node:
-    """Randomly complete all placeholders, respecting depth_budget."""
+    """Randomly complete all placeholders, respecting depth_budget.
+
+    Guaranteed to return a complete tree (no '?' nodes remain).
+    """
     node = _copy(partial)
-    for _ in range(300):
+    while True:
         path = _first_placeholder_path(node)
         if path is None:
             break
@@ -230,12 +247,6 @@ def _random_complete(partial: Node, depth_budget: int, rng: random.Random) -> No
                 else _eml(_placeholder(), _placeholder())
             )
         node = _set_at_path(node, path, replacement)
-    # Force-fill any remaining placeholders
-    for _ in range(200):
-        path = _first_placeholder_path(node)
-        if path is None:
-            break
-        node = _set_at_path(node, path, _leaf(rng.choice(_TERMINALS)))
     return node
 
 
@@ -330,6 +341,8 @@ def mcts_search(
     objective:       str = "mse",
     external_scorer: "Callable[[dict], float] | None" = None,
     eval_tree_fn:    "Callable[[dict, float], float] | None" = None,
+    timeout_s:       "float | None" = None,
+    eval_cache:      "EvalCache | None" = None,
 ) -> MCTSResult:
     """Monte-Carlo Tree Search over the EML grammar.
 
@@ -408,11 +421,26 @@ def mcts_search(
     # on the shared rng while still being reproducible).
     rollout_rngs = [random.Random(seed + i * 31337) for i in range(max(n_rollouts, 1))]
 
+    def _cached_score(node: Node) -> float:
+        if eval_cache is not None:
+            key = _tree_hash(node)
+            cached = eval_cache.get(key)
+            if cached is not None:
+                return cached
+            result = _score_fn(node, probe_points, probe_y)
+            eval_cache.set(key, result)
+            return result
+        return _score_fn(node, probe_points, probe_y)
+
     def _do_rollout(partial: Node, rng_: random.Random) -> tuple[Node, float]:
         completed = _random_complete(partial, depth, rng_)
-        return completed, _score_fn(completed, probe_points, probe_y)
+        return completed, _cached_score(completed)
 
+    actual_sims = 0
     for sim in range(1, n_simulations + 1):
+        if timeout_s is not None and (time.perf_counter() - t0) >= timeout_s:
+            break
+        actual_sims = sim
         # ── Selection ──────────────────────────────────────────────────────
         node = root
         while node.is_fully_expanded() and node.children and not node.is_terminal:
@@ -430,10 +458,10 @@ def mcts_search(
         # ── Simulation (rollout, possibly parallel) ────────────────────────
         if node.is_terminal:
             completed = node.partial
-            mse       = _score_fn(completed, probe_points, probe_y)
+            mse       = _cached_score(completed)
         elif n_rollouts <= 1:
             completed = _random_complete(node.partial, depth, rng)
-            mse       = _score_fn(completed, probe_points, probe_y)
+            mse       = _cached_score(completed)
         else:
             # Parallel rollouts: run n_rollouts random completions, pick best.
             with ThreadPoolExecutor(max_workers=n_rollouts) as exe:
@@ -477,7 +505,7 @@ def mcts_search(
         best_tree=best_node,
         best_mse=best_mse,
         best_formula=_formula(best_node),
-        n_simulations=n_simulations,
+        n_simulations=actual_sims,
         elapsed_s=time.perf_counter() - t0,
         objective=objective,
         history=history,
@@ -493,6 +521,8 @@ def beam_search(
     width:        int = 50,
     log_every:    int = 0,
     objective:    str = "mse",
+    timeout_s:    "float | None" = None,
+    deduplicate:  bool = True,
 ) -> BeamResult:
     """Beam Search over the EML grammar.
 
@@ -541,13 +571,21 @@ def beam_search(
     # Each entry: (score_or_INF, partial_node)
     beam: list[tuple[float, Node]] = [(INF, _placeholder())]
     level = 0
+    seen_hashes: set[str] = set()
 
     while beam:
+        if timeout_s is not None and (time.perf_counter() - t0) >= timeout_s:
+            break
         level     += 1
         candidates: list[tuple[float, Node]] = []
 
         for _, partial in beam:
             for expanded in _expand_options(partial, depth):
+                if deduplicate:
+                    h = _tree_hash(expanded)
+                    if h in seen_hashes:
+                        continue
+                    seen_hashes.add(h)
                 if _is_complete(expanded):
                     mse = _score_fn(expanded, probe_points, probe_y)
                     candidates.append((mse, expanded))
