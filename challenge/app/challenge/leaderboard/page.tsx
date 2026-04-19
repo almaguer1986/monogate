@@ -164,7 +164,7 @@ export default async function LeaderboardPage() {
           padding: "48px 24px", textAlign: "center", color: C.muted, fontSize: 12,
         }}>
           No valid submissions yet across any challenge.{" "}
-          <a href="/challenge" style={{ color: C.orange }}>Pick a problem and submit the first construction.</a>
+          <a href="/" style={{ color: C.orange }}>Pick a problem and submit the first construction.</a>
         </div>
       )}
 
@@ -173,7 +173,7 @@ export default async function LeaderboardPage() {
         display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 10,
         fontSize: 10, color: C.muted,
       }}>
-        <a href="/challenge" style={{ color: C.muted }}>← All challenges</a>
+        <a href="/" style={{ color: C.muted }}>← All challenges</a>
         <a href="https://arxiv.org/abs/2603.21852" target="_blank" rel="noopener noreferrer" style={{ color: C.muted }}>
           arXiv:2603.21852
         </a>

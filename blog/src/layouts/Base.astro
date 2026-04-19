@@ -14,7 +14,7 @@ const { title, description, date } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
     {description && <meta name="description" content={description} />}
-    <title>{title} — monogate blog</title>
+    <title>{title}</title>
     <link rel="icon" href="/favicon.ico" />
     <style>
       :root {
@@ -26,6 +26,7 @@ const { title, description, date } = Astro.props;
         --accent: #a78bfa;
         --cyan: #06b6d4;
         --pink: #ec4899;
+        --orange: #e8a020;
         --mono: 'Space Mono', monospace;
         --serif: 'Georgia', serif;
       }
@@ -51,10 +52,12 @@ const { title, description, date } = Astro.props;
         max-width: 800px;
         margin: 0 auto;
       }
-      nav .brand { color: var(--accent); font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
+      nav .brand { color: var(--orange); font-weight: 700; letter-spacing: 2px; text-transform: uppercase; text-decoration: none; }
+      nav .brand:hover { text-decoration: none; }
       nav .links { display: flex; gap: 24px; color: var(--muted); }
       nav .links a { color: var(--muted); }
       nav .links a:hover { color: var(--text); text-decoration: none; }
+      nav .links a.active { color: var(--text); }
       main {
         max-width: 680px;
         margin: 0 auto;
@@ -129,18 +132,19 @@ const { title, description, date } = Astro.props;
   </head>
   <body>
     <nav>
-      <a class="brand" href="/">monogate</a>
+      <a class="brand" href="/">monogate.org</a>
       <div class="links">
-        <a href="/">Blog</a>
-        <a href="https://monogate.dev" target="_blank">Challenge Board</a>
-        <a href="https://pypi.org/project/monogate/" target="_blank">PyPI</a>
+        <a href="/blog">Blog</a>
+        <a href="/theorems">Theorems</a>
+        <a href="/paper">Paper</a>
+        <a href="https://monogate.dev" target="_blank" rel="noopener noreferrer">Library ↗</a>
       </div>
     </nav>
     <main>
       <slot />
     </main>
     <footer>
-      monogate blog · eml(x,y) = exp(x) − ln(y) · <a href="https://arxiv.org/abs/2603.21852">arXiv:2603.21852</a>
+      monogate.org · eml(x,y) = exp(x) − ln(y) · <a href="https://arxiv.org/abs/2603.21852">arXiv:2603.21852</a> · <a href="https://monogate.dev">monogate.dev</a>
     </footer>
   </body>
 </html>

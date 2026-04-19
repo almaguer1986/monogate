@@ -94,6 +94,8 @@ export default async function ChallengePage({ params }: { params: { id: string }
         <div style={{ fontSize: 11, color: C.muted, marginBottom: 8 }}>
           <a href="/" style={{ color: C.muted, textDecoration: "none" }}>monogate.dev</a>
           {" / "}
+          <a href="/challenge" style={{ color: C.muted, textDecoration: "none" }}>challenges</a>
+          {" / "}
           <span style={{ color: C.text }}>{challenge.name}</span>
         </div>
         <div style={{ display: "flex", alignItems: "flex-start", gap: 14, flexWrap: "wrap" }}>
@@ -239,7 +241,7 @@ export default async function ChallengePage({ params }: { params: { id: string }
         display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 10,
         fontSize: 10, color: C.muted,
       }}>
-        <a href="/" style={{ color: C.muted }}>← All challenges</a>
+        <a href="/challenge" style={{ color: C.muted }}>← All challenges</a>
         <a href="https://arxiv.org/abs/2603.21852" target="_blank" rel="noopener noreferrer" style={{ color: C.muted }}>
           arXiv:2603.21852
         </a>

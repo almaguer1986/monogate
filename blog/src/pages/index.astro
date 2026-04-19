@@ -1,73 +1,92 @@
 ---
 import Base from '../layouts/Base.astro';
-
-const posts = [
-  {
-    slug: 'infinite-zeros-barrier',
-    title: 'The Infinite Zeros Barrier',
-    date: '2026-04-19',
-    description: 'Why sin(x) cannot be expressed as a finite real EML tree — and why that matters.',
-    tag: 'theorem',
-  },
-  {
-    slug: 'near-miss',
-    title: '0.99999524: The Near-Miss',
-    date: '2026-04-19',
-    description: 'How close can an EML tree get to i? The 4.76e-6 gap and the transcendental obstruction behind it.',
-    tag: 'research',
-  },
-  {
-    slug: 'euler-formula-is-eml',
-    title: "Euler's Formula Is the EML Operator",
-    date: '2026-04-19',
-    description: 'eml(ix, 1) = exp(ix) = cos(x) + i·sin(x). The deepest identity in mathematics, as one EML node.',
-    tag: 'exposition',
-  },
-  {
-    slug: 'what-best-routing-saves',
-    title: 'What BEST Routing Actually Saves',
-    date: '2026-04-19',
-    description: 'Empirical speedups from hybrid EML/EDL/EXL dispatch: 52–74% node savings, up to 2.8× wall-clock.',
-    tag: 'engineering',
-  },
-  {
-    slug: 'auditing-1200-sessions',
-    title: '19 Theorems: Auditing 1,200 AI Research Sessions',
-    date: '2026-04-19',
-    description: 'We claimed 957 theorems. The honest count is 18. What went wrong and how we fixed it.',
-    tag: 'meta',
-  },
-];
-
-const tagColors: Record<string, string> = {
-  theorem: '#4ade80',
-  research: '#a78bfa',
-  exposition: '#06b6d4',
-  engineering: '#fbbf24',
-  meta: '#f87171',
-};
 ---
 
-<Base title="monogate blog" description="Research notes on the EML operator.">
-  <div style="margin-bottom: 48px;">
-    <div style="font-family: monospace; font-size: 11px; color: #a78bfa; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 12px;">monogate</div>
-    <h1 style="font-size: 2.4rem; margin-bottom: 8px;">Research Notes</h1>
-    <p style="color: #6b7280; font-size: 1rem; margin-bottom: 0;">
-      On the EML operator: <code>eml(x, y) = exp(x) − ln(y)</code>. One binary operator. All elementary functions.
-    </p>
-    <div style="width: 40px; height: 1px; background: #a78bfa; margin-top: 24px;"></div>
+<Base
+  title="monogate.org — One Operator"
+  description="One binary operator generates every elementary function as a finite binary tree. The research side of monogate."
+>
+  <div class="meta">
+    <span>Odrzywołek (2026)</span>
+    <span>arXiv:2603.21852</span>
   </div>
 
-  <div style="display: flex; flex-direction: column; gap: 4px;">
-    {posts.map(post => (
-      <a href={`/posts/${post.slug}`} style="display: block; padding: 20px 24px; border-radius: 8px; background: #0d0f18; border: 1px solid #1c1f2e; text-decoration: none;">
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
-          <span style="font-size: 1.05rem; font-weight: 600; color: #d4d4d4;">{post.title}</span>
-          <span style={`font-family: monospace; font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 3px; background: ${tagColors[post.tag]}18; border: 1px solid ${tagColors[post.tag]}; color: ${tagColors[post.tag]};`}>{post.tag.toUpperCase()}</span>
-        </div>
-        <p style="font-size: 0.9rem; color: #6b7280; margin: 0; line-height: 1.5;">{post.description}</p>
-        <div style="font-family: monospace; font-size: 10px; color: #4a4d62; margin-top: 8px;">{post.date}</div>
-      </a>
-    ))}
-  </div>
+  <h1>One Operator</h1>
+  <p style="color: #6b7280; font-style: italic; margin-bottom: 32px;">How a single equation generates all elementary functions — and what it reveals about mathematical complexity.</p>
+
+  <div class="divider"></div>
+
+  <p>
+    In March 2026, Andrzej Odrzywołek published a proof that a single binary operator generates
+    every elementary function as a finite binary tree:
+  </p>
+
+  <div class="math-block">eml(x, y) = exp(x) − ln(y)</div>
+
+  <p>
+    Exponentials. Logarithms. Trigonometry. Polynomials. All of them — as finite compositions
+    of this one operator with the constant 1. Not approximately. Exactly.
+  </p>
+
+  <h2>The simplest case</h2>
+
+  <p>
+    Set y = 1. Since ln(1) = 0, the equation becomes <code>eml(x, 1) = exp(x)</code>. One application.
+    The entire exponential function from a single node in the tree.
+  </p>
+
+  <h2>The barrier</h2>
+
+  <p>
+    Now try sin(x) over the reals. You can't build it. A finite EML tree is real-analytic, and a
+    non-zero real-analytic function has isolated zeros. But sin(x) zeros at every multiple of π.
+    Contradiction. This is the <strong>Infinite Zeros Barrier</strong> — provable in two lines.
+    <a href="/blog/infinite-zeros-barrier">Read it →</a>
+  </p>
+
+  <h2>The bypass</h2>
+
+  <p>
+    Over ℂ, <code>eml(ix, 1) = exp(ix) = cos(x) + i·sin(x)</code>. One node.
+    Depth ∞ over ℝ vs. depth 1 over ℂ. Same function, different domain, different complexity.
+    <a href="/blog/euler-formula-is-eml">Why →</a>
+  </p>
+
+  <h2>Complexity strata</h2>
+
+  <ul style="margin: 16px 0 20px 24px; color: #d4d4d4; line-height: 2.2;">
+    <li><strong style="color: #64748b;">Depth 0</strong> — arithmetic (polynomials, rationals)</li>
+    <li><strong style="color: #06b6d4;">Depth 1</strong> — exponential</li>
+    <li><strong style="color: #8b5cf6;">Depth 2</strong> — logarithmic</li>
+    <li><strong style="color: #ec4899;">Depth 3</strong> — oscillatory (sin, cos via complex bypass)</li>
+    <li><strong style="color: #ef4444;">Depth ∞</strong> — non-constructible over ℝ</li>
+  </ul>
+
+  <p>There is no depth 4. The jump is direct. <a href="/theorems">Full theorem catalog →</a></p>
+
+  <h2>The open problem</h2>
+
+  <p>
+    Can you construct i from &#123;1&#125; under strict principal-branch ln?
+    Depth-6 values reach Im ≈ 0.99999524. The gap of 4.76×10⁻⁶ is structural — tan(1) is
+    transcendental (Lindemann–Weierstrass). <a href="/blog/near-miss">The near-miss →</a>
+  </p>
+
+  <div class="divider"></div>
+
+  <h2>Research blog</h2>
+
+  <ul style="margin: 16px 0 20px 24px; line-height: 2.4;">
+    <li><a href="/blog/infinite-zeros-barrier">The Infinite Zeros Barrier</a></li>
+    <li><a href="/blog/near-miss">0.99999524: The Near-Miss</a></li>
+    <li><a href="/blog/euler-formula-is-eml">Euler's Formula Is the EML Operator</a></li>
+    <li><a href="/blog/what-best-routing-saves">What BEST Routing Saves</a></li>
+    <li><a href="/blog/auditing-1200-sessions">Auditing 1200 Sessions</a></li>
+  </ul>
+
+  <p style="color: #6b7280; font-size: 0.9rem; margin-top: 40px;">
+    Library: <a href="https://monogate.dev">monogate.dev</a> ·
+    Paper: <a href="https://arxiv.org/abs/2603.21852">arXiv:2603.21852</a> ·
+    <a href="https://pypi.org/project/monogate/"><code>pip install monogate</code></a>
+  </p>
 </Base>

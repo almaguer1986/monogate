@@ -1,0 +1,66 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base
+  title="Paper — monogate.org"
+  description="The EML operator paper: arXiv:2603.21852, near-miss draft, and related work."
+>
+  <h1>Paper</h1>
+  <p style="color: #6b7280; margin-bottom: 40px;">
+    Published and in-progress work on the EML operator.
+    <a href="/">← monogate.org</a>
+  </p>
+
+  <h2>Main paper</h2>
+
+  <div style="background: #0d0f18; border: 1px solid #1c1f2e; border-radius: 8px; padding: 20px 24px; margin-bottom: 24px;">
+    <div style="font-size: 11px; color: #a78bfa; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px;">Published · 2026</div>
+    <div style="font-size: 18px; font-weight: 600; color: #d4d4d4; margin-bottom: 6px;">
+      Universal Elementary Function Representation via a Single Binary Operator
+    </div>
+    <div style="font-size: 13px; color: #6b7280; margin-bottom: 16px;">
+      Andrzej Odrzywołek · arXiv:2603.21852 · CC BY 4.0
+    </div>
+    <p style="font-size: 13px; color: #9ca3af; margin-bottom: 16px;">
+      Proves that the single operator eml(x, y) = exp(x) − ln(y) generates every elementary
+      function as a finite binary tree, with explicit constructions for all standard functions.
+      Introduces the EML depth hierarchy: five strata from arithmetic (depth 0) through
+      oscillatory (depth 3), with a gap — there is no depth 4.
+    </p>
+    <a href="https://arxiv.org/abs/2603.21852" target="_blank" rel="noopener noreferrer"
+      style="font-size: 13px; font-weight: 700; color: #6ab0f5;">
+      Read on arXiv →
+    </a>
+  </div>
+
+  <h2>In preparation</h2>
+
+  <div style="background: #0d0f18; border: 1px solid #252836; border-radius: 8px; padding: 20px 24px; margin-bottom: 24px;">
+    <div style="font-size: 11px; color: #e8a020; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px;">Draft · STATUS: DRAFT — not ready for arXiv</div>
+    <div style="font-size: 18px; font-weight: 600; color: #d4d4d4; margin-bottom: 6px;">
+      Near-misses and transcendental obstructions in EML tree closure
+    </div>
+    <div style="font-size: 13px; color: #6b7280; margin-bottom: 16px;">
+      Monogate Research · 2026
+    </div>
+    <p style="font-size: 13px; color: #9ca3af; margin-bottom: 16px;">
+      Studies the EML operator eml(x,y) = exp(x) − ln(y) and the smallest set EML₁ containing 1
+      and closed under eml. Central question: whether i ∈ EML₁. Proves depth-5 values have
+      Im(z) ≤ 0, and that depth-6 values can reach Im ≈ 0.99999524 (gap 4.76×10⁻⁶). The
+      obstruction: exact Im = 1 requires Re(y) = π/tan(1), which is transcendental
+      (Hermite–Lindemann).
+    </p>
+    <a href="/blog/near-miss" style="font-size: 13px; font-weight: 700; color: #a78bfa;">
+      Read the blog post →
+    </a>
+  </div>
+
+  <h2>Cite</h2>
+  <pre style="background: #0d0f18; border: 1px solid #1c1f2e; border-radius: 8px; padding: 16px 20px; font-size: 12px; color: #d4d4d4; overflow-x: auto;">{`@misc{odrzywołek2026eml,
+  title  = {Universal Elementary Function Representation via a Single Binary Operator},
+  author = {Odrzywołek, Andrzej},
+  year   = {2026},
+  url    = {https://arxiv.org/abs/2603.21852}
+}`}</pre>
+</Base>

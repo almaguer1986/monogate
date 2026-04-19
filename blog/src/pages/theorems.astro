@@ -1,0 +1,78 @@
+---
+import Base from '../layouts/Base.astro';
+
+const tiers = [
+  { key: 'THEOREM', color: '#4ade80', desc: 'Complete, checkable proof. No gaps.' },
+  { key: 'PROPOSITION', color: '#6ab0f5', desc: 'Proved, short or routine.' },
+  { key: 'CONJECTURE', color: '#e8a020', desc: 'Precisely stated, believed true, not yet proved.' },
+  { key: 'OBSERVATION', color: '#fbbf24', desc: 'Empirical pattern. No proof.' },
+  { key: 'DEFINITION', color: '#a78bfa', desc: 'A new concept or classification.' },
+];
+
+const results = [
+  { id: 'T01', tier: 'THEOREM', name: 'Infinite Zeros Barrier', statement: 'sin(x) has no finite real EML tree. Every finite real EML tree is real-analytic with finitely many zeros; sin(x) has infinitely many (π·ℤ).', link: '/blog/infinite-zeros-barrier' },
+  { id: 'T02', tier: 'THEOREM', name: 'EML Universality', statement: 'eml(x,y) = exp(x) − ln(y) generates every elementary function as a finite binary tree. (Odrzywołek, arXiv:2603.21852, 2026.)', link: 'https://arxiv.org/abs/2603.21852' },
+  { id: 'T03', tier: 'THEOREM', name: 'Euler Gateway', statement: 'ceml(ix, 1) = exp(ix) = cos(x) + i·sin(x). A single depth-1 EML node with complex input gives Euler\'s formula.', link: '/blog/euler-formula-is-eml' },
+  { id: 'T04', tier: 'THEOREM', name: 'Log Recovery', statement: 'ln(x) = 1 − ceml(0, x) for all x > 0. Direct computation: exp(0)=1, so ceml(0,x) = 1 − ln(x).' },
+  { id: 'T05', tier: 'THEOREM', name: 'Phantom Attractor is a Precision Artifact', statement: 'The apparent attractor at ~6.2675 seen in EML gradient descent at double precision vanishes at 15+ decimal places. Not a true fixed point: ∇L ≠ 0.' },
+  { id: 'T06', tier: 'THEOREM', name: 'Tropical Self-EML', statement: 'In the tropical semiring (⊕=max, ⊗=+), teml(a,a) = max(a,−a) = |a|.' },
+  { id: 'T07', tier: 'THEOREM', name: 'BEST Routing — sin/cos via 1 node over ℂ', statement: 'Over ℂ, sin(x) = Im(ceml(ix,1)) and cos(x) = Re(ceml(ix,1)). Both from a single EML node with complex input. Follows from T03.' },
+  { id: 'P01', tier: 'PROPOSITION', name: 'EDL Not Complete over Addition', statement: 'The EDL operator family cannot represent addition using single-variable inputs and EDL grammar. Exhaustive enumeration to depth 5.' },
+  { id: 'P02', tier: 'PROPOSITION', name: 'EXL Node Counts', statement: 'Under EXL grammar: ln(x) achieves 1-node representation; pow(x,n) achieves 3-node representation.' },
+  { id: 'P03', tier: 'PROPOSITION', name: 'exp(x) is EML Depth-1', statement: 'exp(x) = ceml(x,1) is a single-node EML tree. EML-0 ⊊ EML-1.' },
+  { id: 'P04', tier: 'PROPOSITION', name: 'x² is EML Depth-2', statement: 'x² = exp(2·ln(x)) has depth 2. All power functions x^r are EML depth-2.' },
+  { id: 'P05', tier: 'PROPOSITION', name: 'sin(x) is EML-3 over ℂ', statement: 'sin(x) requires at least one complex exp/ln composition — depth 3 over ℂ under the full grammar.' },
+  { id: 'P06', tier: 'PROPOSITION', name: 'Depth-5 Im ≤ 0 Boundedness', statement: 'All EML₁ elements at depth ≤ 5 satisfy Im(z) ≤ 0. Computational verification (41,409 values).', link: '/blog/near-miss' },
+  { id: 'P07', tier: 'PROPOSITION', name: 'Depth-6 Phase Transition', statement: 'Depth-6 EML₁ elements can have positive imaginary part. First Im > 0 values appear at depth 6.', link: '/blog/near-miss' },
+  { id: 'C01', tier: 'CONJECTURE', name: 'i-Constructibility (T_i)', statement: 'i ∈ EML₁ (i is constructible from terminal &#123;1&#125; under strict principal-branch grammar). Status: OPEN. Depth-6 best: Im = 0.99999524.' },
+  { id: 'C02', tier: 'CONJECTURE', name: 'EML₁ Density', statement: 'EML₁ is dense in ℂ: for every z ∈ ℂ and ε > 0, there exists w ∈ EML₁ with |w − z| < ε.' },
+  { id: 'C03', tier: 'CONJECTURE', name: 'i as Accumulation Point', statement: 'i ∉ EML₁ yet i is an accumulation point of EML₁. Equivalently: δ(d) → 0 as d → ∞, but δ(d) > 0 for all finite d.' },
+  { id: 'C04', tier: 'CONJECTURE', name: 'EML Weierstrass Density', statement: 'For every continuous f: [a,b] → ℂ and ε > 0, there exists a depth-k EML tree approximating f to within ε. (Constructive Weierstrass for EML.)' },
+];
+
+const tierColors: Record<string, string> = { THEOREM: '#4ade80', PROPOSITION: '#6ab0f5', CONJECTURE: '#e8a020', OBSERVATION: '#fbbf24', DEFINITION: '#a78bfa', SPECULATION: '#4a4d62' };
+---
+
+<Base title="Theorem Catalog — monogate.org" description="Honest classification of monogate results: theorems (proved), propositions, conjectures, and observations. Every result labeled for what it actually is.">
+
+  <h1>Theorem Catalog</h1>
+  <p style="color: #6b7280; margin-bottom: 8px;">
+    Every result is labeled for what it actually is. Proved facts are theorems.
+    Everything else is clearly marked.
+  </p>
+  <p style="margin-bottom: 32px;">
+    <a href="/">← monogate.org</a>
+  </p>
+
+  <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 36px;">
+    {tiers.map(t => (
+      <span style={`font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: ${t.color}; background: ${t.color}15; border: 1px solid ${t.color}30; border-radius: 3px; padding: 3px 8px;`}>{t.key}</span>
+    ))}
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 12px;">
+    {results.map(r => (
+      <div style="background: #0d0f18; border: 1px solid #1c1f2e; border-radius: 8px; padding: 16px 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 8px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-family: monospace; font-size: 11px; color: #4a4d62;">{r.id}</span>
+            <span style="font-size: 14px; font-weight: 600; color: #d4d4d4;">{r.name}</span>
+          </div>
+          <span style={`font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: ${tierColors[r.tier]}; background: ${tierColors[r.tier]}15; border: 1px solid ${tierColors[r.tier]}30; border-radius: 3px; padding: 2px 6px; white-space: nowrap;`}>{r.tier}</span>
+        </div>
+        <div style="font-size: 12px; color: #9ca3af; line-height: 1.7;">{r.statement}</div>
+        {r.link && (
+          <div style="margin-top: 8px;">
+            <a href={r.link} style="font-size: 11px; color: #a78bfa;">Read more →</a>
+          </div>
+        )}
+      </div>
+    ))}
+  </div>
+
+  <div style="margin-top: 48px; padding-top: 20px; border-top: 1px solid #1c1f2e; font-size: 11px; color: #4a4d62;">
+    T01–T07: Theorems (proved) · P01–P07: Propositions · C01–C04: Conjectures ·
+    Count: 7 theorems, 7 propositions, 4 conjectures ·
+    Paper: <a href="https://arxiv.org/abs/2603.21852" style="color: #6ab0f5;">arXiv:2603.21852</a>
+  </div>
+</Base>

@@ -1,0 +1,40 @@
+---
+import Base from '../../layouts/Base.astro';
+
+const posts = [
+  { href: '/blog/infinite-zeros-barrier', title: 'The Infinite Zeros Barrier', tag: 'theorem', date: '2026-04-19', desc: 'Why sin(x) cannot be expressed as a finite real EML tree.' },
+  { href: '/blog/near-miss', title: '0.99999524: The Near-Miss', tag: 'research', date: '2026-04-19', desc: 'How close can an EML tree get to i? A gap of 4.76×10⁻⁶ and the transcendental obstruction.' },
+  { href: '/blog/euler-formula-is-eml', title: "Euler's Formula Is the EML Operator", tag: 'exposition', date: '2026-04-19', desc: 'eml(ix, 1) = exp(ix). One node. The deepest identity in mathematics.' },
+  { href: '/blog/what-best-routing-saves', title: 'What BEST Routing Saves', tag: 'engineering', date: '2026-04-19', desc: 'Node-count and wall-clock benchmarks across 8 elementary functions.' },
+  { href: '/blog/auditing-1200-sessions', title: 'Auditing 1200 Sessions', tag: 'meta', date: '2026-04-19', desc: 'From 957 claimed theorems to 18 honest ones. What changed and why.' },
+];
+
+const tagColors: Record<string, string> = {
+  theorem: '#4ade80',
+  research: '#a78bfa',
+  exposition: '#06b6d4',
+  engineering: '#fbbf24',
+  meta: '#f87171',
+};
+---
+
+<Base title="Blog — monogate.org" description="Research blog on the EML operator: theorems, proofs, near-misses, and open problems.">
+  <h1>Research Blog</h1>
+  <p style="color: #6b7280; margin-bottom: 40px;">
+    Findings from the EML operator research program.
+    <a href="/">← Back to monogate.org</a>
+  </p>
+
+  <div style="display: flex; flex-direction: column; gap: 20px;">
+    {posts.map(p => (
+      <a href={p.href} style="display: block; border: 1px solid #1c1f2e; border-radius: 8px; padding: 18px 22px; text-decoration: none; color: inherit; background: #0d0f18;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 6px;">
+          <div style="font-size: 15px; font-weight: 600; color: #d4d4d4;">{p.title}</div>
+          <span style={`font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: ${tagColors[p.tag]}; background: ${tagColors[p.tag]}15; border: 1px solid ${tagColors[p.tag]}30; border-radius: 3px; padding: 2px 6px; white-space: nowrap;`}>{p.tag}</span>
+        </div>
+        <div style="font-size: 12px; color: #6b7280; line-height: 1.6;">{p.desc}</div>
+        <div style="font-size: 10px; color: #4a4d62; margin-top: 8px; font-family: monospace;">{p.date}</div>
+      </a>
+    ))}
+  </div>
+</Base>

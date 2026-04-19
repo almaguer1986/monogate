@@ -1,12 +1,15 @@
-import { supabase } from "@/lib/supabase";
-import type { Challenge } from "@/types";
+import type { Metadata } from "next";
 
-export const revalidate = 60;
+export const metadata: Metadata = {
+  title: "monogate — EML operator library",
+  description:
+    "monogate is a library for the EML operator: eml(x, y) = exp(x) − ln(y). " +
+    "Explorer, challenge board, search tool, and open problems.",
+};
 
 const C = {
   bg: "#08090e",
   surface: "#0d0f18",
-  surface2: "#12151f",
   border: "#1c1f2e",
   border2: "#252836",
   text: "#d4d4d4",
@@ -14,228 +17,114 @@ const C = {
   orange: "#e8a020",
   blue: "#6ab0f5",
   green: "#4ade80",
-  red: "#f87171",
+  purple: "#a78bfa",
 };
 
-async function getChallenges(): Promise<Challenge[]> {
-  const { data: challenges, error } = await supabase
-    .from("challenges")
-    .select("*")
-    .order("created_at", { ascending: true });
+const SECTIONS = [
+  {
+    href: "/explorer",
+    label: "Explorer",
+    desc: "Build and optimize EML expression trees interactively.",
+    color: C.blue,
+    tag: "tool",
+  },
+  {
+    href: "/challenge",
+    label: "Challenge Board",
+    desc: "Open problems: construct sin, cos, π, i from eml(x,y) = exp(x) − ln(y). Submit a construction, get credited permanently.",
+    color: C.orange,
+    tag: "challenge",
+  },
+  {
+    href: "/play",
+    label: "Play",
+    desc: "Games and interactive experiments built on the EML grammar.",
+    color: C.green,
+    tag: "games",
+  },
+  {
+    href: "/docs",
+    label: "Docs",
+    desc: "API reference, quickstart, and tutorial for the monogate library.",
+    color: C.purple,
+    tag: "docs",
+  },
+];
 
-  if (error || !challenges) return [];
-
-  const { data: counts } = await supabase
-    .from("submissions")
-    .select("challenge_id")
-    .eq("valid", true);
-
-  const countMap: Record<string, number> = {};
-  for (const row of counts ?? []) {
-    countMap[row.challenge_id] = (countMap[row.challenge_id] ?? 0) + 1;
-  }
-
-  const bestIds = challenges
-    .map((c) => c.best_submission_id)
-    .filter(Boolean) as string[];
-
-  const authorMap: Record<string, string> = {};
-  if (bestIds.length > 0) {
-    const { data: bestSubs } = await supabase
-      .from("submissions")
-      .select("id, author")
-      .in("id", bestIds);
-    for (const s of bestSubs ?? []) {
-      authorMap[s.id] = s.author;
-    }
-  }
-
-  return challenges.map((c) => ({
-    ...c,
-    submission_count: countMap[c.id] ?? 0,
-    best_author: c.best_submission_id ? (authorMap[c.best_submission_id] ?? null) : null,
-  }));
-}
-
-function StatusBadge({ status }: { status: string }) {
-  const solved = status === "solved";
-  const closed = status === "closed";
-  const bgColor = solved ? "rgba(94,196,122,0.10)" : closed ? "rgba(248,113,113,0.10)" : "rgba(232,160,32,0.10)";
-  const borderColor = solved ? C.green : closed ? C.red : C.orange;
-  const label = solved ? "SOLVED" : closed ? "CLOSED — IMPOSSIBLE" : "OPEN";
+export default function LandingPage() {
   return (
-    <span style={{
-      display: "inline-block",
-      fontSize: 9,
-      fontWeight: 700,
-      letterSpacing: "0.12em",
-      padding: "3px 8px",
-      borderRadius: 3,
-      background: bgColor,
-      border: `1px solid ${borderColor}`,
-      color: borderColor,
-    }}>
-      {label}
-    </span>
-  );
-}
+    <div style={{ background: C.bg, minHeight: "100vh", maxWidth: 680, margin: "0 auto", padding: "0 16px 80px" }}>
 
-function Stat({ label, value, color }: { label: string; value: string; color: string }) {
-  return (
-    <div>
-      <div style={{ fontSize: 9, color: C.muted, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 2 }}>
-        {label}
-      </div>
-      <div style={{ fontSize: 13, color, fontWeight: 700 }}>{value}</div>
-    </div>
-  );
-}
-
-function ChallengeCard({ challenge }: { challenge: Challenge }) {
-  const hasBest = challenge.best_known_nodes !== null;
-  return (
-    <a
-      href={`/challenge/${challenge.id}`}
-      style={{
-        display: "block",
-        background: C.surface,
-        border: `1px solid ${C.border}`,
-        borderRadius: 8,
-        padding: "20px 24px",
-        textDecoration: "none",
-        color: "inherit",
-      }}
-    >
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12, marginBottom: 10 }}>
-        <div style={{ fontSize: 20, fontWeight: 700, color: C.orange, letterSpacing: "-0.02em" }}>
-          {challenge.name}
-        </div>
-        <StatusBadge status={challenge.status} />
-      </div>
-
-      <div style={{ fontSize: 11, color: C.muted, lineHeight: 1.7, marginBottom: 16 }}>
-        {challenge.description}
-      </div>
-
-      <div style={{ display: "flex", gap: 24, flexWrap: "wrap", paddingTop: 14, borderTop: `1px solid ${C.border}` }}>
-        <Stat label="Best nodes" value={hasBest ? String(challenge.best_known_nodes) : "—"} color={hasBest ? C.text : C.muted} />
-        <Stat label="Best depth" value={hasBest ? String(challenge.best_known_depth) : "—"} color={hasBest ? C.text : C.muted} />
-        <Stat label="Valid submissions" value={String(challenge.submission_count ?? 0)} color={C.text} />
-        {challenge.best_author && (
-          <Stat label="Record holder" value={challenge.best_author} color={C.blue} />
-        )}
-      </div>
-    </a>
-  );
-}
-
-function PillLink({ href, label, internal }: { href: string; label: string; internal?: boolean }) {
-  const props = internal
-    ? { href }
-    : { href, target: "_blank", rel: "noopener noreferrer" };
-  return (
-    <a {...props} className="eco-btn">
-      {label}
-    </a>
-  );
-}
-
-export default async function HomePage() {
-  const challenges = await getChallenges();
-
-  return (
-    <div style={{ background: C.bg, minHeight: "100vh", maxWidth: 760, margin: "0 auto", padding: "0 16px 60px" }}>
-
-      {/* Header */}
-      <header style={{ borderBottom: `1px solid ${C.border}`, padding: "28px 0 22px", marginBottom: 36 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: 12 }}>
-          <div>
-            <div style={{ fontSize: 11, fontWeight: 700, color: C.orange, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 6 }}>
-              monogate.dev
-            </div>
-            <div style={{ fontSize: 22, fontWeight: 700, color: C.text, letterSpacing: "-0.02em", lineHeight: 1.2 }}>
-              The EML Challenge Board
-            </div>
-          </div>
-          <div style={{ display: "flex", gap: 16 }}>
-            <a href="/search" className="nav-link">Search</a>
-            <a href="/leaderboard" className="nav-link">Leaderboard</a>
-            <a href="/theorems" className="nav-link">Theorems</a>
-            <a href="/how-to-submit" className="nav-link">How to Submit</a>
-            <a href="https://games.monogate.dev" className="nav-link" target="_blank" rel="noopener noreferrer">Play ↗</a>
-          </div>
-        </div>
-        <div style={{ marginTop: 14, fontSize: 11, color: C.muted, lineHeight: 1.8, maxWidth: 540 }}>
-          Canonical validator and leaderboard for open problems in the EML operator.
-          Submit a construction. Get credited permanently.{" "}
-          <a href="https://arxiv.org/abs/2603.21852" className="arxiv-link" style={{ color: C.blue }} target="_blank" rel="noopener noreferrer">
-            arXiv:2603.21852
-          </a>
-        </div>
-      </header>
-
-      {/* Operator card — math only */}
-      <div className="operator-card" style={{ borderRadius: 8, padding: "14px 20px", marginBottom: 10 }}>
-        <div style={{ fontSize: 9, color: C.muted, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 6 }}>
-          The operator
-        </div>
-        <div style={{ fontSize: 16, color: C.orange, fontWeight: 700 }}>eml(x, y) = exp(x) − ln(y)</div>
-        <div style={{ fontSize: 10, color: C.muted, marginTop: 4 }}>
-          Grammar: S → 1 | eml(S, S) · strict principal-branch ln · ln(0) undefined
-        </div>
-      </div>
-
-      {/* Ecosystem row */}
-      <div style={{ marginBottom: 32 }}>
-        <div style={{ fontSize: 9, color: C.muted, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 8 }}>
-          ecosystem
-        </div>
-        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-          <PillLink href="/search" label="Search tool ↗" internal />
-          <PillLink href="https://explorer.monogate.dev" label="Explorer ↗" />
-          <PillLink href="https://www.npmjs.com/package/monogate" label="npm ↗" />
-          <PillLink href="https://github.com/almaguer1986/monogate" label="GitHub ↗" />
-        </div>
-      </div>
-
-      {/* Section heading */}
-      <div style={{ fontSize: 10, color: C.orange, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 14 }}>
-        Open Challenges — {challenges.length} problems
-      </div>
-
-      {/* Cards */}
-      {challenges.length === 0 ? (
-        <div style={{
-          background: C.surface, border: `1px solid ${C.border}`, borderRadius: 8,
-          padding: "40px 24px", textAlign: "center", color: C.muted, fontSize: 12,
-        }}>
-          No challenges found. Run the SQL schema in the Supabase dashboard to seed data.
-        </div>
-      ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          {challenges.map((c) => <ChallengeCard key={c.id} challenge={c} />)}
-        </div>
-      )}
-
-      {/* Footer */}
-      <footer style={{
-        marginTop: 48, paddingTop: 20, borderTop: `1px solid ${C.border}`,
-        display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 10,
-        fontSize: 10, color: C.muted,
-      }}>
-        <span>Odrzywołek (2026) · arXiv:2603.21852v2 · CC BY 4.0 · <a href="https://games.monogate.dev" style={{ color: C.muted }}>Games ↗</a></span>
-        <div style={{ display: "flex", gap: 14 }}>
+      {/* Nav */}
+      <nav style={{ borderBottom: `1px solid ${C.border}`, padding: "16px 0", marginBottom: 60, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 10 }}>
+        <span style={{ fontSize: 13, fontWeight: 700, color: C.orange, letterSpacing: "0.06em" }}>monogate</span>
+        <div style={{ display: "flex", gap: 20 }}>
           {[
-            { href: "https://explorer.monogate.dev", label: "Explorer" },
-            { href: "https://www.npmjs.com/package/monogate", label: "npm" },
-            { href: "https://github.com/almaguer1986/monogate", label: "GitHub" },
-            { href: "https://arxiv.org/abs/2603.21852", label: "arXiv" },
-          ].map(({ href, label }) => (
-            <a key={label} href={href} target="_blank" rel="noopener noreferrer" style={{ color: C.muted }}>
-              {label}
-            </a>
+            { href: "/explorer", label: "Explorer" },
+            { href: "/challenge", label: "Challenge" },
+            { href: "/play", label: "Play" },
+            { href: "/docs", label: "Docs" },
+            { href: "https://monogate.org", label: "Research ↗", external: true },
+          ].map(({ href, label, external }) => (
+            <a key={label} href={href}
+              {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+              style={{ fontSize: 12, color: C.muted, textDecoration: "none" }}
+            >{label}</a>
           ))}
         </div>
+      </nav>
+
+      {/* Hero */}
+      <section style={{ marginBottom: 56 }}>
+        <div style={{ fontSize: 11, color: C.muted, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 16 }}>
+          EML universal operator
+        </div>
+        <div style={{ fontSize: 36, fontWeight: 700, color: C.orange, fontFamily: "monospace", marginBottom: 16, letterSpacing: "-0.02em" }}>
+          eml(x, y) = exp(x) − ln(y)
+        </div>
+        <p style={{ fontSize: 15, color: C.text, lineHeight: 1.8, maxWidth: 560, marginBottom: 24 }}>
+          One binary operator. Every elementary function as a finite binary tree.
+          Odrzywołek (2026) proves that exp, ln, sin, cos, tan, polynomials, and all
+          elementary functions are finite compositions of eml with constant 1.
+        </p>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          <code style={{ fontSize: 12, color: C.green, background: "rgba(74,222,128,0.07)", border: `1px solid rgba(74,222,128,0.2)`, borderRadius: 4, padding: "6px 12px" }}>
+            npm install monogate
+          </code>
+          <code style={{ fontSize: 12, color: C.purple, background: "rgba(167,139,250,0.07)", border: `1px solid rgba(167,139,250,0.2)`, borderRadius: 4, padding: "6px 12px" }}>
+            pip install monogate
+          </code>
+        </div>
+      </section>
+
+      {/* Section cards */}
+      <section style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 48 }}>
+        {SECTIONS.map(({ href, label, desc, color, tag }) => (
+          <a key={href} href={href} style={{ display: "block", background: C.surface, border: `1px solid ${C.border}`, borderRadius: 8, padding: "18px 22px", textDecoration: "none", color: "inherit" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8, marginBottom: 6 }}>
+              <div style={{ fontSize: 15, fontWeight: 700, color }}>{label}</div>
+              <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color, background: `${color}15`, border: `1px solid ${color}30`, borderRadius: 3, padding: "2px 6px" }}>
+                {tag}
+              </span>
+            </div>
+            <div style={{ fontSize: 12, color: C.muted, lineHeight: 1.7 }}>{desc}</div>
+          </a>
+        ))}
+      </section>
+
+      {/* Links */}
+      <footer style={{ borderTop: `1px solid ${C.border}`, paddingTop: 20, display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 10, fontSize: 10, color: C.muted }}>
+        <div style={{ display: "flex", gap: 16 }}>
+          {[
+            { href: "https://arxiv.org/abs/2603.21852", label: "arXiv:2603.21852" },
+            { href: "https://github.com/almaguer1986/monogate", label: "GitHub" },
+            { href: "https://www.npmjs.com/package/monogate", label: "npm" },
+            { href: "https://monogate.org", label: "monogate.org" },
+          ].map(({ href, label }) => (
+            <a key={label} href={href} target="_blank" rel="noopener noreferrer" style={{ color: C.muted }}>{label}</a>
+          ))}
+        </div>
+        <span>Odrzywołek 2026 · CC BY 4.0</span>
       </footer>
     </div>
   );

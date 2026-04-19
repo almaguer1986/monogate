@@ -230,7 +230,7 @@ export default function HowToSubmitPage() {
         display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 10,
         fontSize: 10, color: C.muted,
       }}>
-        <a href="/" style={{ color: C.muted }}>← All challenges</a>
+        <a href="/challenge" style={{ color: C.muted }}>← All challenges</a>
         <a href="https://github.com/almaguer1986/monogate" target="_blank" rel="noopener noreferrer" style={{ color: C.muted }}>
           github.com/almaguer1986/monogate
         </a>
