@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ],
+  "redirects": [
+    { "source": "/games", "destination": "https://monogames.vercel.app", "permanent": false }
+  ]
+}
