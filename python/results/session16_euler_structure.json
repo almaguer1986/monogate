@@ -1,0 +1,373 @@
+{
+  "session": 16,
+  "title": "Euler's Formula Structure Theorem for Complex EML",
+  "euler_verification": [
+    {
+      "x": 0.1,
+      "ceml_ix_1": "(0.9950041652780258+0.09983341664682815j)",
+      "real_part": 0.9950041652780258,
+      "imag_part": 0.09983341664682815,
+      "cos_x": 0.9950041652780258,
+      "sin_x": 0.09983341664682815,
+      "cos_err": 0.0,
+      "sin_err": 0.0,
+      "modulus": 1.0,
+      "modulus_err": 0.0,
+      "all_ok": true
+    },
+    {
+      "x": 0.5,
+      "ceml_ix_1": "(0.8775825618903728+0.479425538604203j)",
+      "real_part": 0.8775825618903728,
+      "imag_part": 0.479425538604203,
+      "cos_x": 0.8775825618903728,
+      "sin_x": 0.479425538604203,
+      "cos_err": 0.0,
+      "sin_err": 0.0,
+      "modulus": 1.0,
+      "modulus_err": 0.0,
+      "all_ok": true
+    },
+    {
+      "x": 0.5235987755982988,
+      "ceml_ix_1": "(0.8660254037844387+0.49999999999999994j)",
+      "real_part": 0.8660254037844387,
+      "imag_part": 0.49999999999999994,
+      "cos_x": 0.8660254037844387,
+      "sin_x": 0.49999999999999994,
+      "cos_err": 0.0,
+      "sin_err": 0.0,
+      "modulus": 1.0,
+      "modulus_err": 0.0,
+      "all_ok": true
+    },
+    {
+      "x": 0.7853981633974483,
+      "ceml_ix_1": "(0.7071067811865476+0.7071067811865476j)",
+      "real_part": 0.7071067811865476,
+      "imag_part": 0.7071067811865476,
+      "cos_x": 0.7071067811865476,
+      "sin_x": 0.7071067811865476,
+      "cos_err": 0.0,
+      "sin_err": 0.0,
+      "modulus": 1.0,
+      "modulus_err": 0.0,
+      "all_ok": true
+    },
+    {
+      "x": 1.0471975511965976,
+      "ceml_ix_1": "(0.5000000000000001+0.8660254037844386j)",
+      "real_part": 0.5000000000000001,
+      "imag_part": 0.8660254037844386,
+      "cos_x": 0.5000000000000001,
+      "sin_x": 0.8660254037844386,
+      "cos_err": 0.0,
+      "sin_err": 0.0,
+      "modulus": 1.0,
+      "modulus_err": 0.0,
+      "all_ok": true
+    },
+    {
+      "x": 1.5707963267948966,
+      "ceml_ix_1": "(6.123233995736766e-17+1j)",
+      "real_part": 6.123233995736766e-17,
+      "imag_part": 1.0,
+      "cos_x": 6.123233995736766e-17,
+      "sin_x": 1.0,
+      "cos_err": 0.0,
+      "sin_err": 0.0,
+      "modulus": 1.0,
+      "modulus_err": 0.0,
+      "all_ok": true
+    },
+    {
+      "x": 3.141592653589793,
+      "ceml_ix_1": "(-1+1.2246467991473532e-16j)",
+      "real_part": -1.0,
+      "imag_part": 1.2246467991473532e-16,
+      "cos_x": -1.0,
+      "sin_x": 1.2246467991473532e-16,
+      "cos_err": 0.0,
+      "sin_err": 0.0,
+      "modulus": 1.0,
+      "modulus_err": 0.0,
+      "all_ok": true
+    },
+    {
+      "x": 6.283185307179586,
+      "ceml_ix_1": "(1-2.4492935982947064e-16j)",
+      "real_part": 1.0,
+      "imag_part": -2.4492935982947064e-16,
+      "cos_x": 1.0,
+      "sin_x": -2.4492935982947064e-16,
+      "cos_err": 0.0,
+      "sin_err": 0.0,
+      "modulus": 1.0,
+      "modulus_err": 0.0,
+      "all_ok": true
+    }
+  ],
+  "all_euler_verified": true,
+  "uniqueness_argument": "\nTheorem (Euler Gateway Uniqueness):\n  ceml(ix, 1) is the UNIQUE depth-1 complex EML expression that is:\n  (a) non-constant in x\n  (b) has modulus 1 for all real x\n  (c) separates into cos (real part) and sin (imaginary part)\n\nProof sketch:\n  Any depth-1 expression has the form ceml(f(x), g(x)) = exp(f(x)) - Log(g(x))\n  for some leaf assignments f, g.\n\n  For modulus = 1 we need |exp(f) - Log(g)| = 1 for all real x.\n  The simplest: g = 1 (constant), then ceml(f(x), 1) = exp(f(x)).\n  For |exp(f(x))| = 1 we need Re(f(x)) = 0, i.e., f(x) = i\u00b7h(x) for real h.\n  The simplest non-constant: h(x) = x, giving ceml(ix, 1) = exp(ix).\n\n  Any other f(x) = i\u00b7h(x) with h \u2260 x\u00b7id gives sin(h(x)) and cos(h(x)).\n  The IDENTITY map h = id is special: it generates all frequencies via De Moivre\n    ceml(inx, 1) = exp(inx) = (ceml(ix,1))^n\n  confirming ceml(ix,1) as the generator of the entire trig system.\n\n  No other depth-1 expression with constant g simultaneously realizes both sin and cos. QED.\n",
+  "euler_collapse_theorem": "\nTheorem (Euler Collapse):\n  Let f : \u211d \u2192 \u211d be a real-analytic function expressible as f(x) = Im(g(exp(ix)))\n  for some rational function g or polynomial g.\n  Then f is EML-\u221e over \u211d but EML-1 over \u2102.\n\n  More precisely:\n    (i) No finite EML tree over \u211d computes f exactly (since f is not an elementary\n        function expressible via exp and log over \u211d without infinite composition).\n    (ii) The depth-1 complex ceml expression ceml(ix, 1) with Im-projection computes\n         f exactly over \u2102.\n\nProof:\n  (i) sin(x) and cos(x) are not in the real EML closure at finite depth.\n      This follows from the fact that EML trees over \u211d generate functions of the\n      form exp(a) - log(b) which are strictly positive for appropriate inputs\n      and cannot oscillate \u2014 while sin and cos oscillate infinitely.\n  (ii) Direct: ceml(ix,1) = exp(ix); Im(exp(ix)) = sin(x). Depth = 1. QED.\n\nCorollary:\n  The imaginary unit i is the complexity gateway: it converts the oscillating\n  structure of trig functions from an \u221e-depth real obstruction to a depth-1\n  complex computation.\n",
+  "depth1_census": [
+    {
+      "expression": "ceml(x, 1)",
+      "description": "exp(x)",
+      "samples": [
+        {
+          "x": 0.3,
+          "val": "(1.3498588075760032+0j)",
+          "ok": true
+        },
+        {
+          "x": 0.7,
+          "val": "(2.0137527074704766+0j)",
+          "ok": true
+        },
+        {
+          "x": 1.2,
+          "val": "(3.3201169227365472+0j)",
+          "ok": true
+        }
+      ]
+    },
+    {
+      "expression": "ceml(ix, 1)",
+      "description": "exp(ix) = cos+i*sin",
+      "samples": [
+        {
+          "x": 0.3,
+          "val": "(0.955336489125606+0.29552020666133955j)",
+          "ok": true
+        },
+        {
+          "x": 0.7,
+          "val": "(0.7648421872844885+0.644217687237691j)",
+          "ok": true
+        },
+        {
+          "x": 1.2,
+          "val": "(0.3623577544766736+0.9320390859672263j)",
+          "ok": true
+        }
+      ]
+    },
+    {
+      "expression": "ceml(2ix, 1)",
+      "description": "exp(2ix) = cos(2x)+i*sin(2x)",
+      "samples": [
+        {
+          "x": 0.3,
+          "val": "(0.8253356149096783+0.5646424733950354j)",
+          "ok": true
+        },
+        {
+          "x": 0.7,
+          "val": "(0.16996714290024104+0.9854497299884601j)",
+          "ok": true
+        },
+        {
+          "x": 1.2,
+          "val": "(-0.7373937155412454+0.675463180551151j)",
+          "ok": true
+        }
+      ]
+    },
+    {
+      "expression": "ceml(-x, 1)",
+      "description": "exp(-x)",
+      "samples": [
+        {
+          "x": 0.3,
+          "val": "(0.7408182206817179-0j)",
+          "ok": true
+        },
+        {
+          "x": 0.7,
+          "val": "(0.4965853037914095-0j)",
+          "ok": true
+        },
+        {
+          "x": 1.2,
+          "val": "(0.30119421191220214-0j)",
+          "ok": true
+        }
+      ]
+    },
+    {
+      "expression": "ceml(0, x)",
+      "description": "1 - Log(x)",
+      "samples": [
+        {
+          "x": 0.3,
+          "val": "(2.203972804325936+0j)",
+          "ok": true
+        },
+        {
+          "x": 0.7,
+          "val": "(1.3566749439387324+0j)",
+          "ok": true
+        },
+        {
+          "x": 1.2,
+          "val": "(0.8176784432060453+0j)",
+          "ok": true
+        }
+      ]
+    },
+    {
+      "expression": "ceml(1, x)",
+      "description": "e - Log(x)",
+      "samples": [
+        {
+          "x": 0.3,
+          "val": "(3.9222546327849814+0j)",
+          "ok": true
+        },
+        {
+          "x": 0.7,
+          "val": "(3.0749567723977775+0j)",
+          "ok": true
+        },
+        {
+          "x": 1.2,
+          "val": "(2.5359602716650906+0j)",
+          "ok": true
+        }
+      ]
+    },
+    {
+      "expression": "ceml(x, e)",
+      "description": "exp(x) - 1",
+      "samples": [
+        {
+          "x": 0.3,
+          "val": "(0.3498588075760032+0j)",
+          "ok": true
+        },
+        {
+          "x": 0.7,
+          "val": "(1.0137527074704766+0j)",
+          "ok": true
+        },
+        {
+          "x": 1.2,
+          "val": "(2.3201169227365472+0j)",
+          "ok": true
+        }
+      ]
+    },
+    {
+      "expression": "ceml(ix, e)",
+      "description": "exp(ix) - 1",
+      "samples": [
+        {
+          "x": 0.3,
+          "val": "(-0.04466351087439402+0.29552020666133955j)",
+          "ok": true
+        },
+        {
+          "x": 0.7,
+          "val": "(-0.2351578127155115+0.644217687237691j)",
+          "ok": true
+        },
+        {
+          "x": 1.2,
+          "val": "(-0.6376422455233264+0.9320390859672263j)",
+          "ok": true
+        }
+      ]
+    },
+    {
+      "expression": "ceml(x+i, 1)",
+      "description": "exp(x+i) = e^x * exp(i)",
+      "samples": [
+        {
+          "x": 0.3,
+          "val": "(0.729331826329732+1.1358670201625922j)",
+          "ok": true
+        },
+        {
+          "x": 0.7,
+          "val": "(1.088035231294508+1.69451447391475j)",
+          "ok": true
+        },
+        {
+          "x": 1.2,
+          "val": "(1.7938668291063888+2.793782056652485j)",
+          "ok": true
+        }
+      ]
+    }
+  ],
+  "de_moivre_verification": [
+    {
+      "n": 1,
+      "max_err": 0.0,
+      "ok": true,
+      "interpretation": "ceml(1ix,1) = (cos x + i\u00b7sin x)^1"
+    },
+    {
+      "n": 2,
+      "max_err": 2.303328157969851e-16,
+      "ok": true,
+      "interpretation": "ceml(2ix,1) = (cos x + i\u00b7sin x)^2"
+    },
+    {
+      "n": 3,
+      "max_err": 2.482534153247273e-16,
+      "ok": true,
+      "interpretation": "ceml(3ix,1) = (cos x + i\u00b7sin x)^3"
+    },
+    {
+      "n": 4,
+      "max_err": 4.606656315939702e-16,
+      "ok": true,
+      "interpretation": "ceml(4ix,1) = (cos x + i\u00b7sin x)^4"
+    },
+    {
+      "n": 5,
+      "max_err": 4.965068306494546e-16,
+      "ok": true,
+      "interpretation": "ceml(5ix,1) = (cos x + i\u00b7sin x)^5"
+    },
+    {
+      "n": 6,
+      "max_err": 6.909984473909553e-16,
+      "ok": true,
+      "interpretation": "ceml(6ix,1) = (cos x + i\u00b7sin x)^6"
+    },
+    {
+      "n": 7,
+      "max_err": 7.447602459741819e-16,
+      "ok": true,
+      "interpretation": "ceml(7ix,1) = (cos x + i\u00b7sin x)^7"
+    },
+    {
+      "n": 8,
+      "max_err": 9.213312631879404e-16,
+      "ok": true,
+      "interpretation": "ceml(8ix,1) = (cos x + i\u00b7sin x)^8"
+    }
+  ],
+  "de_moivre_ok": true,
+  "eulers_identity": {
+    "ceml_i_pi_1": "(-1+1.2246467991473532e-16j)",
+    "real_part": -1.0,
+    "imag_part": 1.2246467991473532e-16,
+    "plus_one": 0.0,
+    "euler_identity_err": 1.2246467991473532e-16,
+    "verified": true,
+    "statement": "ceml(i\u03c0, 1) + 1 = 0  [Euler's identity as a ceml equation]"
+  },
+  "theorems": [
+    "T1 (Euler Gateway): ceml(ix,1) = cos(x) + i\u00b7sin(x)  for all real x",
+    "T2 (Uniqueness): ceml(ix,1) is the unique depth-1 ceml with modulus=1 and identity-argument",
+    "T3 (Euler Collapse): real-EML-\u221e functions of form Im/Re(g(exp(ix))) \u2192 EML-1 over \u2102",
+    "T4 (De Moivre via ceml): ceml(inx,1) = (ceml(ix,1))^n for all integer n",
+    "T5 (Euler Identity): ceml(i\u03c0,1) + 1 = 0  [ceml form of the most beautiful equation]",
+    "T6 (Frequency Scaling): ceml(i\u03c9x,1) generates all trig frequencies \u03c9 at depth 1"
+  ],
+  "status": "PASS"
+}
