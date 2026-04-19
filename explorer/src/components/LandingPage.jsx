@@ -148,7 +148,7 @@ export default function LandingPage({ onEnter }) {
           <div style={{ fontSize: 9, color: C.muted, lineHeight: 1.7 }}>
             We claimed 957 theorems. The honest count is 18.{" "}
             <a
-              href="https://monogate.dev/theorems"
+              href="https://challenge.monogate.dev/theorems"
               target="_blank"
               rel="noreferrer"
               style={{ color: C.accent, textDecoration: "none" }}
@@ -376,7 +376,7 @@ export default function LandingPage({ onEnter }) {
             Games ↗
           </a>
           {[
-            { label: "Theorems", href: "https://monogate.dev/theorems" },
+            { label: "Theorems", href: "https://challenge.monogate.dev/theorems" },
             { label: "Challenges", href: "https://monogate.dev" },
             { label: "GitHub",  href: "https://github.com/almaguer1986/monogate" },
             { label: "npm",     href: "https://www.npmjs.com/package/monogate" },
