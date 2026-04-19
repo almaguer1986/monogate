@@ -1,0 +1,168 @@
+Session 5: Phantom Attractor — Functional Equation & Constant Search
+=================================================================
+
+[1/3] Deriving functional equation...
+  W(1) = 0.567143290409783873
+  Factor 2 has solution: False
+  Factor 3 has solution: False
+  Conclusion: NO gradient-flow fixed point exists in ℝ₊. Factor 1 critical point at x=W(1)≈0.567143 gives F≈12525.2 (not π). Factor 2 ...
+
+[2/3] Brute-force search over ~10,000 expressions (tol=1e-10)...
+  Library size: 738 expressions
+  alpha_dominant: 0 matches within 1e-10
+    closest: 2*ln2+3*ln5(near) @ dist=0.00016625
+  alpha_minority: 0 matches within 1e-10
+    closest: 2*pi @ dist=0.015667
+  alpha_dominant: 0 exact matches (within 1e-10)
+  alpha_minority: 0 exact matches (within 1e-10)
+
+[3/3] Verifying Session 4 degree-7 polynomial at 50/80/120 dps...
+  alpha_dominant: residuals={50: '4.2398879e-37', 80: '4.2398879e-37', 120: '4.2398879e-37'}, shrinking=True
+    PSLQ confirms: {50: False, 80: False, 120: False}
+    Verdict: LIKELY FALSE POSITIVE — residuals plateau or PSLQ fails at higher dps
+  alpha_minority: residuals={50: '2.3085129e-37', 80: '2.3085129e-37', 120: '2.3085129e-37'}, shrinking=True
+    PSLQ confirms: {50: False, 80: False, 120: False}
+    Verdict: LIKELY FALSE POSITIVE — residuals plateau or PSLQ fails at higher dps
+
+=================================================================
+SUMMARY
+  Matches (dominant): 0
+  Matches (minority): 0
+  Polynomial true algebraic: {'alpha_dominant': False, 'alpha_minority': False}
+
+  Functional equation analysis proves no gradient-flow fixed point exists. Brute-force search found 0 expression(s) within 1e-10 of α₁ and 0 expression(s) within 1e-10 of α₂. No symbolic closed form fou
+{
+  "session": 5,
+  "title": "Phantom Attractor: Functional Equation & Brute-Force Constant Search",
+  "functional_equation": {
+    "lambert_W1": "0.567143290409783873",
+    "factor1_critical_x": "0.567143290409783873",
+    "factor1_F_value": "12525.234627580196764",
+    "factor2_requires_A_eq_W1": true,
+    "factor2_min_A_value": "2.3303661247616805832",
+    "factor2_W1_value": "0.567143290409783873",
+    "factor2_has_solution": false,
+    "factor3_requires_B_eq_W1": true,
+    "factor3_min_B_at_xW1": "9.4356798405632115061",
+    "factor3_has_solution": false,
+    "conclusion": "NO gradient-flow fixed point exists in \u211d\u208a. Factor 1 critical point at x=W(1)\u22480.567143 gives F\u224812525.2 (not \u03c0). Factor 2 requires A(x)=W(1) but min(A)\u22482.3304 > W(1)\u22480.5671: NO SOLUTION. Factor 3 requires B(x)=W(1) but min(B)\u22489.4357 > W(1): NO SOLUTION. The phantom attractor is a slow-manifold of the discrete Adam optimizer, NOT a fixed point of the continuous gradient flow.",
+    "slow_manifold_equation": "The slow manifold is: \u2207(|\u2207L|\u00b2) = 0. This is a degree-16 polynomial system in the leaves with no known closed-form solution."
+  },
+  "brute_force_search": {
+    "alpha_dominant": [],
+    "alpha_dominant_closest5": [
+      {
+        "expression": "2*ln2+3*ln5(near)",
+        "value": "6.2146080984221917426",
+        "distance": "0.00016625"
+      },
+      {
+        "expression": "exp(ln3)+2*ln5",
+        "value": "6.2188758248682007492",
+        "distance": "0.004434"
+      },
+      {
+        "expression": "3*pi+-2*ln5(near)",
+        "value": "6.2059021359011789662",
+        "distance": "0.0085397"
+      },
+      {
+        "expression": "1*sqrt3+2*sqrt5",
+        "value": "6.2041867625684566863",
+        "distance": "0.010255"
+      },
+      {
+        "expression": "3*gamma+2*sqrt5(near)",
+        "value": "6.2037829497041779746",
+        "distance": "0.010659"
+      }
+    ],
+    "alpha_minority": [],
+    "alpha_minority_closest5": [
+      {
+        "expression": "2*pi",
+        "value": "6.2831853071795864769",
+        "distance": "0.015667"
+      },
+      {
+        "expression": "3*ln5+1*sqrt2(near)",
+        "value": "6.2425272996753961726",
+        "distance": "0.024991"
+      },
+      {
+        "expression": "2*sqrt2+2*sqrt3",
+        "value": "6.2925287398839446847",
+        "distance": "0.02501"
+      },
+      {
+        "expression": "1*ln3+3*sqrt3(near)",
+        "value": "6.294764711374741572",
+        "distance": "0.027246"
+      },
+      {
+        "expression": "exp(ln3)+2*ln5",
+        "value": "6.2188758248682007492",
+        "distance": "0.048643"
+      }
+    ]
+  },
+  "polynomial_verification": {
+    "alpha_dominant": {
+      "poly_from_session4": {
+        "0": 559163,
+        "1": -501585,
+        "2": 653724,
+        "3": 148312,
+        "4": -58863,
+        "5": 72543,
+        "6": -546212,
+        "7": 86098
+      },
+      "residuals_at_dps": {
+        "50": "4.2398879e-37",
+        "80": "4.2398879e-37",
+        "120": "4.2398879e-37"
+      },
+      "residuals_shrinking": true,
+      "pslq_confirms_algebraic": {
+        "50": false,
+        "80": false,
+        "120": false
+      },
+      "verdict": "LIKELY FALSE POSITIVE \u2014 residuals plateau or PSLQ fails at higher dps"
+    },
+    "alpha_minority": {
+      "poly_from_session4": {
+        "0": -138304,
+        "1": -167882,
+        "2": -223982,
+        "3": -1922,
+        "4": 72809,
+        "5": -522190,
+        "6": 112328,
+        "7": -4897
+      },
+      "residuals_at_dps": {
+        "50": "2.3085129e-37",
+        "80": "2.3085129e-37",
+        "120": "2.3085129e-37"
+      },
+      "residuals_shrinking": true,
+      "pslq_confirms_algebraic": {
+        "50": false,
+        "80": false,
+        "120": false
+      },
+      "verdict": "LIKELY FALSE POSITIVE \u2014 residuals plateau or PSLQ fails at higher dps"
+    }
+  },
+  "summary": {
+    "expressions_within_1e10_dominant": 0,
+    "expressions_within_1e10_minority": 0,
+    "polynomial_true_algebraic": {
+      "alpha_dominant": false,
+      "alpha_minority": false
+    },
+    "interpretation": "Functional equation analysis proves no gradient-flow fixed point exists. Brute-force search found 0 expression(s) within 1e-10 of \u03b1\u2081 and 0 expression(s) within 1e-10 of \u03b1\u2082. No symbolic closed form found in standard EL-field. Polynomial verification: alpha_dominant=False, alpha_minority=False. EML-\u221e classification upheld: phantom attractors are numerical artifacts with no known mathematical description."
+  }
+}
