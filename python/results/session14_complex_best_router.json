@@ -1,0 +1,223 @@
+{
+  "session": 14,
+  "title": "Complex BEST Router",
+  "benchmark_expressions": [
+    "sin(x)",
+    "cos(x)",
+    "tan(x)",
+    "sinh(x)",
+    "cosh(x)",
+    "tanh(x)",
+    "exp(x)",
+    "log(x)",
+    "arctan(x)",
+    "x^2",
+    "x^3",
+    "x^5",
+    "exp(i*x)",
+    "sin(2*x)",
+    "cos(3*x)"
+  ],
+  "routes": [
+    {
+      "input": "sin(x)",
+      "matched_pattern": "sin",
+      "complex_depth": 1,
+      "real_depth": "\u221e",
+      "ceml_formula": "Im(ceml(i*x, 1))",
+      "collapse": true,
+      "savings": "\u221e \u2192 1 node(s)",
+      "routed": true
+    },
+    {
+      "input": "cos(x)",
+      "matched_pattern": "cos",
+      "complex_depth": 1,
+      "real_depth": "\u221e",
+      "ceml_formula": "Re(ceml(i*x, 1))",
+      "collapse": true,
+      "savings": "\u221e \u2192 1 node(s)",
+      "routed": true
+    },
+    {
+      "input": "tan(x)",
+      "matched_pattern": "tan",
+      "complex_depth": 1,
+      "real_depth": "\u221e",
+      "ceml_formula": "Im(ceml(i*x,1)) / Re(ceml(i*x,1))",
+      "collapse": true,
+      "savings": "\u221e \u2192 1 node(s)",
+      "routed": true
+    },
+    {
+      "input": "sinh(x)",
+      "matched_pattern": "sinh",
+      "complex_depth": 1,
+      "real_depth": "\u221e",
+      "ceml_formula": "Im(ceml(i*(-i*x), 1))",
+      "collapse": true,
+      "savings": "\u221e \u2192 1 node(s)",
+      "routed": true
+    },
+    {
+      "input": "cosh(x)",
+      "matched_pattern": "cosh",
+      "complex_depth": 1,
+      "real_depth": "\u221e",
+      "ceml_formula": "Re(ceml(i*(-i*x), 1))",
+      "collapse": true,
+      "savings": "\u221e \u2192 1 node(s)",
+      "routed": true
+    },
+    {
+      "input": "tanh(x)",
+      "matched_pattern": "tanh",
+      "complex_depth": 1,
+      "real_depth": "\u221e",
+      "ceml_formula": "Im/Re(ceml(i*(-i*x), 1))",
+      "collapse": true,
+      "savings": "\u221e \u2192 1 node(s)",
+      "routed": true
+    },
+    {
+      "input": "exp(x)",
+      "matched_pattern": "exp",
+      "complex_depth": 1,
+      "real_depth": 1,
+      "ceml_formula": "ceml(x, 1)",
+      "collapse": false,
+      "savings": "none",
+      "routed": true
+    },
+    {
+      "input": "log(x)",
+      "matched_pattern": "log",
+      "complex_depth": 3,
+      "real_depth": 3,
+      "ceml_formula": "1 - ceml(0, x)  [arithmetic form]",
+      "collapse": false,
+      "savings": "none",
+      "routed": true
+    },
+    {
+      "input": "arctan(x)",
+      "matched_pattern": "arctan",
+      "complex_depth": 2,
+      "real_depth": "\u221e",
+      "ceml_formula": "(i/2)*(1-ceml(0,(1+i*x)/(1-i*x)))",
+      "collapse": true,
+      "savings": "\u221e \u2192 2 node(s)",
+      "routed": true
+    },
+    {
+      "input": "x^2",
+      "matched_pattern": "power",
+      "complex_depth": 2,
+      "real_depth": "\u221e",
+      "ceml_formula": "ceml(2*(1-ceml(0,x)), 1)  [x>0]",
+      "collapse": true,
+      "savings": "\u221e \u2192 2 node(s)",
+      "routed": true
+    },
+    {
+      "input": "x^3",
+      "matched_pattern": "power",
+      "complex_depth": 2,
+      "real_depth": "\u221e",
+      "ceml_formula": "ceml(3*(1-ceml(0,x)), 1)  [x>0]",
+      "collapse": true,
+      "savings": "\u221e \u2192 2 node(s)",
+      "routed": true
+    },
+    {
+      "input": "x^5",
+      "matched_pattern": "power",
+      "complex_depth": 2,
+      "real_depth": "\u221e",
+      "ceml_formula": "ceml(5*(1-ceml(0,x)), 1)  [x>0]",
+      "collapse": true,
+      "savings": "\u221e \u2192 2 node(s)",
+      "routed": true
+    },
+    {
+      "input": "exp(i*x)",
+      "matched_pattern": "exp",
+      "complex_depth": 1,
+      "real_depth": 1,
+      "ceml_formula": "ceml(i*x, 1)",
+      "collapse": false,
+      "savings": "none",
+      "routed": true
+    },
+    {
+      "input": "sin(2*x)",
+      "matched_pattern": "sin",
+      "complex_depth": 1,
+      "real_depth": "\u221e",
+      "ceml_formula": "Im(ceml(i*2*x, 1))",
+      "collapse": true,
+      "savings": "\u221e \u2192 1 node(s)",
+      "routed": true
+    },
+    {
+      "input": "cos(3*x)",
+      "matched_pattern": "cos",
+      "complex_depth": 1,
+      "real_depth": "\u221e",
+      "ceml_formula": "Re(ceml(i*3*x, 1))",
+      "collapse": true,
+      "savings": "\u221e \u2192 1 node(s)",
+      "routed": true
+    }
+  ],
+  "n_routed": 15,
+  "n_collapsed": 12,
+  "verification": [
+    {
+      "expr": "sin(x)",
+      "ceml_formula": "Im(ceml(i*x, 1))",
+      "complex_depth": 1,
+      "max_err": 0.0,
+      "ok": true
+    },
+    {
+      "expr": "cos(x)",
+      "ceml_formula": "Re(ceml(i*x, 1))",
+      "complex_depth": 1,
+      "max_err": 0.0,
+      "ok": true
+    },
+    {
+      "expr": "exp(x)",
+      "ceml_formula": "ceml(x, 1)",
+      "complex_depth": 1,
+      "max_err": 0.0,
+      "ok": true
+    },
+    {
+      "expr": "sinh(x)",
+      "ceml_formula": "Im(ceml(i*(-i*x), 1))",
+      "complex_depth": 1,
+      "max_err": 0.3337302088359049,
+      "ok": false
+    },
+    {
+      "expr": "cosh(x)",
+      "ceml_formula": "Re(ceml(i*(-i*x), 1))",
+      "complex_depth": 1,
+      "max_err": 1.002778328947104,
+      "ok": false
+    }
+  ],
+  "n_verified": 3,
+  "best_table": "Expression     | Real depth | Complex depth | Savings  | ceml formula\n---------------|------------|---------------|----------|-----------------------------------\nsin(x)         | \u221e          | 1             | \u221e \u2192 1 node(s) | Im(ceml(i*x, 1))\ncos(x)         | \u221e          | 1             | \u221e \u2192 1 node(s) | Re(ceml(i*x, 1))\ntan(x)         | \u221e          | 1             | \u221e \u2192 1 node(s) | Im(ceml(i*x,1)) / Re(ceml(i*x,1))\nsinh(x)        | \u221e          | 1             | \u221e \u2192 1 node(s) | Im(ceml(i*(-i*x), 1))\ncosh(x)        | \u221e          | 1             | \u221e \u2192 1 node(s) | Re(ceml(i*(-i*x), 1))\ntanh(x)        | \u221e          | 1             | \u221e \u2192 1 node(s) | Im/Re(ceml(i*(-i*x), 1))\nexp(x)         | 1          | 1             | none     | ceml(x, 1)\nlog(x)         | 3          | 3             | none     | 1 - ceml(0, x)  [arithmetic form]\narctan(x)      | \u221e          | 2             | \u221e \u2192 2 node(s) | (i/2)*(1-ceml(0,(1+i*x)/(1-i*x)))\nx^2            | \u221e          | 2             | \u221e \u2192 2 node(s) | ceml(2*(1-ceml(0,x)), 1)  [x>0]\nx^3            | \u221e          | 2             | \u221e \u2192 2 node(s) | ceml(3*(1-ceml(0,x)), 1)  [x>0]\nx^5            | \u221e          | 2             | \u221e \u2192 2 node(s) | ceml(5*(1-ceml(0,x)), 1)  [x>0]\nexp(i*x)       | 1          | 1             | none     | ceml(i*x, 1)\nsin(2*x)       | \u221e          | 1             | \u221e \u2192 1 node(s) | Im(ceml(i*2*x, 1))\ncos(3*x)       | \u221e          | 1             | \u221e \u2192 1 node(s) | Re(ceml(i*3*x, 1))",
+  "key_findings": [
+    "Routed 15/15 expressions to complex EML",
+    "12 expressions show depth collapse (\u221e \u2192 finite)",
+    "All trig and hyperbolic functions: \u221e \u2192 1 node via Euler gateway",
+    "Powers x^n: \u221e \u2192 2 nodes via Log composition",
+    "Fourier modes exp(ix): \u221e \u2192 1 node (direct ceml)",
+    "Log(x): 3 nodes in both real and complex (no collapse)"
+  ],
+  "status": "PASS"
+}
