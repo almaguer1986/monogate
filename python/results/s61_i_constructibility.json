@@ -1,0 +1,107 @@
+{
+  "max_n": 7,
+  "found_i": false,
+  "witness": null,
+  "loophole_found": true,
+  "loophole_first_n": 5,
+  "loophole_example": {
+    "n": 5,
+    "root_value": "(0.19768791128627594-3.141592653589793j)",
+    "trace": [
+      {
+        "x": "1.0",
+        "y": "1.0",
+        "y_is_nonpositive": "False",
+        "result": "2.718281828459045",
+        "result_is_complex": "False"
+      },
+      {
+        "x": "2.718281828459045",
+        "y": "1.0",
+        "y_is_nonpositive": "False",
+        "result": "15.154262241479262",
+        "result_is_complex": "False"
+      },
+      {
+        "x": "15.154262241479262",
+        "y": "1.0",
+        "y_is_nonpositive": "False",
+        "result": "3814279.104760214",
+        "result_is_complex": "False"
+      },
+      {
+        "x": "1.0",
+        "y": "3814279.104760214",
+        "y_is_nonpositive": "False",
+        "result": "-12.435980413020218",
+        "result_is_complex": "False"
+      },
+      {
+        "x": "1.0",
+        "y": "-12.435980413020218",
+        "y_is_nonpositive": "True",
+        "result": "(0.19768791128627594, -3.141592653589793)",
+        "result_is_complex": "True"
+      }
+    ]
+  },
+  "summary_by_n": {
+    "1": {
+      "total_trees": 1,
+      "real_outputs": 1,
+      "complex_outputs": 0,
+      "domain_errors": 0,
+      "loophole_activations": 0,
+      "found_i": false
+    },
+    "2": {
+      "total_trees": 2,
+      "real_outputs": 2,
+      "complex_outputs": 0,
+      "domain_errors": 0,
+      "loophole_activations": 0,
+      "found_i": false
+    },
+    "3": {
+      "total_trees": 5,
+      "real_outputs": 5,
+      "complex_outputs": 0,
+      "domain_errors": 0,
+      "loophole_activations": 0,
+      "found_i": false
+    },
+    "4": {
+      "total_trees": 14,
+      "real_outputs": 12,
+      "complex_outputs": 0,
+      "domain_errors": 2,
+      "loophole_activations": 0,
+      "found_i": false
+    },
+    "5": {
+      "total_trees": 42,
+      "real_outputs": 33,
+      "complex_outputs": 1,
+      "domain_errors": 8,
+      "loophole_activations": 1,
+      "found_i": false
+    },
+    "6": {
+      "total_trees": 132,
+      "real_outputs": 91,
+      "complex_outputs": 6,
+      "domain_errors": 35,
+      "loophole_activations": 6,
+      "found_i": false
+    },
+    "7": {
+      "total_trees": 429,
+      "real_outputs": 265,
+      "complex_outputs": 31,
+      "domain_errors": 133,
+      "loophole_activations": 31,
+      "found_i": false
+    }
+  },
+  "proof_status": "LOOPHOLE_ACTIVE from N=5: some y-arguments become non-positive, injecting complex values. But i was not produced up to N=7. See S62 for focused attack."
+}

@@ -1,0 +1,17 @@
+=== monogate N=12 Exhaustive Sin(x) Search ===
+CPU threads: 8
+Generating tree shapes for N=12...
+Shapes: 208012, Leaf combos: 8192, Total: 1704034304
+Starting search...
+
+N=12 exhaustive EML search
+  Tree shapes:          208012
+  Leaf combos:            8192
+  Total trees:      1704034304
+  After parity:         191634
+  Best MSE:       1.120024e-1
+  Best formula:   eml(1,eml(eml(eml(eml(eml(x,eml(eml(eml(eml(1,eml(x,1)),1),1),1)),1),1),eml(x,1)),1))
+  Elapsed:        224.7s
+  Verdict:        SIN ABSENT (barrier confirmed)
+
+Results written to: ../python/results/n12_search_results.json

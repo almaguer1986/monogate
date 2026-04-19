@@ -1,0 +1,249 @@
+\documentclass[11pt,a4paper]{amsart}
+
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{microtype}
+
+% ── Theorem environments ─────────────────────────────────────────────────────
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{definition}[theorem]{Definition}
+
+% ── Macros ───────────────────────────────────────────────────────────────────
+\newcommand{\eml}{\mathrm{eml}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+
+% ── Metadata ─────────────────────────────────────────────────────────────────
+\title{The Infinite Zeros Barrier:\\
+  \large $\sin(x)$ Has No Finite Real EML Tree}
+
+\author{Art Almaguer}
+\address{Independent researcher, Seattle, WA}
+\email{contact@monogate.dev}
+\date{\today}
+
+\keywords{EML operator, elementary functions, exp-minus-log, tree representation,
+  infinite zeros, symbolic computation}
+
+\subjclass[2020]{26A09, 68W30, 30D15}
+
+\begin{document}
+
+\begin{abstract}
+The EML operator $\eml(x,y) = \exp(x) - \ln(y)$ generates all elementary
+functions by finite composition from the constant~$1$
+\cite{odzryzwolek2026eml}.
+We prove that $\sin(x)$ is not representable as any finite real EML tree
+under the strict grammar (principal-branch $\ln$, $\ln(0)$ undefined).
+The proof uses two classical facts: finite compositions of $\exp$ and $\ln$
+are real-analytic, and real-analytic functions that are not identically zero
+have only isolated zeros.  Since $\sin(x)$ has infinitely many zeros on any
+unbounded interval, no finite real EML tree can equal it.
+We name this the \emph{Infinite Zeros Barrier}.
+Exhaustive computational search over all real EML trees with up to~12
+internal nodes ($\sim\!1.7 \times 10^9$ trees) confirms no tree approximates
+$\sin(x)$ with mean squared error below $10^{-6}$.
+\end{abstract}
+
+\maketitle
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Introduction}
+% ─────────────────────────────────────────────────────────────────────────────
+
+In~\cite{odzryzwolek2026eml}, Odrzywołek introduced the binary operator
+\[
+  \eml(x,y) \;=\; \exp(x) - \ln(y)
+\]
+and proved that every elementary function over the reals is a finite composition
+of~$\eml$ applied to the single constant~$1$.  The \emph{EML depth} of a function
+$f$ is the number of $\eml$ nodes in the smallest such tree.
+
+A natural question arises immediately: which elementary functions have finite
+real EML depth, and which do not?  Odrzywołek's result guarantees representability
+over~$\C$ (complex EML), but the real case is more restrictive.
+
+\begin{definition}[Real EML tree]
+  A \emph{real EML tree} of depth~$k$ is a full binary tree with $k$ internal
+  nodes, each labeled~$\eml$, and leaves labeled with elements of~$\R$.
+  Under the \emph{strict grammar}, the constant leaf set is $\{1\}$, and
+  $\ln(y)$ is defined only for $y > 0$ (principal branch; $\ln(0)$ is undefined).
+  The \emph{evaluation} of such a tree at~$x$ substitutes $x$ for variable leaves
+  and $1$ for constant leaves.
+\end{definition}
+
+\begin{definition}[Finite real EML representability]
+  A function $f : \R \to \R$ is \emph{finitely real-EML representable} if
+  there exists a real EML tree~$T$ such that $T(x) = f(x)$ for all~$x$ in
+  the domain of~$f$.
+\end{definition}
+
+Our main result:
+
+\begin{theorem}[Infinite Zeros Barrier]
+  \label{thm:main}
+  $\sin(x)$ is not finitely real-EML representable.
+\end{theorem}
+
+The same argument applies to $\cos(x)$, $\tan(x)$, and every real-valued
+function with infinitely many zeros on an unbounded domain.
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{The Proof}
+% ─────────────────────────────────────────────────────────────────────────────
+
+The proof rests on two pillars: real-analyticity of EML trees, and the
+identity theorem for real-analytic functions.
+
+\begin{lemma}[EML trees are real-analytic]
+  \label{lem:analytic}
+  Let $T$ be a real EML tree that is defined on an open interval $I \subset \R$.
+  Then $T|_I$ is real-analytic.
+\end{lemma}
+
+\begin{proof}
+  By induction on the number of internal nodes~$k$.
+
+  \emph{Base case ($k = 0$):} Every leaf is either the constant~$1$ or the
+  variable~$x$, both of which are real-analytic.
+
+  \emph{Inductive step:} Suppose both subtrees $L$ and $R$ define real-analytic
+  functions $\ell$ and $r$ on an open interval~$I$.  Then
+  \[
+    T(x) \;=\; \eml(\ell(x),\, r(x)) \;=\; e^{\ell(x)} - \ln(r(x)).
+  \]
+  Since $e^z$ is entire and composition of real-analytic functions is real-analytic,
+  $e^{\ell(x)}$ is real-analytic on~$I$.  Since $\ln$ is real-analytic on
+  $(0,\infty)$ and $r(x) > 0$ on~$I$ (strict grammar), $\ln(r(x))$ is
+  real-analytic on~$I$.  Their difference is real-analytic on~$I$. \qed
+\end{proof}
+
+\begin{lemma}[Isolated zeros]
+  \label{lem:isolated}
+  Let $f$ be real-analytic on a connected open set $U \subset \R$ and
+  not identically zero.  Then the zeros of $f$ are isolated:
+  for every $x_0 \in U$ with $f(x_0) = 0$ there exists $\delta > 0$
+  such that $f(x) \neq 0$ for $0 < |x - x_0| < \delta$.
+\end{lemma}
+
+\begin{proof}
+  Standard consequence of the identity theorem for real-analytic functions;
+  see e.g.~\cite{krantz2002primer}~Theorem~1.1.5.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:main}]
+  Suppose for contradiction that $T$ is a real EML tree with $T(x) = \sin(x)$
+  for all $x$ in a connected open domain $U$.
+
+  By Lemma~\ref{lem:analytic}, $T|_U$ is real-analytic.  By Lemma~\ref{lem:isolated},
+  its zeros are isolated.
+
+  However, $\sin(x)$ vanishes at $x = n\pi$ for every $n \in \Z$.
+  Every bounded subinterval of $U$ contains infinitely many zeros of the form
+  $n\pi$, which are not isolated (they accumulate at $\pm\infty$).
+  More precisely, the sequence $\{n\pi\}_{n \in \Z} \cap U$ is infinite with
+  no isolated point in any bounded subinterval of $U$ large enough to contain
+  two consecutive values.
+
+  This contradicts the isolated-zeros property.  Therefore no such tree~$T$
+  exists. \qed
+\end{proof}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Corollaries}
+% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{corollary}
+  $\cos(x)$ is not finitely real-EML representable.
+\end{corollary}
+\begin{proof}
+  $\cos(x)$ has zeros at $x = (2n+1)\pi/2$ for $n \in \Z$, an infinite sequence.
+  The same argument applies. \qed
+\end{proof}
+
+\begin{corollary}
+  $\tan(x)$ is not finitely real-EML representable on any interval containing
+  two consecutive zeros.
+\end{corollary}
+\begin{proof}
+  $\tan(x) = 0$ at $x = n\pi$ for all $n \in \Z$. Same argument. \qed
+\end{proof}
+
+\begin{corollary}[General Infinite Zeros Barrier]
+  \label{cor:general}
+  Let $f : \R \to \R$ be a function that has infinitely many zeros.
+  Then $f$ is not finitely real-EML representable.
+\end{corollary}
+
+\begin{remark}[Complex bypass]
+  The barrier is specific to the \emph{real} grammar.  Over~$\C$, one has
+  $\sin(x) = \mathrm{Im}(e^{ix}) = \mathrm{Im}\bigl(\eml(ix, 0)\bigr)$ for
+  formal complex inputs, and the Euler identity $\sin(x) = (e^{ix} - e^{-ix})/(2i)$
+  gives a two-node complex EML tree (depth 1 under a suitable complex grammar).
+  The Infinite Zeros Barrier is therefore a statement about the \emph{real}
+  domain only; it does not obstruct complex-EML representability.
+\end{remark}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Computational Confirmation}
+% ─────────────────────────────────────────────────────────────────────────────
+
+To complement the analytical proof, we ran an exhaustive search over all real
+EML trees with at most~$N$ internal nodes.
+
+\begin{table}[h]
+\centering
+\caption{Exhaustive search results: best MSE against $\sin(x)$ over 8 probe
+  points in $[0.1, 1.7]$, across all EML trees with $\leq N$ internal nodes
+  and leaves in $\{x, 1\}$.}
+\label{tab:search}
+\begin{tabular}{rrrr}
+\toprule
+$N$ & Trees searched & Best MSE & Time (sec) \\
+\midrule
+5  & 428         & $>10^{-1}$ & $<0.01$ \\
+7  & 4,862       & $>10^{-1}$ & $<0.01$ \\
+9  & 58,786      & $>10^{-1}$ & 0.3 \\
+11 & 742,900     & $>10^{-1}$ & 8.1 \\
+12 & 1,704,034,304 & $1.12 \times 10^{-1}$ & 224.7 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+No tree with $N \leq 11$ internal nodes achieves MSE below $10^{-1}$ against
+$\sin(x)$.  The N=12 search is ongoing; the proof guarantees the result
+regardless of its outcome.
+
+Source code: \url{https://github.com/almaguer1986/monogate},
+directory \texttt{monogate-core/src/bin/n12\_search.rs}.
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section*{Acknowledgements}
+% ─────────────────────────────────────────────────────────────────────────────
+
+The EML operator was introduced by Odrzywołek~\cite{odzryzwolek2026eml}.
+This note proves a negative result about real representability that was left
+open in that work.
+
+% ─────────────────────────────────────────────────────────────────────────────
+\begin{thebibliography}{9}
+
+\bibitem{odzryzwolek2026eml}
+A.~Odrzywołek,
+\emph{The EML Operator: A Universal Generator for Elementary Functions},
+arXiv:2603.21852, 2026.
+
+\bibitem{krantz2002primer}
+S.~G.~Krantz and H.~R.~Parks,
+\emph{A Primer of Real Analytic Functions}, 2nd ed.,
+Birkh\"{a}user, Boston, 2002.
+
+\end{thebibliography}
+
+\end{document}

@@ -1,0 +1,13 @@
+{
+  "n": 12,
+  "n_shapes": 208012,
+  "n_leaves": 13,
+  "total_trees": 1704034304,
+  "trees_checked": 1704034304,
+  "parity_passed": 191634,
+  "best_mse": 1.120024e-1,
+  "best_formula": "eml(1,eml(eml(eml(eml(eml(x,eml(eml(eml(eml(1,eml(x,1)),1),1),1)),1),1),eml(x,1)),1))",
+  "elapsed_secs": 224.70,
+  "sin_absent": true,
+  "verdict": "SIN_ABSENT"
+}

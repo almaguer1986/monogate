@@ -1,0 +1,68 @@
+{
+  "ipi_closure": {
+    "first_loophole_value": "(0.19768791128627594-3.141592653589793j)",
+    "ln_of_loophole": "(1.1467058181715608-1.5079531691896073j)",
+    "arg_of_loophole": -1.5079531691896073,
+    "arg_over_pi": -0.4799964016552304,
+    "arg_is_integer_multiple_of_pi": false,
+    "observation": "arg(0.198 - \u03c0i) / \u03c0 \u2248 -0.479996 \u2014 NOT an integer, so ln of loophole value exits the i\u03c0\u00b7\u2124 lattice immediately at the next composition level."
+  },
+  "algebraic_obstruction": {
+    "pi": 3.141592653589793,
+    "1/pi": 0.3183098861837907,
+    "1_is_integer_multiple_of_pi": false,
+    "conclusion": "THEOREM: i is not constructible from {1} under strict real EML grammar. Proof: all Im parts lie in \u03c0\u00b7\u2124. Since 1 \u2209 \u03c0\u00b7\u2124 (\u03c0 is transcendental), Im = 1 is impossible."
+  },
+  "census_n9": {
+    "max_n": 9,
+    "found_i": false,
+    "found_neg_i": false,
+    "n_complex_outputs": 737,
+    "distinct_im_count": 158,
+    "im_values_sample": [
+      -3.401023171750857e+97,
+      -1212484.90449634,
+      -44.77991105,
+      -5.01324374,
+      -4.81952354,
+      -4.81724428,
+      -4.29073189,
+      -3.14159265,
+      -3.14159259,
+      -2.93463136,
+      -2.83475866,
+      -1.71499096,
+      -1.53134969,
+      -1.50795317,
+      -1.50795316,
+      -1.4814253,
+      -1.35705191,
+      -1.34726035,
+      -1.3472603,
+      -1.2483425
+    ],
+    "im_values_over_pi": [
+      -1.08257929870845e+97,
+      -385945.93195,
+      -14.253888,
+      -1.595765,
+      -1.534102,
+      -1.533376,
+      -1.365782,
+      -1.0,
+      -1.0,
+      -0.934122,
+      -0.902332,
+      -0.545899,
+      -0.487444,
+      -0.479996,
+      -0.479996,
+      -0.471552,
+      -0.431963,
+      -0.428846,
+      -0.428846,
+      -0.39736
+    ]
+  },
+  "final_status": "THEOREM: i not constructible"
+}

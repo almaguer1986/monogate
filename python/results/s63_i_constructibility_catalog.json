@@ -1,0 +1,26 @@
+{
+  "id": "T_i_strict",
+  "name": "i-Constructibility (Strict Grammar)",
+  "tier": "CONJECTURE",
+  "session": "S61-S63",
+  "category": "Core Algebra",
+  "statement": "i = sqrt(-1) is NOT constructible as a finite EML tree from terminal {1} under strict principal-branch grammar (ln(0) undefined, ln of negative reals returns complex via principal branch).",
+  "evidence": "Exhaustive enumeration of all full binary EML trees with N=1..9 internal nodes (1429 trees total), all leaves assigned value 1. No tree evaluates to i. The loophole (negative y-argument entering ln) first activates at N=5, producing complex values with Im = -\u03c0. Subsequent compositions produce Im parts that are NOT integer multiples of \u03c0 (Im/\u03c0 census: irrational values like -0.48, -0.93, -1.59 appear). Despite the complex values, Im = 1 never appears.",
+  "proof_status": "INCOMPLETE",
+  "proof_gap": "Attempted i\u03c0-closure induction: first complex generation has Im = -\u03c0 (valid). But exp(a + ib) for general b breaks the integer-\u03c0 invariant. A complete proof requires either: (a) a different algebraic invariant, (b) extending the search to N=11+ with the Rust kernel, or (c) a transcendence argument about which Im values are reachable.",
+  "verify": "python python/experiments/i_constructibility.py  # N=1..7\npython python/experiments/i_constructibility_s62.py  # N=1..9 census",
+  "challenge_board_status": "OPEN",
+  "search_summary": {
+    "max_n_searched": 9,
+    "total_trees": 1429,
+    "complex_outputs": 737,
+    "found_i": false,
+    "loophole_first_n": 5,
+    "note": "N=12 Rust search running in background (started S61)"
+  },
+  "next_steps": [
+    "S66-S69: Lean proof attempt (private repo)",
+    "Extend Python search to N=11 using Rust kernel",
+    "Explore transcendence argument: what algebraic structure do reachable Im values have?"
+  ]
+}
