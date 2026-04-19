@@ -1,0 +1,87 @@
+{
+  "theorem": {
+    "id": "T19",
+    "name": "Strict-Grammar i-Barrier",
+    "tier": "THEOREM",
+    "session": "S70",
+    "category": "Core Algebra \u2014 i-Constructibility Sprint",
+    "statement": "Under the strict principal-branch EML grammar (ln defined only on \u211d\u207a, terminal set {1}), i = \u221a(\u22121) is not constructible. More generally: every well-defined tree evaluation is a real number.",
+    "proof": {
+      "type": "Induction on depth",
+      "length": "3 lines",
+      "line_1": "Leaves: the only leaf is 1 \u2208 \u211d\u207a.",
+      "line_2": "Step: if x \u2208 \u211d and y \u2208 \u211d\u207a (strict grammar requires y > 0), then exp(x) \u2208 \u211d and ln(y) \u2208 \u211d, so eml(x,y) = exp(x) \u2212 ln(y) \u2208 \u211d.",
+      "line_3": "By induction on tree depth, every well-defined evaluation is real. Since i \u2209 \u211d, i is not constructible. \u220e"
+    },
+    "corollaries": [
+      "\u2102 \\ \u211d \u2229 EML({1}, strict) = \u2205 \u2014 no complex value is constructible under strict grammar.",
+      "EML({1}, strict) \u2286 \u211d \u2014 the entire strict-grammar closure lies in \u211d.",
+      "Contrast with extended grammar: the loophole (ln of negative real) first activates at N=5, producing values with Im = \u2212\u03c0."
+    ],
+    "proof_status": "COMPLETE",
+    "sorry_count": 0,
+    "lean_session": "S74",
+    "notes": "The proof is immediate once we note that the strict grammar's domain restriction (y > 0) is precisely what prevents complex numbers from entering the computation. The extended grammar relaxes this and creates the loophole (Session S62)."
+  },
+  "verification": {
+    "max_n": 5,
+    "values_by_n": {
+      "0": [
+        1.0
+      ],
+      "1": [
+        2.71828183
+      ],
+      "2": [
+        1.71828183,
+        15.15426226
+      ],
+      "3": [
+        -0.0,
+        2.17695697,
+        5.57494153,
+        14.15426226,
+        3814279.17540347
+      ],
+      "4": [
+        -12.43598043,
+        0.06826603,
+        1.0,
+        1.94035381,
+        4.57494153,
+        8.8194276,
+        12.43598044,
+        14.61293741,
+        263.73413465,
+        1403194.8915193,
+        3814278.17540347
+      ],
+      "5": [
+        -12.43598017,
+        -11.43598043,
+        -2.8566597,
+        0.0,
+        3.97e-06,
+        0.03637457,
+        0.19768791,
+        0.54132486,
+        1.0706501,
+        1.19768791,
+        2.0554115,
+        2.71828183,
+        2.8566597,
+        5.03361668,
+        5.40262483,
+        6.96121348,
+        7.8194276,
+        12.50424647,
+        13.43598044,
+        14.37633425
+      ]
+    },
+    "total_values": 45,
+    "all_real": true,
+    "i_in_set": false,
+    "theorem_verified": true
+  }
+}
