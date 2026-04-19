@@ -10,7 +10,6 @@ const nextConfig = {
       { source: "/one-operator", destination: "https://monogate.org", permanent: false },
       // /games → /play (canonical)
       { source: "/games", destination: "/play", permanent: true },
-      { source: "/explorer", destination: "https://www.monogate.dev", permanent: false },
     ];
   },
   async rewrites() {
@@ -18,6 +17,9 @@ const nextConfig = {
       // Proxy /play/* to games.monogate.dev/play/* — URL stays at monogate.dev
       { source: "/play", destination: "https://games.monogate.dev/play" },
       { source: "/play/:path*", destination: "https://games.monogate.dev/play/:path*" },
+      // Proxy /explorer/* to explorer.monogate.dev/explorer/* — URL stays at monogate.dev
+      { source: "/explorer", destination: "https://explorer.monogate.dev/explorer" },
+      { source: "/explorer/:path*", destination: "https://explorer.monogate.dev/explorer/:path*" },
     ];
   },
 };
