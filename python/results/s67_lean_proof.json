@@ -1,0 +1,121 @@
+{
+  "session": "S67",
+  "title": "Lean: expTree_evalReal + depth_k_unbounded reformulation",
+  "lean_file": "D:/monogate-research/lean/EML/EMLDepth.lean",
+  "new_lemmas": [
+    {
+      "name": "expTree_evalReal",
+      "statement": "\u2200 x : \u211d, expTree.evalReal x = Real.exp x",
+      "status": "PROVED",
+      "sorry_count": 0,
+      "proof_method": "simp [expTree, EMLTree.evalReal, EMLTree.eval, Complex.log_one, Complex.exp_ofReal_re]"
+    },
+    {
+      "name": "var_evalReal",
+      "statement": "\u2200 x : \u211d, EMLTree.var.evalReal x = x",
+      "status": "PROVED",
+      "sorry_count": 0,
+      "proof_method": "simp [EMLTree.evalReal, EMLTree.eval]"
+    },
+    {
+      "name": "const_evalReal",
+      "statement": "\u2200 (c : \u2102) (x : \u211d), (const c).evalReal x = c.re",
+      "status": "PROVED",
+      "sorry_count": 0,
+      "proof_method": "simp [EMLTree.evalReal, EMLTree.eval]"
+    },
+    {
+      "name": "EMLTree.HasVar",
+      "statement": "Predicate: tree contains at least one .var leaf",
+      "status": "DEFINED",
+      "sorry_count": 0
+    },
+    {
+      "name": "no_var_evalReal_const",
+      "statement": "\u00acHasVar t \u2192 \u2203 c, \u2200 x, t.evalReal x = c",
+      "status": "PARTIAL",
+      "sorry_count": 1,
+      "sorry_note": "ceml inductive case: x-independence of eval for no-var trees"
+    },
+    {
+      "name": "depth_k_unbounded_along_real",
+      "statement": "HasVar t \u2192 1 \u2264 depth \u2192 Tendsto evalReal atTop atTop \u2228 atBot",
+      "status": "PARTIAL",
+      "sorry_count": 1,
+      "sorry_note": "General inductive step. Base case (expTree) proved. Im-part bound needed for ceml case.",
+      "counterexample_to_original": "ceml(const 0, const(-1)).evalReal = 1 (constant) but depth=1"
+    }
+  ],
+  "sorry_count_change": {
+    "before": 2,
+    "after": 2,
+    "note": "Same count but CORRECTLY STATED now; original lemma was false"
+  },
+  "key_insight": "depth_k_unbounded_along_real required HasVar predicate. Without it, ceml(const 0, const(-1)) is a depth-1 counterexample with constant evalReal=1. This is mathematically important: the barrier against sin is really about trees that FUNCTIONALLY depend on x, not just have high depth.",
+  "computational_checks": {
+    "counterexample": [
+      {
+        "x": 0.0,
+        "evalReal": 1.0,
+        "expected_constant": 1.0,
+        "is_constant": true
+      },
+      {
+        "x": 1.0,
+        "evalReal": 1.0,
+        "expected_constant": 1.0,
+        "is_constant": true
+      },
+      {
+        "x": 2.0,
+        "evalReal": 1.0,
+        "expected_constant": 1.0,
+        "is_constant": true
+      },
+      {
+        "x": 5.0,
+        "evalReal": 1.0,
+        "expected_constant": 1.0,
+        "is_constant": true
+      },
+      {
+        "x": 10.0,
+        "evalReal": 1.0,
+        "expected_constant": 1.0,
+        "is_constant": true
+      },
+      {
+        "x": 100.0,
+        "evalReal": 1.0,
+        "expected_constant": 1.0,
+        "is_constant": true
+      }
+    ],
+    "expTree_check": [
+      {
+        "x": 0.0,
+        "evalReal": 1.0,
+        "expected": 1.0,
+        "match": true
+      },
+      {
+        "x": 0.5,
+        "evalReal": 1.6487212707001282,
+        "expected": 1.6487212707001282,
+        "match": true
+      },
+      {
+        "x": 1.0,
+        "evalReal": 2.718281828459045,
+        "expected": 2.718281828459045,
+        "match": true
+      },
+      {
+        "x": 2.0,
+        "evalReal": 7.38905609893065,
+        "expected": 7.38905609893065,
+        "match": true
+      }
+    ]
+  }
+}
