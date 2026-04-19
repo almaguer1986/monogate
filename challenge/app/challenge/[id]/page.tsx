@@ -56,7 +56,7 @@ function StatusBadge({ status }: { status: string }) {
   const closed = status === "closed";
   const bgColor = solved ? "rgba(94,196,122,0.10)" : closed ? "rgba(248,113,113,0.10)" : "rgba(232,160,32,0.10)";
   const borderColor = solved ? C.green : closed ? C.red : C.orange;
-  const label = solved ? "SOLVED" : closed ? "CLOSED — IMPOSSIBLE" : "OPEN";
+  const label = solved ? "SOLVED" : closed ? "PROVED IMPOSSIBLE" : "OPEN";
   return (
     <span style={{
       display: "inline-block", fontSize: 9, fontWeight: 700,
@@ -110,6 +110,51 @@ export default async function ChallengePage({ params }: { params: { id: string }
           {challenge.description}
         </div>
       </header>
+
+      {/* Proof box — closed challenges only */}
+      {challenge.status === "closed" && challenge.result_summary && (
+        <div style={{
+          background: "rgba(248,113,113,0.05)", border: `1px solid rgba(248,113,113,0.25)`,
+          borderRadius: 8, padding: "18px 22px", marginBottom: 28,
+        }}>
+          <div style={{ fontSize: 9, color: C.red, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 10 }}>
+            Result
+          </div>
+          <div style={{ fontSize: 12, color: "#d0d0d0", lineHeight: 1.8, marginBottom: 14 }}>
+            {challenge.result_summary}
+          </div>
+          {challenge.proof_reference && (
+            <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+              <span style={{ fontSize: 9, color: C.muted, letterSpacing: "0.1em", textTransform: "uppercase" }}>Proof</span>
+              <span style={{
+                fontFamily: "monospace", fontSize: 10, color: C.red,
+                background: "rgba(248,113,113,0.08)", border: "1px solid rgba(248,113,113,0.2)",
+                borderRadius: 4, padding: "2px 8px",
+              }}>
+                {challenge.proof_reference}
+              </span>
+              {challenge.proof_link && (
+                <a href={challenge.proof_link} style={{ fontSize: 11, color: C.blue }}>
+                  Read the proof →
+                </a>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Near-miss box — i-extended and other open challenges */}
+      {challenge.status === "open" && challenge.near_miss_value !== null && (
+        <div style={{
+          background: "rgba(106,176,245,0.04)", border: `1px solid rgba(106,176,245,0.2)`,
+          borderRadius: 8, padding: "14px 20px", marginBottom: 28,
+          display: "flex", gap: 24, flexWrap: "wrap",
+        }}>
+          <Stat label="Nearest miss (Im)" value={(challenge.near_miss_value ?? 0).toFixed(8)} color={C.blue} />
+          <Stat label="At depth" value={String(challenge.near_miss_depth ?? "—")} color={C.blue} />
+          <Stat label="Gap" value={(1 - (challenge.near_miss_value ?? 0)).toExponential(2)} color={C.muted} />
+        </div>
+      )}
 
       {/* Best known */}
       {challenge.best_known_nodes !== null && (
@@ -214,26 +259,28 @@ export default async function ChallengePage({ params }: { params: { id: string }
         )}
       </section>
 
-      {/* Search tool nudge */}
-      <div style={{
-        marginBottom: 20, padding: "12px 18px",
-        border: `1px solid ${C.border2}`, borderRadius: 6,
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-        gap: 12, flexWrap: "wrap",
-      }}>
-        <span style={{ fontSize: 13, color: "#a0a0a0" }}>
-          Not sure where to start?
-        </span>
-        <a href="/search" style={{
-          fontSize: 13, fontWeight: 700, color: C.orange,
-          letterSpacing: "0.02em", whiteSpace: "nowrap",
-        }}>
-          Try the symbolic regression search tool →
-        </a>
-      </div>
-
-      {/* Submission form */}
-      <SubmissionForm challengeId={challenge.id} challengeName={challenge.name} />
+      {/* Search tool nudge + submission form — open challenges only */}
+      {challenge.status === "open" && (
+        <>
+          <div style={{
+            marginBottom: 20, padding: "12px 18px",
+            border: `1px solid ${C.border2}`, borderRadius: 6,
+            display: "flex", alignItems: "center", justifyContent: "space-between",
+            gap: 12, flexWrap: "wrap",
+          }}>
+            <span style={{ fontSize: 13, color: "#a0a0a0" }}>
+              Not sure where to start?
+            </span>
+            <a href="/search" style={{
+              fontSize: 13, fontWeight: 700, color: C.orange,
+              letterSpacing: "0.02em", whiteSpace: "nowrap",
+            }}>
+              Try the symbolic regression search tool →
+            </a>
+          </div>
+          <SubmissionForm challengeId={challenge.id} challengeName={challenge.name} />
+        </>
+      )}
 
       {/* Footer */}
       <footer style={{

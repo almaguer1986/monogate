@@ -62,7 +62,7 @@ function StatusBadge({ status }: { status: string }) {
   const closed = status === "closed";
   const bgColor = solved ? "rgba(94,196,122,0.10)" : closed ? "rgba(248,113,113,0.10)" : "rgba(232,160,32,0.10)";
   const borderColor = solved ? C.green : closed ? C.red : C.orange;
-  const label = solved ? "SOLVED" : closed ? "CLOSED — IMPOSSIBLE" : "OPEN";
+  const label = solved ? "SOLVED" : closed ? "PROVED IMPOSSIBLE" : "OPEN";
   return (
     <span style={{
       display: "inline-block",
@@ -91,8 +91,9 @@ function Stat({ label, value, color }: { label: string; value: string; color: st
   );
 }
 
-function ChallengeCard({ challenge }: { challenge: Challenge }) {
+function OpenChallengeCard({ challenge }: { challenge: Challenge }) {
   const hasBest = challenge.best_known_nodes !== null;
+  const hasNearMiss = challenge.near_miss_value !== null;
   return (
     <a
       href={`/challenge/${challenge.id}`}
@@ -117,6 +118,16 @@ function ChallengeCard({ challenge }: { challenge: Challenge }) {
         {challenge.description}
       </div>
 
+      {hasNearMiss && (
+        <div style={{
+          background: "rgba(106,176,245,0.05)", border: `1px solid rgba(106,176,245,0.15)`,
+          borderRadius: 6, padding: "8px 12px", marginBottom: 12, fontSize: 10, color: C.blue, lineHeight: 1.7,
+        }}>
+          Nearest miss: Im = {challenge.near_miss_value?.toFixed(8)} at depth {challenge.near_miss_depth}
+          {" "}— gap = {(1 - (challenge.near_miss_value ?? 0)).toExponential(2)}
+        </div>
+      )}
+
       <div style={{ display: "flex", gap: 24, flexWrap: "wrap", paddingTop: 14, borderTop: `1px solid ${C.border}` }}>
         <Stat label="Best nodes" value={hasBest ? String(challenge.best_known_nodes) : "—"} color={hasBest ? C.text : C.muted} />
         <Stat label="Best depth" value={hasBest ? String(challenge.best_known_depth) : "—"} color={hasBest ? C.text : C.muted} />
@@ -125,6 +136,56 @@ function ChallengeCard({ challenge }: { challenge: Challenge }) {
           <Stat label="Record holder" value={challenge.best_author} color={C.blue} />
         )}
       </div>
+    </a>
+  );
+}
+
+function ClosedChallengeCard({ challenge }: { challenge: Challenge }) {
+  return (
+    <a
+      href={`/challenge/${challenge.id}`}
+      style={{
+        display: "block",
+        background: C.surface,
+        border: `1px solid rgba(248,113,113,0.2)`,
+        borderRadius: 8,
+        padding: "20px 24px",
+        textDecoration: "none",
+        color: "inherit",
+        opacity: 0.85,
+      }}
+    >
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12, marginBottom: 10 }}>
+        <div style={{ fontSize: 18, fontWeight: 700, color: C.text, letterSpacing: "-0.02em" }}>
+          {challenge.name}
+        </div>
+        <StatusBadge status={challenge.status} />
+      </div>
+
+      {challenge.result_summary && (
+        <div style={{
+          fontSize: 11, color: "#c0c0c0", lineHeight: 1.75, marginBottom: 12,
+          paddingLeft: 10, borderLeft: `2px solid rgba(248,113,113,0.4)`,
+        }}>
+          {challenge.result_summary}
+        </div>
+      )}
+
+      {challenge.proof_reference && (
+        <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+          <span style={{ fontSize: 9, color: C.muted, letterSpacing: "0.1em", textTransform: "uppercase" }}>Proof</span>
+          <span style={{
+            fontFamily: "monospace", fontSize: 10, color: C.red,
+            background: "rgba(248,113,113,0.08)", border: "1px solid rgba(248,113,113,0.2)",
+            borderRadius: 4, padding: "2px 7px",
+          }}>
+            {challenge.proof_reference}
+          </span>
+          {challenge.proof_link && (
+            <span style={{ fontSize: 10, color: C.blue }}>Read more →</span>
+          )}
+        </div>
+      )}
     </a>
   );
 }
@@ -142,6 +203,8 @@ function PillLink({ href, label, internal }: { href: string; label: string; inte
 
 export default async function HomePage() {
   const challenges = await getChallenges();
+  const open = challenges.filter((c) => c.status === "open");
+  const resolved = challenges.filter((c) => c.status === "closed" || c.status === "solved");
 
   return (
     <div style={{ background: C.bg, minHeight: "100vh", maxWidth: 760, margin: "0 auto", padding: "0 16px 60px" }}>
@@ -175,7 +238,7 @@ export default async function HomePage() {
         </div>
       </header>
 
-      {/* Operator card — math only */}
+      {/* Operator card */}
       <div className="operator-card" style={{ borderRadius: 8, padding: "14px 20px", marginBottom: 10 }}>
         <div style={{ fontSize: 9, color: C.muted, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 6 }}>
           The operator
@@ -187,7 +250,7 @@ export default async function HomePage() {
       </div>
 
       {/* Ecosystem row */}
-      <div style={{ marginBottom: 32 }}>
+      <div style={{ marginBottom: 36 }}>
         <div style={{ fontSize: 9, color: C.muted, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 8 }}>
           ecosystem
         </div>
@@ -199,23 +262,39 @@ export default async function HomePage() {
         </div>
       </div>
 
-      {/* Section heading */}
+      {/* Open Challenges */}
       <div style={{ fontSize: 10, color: C.orange, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 14 }}>
-        Open Challenges — {challenges.length} problems
+        Open Challenges — {open.length} problem{open.length !== 1 ? "s" : ""}
       </div>
 
-      {/* Cards */}
-      {challenges.length === 0 ? (
+      {open.length === 0 ? (
         <div style={{
           background: C.surface, border: `1px solid ${C.border}`, borderRadius: 8,
           padding: "40px 24px", textAlign: "center", color: C.muted, fontSize: 12,
         }}>
-          No challenges found. Run the SQL schema in the Supabase dashboard to seed data.
+          No open challenges. Run the SQL schema in Supabase to seed data.
         </div>
       ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          {challenges.map((c) => <ChallengeCard key={c.id} challenge={c} />)}
+        <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 48 }}>
+          {open.map((c) => <OpenChallengeCard key={c.id} challenge={c} />)}
         </div>
+      )}
+
+      {/* Resolved */}
+      {resolved.length > 0 && (
+        <>
+          <div style={{
+            fontSize: 10, color: C.muted, letterSpacing: "0.12em",
+            textTransform: "uppercase", marginBottom: 14,
+            display: "flex", alignItems: "center", gap: 12,
+          }}>
+            <span>Resolved — {resolved.length} proved impossible</span>
+            <span style={{ flex: 1, borderTop: `1px solid ${C.border}` }} />
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {resolved.map((c) => <ClosedChallengeCard key={c.id} challenge={c} />)}
+          </div>
+        </>
       )}
 
       {/* Footer */}
