@@ -1,0 +1,175 @@
+Session 8: PySR Benchmark — EML on Nguyen Suite
+=======================================================
+
+[1/3] Running EML brute-force search on Nguyen-1..10...
+  N1: R²=0.903419 | not-EML | t=0.0001s
+  N2: R²=0.659833 | not-EML | t=0.0001s
+  N3: R²=0.815404 | not-EML | t=0.0001s
+  N4: R²=0.629819 | not-EML | t=0.0001s
+  N5: R²=-26.97198 | complex-EML | t=0.0001s
+  N6: R²=0.850824 | complex-EML | t=0.0001s
+  N7: ✓ EXACT | EML-expressible | t=0.0s
+  N8: ✓ EXACT | EML-expressible | t=0.0s
+  N9: R²=0.158821 | complex-EML | t=0.0001s
+  N10: R²=0.355208 | complex-EML | t=0.0001s
+
+[2/3] MCTS search on N7 and N8...
+  MCTS: monogate.search not importable
+
+[3/3] Generating comparison table...
+| Problem | Target | EML Expressible | EML R² | PySR R² | EML Formula |
+|---------|--------|-----------------|--------|---------|-------------|
+| N1 | x³ + x² + x | ✗ | 0.9034 | 1.0000 | exp(x) - 1 |
+| N2 | x⁴ + x³ + x² + x | ✗ | 0.6598 | 1.0000 | exp(x) - 1 |
+| N3 | x⁵ + x⁴ + x³ + x² + x | ✗ | 0.8154 | 1.0000 | exp(x) - 1 |
+| N4 | x⁶ + x⁵ + x⁴ + x³ + x² +  | ✗ | 0.6298 | 1.0000 | exp(x) - 1 |
+| N5 | sin(x²)·cos(x) − 1 | ~ℂ | -26.9720 | 1.0000 | x |
+| N6 | sin(x) + sin(x + x²) | ~ℂ | 0.8508 | 1.0000 | exp(x) - 1 |
+| N7 | log(x+1) + log(x²+1) | ✓ | 1.0000 | 1.0000 | ln((x+1)*(x^2+1)) = eml(0, 1/((x+1)(x^2+ |
+| N8 | √x | ✓ | 1.0000 | 1.0000 | exp(0.5·ln(x)) via 2-node EML |
+| N9 | sin(x) + sin(y²) | ~ℂ | 0.1588 | 1.0000 | x |
+| N10 | 2·sin(x)·cos(y) | ~ℂ | 0.3552 | 1.0000 | x |
+
+=======================================================
+EML exact solutions: 2/10
+EML expressible (real+complex): 6/10
+
+EML achieves exact R²≈1.0 on 2/10 Nguyen problems via direct formula construction. 6/10 problems are EML-expressible (real+complex BEST routing). EML is NOT competitive on polynomial-dominated problems (N1-N4) since exp/ln are not polynomial. EML exc
+{
+  "session": 8,
+  "title": "PySR Benchmark: EML vs PySR on Nguyen-1 through Nguyen-10",
+  "eml_results": [
+    {
+      "problem": "N1",
+      "eml_expressible": false,
+      "eml_complex_expressible": false,
+      "eml_best_formula": "exp(x) - 1",
+      "eml_r2": 0.903419,
+      "eml_rmse": 0.231067,
+      "eml_exact": false,
+      "search_time_s": 0.0001,
+      "published_pysr_r2": 1.0,
+      "published_pysr_formula": "x^3 + x^2 + x"
+    },
+    {
+      "problem": "N2",
+      "eml_expressible": false,
+      "eml_complex_expressible": false,
+      "eml_best_formula": "exp(x) - 1",
+      "eml_r2": 0.659833,
+      "eml_rmse": 0.375533,
+      "eml_exact": false,
+      "search_time_s": 0.0001,
+      "published_pysr_r2": 1.0,
+      "published_pysr_formula": "x^4 + x^3 + x^2 + x"
+    },
+    {
+      "problem": "N3",
+      "eml_expressible": false,
+      "eml_complex_expressible": false,
+      "eml_best_formula": "exp(x) - 1",
+      "eml_r2": 0.815404,
+      "eml_rmse": 0.364294,
+      "eml_exact": false,
+      "search_time_s": 0.0001,
+      "published_pysr_r2": 1.0,
+      "published_pysr_formula": "x^5 + ... + x"
+    },
+    {
+      "problem": "N4",
+      "eml_expressible": false,
+      "eml_complex_expressible": false,
+      "eml_best_formula": "exp(x) - 1",
+      "eml_r2": 0.629819,
+      "eml_rmse": 0.46025,
+      "eml_exact": false,
+      "search_time_s": 0.0001,
+      "published_pysr_r2": 1.0,
+      "published_pysr_formula": "x^6 + ... + x"
+    },
+    {
+      "problem": "N5",
+      "eml_expressible": false,
+      "eml_complex_expressible": true,
+      "eml_best_formula": "x",
+      "eml_r2": -26.97198,
+      "eml_rmse": 0.862314,
+      "eml_exact": false,
+      "search_time_s": 0.0001,
+      "published_pysr_r2": 1.0,
+      "published_pysr_formula": "sin(x^2)*cos(x) - 1"
+    },
+    {
+      "problem": "N6",
+      "eml_expressible": false,
+      "eml_complex_expressible": true,
+      "eml_best_formula": "exp(x) - 1",
+      "eml_r2": 0.850824,
+      "eml_rmse": 0.327346,
+      "eml_exact": false,
+      "search_time_s": 0.0001,
+      "published_pysr_r2": 1.0,
+      "published_pysr_formula": "sin(x) + sin(x + x^2)"
+    },
+    {
+      "problem": "N7",
+      "eml_expressible": true,
+      "eml_complex_expressible": false,
+      "eml_best_formula": "ln((x+1)*(x^2+1)) = eml(0, 1/((x+1)(x^2+1))) + 1",
+      "eml_r2": 1.0,
+      "eml_rmse": 0.0,
+      "eml_exact": true,
+      "search_time_s": 0.0,
+      "published_pysr_r2": 1.0,
+      "published_pysr_formula": "log(x+1) + log(x^2+1)"
+    },
+    {
+      "problem": "N8",
+      "eml_expressible": true,
+      "eml_complex_expressible": false,
+      "eml_best_formula": "exp(0.5\u00b7ln(x)) via 2-node EML",
+      "eml_r2": 1.0,
+      "eml_rmse": 0.0,
+      "eml_exact": true,
+      "search_time_s": 0.0,
+      "published_pysr_r2": 1.0,
+      "published_pysr_formula": "sqrt(x)"
+    },
+    {
+      "problem": "N9",
+      "eml_expressible": false,
+      "eml_complex_expressible": true,
+      "eml_best_formula": "x",
+      "eml_r2": 0.158821,
+      "eml_rmse": 0.564607,
+      "eml_exact": false,
+      "search_time_s": 0.0001,
+      "published_pysr_r2": 1.0,
+      "published_pysr_formula": "sin(x) + sin(y^2)"
+    },
+    {
+      "problem": "N10",
+      "eml_expressible": false,
+      "eml_complex_expressible": true,
+      "eml_best_formula": "x",
+      "eml_r2": 0.355208,
+      "eml_rmse": 0.697637,
+      "eml_exact": false,
+      "search_time_s": 0.0001,
+      "published_pysr_r2": 1.0,
+      "published_pysr_formula": "2*sin(x)*cos(y)"
+    }
+  ],
+  "mcts_results": {
+    "available": false,
+    "note": "monogate.search not importable"
+  },
+  "markdown_table": "| Problem | Target | EML Expressible | EML R\u00b2 | PySR R\u00b2 | EML Formula |\n|---------|--------|-----------------|--------|---------|-------------|\n| N1 | x\u00b3 + x\u00b2 + x | \u2717 | 0.9034 | 1.0000 | exp(x) - 1 |\n| N2 | x\u2074 + x\u00b3 + x\u00b2 + x | \u2717 | 0.6598 | 1.0000 | exp(x) - 1 |\n| N3 | x\u2075 + x\u2074 + x\u00b3 + x\u00b2 + x | \u2717 | 0.8154 | 1.0000 | exp(x) - 1 |\n| N4 | x\u2076 + x\u2075 + x\u2074 + x\u00b3 + x\u00b2 +  | \u2717 | 0.6298 | 1.0000 | exp(x) - 1 |\n| N5 | sin(x\u00b2)\u00b7cos(x) \u2212 1 | ~\u2102 | -26.9720 | 1.0000 | x |\n| N6 | sin(x) + sin(x + x\u00b2) | ~\u2102 | 0.8508 | 1.0000 | exp(x) - 1 |\n| N7 | log(x+1) + log(x\u00b2+1) | \u2713 | 1.0000 | 1.0000 | ln((x+1)*(x^2+1)) = eml(0, 1/((x+1)(x^2+ |\n| N8 | \u221ax | \u2713 | 1.0000 | 1.0000 | exp(0.5\u00b7ln(x)) via 2-node EML |\n| N9 | sin(x) + sin(y\u00b2) | ~\u2102 | 0.1588 | 1.0000 | x |\n| N10 | 2\u00b7sin(x)\u00b7cos(y) | ~\u2102 | 0.3552 | 1.0000 | x |",
+  "summary": {
+    "total_problems": 10,
+    "eml_exact_solutions": 2,
+    "eml_expressible_real": 2,
+    "eml_expressible_complex": 4,
+    "interpretation": "EML achieves exact R\u00b2\u22481.0 on 2/10 Nguyen problems via direct formula construction. 6/10 problems are EML-expressible (real+complex BEST routing). EML is NOT competitive on polynomial-dominated problems (N1-N4) since exp/ln are not polynomial. EML excels on problems involving exp, ln, sqrt (N7, N8). Trigonometric problems (N5, N6, N9, N10) require complex EML. PySR uses a much larger operator set and achieves 10/10, while EML (real only) achieves 2/10 exactly."
+  }
+}
