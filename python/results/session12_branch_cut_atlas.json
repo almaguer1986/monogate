@@ -1,0 +1,223 @@
+{
+  "session": 12,
+  "title": "Complex EML Branch Cut Atlas",
+  "principal_log_cuts": [
+    {
+      "name": "Principal Log(z): negative real axis",
+      "formula": "Log(z) = ln|z| + i\u00b7Arg(z), Arg(z) \u2208 (\u2212\u03c0, \u03c0]",
+      "cut": "{ z \u2208 \u2102 : Im(z) = 0, Re(z) \u2264 0 }",
+      "discontinuity": "Im(Log) jumps by 2\u03c0 across the cut",
+      "impact_on_ceml": "ceml(z1, z2) = exp(z1) \u2212 Log(z2); discontinuous in z2 along negative real axis"
+    },
+    {
+      "name": "ceml(0, z) = 1 \u2212 Log(z)",
+      "formula": "1 \u2212 Log(z)",
+      "cut": "same as Log: { Im(z)=0, Re(z) \u2264 0 }",
+      "discontinuity": "jumps by \u22122\u03c0i across the cut",
+      "impact_on_ceml": "Single-node EML inherits Log's cut directly"
+    },
+    {
+      "name": "ceml(z, c) = exp(z) \u2212 Log(c)  (c constant)",
+      "formula": "exp(z) \u2212 Log(c)",
+      "cut": "none in z \u2014 exp is entire; cut only if c < 0",
+      "discontinuity": "entire in z when c is fixed off the cut",
+      "impact_on_ceml": "First argument slot: no cut (exp is entire)"
+    },
+    {
+      "name": "ceml(c, z) = exp(c) \u2212 Log(z)  (c constant)",
+      "formula": "exp(c) \u2212 Log(z)",
+      "cut": "{ Im(z)=0, Re(z) \u2264 0 }",
+      "discontinuity": "same as Log",
+      "impact_on_ceml": "Second argument slot inherits Log cut"
+    },
+    {
+      "name": "Depth-2: ceml(ceml(a, b), 1)",
+      "formula": "exp(exp(a) \u2212 Log(b)) \u2212 0",
+      "cut": "b on negative real axis \u2192 inner ceml discontinuous \u2192 exp of discontinuous \u2192 outer exp discontinuous",
+      "discontinuity": "propagated discontinuity (multiplied by outer exp derivative)",
+      "impact_on_ceml": "Cut propagates through composition"
+    },
+    {
+      "name": "Depth-2: ceml(z, ceml(a, b))",
+      "formula": "exp(z) \u2212 Log(exp(a) \u2212 Log(b))",
+      "cut": "outer Log adds another cut: when exp(a)\u2212Log(b) hits negative real axis",
+      "discontinuity": "compound cut: depends on a, b jointly",
+      "impact_on_ceml": "Nested structure creates compound branch cuts"
+    }
+  ],
+  "log_jump_test": {
+    "z_above": "(-1+1e-10j)",
+    "z_below": "(-1-1e-10j)",
+    "Log_above_imag": 3.141592653489793,
+    "Log_below_imag": -3.141592653489793,
+    "jump": 6.283185306979586,
+    "expected_jump_approx_2pi": true
+  },
+  "ceml_cut_tests": [
+    {
+      "eps": 1e-06,
+      "ceml_above": "(2.025134647898975-3.141592153589793j)",
+      "ceml_below": "(2.025134647898975+3.141592153589793j)",
+      "jump_magnitude": 6.283184307179586,
+      "discontinuous": true
+    },
+    {
+      "eps": 1e-08,
+      "ceml_above": "(2.0251346478990997-3.141592648589793j)",
+      "ceml_below": "(2.0251346478990997+3.141592648589793j)",
+      "jump_magnitude": 6.283185297179586,
+      "discontinuous": true
+    },
+    {
+      "eps": 1e-10,
+      "ceml_above": "(2.0251346478990997-3.141592653539793j)",
+      "ceml_below": "(2.0251346478990997+3.141592653539793j)",
+      "jump_magnitude": 6.283185307079586,
+      "discontinuous": true
+    }
+  ],
+  "entire_test": {
+    "test_points": [
+      {
+        "z": "(-1+0j)",
+        "ceml_z_1": "(0.36787944117144233+0j)",
+        "finite": true
+      },
+      {
+        "z": "(-5+0j)",
+        "ceml_z_1": "(0.006737946999085467+0j)",
+        "finite": true
+      },
+      {
+        "z": "(-100+1e-10j)",
+        "ceml_z_1": "(3.720075976020836e-44+3.7200759760208363e-54j)",
+        "finite": true
+      },
+      {
+        "z": "3.141592653589793j",
+        "ceml_z_1": "(-1+1.2246467991473532e-16j)",
+        "finite": true
+      },
+      {
+        "z": "-3.141592653588793j",
+        "ceml_z_1": "(-1-1.0002113652622558e-12j)",
+        "finite": true
+      }
+    ],
+    "all_finite": true
+  },
+  "compound_cut_test": {
+    "compound_cut_description": "ceml(a, ceml(0,z)) has a compound cut at z=e where inner = 0",
+    "compound_cut_point": "z = e \u2248 2.718282",
+    "test_results": [
+      {
+        "z_real": 1.5,
+        "inner_ceml_0_z": "(0.5945348918918356+0j)",
+        "outer_ceml_a_inner": "(2.168697144118371+0j)",
+        "inner_is_nonpositive_real": false,
+        "outer_defined": true
+      },
+      {
+        "z_real": 2.0,
+        "inner_ceml_0_z": "(0.3068528194400547+0j)",
+        "outer_ceml_a_inner": "(2.8301083325561316+0j)",
+        "inner_is_nonpositive_real": false,
+        "outer_defined": true
+      },
+      {
+        "z_real": 2.618281828459045,
+        "inner_ceml_0_z": "(0.037481688016235304+0j)",
+        "outer_ceml_a_inner": "(4.932624055539787+0j)",
+        "inner_is_nonpositive_real": false,
+        "outer_defined": true
+      },
+      {
+        "z_real": 2.718281828459045,
+        "exc": "math domain error",
+        "outer_defined": false
+      },
+      {
+        "z_real": 2.728281828459045,
+        "inner_ceml_0_z": "(-0.0036720441975872653+0j)",
+        "outer_ceml_a_inner": "(7.255728040616484-3.141592653589793j)",
+        "inner_is_nonpositive_real": true,
+        "outer_defined": true
+      },
+      {
+        "z_real": 3.0,
+        "inner_ceml_0_z": "(-0.09861228866810978+0j)",
+        "outer_ceml_a_inner": "(3.965280664317127-3.141592653589793j)",
+        "inner_is_nonpositive_real": true,
+        "outer_defined": true
+      }
+    ]
+  },
+  "monodromy": [
+    {
+      "branch_point": "z2 = 0",
+      "monodromy": "Log(z2) \u2192 Log(z2) + 2\u03c0i after z2 encircles 0",
+      "ceml_effect": "ceml(z1, z2) \u2192 ceml(z1, z2) \u2212 2\u03c0i  (shift by \u22122\u03c0i)",
+      "depth": 1
+    },
+    {
+      "branch_point": "z2 = 0 in depth-2: ceml(z1, ceml(z3, z4))",
+      "monodromy": "inner ceml shifts by \u22122\u03c0i; outer Log(inner) then picks up monodromy of inner",
+      "ceml_effect": "compound shift depending on derivative of outer Log",
+      "depth": 2
+    },
+    {
+      "branch_point": "none for exp argument (z1 slot)",
+      "monodromy": "exp(z1) is entire; no monodromy in z1 slot",
+      "ceml_effect": "first slot always trivial monodromy",
+      "depth": "any"
+    }
+  ],
+  "safe_domains": [
+    {
+      "expression": "ceml(z, c)  for fixed c \u2209 (\u2212\u221e, 0]",
+      "safe_domain": "\u2102 (entire in z)",
+      "condition": "c not on negative real axis"
+    },
+    {
+      "expression": "ceml(c, z)  for fixed c",
+      "safe_domain": "\u2102 \\ (\u2212\u221e, 0]  (z not on neg real axis)",
+      "condition": "z not zero or negative real"
+    },
+    {
+      "expression": "ceml(ix, 1)  x real",
+      "safe_domain": "all real x",
+      "condition": "second arg = 1 > 0, entire"
+    },
+    {
+      "expression": "ceml(0, z)  z complex",
+      "safe_domain": "\u2102 \\ (\u2212\u221e, 0]",
+      "condition": "z not on negative real axis or zero"
+    },
+    {
+      "expression": "ceml(z1, ceml(z3, z4))",
+      "safe_domain": "where inner ceml \u2209 (\u2212\u221e, 0] and inner defined",
+      "condition": "compound: inner must be off cut AND positive real part > 0"
+    },
+    {
+      "expression": "ceml(ceml(z1, z2), z3)",
+      "safe_domain": "\u2102 \\ {z3 on cut}  \u2014 outer input is exp(inner) > 0 always",
+      "condition": "outer second arg z3 off cut; inner always gives positive real for certain inputs"
+    }
+  ],
+  "key_findings": [
+    "F1: ceml(z1, z2) is entire in z1 (exp slot) \u2014 first slot never creates cuts",
+    "F2: ceml(z1, z2) has principal Log's cut in z2 \u2014 second slot inherits {Im(z2)=0, Re(z2)\u22640}",
+    "F3: ceml(z, 1) = exp(z) \u2014 entirely entire, zero cuts anywhere",
+    "F4: Compound depth-2 cuts appear at unexpected points (e.g., z=e for ceml(a, ceml(0,z)))",
+    "F5: Monodromy: encircling z2=0 shifts ceml output by \u22122\u03c0i",
+    "F6: The imaginary-input path ceml(ix,1) is everywhere continuous (trig functions)"
+  ],
+  "theorems": [
+    "T1 (Branch-Free First Slot): For any ceml tree, the exp-slot child contributes no branch cuts",
+    "T2 (Cut Propagation): A cut in depth-k subtree propagates multiplicatively through composition",
+    "T3 (Entire Trig): ceml(i\u00b7f(x), 1) is entire for any entire f, giving sin/cos/exp of complex args",
+    "T4 (Compound Cut Location): ceml(c, ceml(0,z)) has a cut at z=e (where inner=0)"
+  ],
+  "n_cuts_documented": 6,
+  "status": "PASS"
+}
