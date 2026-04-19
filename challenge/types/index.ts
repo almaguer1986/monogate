@@ -1,4 +1,4 @@
-export type ChallengeStatus = "open" | "solved";
+export type ChallengeStatus = "open" | "solved" | "closed";
 
 export interface Challenge {
   id: string;
