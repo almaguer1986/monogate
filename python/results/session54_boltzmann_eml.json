@@ -1,0 +1,47 @@
+{
+  "session": 54,
+  "title": "Statistical Mechanics & EML",
+  "depth_table": [
+    {
+      "quantity": "exp(-\u03b2E_i)",
+      "depth": 1
+    },
+    {
+      "quantity": "Z = \u03a3 exp(-\u03b2E)",
+      "depth": 1
+    },
+    {
+      "quantity": "F = -kT log Z",
+      "depth": 1
+    },
+    {
+      "quantity": "\u27e8E\u27e9",
+      "depth": 1
+    },
+    {
+      "quantity": "C = \u03b2\u00b2\u00b7Var(E)",
+      "depth": 2
+    },
+    {
+      "quantity": "Phase transition",
+      "depth": "EML-\u221e"
+    }
+  ],
+  "two_level": {
+    "max_err": 5.551115123125783e-17,
+    "ok": true
+  },
+  "ising_1d": {
+    "max_rel_err": 0.0,
+    "ok": true,
+    "note": "cosh(\u03b2J) = (ceml(\u03b2J,1)+ceml(-\u03b2J,1))/2 \u2014 depth 1"
+  },
+  "theorems": [
+    "CEML-T107: Boltzmann weight exp(-\u03b2E) = ceml(-\u03b2E, 1) \u2014 depth 1",
+    "CEML-T108: Partition function Z is a depth-1 sum",
+    "CEML-T109: Free energy F = -kT\u00b7log(Z) is depth-1 ceml(0,Z)",
+    "CEML-T110: Heat capacity C is depth-2 (quadratic in \u27e8E\u27e9)",
+    "CEML-T111: Phase transitions require EML-\u221e (thermodynamic limit, discontinuity)"
+  ],
+  "status": "PASS"
+}
