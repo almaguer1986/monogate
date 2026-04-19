@@ -1,0 +1,53 @@
+{
+  "session": "S88",
+  "title": "Literature Bridge \u2014 Theorems Needed for tan(1) Claim",
+  "gap_statement": "Prove: no z in EML_1 has arg(z) = -1. Equivalently: no z in EML_1 has Im(z)/Re(z) = -tan(1).",
+  "theorems": {
+    "Lindemann_Weierstrass": {
+      "proved": true,
+      "year": 1882,
+      "closes_gap_directly": false,
+      "relevance": "e^alpha transcendental for algebraic alpha != 0; pi transcendental"
+    },
+    "Baker_linear_forms": {
+      "proved": true,
+      "year": 1966,
+      "closes_gap_directly": false,
+      "relevance": "Controls log of algebraic numbers; EML_1 values not necessarily algebraic"
+    },
+    "Nesterenko": {
+      "proved": true,
+      "year": 1996,
+      "closes_gap_directly": false,
+      "relevance": "pi, e^pi, Gamma(1/4) algebraically independent; useful once structure known"
+    },
+    "Gelfond_Schneider": {
+      "proved": true,
+      "year": 1934,
+      "closes_gap_directly": false,
+      "relevance": "alpha^beta transcendental for algebraic alpha, beta; tan(1) not of this form"
+    },
+    "Schanuel_conjecture": {
+      "proved": false,
+      "year": "~1960s",
+      "closes_gap_directly": true,
+      "relevance": "Would show e and e^i algebraically independent; under Schanuel tan(1) not reachable",
+      "caveat": "UNPROVED \u2014 one of deepest open problems in transcendence theory"
+    },
+    "Structural_claim": {
+      "proved": false,
+      "year": null,
+      "closes_gap_directly": true,
+      "relevance": "If Im(EML_1) can be shown to stay in a set not containing 1",
+      "gap": "Im CAN become positive (counterexample: eml(0, y) = -arg(y) > 0 when arg(y) < 0); but 0 not in EML_1"
+    }
+  },
+  "key_numbers": {
+    "tan_1": 1.5574077246549023,
+    "pi": 3.141592653589793,
+    "1_radian": 1.0,
+    "pi_minus_1": 2.141592653589793
+  },
+  "recommended_next_step": "Attempt to prove: for all x in EML_1, Re(x) >= 1. If Re(x) >= 1 always, then Im(eml(x,y)) = exp(Re(x))*sin(Im(x)) - arg(y) with exp(Re(x)) >= e \u2248 2.718. Then Im = 1 requires sin(Im(x)) = (1 + arg(y))/exp(Re(x)) = (1 + arg(y))/exp(Re(x)) in [-1/(e-1), (1+pi)/e] = a bounded range. This might be constrainable.",
+  "conclusion": "No existing proved theorem directly closes the tan(1) gap. Schanuel's conjecture would close it. A structural approach (bounding Re(x) from below) might provide a partial result. Full resolution likely requires new techniques. The claim T_i remains a CONJECTURE supported by: 50,907 computed values (depth <= 5), PSLQ at 300 digits showing no relation, and the self-similar structure reducing to the same claim at each step."
+}

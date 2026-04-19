@@ -1,0 +1,59 @@
+{
+  "session": "S86",
+  "title": "Branch-Cut Bounding Proof",
+  "propagation_rule": "Im(eml(x,y)) = exp(Re(x))*sin(Im(x)) - arg(y)",
+  "analysis": {
+    "case1_real_x": {
+      "description": "x real: Im(eml(x,y)) = -arg(y)",
+      "for_im_z_equals_1": "Need arg(y) = -1",
+      "arg_y_minus1_means": "Im(y)/Re(y) = -tan(1) (if Re(y) > 0) or Im(y)/Re(y) = tan(pi-1) (if Re(y) < 0)",
+      "tan_neg1": -1.5574077246549023,
+      "tan_pi_minus_1": -1.5574077246549027,
+      "conclusion": "Reduces to: does EML\u2081 contain element with arg = -1?"
+    },
+    "case2_im_x_minus_pi": {
+      "description": "Im(x) = -pi: sin(-pi) = 0, so Im(eml) = -arg(y)",
+      "same_as_case1": true,
+      "conclusion": "Also reduces to arg(y) = -1"
+    },
+    "case3_im_x_minus_pi_half": {
+      "description": "If Im(x) = -pi/2: Im(eml) = -exp(Re(x)) - arg(y)",
+      "for_im_z_equals_1": "Need arg(y) = -1 - exp(Re(x))",
+      "feasibility": "Only if exp(Re(x)) < pi - 1 \u2248 2.14, i.e., Re(x) < 0.76",
+      "seen_in_eml1": false,
+      "pi_minus_1": 2.141592653589793,
+      "ln_pi_minus_1": 0.7615497828808944
+    },
+    "principal_branch_bound": {
+      "arg_range": "arg(z) = Im(Log(z)) in (-pi, pi]",
+      "bound_on_im_eml": "|Im(eml(x,y))| = |exp(Re(x))*sin(Im(x)) - arg(y)|",
+      "upper_bound": "exp(Re(x)) + pi (triangle inequality)",
+      "observation": "If Im(x) in (-pi, 0) and arg(y) in (-pi, 0): Im(eml) could be positive or negative",
+      "critical_gap": "Im(EML\u2081) \u2286 (-pi, 0] is NOT automatically preserved by the operator"
+    },
+    "empirical_bound": {
+      "max_im_seen_depth_5": 0.0,
+      "min_arg_seen_depth_5": -2.27152,
+      "min_arg_over_pi": -0.7230472726642043,
+      "arg_equals_1_seen": false,
+      "arg_equals_neg1_seen": false,
+      "observation": "All arg values seen at depth <= 5 are negative, confirming Im(EML\u2081) subset (\u2212pi, 0] at depth <= 5"
+    },
+    "positive_im_analysis": {
+      "formula": "Im(eml(x,y)) = exp(Re(x))*sin(Im(x)) - arg(y)",
+      "for_positive_im": "Need exp(Re(x))*sin(Im(x)) > arg(y)",
+      "if_arg_y_negative": "arg(y) < 0, so -arg(y) > 0. Even with sin(Im(x)) = 0: Im(eml) = -arg(y) > 0",
+      "example": "x = 0, y with arg(y) = -1: Im(eml(0,y)) = 0 - (-1) = 1",
+      "key_insight": "Im CAN become 1 via -arg(y) = 1, i.e., arg(y) = -1!",
+      "conclusion": "The positivity gap IS reachable \u2014 IF there exists y \u2208 EML\u2081 with arg(y) = -1. This is exactly Claim C. The branch-cut bound does NOT rule it out automatically; it REDUCES the problem to: find (or rule out) y \u2208 EML\u2081 with arg(y) = -1."
+    }
+  },
+  "main_finding": "The branch-cut bound REDUCES Claim C to itself: Im(z) = 1 is achievable iff some y \u2208 EML\u2081 has arg(y) = -1. arg(y) = -1 iff Im(y)/Re(y) = -tan(1). So the question is self-similar (fractal): does any EML\u2081 element have ratio -tan(1)? This IS Claim C, just shifted. The reduction is circular but necessary \u2014 it shows the claim is self-consistent and highlights the transcendence gap.",
+  "key_values": {
+    "tan_1": 1.5574077246549023,
+    "tan_neg_1": -1.5574077246549023,
+    "tan_pi_minus_1": -1.5574077246549027,
+    "pi": 3.141592653589793
+  },
+  "next_step": "S87: Lean formalization of the reduction structure"
+}

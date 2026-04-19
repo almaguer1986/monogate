@@ -1,0 +1,47 @@
+{
+  "session": "S82",
+  "title": "Nesterenko Application Analysis",
+  "theorem": {
+    "name": "Nesterenko 1996",
+    "statement": "pi, e^pi, Gamma(1/4) are algebraically independent over Q",
+    "corollaries": [
+      "pi and e^pi are algebraically independent",
+      "For algebraic a != 0: pi and e^(pi*a) are algebraically independent",
+      "1 is not in Q-linear span of {pi, e^pi} alone (would require algebraic dependence)"
+    ]
+  },
+  "eml1_im_parts_seen": {
+    "depth_0_to_4": "all zero (Im = 0)",
+    "depth_5": "-pi (first complex: eml(real, real_negative))",
+    "depth_6_plus": "combinations involving -pi, arctan-type values"
+  },
+  "application_cases": {
+    "case_A_pure_real_negative": {
+      "description": "Im from Log of negative real: Im = -pi or +pi",
+      "result_for_im_equals_1": "IMPOSSIBLE: 1 != +-pi by Lindemann"
+    },
+    "case_B_sin_of_pi_half": {
+      "description": "Im(x) = pi/2 would give sin(Im(x)) = 1",
+      "blocker": "pi/2 not known to be in EML\u2081 Im-parts",
+      "if_it_were": "exp(Re(x)) = 1 + arg(y) \u2014 transcendental = alg combo of 1 and pi"
+    },
+    "case_C_non_pi_multiples": {
+      "description": "sin(Im(x)) for non-algebraic Im(x)",
+      "blocker": "Both Im(x) and sin(Im(x)) are transcendental; can't use Baker directly"
+    }
+  },
+  "partial_result": {
+    "claim": "If Im(EML\u2081) \u2286 Z*pi + Z*e^pi, then 1 \u2209 Im(EML\u2081)",
+    "proof": "By Nesterenko, pi and e^pi algebraically independent, so 1 not in their Q-linear span",
+    "gap": "Containment Im(EML\u2081) \u2286 Z*pi + Z*e^pi is unproved"
+  },
+  "key_values": {
+    "pi": 3.141592653589793,
+    "e_pi": 23.140692632779267,
+    "tan_1": 1.5574077246549023,
+    "1_over_pi": 0.3183098861837907,
+    "comment": "tan(1)/pi = 0.4957382755766584"
+  },
+  "conclusion": "Nesterenko is a useful tool ONCE the structural characterization of Im(EML\u2081) is known. Direct application is blocked by the fact that EML\u2081 Im-parts are themselves transcendental. Need: either Schanuel (to handle algebraic independence of {1, i}), or a direct structural proof that Im(EML\u2081) \u2286 Z\u00b7\u03c0.",
+  "next_session": "S83: Gelfond-Schneider angle \u2014 treat tan(1) via algebraic power theory"
+}

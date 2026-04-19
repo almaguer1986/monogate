@@ -1,0 +1,34 @@
+{
+  "session": "S83",
+  "title": "Gelfond-Schneider Mapping",
+  "theorem": {
+    "name": "Gelfond-Schneider 1934",
+    "statement": "If a algebraic (not 0,1), b algebraic irrational, then a^b transcendental",
+    "classic_examples": {
+      "Hilbert_7th": "2^sqrt(2) is transcendental",
+      "e_pi": "e^pi = (-1)^(-i) is transcendental",
+      "i_i": "i^i = e^(-pi/2) is transcendental"
+    }
+  },
+  "tan1_analysis": {
+    "tan1_as_power": "tan(1) != alpha^beta for known algebraic alpha, beta",
+    "reason": "tan(1) = sin(1)/cos(1); sin(1) and cos(1) are both transcendental",
+    "by_lindemann": "e^i transcendental (Lindemann); e^i = cos(1)+i*sin(1); both parts transcendental",
+    "gelfond_inapplicable": "G-S handles algebraic base; tan(1) has transcendental components"
+  },
+  "schanuel_connection": {
+    "under_schanuel": "1 and i are Q-lin-indep => trdeg_Q(e, e^i) >= 2",
+    "consequence": "e and e^i = cos(1)+i*sin(1) are algebraically independent",
+    "for_tan1": "sin(1) and cos(1) satisfy sin^2+cos^2=1 but otherwise algebraically independent (Schanuel)",
+    "conclusion": "tan(1) cannot be algebraically related to EML\u2081 real-part values (under Schanuel)",
+    "caveat": "Schanuel is unproved"
+  },
+  "key_values": {
+    "e_to_i_real": 0.5403023058681398,
+    "e_to_i_imag": 0.8414709848078965,
+    "tan_1": 1.5574077246549023,
+    "i_to_i": 0.20787957635076193,
+    "e_to_pi": 23.140692632779267
+  },
+  "conclusion": "Gelfond-Schneider does not directly constrain tan(1). tan(1) is transcendental by Lindemann (e^(i) transcendental, not by G-S). Under Schanuel: e and e^i are algebraically independent, suggesting tan(1) cannot be in EML\u2081's ratio set \u2014 but Schanuel is unproved. Structural path (Strategy D) remains the best hope without Schanuel."
+}

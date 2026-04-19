@@ -1,0 +1,32 @@
+{
+  "session": "S80",
+  "title": "Canonical tan(1) Non-Membership Conjecture",
+  "status": "CONJECTURE",
+  "definitions": {
+    "EML_1": "Smallest subset of C containing 1 and closed under (x,y) |-> exp(x) - Log(y) for y != 0, where Log is the principal-branch complex logarithm.",
+    "ARG_set": "{ arg(z) : z in EML_1, Re(z) != 0 } \u2286 (-\u03c0, \u03c0]",
+    "T_ratio_set": "{ Im(z)/Re(z) : z in EML_1, Re(z) != 0, Im(z) != 0 }"
+  },
+  "claim": "tan(1) \u2209 T",
+  "tan_1_value": 1.5574077246549023,
+  "equivalent_forms": {
+    "C1": "\u2200 z \u2208 EML\u2081, Im(z)/Re(z) \u2260 tan(1)  [when Re(z)\u22600]",
+    "C2": "\u2200 z \u2208 EML\u2081, arg(z) \u2260 1",
+    "C3": "1 \u2209 ARG(EML\u2081)"
+  },
+  "sufficiency": "C \u27f9 i \u2209 EML\u2081 via the propagation rule: Im(eml(x,y)) = exp(Re x)\u00b7sin(Im x) \u2212 arg(y). For Im = 1 with real x: arg(y) = \u22121, requires tan(arg(y)) = \u2212tan(1). S86 handles the full (x complex) case.",
+  "lean_statement": "theorem tan1_not_in_eml_ratio_set :\n    \u2200 z : \u2102, z \u2208 EML_1 \u2192 z.re \u2260 0 \u2192\n    z.im / z.re \u2260 Real.tan 1 := by sorry",
+  "key_numbers": {
+    "tan_1": 1.5574077246549023,
+    "neg_tan_1": -1.5574077246549023,
+    "pi": 3.141592653589793,
+    "target_arg_radians": -1.0,
+    "1_over_tan_1": 0.6420926159343306
+  },
+  "disambiguation": [
+    "Principal-branch Log: arg \u2208 (-\u03c0, \u03c0]",
+    "tan(1) \u2248 1.5574077... is transcendental (Hermite-Lindemann)",
+    "Claim is exact equality, not approximation",
+    "Reduction is complete for real-x case; S86 handles complex-x"
+  ]
+}

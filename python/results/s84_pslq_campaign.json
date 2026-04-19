@@ -1,0 +1,45 @@
+{
+  "session": "S84",
+  "title": "PSLQ Campaign \u2014 300-Digit Precision",
+  "mpmath_available": true,
+  "precision_digits": 300,
+  "searches": [
+    {
+      "name": "tan1_over_1_pi_e_ln2",
+      "status": "NO_RELATION",
+      "max_coeff_tried": 500
+    },
+    {
+      "name": "tan1_over_powers_of_pi_e",
+      "status": "NO_RELATION",
+      "max_coeff_tried": 200
+    },
+    {
+      "name": "sin1_over_1_pi_e_cos1",
+      "status": "NO_RELATION",
+      "max_coeff_tried": 500
+    },
+    {
+      "name": "tan1_tan1sq_over_1_pi_e",
+      "status": "NO_RELATION",
+      "max_coeff_tried": 200
+    },
+    {
+      "name": "first_complex_im_vs_minus_pi",
+      "x_neg_value": -12.43598041302022,
+      "im_part_300dig": -3.141592653589793,
+      "minus_pi_300dig": -3.141592653589793,
+      "difference_abs": 0.0,
+      "status": "CONFIRMED_MINUS_PI"
+    },
+    {
+      "name": "integer_1_over_pi_e_ln2_tan1",
+      "status": "NO_RELATION",
+      "max_coeff_tried": 1000
+    },
+    {
+      "name": "identify_tan1",
+      "result": "NO_MATCH"
+    }
+  ]
+}

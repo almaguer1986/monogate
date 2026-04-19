@@ -1,0 +1,41 @@
+{
+  "session": "S87",
+  "title": "Lean Formalization \u2014 tan(1) Non-Membership",
+  "lean_file": "lean/EML/ExtendedClosure.lean",
+  "new_definitions": [
+    "EML_1 : Set C (inductive set)",
+    "eml_ratio_set : Set R",
+    "eml_arg_set : Set R"
+  ],
+  "theorems": {
+    "tan1_not_in_eml_ratio_set": {
+      "status": "SORRY",
+      "proof_structure": "Induction on EML_1 derivation; sorry for transcendence step"
+    },
+    "eml1_arg_ne_one": {
+      "status": "SORRY",
+      "proof_structure": "Same induction; same transcendence step"
+    },
+    "base_ratio_zero": {
+      "status": "PROVED"
+    },
+    "im_eml_eq": {
+      "status": "PROVED (modulo Mathlib simp lemmas)"
+    }
+  },
+  "sorry_count": 2,
+  "numerical_evidence": {
+    "depth_5_values": 50907,
+    "complex_nonzero_re_im": 9657,
+    "tan1_matches": 0,
+    "neg_tan1_matches": 0,
+    "arg_equals_1": false,
+    "arg_equals_neg1": false,
+    "pslq_300_digits": "NO_RELATION"
+  },
+  "key_gap": "The sorry requires showing no EML_1 element has arg = -1. By the propagation rule, this is equivalent to Claim C itself (self-similar). Breaking the circularity requires transcendence theory.",
+  "lean_write": {
+    "success": true,
+    "path": "D:\\monogate-research\\lean\\EML\\ExtendedClosure.lean"
+  }
+}

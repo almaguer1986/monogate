@@ -1,0 +1,55 @@
+{
+  "session": "S81",
+  "title": "Transcendence Reduction Memo",
+  "tan1_is_transcendental": {
+    "fact": "tan(1) is transcendental",
+    "proof_sketch": "Hermite-Lindemann: e^i is transcendental (i is algebraic nonzero). e^i = cos(1) + i\u00b7sin(1). Both cos(1) and sin(1) transcendental. tan(1) = sin(1)/cos(1), ratio of transcendentals. (Niven: only rational sin values at rational radian multiples of 2\u03c0 are \u00b11,\u00b11/2,0)",
+    "value": 1.5574077246549023
+  },
+  "strategies": {
+    "A_Nesterenko": {
+      "theorem": "\u03c0, e^\u03c0, \u0393(1/4) are algebraically independent (Nesterenko 1996)",
+      "applicability": "INDIRECT \u2014 doesn't directly constrain arg of EML\u2081 elements",
+      "gap": "Need to relate EML\u2081 imaginary parts to \u03c0-multiples; not obvious"
+    },
+    "B_Baker": {
+      "theorem": "Linear forms in logarithms of algebraic numbers are nonzero (Baker 1966)",
+      "applicability": "INDIRECT \u2014 EML\u2081 Im-parts may not be log of algebraics",
+      "gap": "tan(1) is transcendental so Baker doesn't directly bound it"
+    },
+    "C_Schanuel": {
+      "theorem": "Schanuel's conjecture (unproved): trdeg of {z_i, e^{z_i}} \u2265 n for \u211a-lin-indep z_i",
+      "applicability": "DIRECT if proved \u2014 would show e and tan(1) algebraically independent",
+      "gap": "Unproved conjecture! Cannot use as axiom"
+    },
+    "D_Structural": {
+      "theorem": "Characterize Im(EML\u2081) as closed under specific operations",
+      "applicability": "MOST TRACTABLE \u2014 no transcendence theory needed if successful",
+      "hypothesis": "Im(EML\u2081) \u2286 \u2124\u00b7\u03c0 + sum of arg values of constructible elements",
+      "gap": "Requires inductive characterization of Im-parts; S86 is needed for bounds"
+    }
+  },
+  "recommended_path": "D_Structural",
+  "reduction_chain": [
+    "tan(1) \u2209 T",
+    "\u27fa \u2200 z \u2208 EML\u2081, arg(z) \u2260 \u00b11",
+    "\u27f8 Im(EML\u2081) \u2286 \u2124\u00b7\u03c0 (or some restricted set not containing \u00b1Re(z)\u00b7tan(1))",
+    "\u27f8 Structural induction on EML\u2081 depth [requires S86 branch-cut analysis]"
+  ],
+  "key_numbers": {
+    "tan_1": 1.5574077246549023,
+    "sin_1": 0.8414709848078965,
+    "cos_1": 0.5403023058681398,
+    "pi": 3.141592653589793,
+    "pi_approx_tan_1_ratio": 2.017193445143546
+  },
+  "literature": {
+    "Hermite_1873": "e is transcendental",
+    "Lindemann_1882": "\u03c0 is transcendental; e^\u03b1 transcendental for algebraic \u03b1\u22600",
+    "Baker_1966": "Linear forms in logarithms (lower bounds)",
+    "Nesterenko_1996": "\u03c0, e^\u03c0, \u0393(1/4) algebraically independent",
+    "Niven_1956": "Rational values of trig functions at rational multiples of \u03c0",
+    "Schanuel_1960s": "Conjecture on transcendence degree of exp field extensions"
+  },
+  "open_question": "Does Strategy D close the gap? I.e., can we prove Im(EML\u2081) \u2286 \u2124\u00b7\u03c0 purely structurally? If yes: i-unconstructibility follows without Schanuel."
+}
