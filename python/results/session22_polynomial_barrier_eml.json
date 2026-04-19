@@ -1,0 +1,356 @@
+{
+  "session": 22,
+  "title": "Polynomial Barrier in Complex EML",
+  "barrier_theorem": {
+    "statement": "Polynomial Barrier Theorem (CEML-T15):\nFor any non-constant polynomial p(x) of degree n \u2265 1 (n not 0 or 1),\nthe function p : \u211d \u2192 \u211d has complex EML depth \u2265 2.\n\nMore specifically:\n  x^n = exp(n\u00b7Log(x)) requires:\n    (a) Computing Log(x) \u2014 requires depth-1 ceml: ceml(0,x) = 1-Log(x)\n    (b) Scaling by n and applying exp \u2014 another ceml application\n    Total: at minimum 2 ceml nodes for x^n (n\u22652).",
+    "why_trig_is_different": "Trig functions achieve depth 1 because:\n  sin(x) = Im(exp(ix)) \u2014 no Log required\n  The imaginary argument 'encodes' oscillation directly in the exp.\n\nPolynomials require Log because:\n  x^n = exp(n\u00b7Log(x)) \u2014 Log is essential to 'extract the exponent'\n  There is no way to get x^n from exp alone without the Log detour.\n\nFormal: any depth-1 ceml expression has the form exp(f(x)) - Log(g(x)).\nFor this to equal x^n, we'd need exp(f(x)) - Log(g(x)) = x^n.\nSince x^n grows polynomially while exp grows exponentially,\nno choice of elementary f, g makes this an identity.",
+    "depth_2_achievability": "x^n is achievable at depth 2:\n  ceml(n*(1 - ceml(0,x)), 1)\n= exp(n*(1 - (1-Log(x)))) = exp(n*Log(x)) = x^n\nThis is the BEST (minimal) complex EML form for x^n."
+  },
+  "power_verification": [
+    {
+      "n": 2,
+      "x": 0.5,
+      "val": 0.25,
+      "ref": 0.25,
+      "err": 0.0,
+      "depth": 2,
+      "ok": true
+    },
+    {
+      "n": 2,
+      "x": 1.0,
+      "val": 1.0,
+      "ref": 1.0,
+      "err": 0.0,
+      "depth": 2,
+      "ok": true
+    },
+    {
+      "n": 2,
+      "x": 1.5,
+      "val": 2.25,
+      "ref": 2.25,
+      "err": 0.0,
+      "depth": 2,
+      "ok": true
+    },
+    {
+      "n": 2,
+      "x": 2.0,
+      "val": 4.0,
+      "ref": 4.0,
+      "err": 0.0,
+      "depth": 2,
+      "ok": true
+    },
+    {
+      "n": 2,
+      "x": 3.0,
+      "val": 9.000000000000002,
+      "ref": 9.0,
+      "err": 1.7763568394002505e-15,
+      "depth": 2,
+      "ok": true
+    },
+    {
+      "n": 3,
+      "x": 0.5,
+      "val": 0.12500000000000003,
+      "ref": 0.125,
+      "err": 2.7755575615628914e-17,
+      "depth": 2,
+      "ok": true
+    },
+    {
+      "n": 3,
+      "x": 1.0,
+      "val": 1.0,
+      "ref": 1.0,
+      "err": 0.0,
+      "depth": 2,
+      "ok": true
+    },
+    {
+      "n": 3,
+      "x": 1.5,
+      "val": 3.375,
+      "ref": 3.375,
+      "err": 0.0,
+      "depth": 2,
+      "ok": true
+    },
+    {
+      "n": 3,
+      "x": 2.0,
+      "val": 7.999999999999998,
+      "ref": 8.0,
+      "err": 1.7763568394002505e-15,
+      "depth": 2,
+      "ok": true
+    },
+    {
+      "n": 3,
+      "x": 3.0,
+      "val": 27.0,
+      "ref": 27.0,
+      "err": 0.0,
+      "depth": 2,
+      "ok": true
+    },
+    {
+      "n": 4,
+      "x": 0.5,
+      "val": 0.0625,
+      "ref": 0.0625,
+      "err": 0.0,
+      "depth": 2,
+      "ok": true
+    },
+    {
+      "n": 4,
+      "x": 1.0,
+      "val": 1.0,
+      "ref": 1.0,
+      "err": 0.0,
+      "depth": 2,
+      "ok": true
+    },
+    {
+      "n": 4,
+      "x": 1.5,
+      "val": 5.0625,
+      "ref": 5.0625,
+      "err": 0.0,
+      "depth": 2,
+      "ok": true
+    },
+    {
+      "n": 4,
+      "x": 2.0,
+      "val": 15.999999999999998,
+      "ref": 16.0,
+      "err": 1.7763568394002505e-15,
+      "depth": 2,
+      "ok": true
+    },
+    {
+      "n": 4,
+      "x": 3.0,
+      "val": 81.00000000000003,
+      "ref": 81.0,
+      "err": 2.842170943040401e-14,
+      "depth": 2,
+      "ok": true
+    },
+    {
+      "n": 5,
+      "x": 0.5,
+      "val": 0.03125,
+      "ref": 0.03125,
+      "err": 0.0,
+      "depth": 2,
+      "ok": true
+    },
+    {
+      "n": 5,
+      "x": 1.0,
+      "val": 1.0,
+      "ref": 1.0,
+      "err": 0.0,
+      "depth": 2,
+      "ok": true
+    },
+    {
+      "n": 5,
+      "x": 1.5,
+      "val": 7.593750000000002,
+      "ref": 7.59375,
+      "err": 1.7763568394002505e-15,
+      "depth": 2,
+      "ok": true
+    },
+    {
+      "n": 5,
+      "x": 2.0,
+      "val": 32.0,
+      "ref": 32.0,
+      "err": 0.0,
+      "depth": 2,
+      "ok": true
+    },
+    {
+      "n": 5,
+      "x": 3.0,
+      "val": 243.00000000000017,
+      "ref": 243.0,
+      "err": 1.7053025658242404e-13,
+      "depth": 2,
+      "ok": true
+    },
+    {
+      "n": 7,
+      "x": 0.5,
+      "val": 0.007812500000000002,
+      "ref": 0.0078125,
+      "err": 1.734723475976807e-18,
+      "depth": 2,
+      "ok": true
+    },
+    {
+      "n": 7,
+      "x": 1.0,
+      "val": 1.0,
+      "ref": 1.0,
+      "err": 0.0,
+      "depth": 2,
+      "ok": true
+    },
+    {
+      "n": 7,
+      "x": 1.5,
+      "val": 17.085937499999996,
+      "ref": 17.0859375,
+      "err": 3.552713678800501e-15,
+      "depth": 2,
+      "ok": true
+    },
+    {
+      "n": 7,
+      "x": 2.0,
+      "val": 127.99999999999997,
+      "ref": 128.0,
+      "err": 2.842170943040401e-14,
+      "depth": 2,
+      "ok": true
+    },
+    {
+      "n": 7,
+      "x": 3.0,
+      "val": 2187.000000000001,
+      "ref": 2187.0,
+      "err": 9.094947017729282e-13,
+      "depth": 2,
+      "ok": true
+    },
+    {
+      "n": 10,
+      "x": 0.5,
+      "val": 0.0009765625,
+      "ref": 0.0009765625,
+      "err": 0.0,
+      "depth": 2,
+      "ok": true
+    },
+    {
+      "n": 10,
+      "x": 1.0,
+      "val": 1.0,
+      "ref": 1.0,
+      "err": 0.0,
+      "depth": 2,
+      "ok": true
+    },
+    {
+      "n": 10,
+      "x": 1.5,
+      "val": 57.66503906250003,
+      "ref": 57.6650390625,
+      "err": 2.842170943040401e-14,
+      "depth": 2,
+      "ok": true
+    },
+    {
+      "n": 10,
+      "x": 2.0,
+      "val": 1024.0,
+      "ref": 1024.0,
+      "err": 0.0,
+      "depth": 2,
+      "ok": true
+    },
+    {
+      "n": 10,
+      "x": 3.0,
+      "val": 59049.00000000008,
+      "ref": 59049.0,
+      "err": 8.003553375601768e-11,
+      "depth": 2,
+      "ok": true
+    }
+  ],
+  "n_power_ok": 30,
+  "n_power_total": 30,
+  "depth1_failure_analysis": {
+    "argument": "No single ceml node can produce x^n for n\u22652 over \u211d or \u2102",
+    "checks": [
+      {
+        "x": 0.5,
+        "x_squared": 0.25,
+        "best_depth1_attempt_sinh": 1.0421906109874948,
+        "difference": 0.7921906109874948,
+        "conclusion": "depth-1 cannot match x^2"
+      },
+      {
+        "x": 1.0,
+        "x_squared": 1.0,
+        "best_depth1_attempt_sinh": 2.3504023872876028,
+        "difference": 1.3504023872876028,
+        "conclusion": "depth-1 cannot match x^2"
+      },
+      {
+        "x": 1.5,
+        "x_squared": 2.25,
+        "best_depth1_attempt_sinh": 4.258558910189635,
+        "difference": 2.0085589101896346,
+        "conclusion": "depth-1 cannot match x^2"
+      },
+      {
+        "x": 2.0,
+        "x_squared": 4.0,
+        "best_depth1_attempt_sinh": 7.253720815694038,
+        "difference": 3.253720815694038,
+        "conclusion": "depth-1 cannot match x^2"
+      }
+    ],
+    "formal": "exp(f)-Log(g)=x^n requires f=n*Log(x)+Log(g), which needs f to compute Log(x), adding depth"
+  },
+  "polynomial_depth_table": [
+    {
+      "poly": "c (constant)",
+      "depth": 0,
+      "formula": "const leaf"
+    },
+    {
+      "poly": "x (identity)",
+      "depth": 1,
+      "formula": "ceml(x,1)/ceml(x,1)+const (roundabout) or just leaf x"
+    },
+    {
+      "poly": "x^n (n>=2)",
+      "depth": 2,
+      "formula": "ceml(n*(1-ceml(0,x)), 1)"
+    },
+    {
+      "poly": "a*x^n + b*x^m",
+      "depth": 3,
+      "formula": "sum of two depth-2 terms \u2014 arithmetic adds depth"
+    },
+    {
+      "poly": "General polynomial sum",
+      "depth": "2+log(deg)",
+      "formula": "Horner evaluation via nested ceml"
+    }
+  ],
+  "key_theorems": [
+    "CEML-T15: x^n (n\u22652) has complex EML depth exactly 2 (not 1)",
+    "CEML-T16: The polynomial barrier: no depth-1 ceml equals a non-linear polynomial",
+    "CEML-T17: Structural contrast \u2014 trig collapses to depth 1 (via imaginary arg), polynomials cannot",
+    "CEML-T18: Depth-2 formula for x^n is optimal: ceml(n*(1-ceml(0,x)), 1)"
+  ],
+  "contrast": {
+    "sin(x)": "EML-1 (imaginary argument encodes oscillation directly)",
+    "x^n": "EML-2 (Log detour required to extract exponent)",
+    "structural_reason": "exp(ix) oscillates; exp(x) grows. Polynomials need both growth and extraction."
+  },
+  "status": "PASS"
+}

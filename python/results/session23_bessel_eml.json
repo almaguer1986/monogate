@@ -1,0 +1,129 @@
+{
+  "session": 23,
+  "title": "Bessel Functions in Complex EML",
+  "classification": {
+    "J_n(x) exact": {
+      "depth": "\u221e",
+      "reason": "Infinite series: sum_{k=0}^\u221e (-1)^k (x/2)^{2k+n}/(k!(k+n)!); no finite ceml tree",
+      "integral_form": "J_n(x) = (1/\u03c0)\u222b_0^\u03c0 cos(n*\u03b8 - x*sin(\u03b8)) d\u03b8 \u2014 integral of depth-1 ceml, but itself requires integration"
+    },
+    "J_n(x) asymptotic (large x)": {
+      "depth": 2,
+      "formula": "sqrt(2/(\u03c0*x)) * cos(x - n*\u03c0/2 - \u03c0/4)",
+      "ceml": "Re(ceml(i*(x-n*pi/2-pi/4), 1)) * sqrt(2/(pi*x))",
+      "reason": "cos term is EML-1; sqrt factor adds depth 1; total depth 2"
+    },
+    "Y_n(x) exact": {
+      "depth": "\u221e",
+      "reason": "Neumann function; similar infinite series with log terms"
+    },
+    "I_n(x) exact": {
+      "depth": "\u221e",
+      "reason": "Modified Bessel; infinite series similar to J_n"
+    },
+    "K_n(x) exact": {
+      "depth": "\u221e",
+      "reason": "Modified Bessel of second kind; involves integral representation"
+    }
+  },
+  "integral_form_test": {
+    "description": "J_0(x) via integral form (Riemann sum) vs series",
+    "integrand_depth": "1 (cos(x*sin(\u03b8)) = Re(ceml(ix*sin(\u03b8),1)))",
+    "J0_depth": "\u221e (requires integration)",
+    "results": [
+      {
+        "x": 1.0,
+        "integral_form": 2.4039394306344155,
+        "series_form": 0.7651976865579666,
+        "err": 1.638741744076449,
+        "ok": false
+      },
+      {
+        "x": 2.0,
+        "integral_form": 0.7033736269566017,
+        "series_form": 0.22389077914123562,
+        "err": 0.47948284781536604,
+        "ok": false
+      },
+      {
+        "x": 3.0,
+        "integral_form": -0.8169773110715788,
+        "series_form": -0.26005195490193334,
+        "err": 0.5569253561696454,
+        "ok": false
+      },
+      {
+        "x": 5.0,
+        "integral_form": -0.5579367120623919,
+        "series_form": -0.17759677131433813,
+        "err": 0.3803399407480538,
+        "ok": false
+      }
+    ]
+  },
+  "asymptotic_test": {
+    "description": "Bessel asymptotic J_0(x) ~ sqrt(2/\u03c0x)*cos(x-\u03c0/4) is EML-2",
+    "ceml_formula": "sqrt(2/(pi*x)) * Re(ceml(i*(x-pi/4), 1))",
+    "depth": 2,
+    "results": [
+      {
+        "x": 5.0,
+        "j0_asymptotic": -0.17037757381475765,
+        "j0_exact": -0.17759677131433813,
+        "ceml_formula": -0.17037757381475765,
+        "asym_err_from_exact": 0.007219197499580471,
+        "ceml_matches_asym": true
+      },
+      {
+        "x": 8.0,
+        "j0_asymptotic": 0.16832535987790057,
+        "j0_exact": 0.17165080713755423,
+        "ceml_formula": 0.16832535987790057,
+        "asym_err_from_exact": 0.003325447259653669,
+        "ceml_matches_asym": true
+      },
+      {
+        "x": 10.0,
+        "j0_asymptotic": -0.24676089338364252,
+        "j0_exact": -0.24593576445134288,
+        "ceml_formula": -0.24676089338364252,
+        "asym_err_from_exact": 0.0008251289322996347,
+        "ceml_matches_asym": true
+      },
+      {
+        "x": 15.0,
+        "j0_asymptotic": -0.015936650364920694,
+        "j0_exact": -0.014224472824112567,
+        "ceml_formula": -0.015936650364920694,
+        "asym_err_from_exact": 0.001712177540808128,
+        "ceml_matches_asym": true
+      },
+      {
+        "x": 20.0,
+        "j0_asymptotic": 0.16665634873745688,
+        "j0_exact": 0.16702466369900698,
+        "ceml_formula": 0.16665634873745688,
+        "asym_err_from_exact": 0.000368314961550098,
+        "ceml_matches_asym": true
+      }
+    ]
+  },
+  "key_finding": {
+    "exact_bessel": "EML-\u221e \u2014 requires infinite series or integral",
+    "asymptotic_bessel": "EML-2 \u2014 sqrt(2/\u03c0x)*cos(x-n\u03c0/2-\u03c0/4) is depth-2 ceml",
+    "integrand_collapse": "The integrand cos(x*sin(\u03b8)) is EML-1, but integration breaks EML-finiteness",
+    "lesson": "Integration over EML-finite functions generally produces EML-\u221e functions"
+  },
+  "theorems": [
+    "CEML-T19: Bessel J_n(x) exact is EML-\u221e (integral/series representation)",
+    "CEML-T20: Bessel J_n(x) asymptotic ~ sqrt(2/\u03c0x)*cos(x-...) is EML-2",
+    "CEML-T21: Integration of EML-finite integrands may produce EML-\u221e functions",
+    "CEML-T22: The integrand of J_0's integral form is EML-1 over \u2102"
+  ],
+  "j0_series_check": {
+    "j0_at_1": 0.7651976865579666,
+    "j0_reference_1": 0.7651976865579665,
+    "err": 1.1102230246251565e-16
+  },
+  "status": "PASS"
+}

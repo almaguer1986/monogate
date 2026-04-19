@@ -1,0 +1,168 @@
+{
+  "session": 21,
+  "title": "Hyperbolic Function Complexity",
+  "rotation_theorem": {
+    "statement": "Rotation Theorem (CEML-T12):\nAll six hyperbolic functions are EML-1 over \u2102:\n  sinh(x) = -i\u00b7sin(ix)  = -i\u00b7Im(ceml(i\u00b7(ix),1)) = -i\u00b7Im(ceml(-x,1))\n            equivalently: (ceml(x,1) - ceml(-x,1))/2\n  cosh(x) = cos(ix)     = Re(ceml(i\u00b7(ix),1)) = Re(ceml(-x,1))\n  tanh(x) = sinh(x)/cosh(x) \u2014 ratio of same depth-1 node\n  csch, sech, coth \u2014 reciprocals of the above",
+    "key_identity": "Hyperbolic \u2194 Trig via rotation by i: f_hyp(x) = f_trig(ix) (up to signs)"
+  },
+  "inverse_hyperbolic": [
+    {
+      "fn": "arcsinh(x)",
+      "depth": 2,
+      "formula": "Log(x+sqrt(x^2+1))",
+      "note": "Log is depth-1 arithmetic; sqrt needs depth-2 pure tree"
+    },
+    {
+      "fn": "arccosh(x)",
+      "depth": 2,
+      "formula": "Log(x+sqrt(x^2-1))  [x\u22651]",
+      "note": "Same structure as arcsinh"
+    },
+    {
+      "fn": "arctanh(x)",
+      "depth": 2,
+      "formula": "(1/2)Log((1+x)/(1-x))  [|x|<1]",
+      "note": "Log of rational function"
+    },
+    {
+      "fn": "arccsch(x)",
+      "depth": 2,
+      "formula": "arcsinh(1/x)",
+      "note": "Composition with reciprocal"
+    },
+    {
+      "fn": "arcsech(x)",
+      "depth": 2,
+      "formula": "arccosh(1/x)",
+      "note": "Same"
+    },
+    {
+      "fn": "arccoth(x)",
+      "depth": 2,
+      "formula": "arctanh(1/x)",
+      "note": "Same"
+    }
+  ],
+  "hyperbolic_tests": [
+    {
+      "x": 0.3,
+      "sinh_err": 5.551115123125783e-17,
+      "cosh_err": 0.0,
+      "tanh_err": 5.551115123125783e-17,
+      "ok": true
+    },
+    {
+      "x": 0.5,
+      "sinh_err": 0.0,
+      "cosh_err": 0.0,
+      "tanh_err": 5.551115123125783e-17,
+      "ok": true
+    },
+    {
+      "x": 0.7,
+      "sinh_err": 2.220446049250313e-16,
+      "cosh_err": 0.0,
+      "tanh_err": 1.1102230246251565e-16,
+      "ok": true
+    },
+    {
+      "x": 1.0,
+      "sinh_err": 0.0,
+      "cosh_err": 0.0,
+      "tanh_err": 0.0,
+      "ok": true
+    },
+    {
+      "x": 1.5,
+      "sinh_err": 0.0,
+      "cosh_err": 0.0,
+      "tanh_err": 0.0,
+      "ok": true
+    },
+    {
+      "x": 2.0,
+      "sinh_err": 4.440892098500626e-16,
+      "cosh_err": 0.0,
+      "tanh_err": 1.1102230246251565e-16,
+      "ok": true
+    }
+  ],
+  "inverse_hyp_tests": [
+    {
+      "fn": "arcsinh",
+      "x": 0.3,
+      "ref": 0.2956730475634224,
+      "ceml": 0.2956730475634225,
+      "err": 1.1102230246251565e-16,
+      "ok": true
+    },
+    {
+      "fn": "arctanh",
+      "x": 0.3,
+      "ref": 0.30951960420311175,
+      "ceml": 0.3095196042031118,
+      "err": 5.551115123125783e-17,
+      "ok": true
+    },
+    {
+      "fn": "arcsinh",
+      "x": 0.5,
+      "ref": 0.48121182505960347,
+      "ceml": 0.4812118250596035,
+      "err": 5.551115123125783e-17,
+      "ok": true
+    },
+    {
+      "fn": "arctanh",
+      "x": 0.5,
+      "ref": 0.5493061443340549,
+      "ceml": 0.5493061443340549,
+      "err": 0.0,
+      "ok": true
+    },
+    {
+      "fn": "arcsinh",
+      "x": 0.7,
+      "ref": 0.6526665660823557,
+      "ceml": 0.6526665660823557,
+      "err": 0.0,
+      "ok": true
+    },
+    {
+      "fn": "arctanh",
+      "x": 0.7,
+      "ref": 0.8673005276940532,
+      "ceml": 0.8673005276940532,
+      "err": 0.0,
+      "ok": true
+    },
+    {
+      "fn": "arcsinh",
+      "x": 0.9,
+      "ref": 0.8088669356527824,
+      "ceml": 0.8088669356527826,
+      "err": 1.1102230246251565e-16,
+      "ok": true
+    },
+    {
+      "fn": "arctanh",
+      "x": 0.9,
+      "ref": 1.4722194895832204,
+      "ceml": 1.4722194895832204,
+      "err": 0.0,
+      "ok": true
+    }
+  ],
+  "all_hyp_ok": true,
+  "all_inv_ok": true,
+  "key_theorems": [
+    "CEML-T12: All 6 hyperbolic functions are EML-1 over \u2102 via rotation x\u21a6ix",
+    "CEML-T13: All 6 inverse hyperbolic functions are EML-2 over \u2102 via Log composition",
+    "CEML-T14: Real-to-complex depth map for hyperbolic: {sin,cos}\u2194{sinh,cosh} under i-rotation"
+  ],
+  "depth_summary": {
+    "sinh, cosh, tanh, csch, sech, coth": "EML-1 over \u2102",
+    "arcsinh, arccosh, arctanh, arccsch, arcsech, arccoth": "EML-2 over \u2102"
+  },
+  "status": "PASS"
+}

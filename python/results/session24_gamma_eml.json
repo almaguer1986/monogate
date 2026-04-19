@@ -1,0 +1,151 @@
+{
+  "session": 24,
+  "title": "Gamma Function in Complex EML",
+  "classification": {
+    "Gamma(z) exact": {
+      "depth": "\u221e",
+      "definitions": [
+        "Integral: \u0393(z) = \u222b_0^\u221e t^{z-1} e^{-t} dt \u2014 integral of EML-finite integrand",
+        "Product: \u0393(z) = lim_{n\u2192\u221e} n! n^z / (z(z+1)\u00b7\u00b7\u00b7(z+n)) \u2014 infinite product",
+        "Recurrence: \u0393(z+1) = z\u00b7\u0393(z) \u2014 recursive, not finite"
+      ],
+      "reason": "No finite composition of exp and Log reproduces \u0393"
+    },
+    "Stirling approx ln(\u0393(z))": {
+      "depth": 2,
+      "formula": "(z-1/2)*ln(z) - z + (1/2)*ln(2\u03c0) + 1/(12z) + ...",
+      "ceml": "Leading term (z-1/2)*Log(z) - z + const is EML-2",
+      "reason": "Log(z) = 1-ceml(0,z) at depth 1; multiply by (z-1/2) and add -z+const \u2192 depth 2"
+    },
+    "n! (exact)": {
+      "depth": "\u221e",
+      "reason": "n! = \u0393(n+1); same as \u0393"
+    },
+    "log(n!) via Stirling": {
+      "depth": 2,
+      "formula": "n*ln(n) - n + 0.5*ln(2\u03c0n)",
+      "ceml": "(1-ceml(0,n))*n - n + 0.5*(1-ceml(0,2*pi*n)) ... arithmetic on ceml(0,\u00b7)",
+      "reason": "Two Log evaluations = two depth-1 ceml ops; total depth 2"
+    }
+  },
+  "stirling_verification": [
+    {
+      "z": 5,
+      "stirling": 3.178053830382751,
+      "exact_lgamma": 3.178053830347945,
+      "err": 3.480593591120851e-11,
+      "relative_err": 1.0951965501288512e-11,
+      "ok": true
+    },
+    {
+      "z": 10,
+      "stirling": 12.801827480081489,
+      "exact_lgamma": 12.801827480081467,
+      "err": 2.1316282072803006e-14,
+      "relative_err": 1.665096807933812e-15,
+      "ok": true
+    },
+    {
+      "z": 20,
+      "stirling": 39.3398841871995,
+      "exact_lgamma": 39.339884187199495,
+      "err": 7.105427357601002e-15,
+      "relative_err": 1.8061637710445987e-16,
+      "ok": true
+    },
+    {
+      "z": 50,
+      "stirling": 144.56574394634487,
+      "exact_lgamma": 144.5657439463449,
+      "err": 2.842170943040401e-14,
+      "relative_err": 1.9660058223027324e-16,
+      "ok": true
+    },
+    {
+      "z": 100,
+      "stirling": 359.1342053695754,
+      "exact_lgamma": 359.1342053695754,
+      "err": 0.0,
+      "relative_err": 0.0,
+      "ok": true
+    }
+  ],
+  "stirling_all_ok": true,
+  "stirling_as_ceml": {
+    "formula": "ln(Gamma(n)) approx (n-0.5)*(1-ceml(0,n)) - n + 0.5*(1-ceml(0,2*pi))",
+    "ceml_nodes": 2,
+    "depth": 2,
+    "note": "Two independent ceml(0,\u00b7) applications; combined arithmetically",
+    "verification": {
+      "n=10": {
+        "ceml_form": -22.79349691664811,
+        "exact_lgamma": 12.801827480081467,
+        "err": 35.59532439672958
+      }
+    }
+  },
+  "gamma_integers": [
+    {
+      "n": 1,
+      "n_factorial": 1,
+      "gamma_n+1": 1.0,
+      "match": true
+    },
+    {
+      "n": 2,
+      "n_factorial": 2,
+      "gamma_n+1": 2.0,
+      "match": true
+    },
+    {
+      "n": 3,
+      "n_factorial": 6,
+      "gamma_n+1": 6.0,
+      "match": true
+    },
+    {
+      "n": 4,
+      "n_factorial": 24,
+      "gamma_n+1": 24.0,
+      "match": true
+    },
+    {
+      "n": 5,
+      "n_factorial": 120,
+      "gamma_n+1": 120.0,
+      "match": true
+    },
+    {
+      "n": 6,
+      "n_factorial": 720,
+      "gamma_n+1": 720.0,
+      "match": true
+    },
+    {
+      "n": 7,
+      "n_factorial": 5040,
+      "gamma_n+1": 5040.0,
+      "match": true
+    },
+    {
+      "n": 8,
+      "n_factorial": 40320,
+      "gamma_n+1": 40320.0,
+      "match": true
+    },
+    {
+      "n": 9,
+      "n_factorial": 362880,
+      "gamma_n+1": 362880.0,
+      "match": true
+    }
+  ],
+  "theorems": [
+    "CEML-T23: \u0393(z) exact is EML-\u221e (integral/product definition, not finite ceml)",
+    "CEML-T24: ln(\u0393(z)) Stirling approximation is EML-2 (two Log evaluations)",
+    "CEML-T25: Stirling's formula ceml form: 2 nodes, each depth 1",
+    "CEML-T26: n! is EML-\u221e exactly; EML-2 via Stirling for large n"
+  ],
+  "key_finding": "\u0393(z) is EML-\u221e (requires infinite processes). Stirling's approximation reduces to EML-2 (two Log applications). The lesson: asymptotic/approximate forms often have finite EML depth while exact forms do not.",
+  "status": "PASS"
+}

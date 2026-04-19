@@ -1,0 +1,229 @@
+{
+  "session": 25,
+  "title": "Complex EML Classification Theorem",
+  "classification_theorem": {
+    "name": "Complex EML Classification Theorem (CEML-T27)",
+    "statement": "\nLet f : D \u2286 \u211d \u2192 \u211d be a real-analytic function. Define its complex EML depth\nd_\u2102(f) as the minimum number of ceml nodes needed to compute f over \u2102.\n\nCLASSIFICATION:\n\nd_\u2102(f) = 0:\n  f is constant.\n\nd_\u2102(f) = 1:\n  f \u2208 EML-1(\u2102) iff f(x) = Re(a\u00b7exp(b\u00b7i\u00b7x + c)) or Im(a\u00b7exp(b\u00b7i\u00b7x + c))\n  for constants a, b, c \u2208 \u2102 with b \u2260 0.\n  Examples: sin, cos, sinh, cosh, tan, tanh, all Fourier modes, damped oscillations.\n\nd_\u2102(f) = 2:\n  f \u2208 EML-2(\u2102) iff f requires exactly one Log evaluation (plus one exp).\n  Examples: x^n, x^\u03b1, arctan, arctanh, arcsinh, log(sin(x)), sin(log(x)).\n\nd_\u2102(f) = 3:\n  f \u2208 EML-3(\u2102) iff f requires two Log evaluations or one Log\u2218sqrt composition.\n  Examples: arcsin, arccos, Log(x) [in pure tree form], sin(log(log(x))).\n\nd_\u2102(f) = \u221e:\n  f \u2208 EML-\u221e(\u2102) iff f is defined by an infinite process irresolvable to finite ceml.\n  Examples: \u0393(z), \u03b6(s), J_n(x), Weierstrass \u2118, modular j-function.\n",
+    "key_insight": "The Classification Theorem shows that complex EML depth measures the 'number of transcendental detours' a function requires:\n  0 detours \u2192 EML-0 (constant)\n  1 exp detour \u2192 EML-1 (oscillatory via i-gateway)\n  1 Log + 1 exp detour \u2192 EML-2 (power, inverse trig)\n  2 Log detours or 1 sqrt \u2192 EML-3\n  Infinite detours \u2192 EML-\u221e"
+  },
+  "classified_functions": {
+    "EML-0": [
+      "constants: 0, 1, \u03c0, e"
+    ],
+    "EML-1": [
+      "exp(x)",
+      "sin(x)",
+      "cos(x)",
+      "tan(x)",
+      "csc(x)",
+      "sec(x)",
+      "cot(x)",
+      "sinh(x)",
+      "cosh(x)",
+      "tanh(x)",
+      "csch(x)",
+      "sech(x)",
+      "coth(x)",
+      "e^x*sin(x)",
+      "e^x*cos(x)",
+      "sin(nx)",
+      "cos(nx) for any n",
+      "all Fourier modes exp(inx)"
+    ],
+    "EML-2": [
+      "x^n (n\u22652)",
+      "x^\u03b1 (\u03b1 real)",
+      "arctan(x)",
+      "arctanh(x)",
+      "arcsinh(x)",
+      "arccosh(x)",
+      "log(sin(x))",
+      "log(cos(x))",
+      "sin(log(x))",
+      "exp(sin(x))",
+      "sin(x^2)",
+      "cos(exp(x))"
+    ],
+    "EML-3": [
+      "arcsin(x)",
+      "arccos(x)",
+      "Log(x) [pure ceml tree form]",
+      "log(log(x))",
+      "arcsin(sin(x)) [composed]"
+    ],
+    "EML-inf": [
+      "Gamma(z)",
+      "zeta(s)",
+      "Bessel J_n(x)",
+      "Bessel Y_n(x)",
+      "Weierstrass P(z)",
+      "modular j(tau)",
+      "Airy Ai(x)",
+      "Airy Bi(x)",
+      "n! exact (for variable n)"
+    ]
+  },
+  "depth1_witnesses": [
+    {
+      "fn": "sin",
+      "x": 0.5,
+      "eml": 0.479425538604203,
+      "ref": 0.479425538604203,
+      "err": 0.0,
+      "ok": true
+    },
+    {
+      "fn": "sin",
+      "x": 1.0,
+      "eml": 0.8414709848078965,
+      "ref": 0.8414709848078965,
+      "err": 0.0,
+      "ok": true
+    },
+    {
+      "fn": "sin",
+      "x": 1.5,
+      "eml": 0.9974949866040544,
+      "ref": 0.9974949866040544,
+      "err": 0.0,
+      "ok": true
+    },
+    {
+      "fn": "cos",
+      "x": 0.5,
+      "eml": 0.8775825618903728,
+      "ref": 0.8775825618903728,
+      "err": 0.0,
+      "ok": true
+    },
+    {
+      "fn": "cos",
+      "x": 1.0,
+      "eml": 0.5403023058681398,
+      "ref": 0.5403023058681398,
+      "err": 0.0,
+      "ok": true
+    },
+    {
+      "fn": "cos",
+      "x": 1.5,
+      "eml": 0.0707372016677029,
+      "ref": 0.0707372016677029,
+      "err": 0.0,
+      "ok": true
+    },
+    {
+      "fn": "sinh",
+      "x": 0.5,
+      "eml": 0.5210953054937474,
+      "ref": 0.5210953054937474,
+      "err": 0.0,
+      "ok": true
+    },
+    {
+      "fn": "sinh",
+      "x": 1.0,
+      "eml": 1.1752011936438014,
+      "ref": 1.1752011936438014,
+      "err": 0.0,
+      "ok": true
+    },
+    {
+      "fn": "sinh",
+      "x": 1.5,
+      "eml": 2.1292794550948173,
+      "ref": 2.1292794550948173,
+      "err": 0.0,
+      "ok": true
+    },
+    {
+      "fn": "cosh",
+      "x": 0.5,
+      "eml": 1.1276259652063807,
+      "ref": 1.1276259652063807,
+      "err": 0.0,
+      "ok": true
+    },
+    {
+      "fn": "cosh",
+      "x": 1.0,
+      "eml": 1.5430806348152437,
+      "ref": 1.5430806348152437,
+      "err": 0.0,
+      "ok": true
+    },
+    {
+      "fn": "cosh",
+      "x": 1.5,
+      "eml": 2.352409615243247,
+      "ref": 2.352409615243247,
+      "err": 0.0,
+      "ok": true
+    },
+    {
+      "fn": "e^x*sin",
+      "x": 0.5,
+      "eml": 0.7904390832136149,
+      "ref": 0.7904390832136149,
+      "err": 0.0,
+      "ok": true
+    },
+    {
+      "fn": "e^x*sin",
+      "x": 1.0,
+      "eml": 2.2873552871788423,
+      "ref": 2.2873552871788423,
+      "err": 0.0,
+      "ok": true
+    },
+    {
+      "fn": "e^x*sin",
+      "x": 1.5,
+      "eml": 4.470462379180405,
+      "ref": 4.470462379180405,
+      "err": 0.0,
+      "ok": true
+    }
+  ],
+  "depth2_witnesses": [
+    {
+      "fn": "x^3",
+      "x": 1.5,
+      "eml": 3.375,
+      "ref": 3.375,
+      "err": 0.0,
+      "ok": true
+    },
+    {
+      "fn": "arctan",
+      "x": 0.7,
+      "eml": 0.6107259643892086,
+      "ref": 0.6107259643892086,
+      "err": 0.0,
+      "ok": true
+    },
+    {
+      "fn": "arcsinh",
+      "x": 1.0,
+      "eml": 0.881373587019543,
+      "ref": 0.881373587019543,
+      "err": 0.0,
+      "ok": true
+    }
+  ],
+  "n_d1_ok": 15,
+  "n_d1_total": 15,
+  "n_d2_ok": 3,
+  "n_d2_total": 3,
+  "separation_lemma": {
+    "statement": "Separation Lemma (CEML-T28):\nx^2 is NOT EML-1 over \u2102.\n\nProof:\nAny EML-1 expression over \u2102 has the form E(x) = exp(f(x)) - Log(g(x))\nwhere f, g are leaves (constants or x itself).\n\nCase 1: g = 1 (constant), f = \u03b1x + \u03b2 \u2192 E(x) = exp(\u03b1x+\u03b2).\n  exp(\u03b1x+\u03b2) = x^2 requires: \u03b1 real, \u03b2 real, exp(\u03b1x+\u03b2) = x^2.\n  But exp grows exponentially while x^2 grows polynomially \u2192 no solution.\n\nCase 2: g = x (leaf), f = \u03b1 (constant) \u2192 E(x) = e^\u03b1 - Log(x).\n  This equals x^2 only if e^\u03b1 - Log(x) = x^2, impossible for all x.\n\nCase 3: f = \u03b1x + \u03b2, g = x \u2192 E(x) = exp(\u03b1x+\u03b2) - Log(x).\n  For this to equal x^2: exp(\u03b1x+\u03b2) = x^2 + Log(x).\n  LHS grows exponentially; RHS grows polynomially \u2192 impossible.\n\nAll cases fail. Therefore x^2 \u2209 EML-1(\u2102). QED."
+  },
+  "summary": {
+    "EML-0": 1,
+    "EML-1": 18,
+    "EML-2": 12,
+    "EML-3": 5,
+    "EML-inf": 9
+  },
+  "status": "PASS"
+}
