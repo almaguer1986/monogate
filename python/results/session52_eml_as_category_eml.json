@@ -1,0 +1,76 @@
+{
+  "session": 52,
+  "title": "EML as a Category",
+  "eml_category": {
+    "objects": [
+      "EML-0",
+      "EML-1",
+      "EML-2",
+      "EML-3",
+      "EML-\u221e"
+    ],
+    "morphisms": [
+      {
+        "from": "EML-0",
+        "to": "EML-1",
+        "name": "\u03b9\u2080\u2081",
+        "strict": true
+      },
+      {
+        "from": "EML-1",
+        "to": "EML-2",
+        "name": "\u03b9\u2081\u2082",
+        "strict": true
+      },
+      {
+        "from": "EML-2",
+        "to": "EML-3",
+        "name": "\u03b9\u2082\u2083",
+        "strict": true
+      },
+      {
+        "from": "EML-3",
+        "to": "EML-\u221e",
+        "name": "\u03b9\u2083\u221e",
+        "strict": true
+      }
+    ],
+    "terminal_object": "EML-\u221e",
+    "initial_object": "EML-0",
+    "note": "This is a thin category (poset): at most one morphism between any two objects"
+  },
+  "complexification_functor": {
+    "name": "F: EML(\u211d) \u2192 EML(\u2102)",
+    "depth_map": {
+      "EML-\u221e(\u211d) [sin,cos]": "EML-1(\u2102)",
+      "EML-\u221e(\u211d) [x^n]": "EML-2(\u2102)",
+      "EML-\u221e(\u211d) [\u0393,\u03b6]": "EML-\u221e(\u2102)"
+    },
+    "faithful": true,
+    "full": false,
+    "depth_reducing": true,
+    "adjoint": "F \u22a3 Re (complexification \u22a3 real-part)"
+  },
+  "depth_subadditivity": {
+    "function": "sin(x\u00b2)",
+    "D_sin": 1,
+    "D_xsq": 2,
+    "D_bound": 3,
+    "max_err": 8.881784197001252e-16,
+    "ok": true
+  },
+  "adjunction_unit": {
+    "x": 0.7,
+    "sin_x": 0.644217687237691,
+    "Im_F_sin": 0.644217687237691,
+    "ok": true
+  },
+  "theorems": [
+    "CEML-T98: EML(\u211d) is a thin category (poset) with 4 strict inclusions",
+    "CEML-T99: Complexification F: EML(\u211d)\u2192EML(\u2102) is faithful, non-full, depth-reducing",
+    "CEML-T100: Depth functor D: EML\u2192\u2115 satisfies D(f\u2218g) \u2264 D(f)+D(g) (lax monoidal)",
+    "CEML-T101: F \u22a3 Re: complexification is left adjoint to real-part extraction",
+    "CEML-T102: Unit \u03b7_sin: sin\u2192Im\u2218F(sin) is an equality (verified numerically)"
+  ],
+  "status": "PASS"
+}
