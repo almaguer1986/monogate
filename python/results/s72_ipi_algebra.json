@@ -1,0 +1,121 @@
+{
+  "ipi_value": "0.000000 + 3.141593i",
+  "euler_identity": {
+    "exp_ipi": "-1.000000",
+    "equals_neg1": true
+  },
+  "log_ipi": {
+    "Log(ipi)": "1.144730 + 1.570796i",
+    "magnitude_ipi": 3.141592653589793,
+    "Re_Log_ipi": 1.14473,
+    "Im_Log_ipi": 1.570796,
+    "Im_over_pi": 0.5,
+    "note": "Log(ipi) = ln(pi) + i*pi/2 since arg(ipi) = pi/2"
+  },
+  "one_step_from_ipi": [
+    {
+      "expr": "eml(ipi, 1)",
+      "value": "-1.000000",
+      "Re": -1.0,
+      "Im": 0.0,
+      "Im_over_pi": 0.0,
+      "arg_rad": 3.141593,
+      "magnitude": 1.0,
+      "is_real": true,
+      "Im_is_1": false
+    },
+    {
+      "expr": "eml(1, ipi)",
+      "value": "1.573552 + -1.570796i",
+      "Re": 1.573552,
+      "Im": -1.570796,
+      "Im_over_pi": -0.5,
+      "arg_rad": -0.784522,
+      "magnitude": 2.223391,
+      "is_real": false,
+      "Im_is_1": false
+    },
+    {
+      "expr": "eml(ipi, ipi)",
+      "value": "-2.144730 + -1.570796i",
+      "Re": -2.14473,
+      "Im": -1.570796,
+      "Im_over_pi": -0.5,
+      "arg_rad": -2.509452,
+      "magnitude": 2.658433,
+      "is_real": false,
+      "Im_is_1": false
+    },
+    {
+      "expr": "eml(ipi, e)",
+      "value": "-2.000000",
+      "Re": -2.0,
+      "Im": 0.0,
+      "Im_over_pi": 0.0,
+      "arg_rad": 3.141593,
+      "magnitude": 2.0,
+      "is_real": true,
+      "Im_is_1": false
+    },
+    {
+      "expr": "eml(e, ipi)",
+      "value": "14.009532 + -1.570796i",
+      "Re": 14.009532,
+      "Im": -1.570796,
+      "Im_over_pi": -0.5,
+      "arg_rad": -0.111657,
+      "magnitude": 14.097319,
+      "is_real": false,
+      "Im_is_1": false
+    },
+    {
+      "expr": "eml(ipi, -1)",
+      "value": "-1.000000 + -3.141593i",
+      "Re": -1.0,
+      "Im": -3.141593,
+      "Im_over_pi": -1.0,
+      "arg_rad": -1.878965,
+      "magnitude": 3.296908,
+      "is_real": false,
+      "Im_is_1": false
+    },
+    {
+      "expr": "eml(-1, ipi)",
+      "value": "-0.776850 + -1.570796i",
+      "Re": -0.77685,
+      "Im": -1.570796,
+      "Im_over_pi": -0.5,
+      "arg_rad": -2.030081,
+      "magnitude": 1.752398,
+      "is_real": false,
+      "Im_is_1": false
+    }
+  ],
+  "pi_constructibility": {
+    "question": "Is pi = Re(0 + i*pi) constructible as a REAL value from {1}?",
+    "pi_value": 3.141592653589793,
+    "closest_constructible_reals": [
+      0.423310825130748,
+      1.423310825130748,
+      2.141592653589793
+    ],
+    "min_distance_to_pi": 0.423310825130748,
+    "conclusion": "pi is NOT known to be EML-constructible from {1}. Even if it were, there's no EML division operation. The question i = ipi/pi is ill-posed within the EML grammar."
+  },
+  "im1_analysis": {
+    "question": "Can Im(z) = 1 for any constructible z?",
+    "from_exp": {
+      "route": "Im(exp(x)) = exp(Re x) * sin(Im x) = 1",
+      "requirement": "exp(Re x) * sin(Im x) = 1",
+      "example": "if Im x = pi/6, then sin(pi/6) = 0.5, need exp(Re x) = 2, i.e. Re x = ln(2)",
+      "issue": "ln(2) is not known to be EML-constructible from {1}"
+    },
+    "from_log": {
+      "route": "Im(Log(y)) = arg(y) = 1 requires y at argument exactly 1 radian",
+      "requirement": "arg(y) = -1 for eml(real, y) to have Im = 1",
+      "condition": "Im(y)/Re(y) = -tan(1) \u2248 -1.5574",
+      "issue": "tan(1) is transcendental; no constructible y is known to have this ratio"
+    },
+    "conclusion": "Im = 1 appears unreachable; proof requires transcendence argument"
+  }
+}
