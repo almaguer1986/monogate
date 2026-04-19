@@ -156,6 +156,7 @@ export default async function HomePage() {
           <div style={{ display: "flex", gap: 16 }}>
             <a href="/search" className="nav-link">Search</a>
             <a href="/leaderboard" className="nav-link">Leaderboard</a>
+            <a href="/theorems" className="nav-link">Theorems</a>
             <a href="/how-to-submit" className="nav-link">How to Submit</a>
           </div>
         </div>

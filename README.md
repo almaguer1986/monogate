@@ -1,83 +1,18 @@
 # monogate
 
-**`eml(x, y) = exp(x) − ln(y)`** — one binary operator that generates every elementary function as a finite expression tree. EML Weierstrass Theorem proven. Infinite Zeros Barrier confirmed across 1.7B trees.
+**`eml(x, y) = exp(x) − ln(y)`** — one binary operator. Open problem: can sin(x) be constructed from it?
 
 Based on [arXiv:2603.21852](https://arxiv.org/abs/2603.21852) (Odrzywołek, 2026).  
-Live explorer: **[monogate.dev](https://monogate.dev)** · [![PyPI](https://img.shields.io/pypi/v/monogate)](https://pypi.org/project/monogate/) · [![Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://monogate.streamlit.app) · [![CapCard](https://img.shields.io/badge/capcard-0.94-10b981)](https://capcard.ai/registry.html)
+Challenge board: **[monogate.dev](https://monogate.dev)** · [![PyPI](https://img.shields.io/pypi/v/monogate)](https://pypi.org/project/monogate/) · [![Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://monogate.streamlit.app)
 
 ```bash
 pip install monogate          # core — no dependencies
-pip install "monogate[sympy]" # + prover (recommended)
+pip install "monogate[sympy]" # + symbolic simplification
 ```
 
 ---
 
-## Neurosymbolic Prover  ✦ new in v1.1
-
-monogate now includes a four-tier theorem prover that can prove — or find
-counterexamples to — any single-variable mathematical identity. The prover
-combines exact SymPy simplification, interval arithmetic certification, MCTS
-witness search, and an online-learning neural scorer that improves with each
-proof it completes.
-
-```python
-from monogate.prover import EMLProverV2
-
-p = EMLProverV2(enable_learning=True)
-
-# Tier 2: exact SymPy proof
-r = p.prove("sin(x)**2 + cos(x)**2 == 1")
-print(r.status, r.confidence)   # proved_exact  1.0
-
-# Tier 2: Euler identity
-r = p.prove("exp(x + y) == exp(x) * exp(y)")
-print(r.status)   # proved_exact
-
-# Tier 4: EML witness search (MCTS finds a tree that matches numerically)
-r = p.prove("cosh(x)**2 - sinh(x)**2 == 1")
-print(r.status, r.node_count)   # proved_witness  7
-
-# Neural scorer updates automatically after each witness proof
-p.scorer.save("scorer.json")   # checkpoint learned weights
-```
-
-**Generate new conjectures:**
-
-```python
-candidates = p.generate_conjectures(n=20, depth=3, min_confidence=0.7)
-for c in candidates:
-    print(f"{c.expression:50s}  conf={c.confidence:.2f}")
-```
-
-**Interactive proof visualization** (Plotly HTML, one click):
-
-```python
-result = p.prove("sin(x)**2 + cos(x)**2 == 1")
-fig = p.visualize_proof_interactive(result, output_path="proof.html")
-```
-
-The interactive tree shows each EML node colored by role (operator / constant / variable),
-with hover text displaying the sub-formula at every node.
-
-**Batch proving and compression:**
-
-```python
-from monogate.identities import TRIG_IDENTITIES
-
-report = p.batch_prove(TRIG_IDENTITIES)
-print(f"proved {report.proved_rate:.0%} of trig identities")
-
-# Shrink a witness proof tree
-compressed = p.compress_proof(result)
-print(f"{result.node_count} → {compressed.node_count} nodes")
-```
-
-**Try the showcase notebook:**
-[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/almaguer1986/monogate/blob/master/python/notebooks/prover_showcase.ipynb)
-
----
-
-## Quick start — function approximation
+## Quick start — expression construction
 
 ```python
 from monogate import BEST, best_optimize, CBEST, im
@@ -106,39 +41,16 @@ streamlit run streamlit_app.py
 
 ---
 
-## Identity catalog
-
-v1.1 ships with **151 proved identities** across six categories:
-
-| Category | Count | Examples |
-|----------|------:|---------|
-| Trigonometric | 32 | Pythagorean, double-angle, Chebyshev T5/T6, triple-product |
-| Hyperbolic | 25 | Pythagorean, inverse-trig connections, Gudermann |
-| Exponential | 18 | Addition, shift, ln-exp compositions |
-| Special functions | 25 | erf, Bessel J0/J1, Airy Ai, digamma recurrence |
-| Physics | 17 | Schrödinger free, KdV soliton, Boltzmann, Planck |
-| Open conjectures | 21 | EML structure conjectures under active investigation |
-
-```python
-from monogate.identities import ALL_IDENTITIES, get_by_category, get_by_difficulty
-
-print(len(ALL_IDENTITIES))                    # 151
-hard = get_by_difficulty("hard")              # curated hard targets
-physics = get_by_category("physics")          # 17 physics equations
-```
-
----
-
 ## For Researchers
 
-**Theory and open problems:** [`THEORY.md`](THEORY.md) — formal definitions, proven theorems, seven open conjectures (C1–C7), and a structured research roadmap. **Start here** if you want to build on the EML framework.
+**Challenge board:** [monogate.dev](https://monogate.dev) — submit a construction for sin, cos, π, or i. Get credited permanently.
 
-**Tractable entry points:**
-- **C1** — EDL additive incompleteness: a clean structural proof is missing
-- **C3** — The phantom attractor at ~3.1696: what is this value in closed form?
-- **C5** — N=12 sin search: GPU MCTS is already implemented, needs a run
+**Theorem catalog:** [monogate.dev/theorems](https://monogate.dev/theorems) — every result labeled honestly: theorem, conjecture, observation, or speculation.
 
-Pull requests solving any open problem are welcome. Crack one and it's publishable.
+**Open problems:**
+- Construct sin(x) from eml(x,y) using only grammar terminals {1, x}
+- Construct i (the imaginary unit) from terminal {1} alone
+- Prove or disprove: the EML depth hierarchy has no level 4
 
 **Reproduce the paper results:**
 ```bash
@@ -162,28 +74,6 @@ make paper            # compile preprint.tex (requires TeX Live)
 
 ---
 
-## What's new in v1.1.0
-
-- **Neurosymbolic prover** (`EMLProver`, `EMLProverV2`) — four-tier pipeline
-- **Neural scorer** (`FeatureBasedEMLScorer`) — online MLP, numpy inference, torch training
-- **Conjecture generation** — auto-generate and filter candidate identities
-- **Proof compression** — minimax tree reduction on witness proofs
-- **Interactive Plotly visualization** — `visualize_proof_interactive()`
-- **Identity catalog** — 120 → 151 identities
-- **1184 tests**, 0 failed
-
-Full details: [`python/CHANGELOG.md`](python/CHANGELOG.md)
-
----
-
-## What's new in v1.0.0
-
-**Five new research modules** — minimax approximation, CBEST physics survey,
-sklearn-compatible `EMLRegressor`, p-adic EML arithmetic, chemistry reaction
-catalogs, causal EML models. **THEORY.md** canonical formal reference.
-983 tests.
-
----
 
 ## The sin(x) barrier
 
@@ -218,7 +108,6 @@ Total: **37 nodes** (BEST) vs 77 (all-EML) — **52% fewer.**
 
 monogate is the right tool when your workload:
 - Does **symbolic regression** or interpretable expression search
-- Needs **theorem proving** or **conjecture generation** over single-variable identities
 - Is dominated by `pow`, `ln`, `mul`, or `div` (all save ≥6 nodes each)
 - Uses sin/cos activations (NeRF, SIREN, Fourier features, physics ML)
 - Needs human-readable formula output from a differentiable tree
