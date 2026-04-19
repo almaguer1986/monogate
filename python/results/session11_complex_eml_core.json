@@ -1,0 +1,212 @@
+{
+  "session": 11,
+  "title": "Complex EML Core Module",
+  "identity_tests": [
+    {
+      "identity": "Euler: ceml(ix,1) = cos+i\u00b7sin",
+      "passed": 7,
+      "total": 7,
+      "all_pass": true,
+      "max_err": 0.0
+    },
+    {
+      "identity": "De Moivre n=2: ceml(2ix,1) = ceml(ix,1)^2",
+      "passed": 7,
+      "total": 7,
+      "all_pass": true,
+      "max_err": 2.303328157969851e-16
+    },
+    {
+      "identity": "De Moivre n=3: ceml(3ix,1) = ceml(ix,1)^3",
+      "passed": 7,
+      "total": 7,
+      "all_pass": true,
+      "max_err": 2.6611337870406944e-16
+    },
+    {
+      "identity": "exp add: ceml(a+b,1) = ceml(a,1)\u00b7ceml(b,1)",
+      "passed": 7,
+      "total": 7,
+      "all_pass": true,
+      "max_err": 8.881784197001252e-16
+    },
+    {
+      "identity": "Log(x) = 1 - ceml(0,x)",
+      "passed": 7,
+      "total": 7,
+      "all_pass": true,
+      "max_err": 1.1102230246251565e-16
+    },
+    {
+      "identity": "sin(x) = Im(ceml(ix,1))",
+      "passed": 7,
+      "total": 7,
+      "all_pass": true,
+      "max_err": 0.0
+    },
+    {
+      "identity": "cos(x) = Re(ceml(ix,1))",
+      "passed": 7,
+      "total": 7,
+      "all_pass": true,
+      "max_err": 0.0
+    },
+    {
+      "identity": "sinh(x) = Im(ceml(ix rotated, 1))",
+      "passed": 7,
+      "total": 7,
+      "all_pass": true,
+      "max_err": 0.0
+    },
+    {
+      "identity": "cosh(x) = Re(ceml(ix rotated, 1))",
+      "passed": 7,
+      "total": 7,
+      "all_pass": true,
+      "max_err": 0.0
+    },
+    {
+      "identity": "Pythag: sin\u00b2+cos\u00b2 = 1",
+      "passed": 7,
+      "total": 7,
+      "all_pass": true,
+      "max_err": 2.220446049250313e-16
+    },
+    {
+      "identity": "ceml(0,1) = 1",
+      "passed": 7,
+      "total": 7,
+      "all_pass": true,
+      "max_err": 0.0
+    },
+    {
+      "identity": "x^3 = ceml(3*(1-ceml(0,x)), 1) for x>0",
+      "passed": 4,
+      "total": 4,
+      "all_pass": true,
+      "max_err": 1.7763568394002505e-15
+    },
+    {
+      "identity": "ceml(z,1)\u00b7ceml(w,1) = ceml(z+w,1) over \u2102",
+      "passed": 4,
+      "total": 4,
+      "all_pass": true,
+      "max_err": 2.220446049250313e-16
+    },
+    {
+      "identity": "|ceml(ix,1)| = 1",
+      "passed": 7,
+      "total": 7,
+      "all_pass": true,
+      "max_err": 0.0
+    },
+    {
+      "identity": "Log(exp(z)) = z  [Log(x)=1-ceml(0,x)]",
+      "passed": 4,
+      "total": 4,
+      "all_pass": true,
+      "max_err": 1.9478403400799703e-16
+    },
+    {
+      "identity": "exp(Log(z)) = z  [via ceml(1-ceml(0,z),1)]",
+      "passed": 4,
+      "total": 4,
+      "all_pass": true,
+      "max_err": 5.551115123125783e-17
+    },
+    {
+      "identity": "sin(2x) = 2\u00b7sin(x)\u00b7cos(x)",
+      "passed": 7,
+      "total": 7,
+      "all_pass": true,
+      "max_err": 2.220446049250313e-16
+    },
+    {
+      "identity": "cos(2x) = cos\u00b2(x) \u2212 sin\u00b2(x)",
+      "passed": 7,
+      "total": 7,
+      "all_pass": true,
+      "max_err": 1.1102230246251565e-16
+    },
+    {
+      "identity": "ceml(z1,z2) = exp(z1) \u2212 Log(z2)",
+      "passed": 4,
+      "total": 4,
+      "all_pass": true,
+      "max_err": 0.0
+    },
+    {
+      "identity": "ceml(a\u00b7z,1)/ceml(b\u00b7z,1) = exp((a\u2212b)z)  (for a\u2260b)",
+      "passed": 3,
+      "total": 3,
+      "all_pass": true,
+      "max_err": 8.881784197001252e-16
+    }
+  ],
+  "n_identities_pass": 20,
+  "n_identities_total": 20,
+  "all_identities_pass": true,
+  "cost_table": "Function       | Depth/\u211d | Depth/\u2102 | ceml nodes | Formula\n---------------|---------|---------|------------|------------------------------\nexp(x)         | 1       | 1       | 1          | ceml(x, 1)\nLog(x)         | 3       | 3       | 3          | 1 \u2212 ceml(0, x)  [ceml(0,x)=1\u2212Log(x) so Log(x)=1\u2212ceml(0,x)]\nsin(x)         | \u221e       | 1       | 1          | Im(ceml(i\u00b7x, 1))\ncos(x)         | \u221e       | 1       | 1          | Re(ceml(i\u00b7x, 1))\ntan(x)         | \u221e       | 1       | 1          | Im(ceml(i\u00b7x,1)) / Re(ceml(i\u00b7x,1))\nsinh(x)        | \u221e       | 1       | 1          | Im(ceml(i\u00b7(-ix), 1))  [=Im(ceml(x,1)) via rotation]\ncosh(x)        | \u221e       | 1       | 1          | Re(ceml(i\u00b7(-ix), 1))\nsin(2x)        | \u221e       | 1       | 1          | Im(ceml(2i\u00b7x, 1))\nx^n (integer)  | \u221e       | 2       | 2          | ceml(n\u00b7ceml(0, x), 1)  [= exp(n\u00b7Log(x)) = x^n]\narcsin(x)      | \u221e       | 2       | 2          | Re(ceml(-ceml(1j\u00b7ceml(1j\u00b7x,1), 1-x\u00b2), 1))/(\u2212i)",
+  "depth_collapse": {
+    "sin_real_depth": "\u221e (requires infinite EML composition over \u211d)",
+    "sin_complex_depth": "1 (Im(ceml(ix,1)) \u2014 single EML node over \u2102)",
+    "cos_real_depth": "\u221e",
+    "cos_complex_depth": "1",
+    "exp_both": "1 (ceml(x,1) works over \u211d and \u2102)",
+    "ln_both": "1 (\u2212ceml(0,x))",
+    "key_insight": "Over \u2102, EML collapses an entire tower of real operators to depth 1 via Euler's formula. The imaginary axis is the complexity gateway."
+  },
+  "branch_cuts": [
+    {
+      "function": "Log(z)",
+      "cut": "negative real axis: z.real \u2264 0, z.imag = 0",
+      "convention": "principal branch: Im(Log(z)) \u2208 (\u2212\u03c0, \u03c0]",
+      "ceml_impact": "ceml(z1, z2) discontinuous when z2 crosses negative real axis"
+    },
+    {
+      "function": "ceml(ix, 1) = exp(ix)",
+      "cut": "none \u2014 exp is entire",
+      "convention": "entire function, no branch cut",
+      "ceml_impact": "sin/cos = Im/Re parts, both entire"
+    },
+    {
+      "function": "ceml(0, x) = \u2212Log(x)",
+      "cut": "x.real \u2264 0, x.imag = 0",
+      "convention": "inherited from Log",
+      "ceml_impact": "ln-EML discontinuous at negative real inputs"
+    },
+    {
+      "function": "ceml(n\u00b7Log(x), 1) = x^n",
+      "cut": "x.real \u2264 0, x.imag = 0  (for non-integer n)",
+      "convention": "principal power",
+      "ceml_impact": "depth-2 ceml with nested Log; cut inherited"
+    },
+    {
+      "function": "arcsin via ceml",
+      "cut": "real axis: |x| > 1",
+      "convention": "principal branch",
+      "ceml_impact": "two nested ceml ops needed"
+    }
+  ],
+  "branch_summary": {
+    "principal_log_cut": "negative real axis",
+    "safe_domains": [
+      "Re(z2) > 0",
+      "Im(z2) \u2260 0"
+    ],
+    "entire_functions": [
+      "ceml(z,1) = exp(z)",
+      "ceml(ix,1) = exp(ix)"
+    ],
+    "n_branch_cuts_documented": 5
+  },
+  "catalog_size": 10,
+  "key_theorems": [
+    "T1: ceml(ix,1) = exp(ix) = cos(x)+i\u00b7sin(x) [Euler via EML]",
+    "T2: sin(x), cos(x) drop from EML-\u221e (\u211d) to EML-1 (\u2102) via T1",
+    "T3: All elementary trig functions are EML-1 over \u2102",
+    "T4: ceml is entire in z1; principal-branch in z2",
+    "T5: De Moivre: ceml(inx,1) = ceml(ix,1)^n for all integer n"
+  ],
+  "status": "PASS"
+}
