@@ -1,0 +1,24 @@
+{
+  "id": "T_i",
+  "name": "Extended-Grammar i-Conjecture",
+  "tier": "CONJECTURE",
+  "session": "S61-S76",
+  "lean_session": "S75 (framework only)",
+  "category": "Core Algebra",
+  "statement": "i = \u221a(\u22121) is NOT constructible from terminal {1} under extended principal-branch EML grammar (eml(x,y) = exp(x) \u2212 Log(y) via principal branch, all \u2102\u2217 inputs allowed).",
+  "evidence": {
+    "computational": "N=1..9 exhaustive search: 1429 trees, no i found.",
+    "structural": "Propagation rule: Im(eml(x,y)) = exp(Re x)\u00b7sin(Im x) \u2212 arg(y). For Im = 1 via Log route: need arg(y) = -1, i.e. Im(y)/Re(y) = -tan(1). tan(1) \u2248 1.5574 is transcendental; no constructible y known to satisfy this.",
+    "loophole": "First complex at N=5: Im = \u2212\u03c0. Subsequent Im values: arctan-type, never 1.",
+    "euler": "exp(i\u03c0) = -1 and Log(-1) = i\u03c0 form a closed loop that never exits to Im = 1."
+  },
+  "proof_gap": "Complete proof requires: (a) Show Im = 1 is not achievable via the exp route:     exp(Re x)\u00b7sin(Im x) = 1 for no constructible x. (b) Show Im = 1 is not achievable via the Log route:     arg(y) = -1 for no constructible y \u2014 requires tan(1) \u2209 EML-reachable. Both require transcendence theory (Nesterenko, Gelfond-Schneider type arguments).",
+  "proof_status": "INCOMPLETE",
+  "lean_status": "FRAMEWORK (ExtendedClosure.lean, 3 sorries)",
+  "challenge_board": "OPEN",
+  "next_steps": [
+    "Transcendence argument: show tan(1) not in EML-closure of real parts.",
+    "Extend Lean to full conjecture (post S97 after Im-part bounds).",
+    "Extend search to N=12 (Rust kernel)."
+  ]
+}

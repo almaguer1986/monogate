@@ -1,0 +1,25 @@
+{
+  "id": "T19",
+  "name": "Strict-Grammar i-Barrier",
+  "tier": "THEOREM",
+  "session": "S70",
+  "lean_session": "S74",
+  "category": "Core Algebra",
+  "statement": "Under the strict principal-branch EML grammar (eml(x,y) defined only when y > 0, terminal {1}), every well-defined tree evaluation is a real number. In particular, i = \u221a(\u22121) is not constructible.",
+  "proof": {
+    "length": "3 lines",
+    "type": "Induction on depth",
+    "line_1": "Leaves evaluate to 1 \u2208 \u211d\u207a.",
+    "line_2": "x \u2208 \u211d, y > 0 \u27f9 eml(x,y) = exp(x) \u2212 ln(y) \u2208 \u211d.",
+    "line_3": "Induction on depth: all values real. i \u2209 \u211d. \u220e"
+  },
+  "proof_status": "COMPLETE",
+  "lean_status": "PROVED (0 sorries) \u2014 StrictBarrier.lean",
+  "sorry_count": 0,
+  "corollaries": [
+    "EML({1}, strict) \u2286 \u211d.",
+    "No complex value is constructible under strict grammar.",
+    "Contrast: extended grammar's loophole activates at N=5 (Im = \u2212\u03c0)."
+  ],
+  "challenge_board": "CLOSED (proved)"
+}
