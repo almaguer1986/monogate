@@ -1,0 +1,202 @@
+{
+  "session": "T08-Audit",
+  "date": "2026-04-20",
+  "title": "SuperBEST v4 Full Structural Audit",
+  "output_file": "python/paper/theorems/SuperBEST_v4_Structural_Audit.tex",
+
+  "entries": [
+    {
+      "op": "exp(x)",
+      "nodes_v4": 1,
+      "nodes_correct": 1,
+      "proved": true,
+      "method": "trivial_primitive",
+      "proof_type": "THEOREM",
+      "upper_bound": "EML(x, 1) = e^x - ln(1) = e^x",
+      "lower_bound": "0-node impossible: no terminal in {x} ∪ Q equals e^x",
+      "gap_if_any": null,
+      "prior_source": null,
+      "new_in_audit": true
+    },
+    {
+      "op": "ln(x)",
+      "nodes_v4": 1,
+      "nodes_correct": 1,
+      "proved": true,
+      "method": "direct_construction_nonconst",
+      "proof_type": "THEOREM",
+      "upper_bound": "EXL(0, x) = e^0 * ln(x) = ln(x)",
+      "lower_bound": "0-node impossible: terminal x gives identity, constants are fixed",
+      "gap_if_any": null,
+      "prior_source": null,
+      "new_in_audit": true
+    },
+    {
+      "op": "neg(x)",
+      "nodes_v4": 2,
+      "nodes_correct": 2,
+      "proved": true,
+      "method": "slope_barrier_T09",
+      "proof_type": "THEOREM",
+      "upper_bound": "2-node EXL+DEML chain (T09 construction)",
+      "lower_bound": "T09: no single F16-operator has constant derivative -1 for all x",
+      "gap_if_any": null,
+      "prior_source": "T09",
+      "new_in_audit": false
+    },
+    {
+      "op": "recip(x)",
+      "nodes_v4": 1,
+      "nodes_correct": 1,
+      "proved": true,
+      "method": "ELSb_direct_R16C1",
+      "proof_type": "THEOREM",
+      "upper_bound": "ELSb(0, x) = e^0 / x = 1/x (1 node)",
+      "lower_bound": "0-node impossible: no terminal equals 1/x on (0,∞)",
+      "gap_if_any": null,
+      "prior_source": "R16-C1",
+      "new_in_audit": false
+    },
+    {
+      "op": "sqrt(x)",
+      "nodes_v4": 2,
+      "nodes_correct": 2,
+      "proved": true,
+      "method": "derivative_obstruction_rational_terminal_convention",
+      "proof_type": "THEOREM",
+      "upper_bound": "EML(EXL(0,x)/2, 1) = exp((ln x)/2) = sqrt(x) in 2 nodes",
+      "lower_bound": "Derivative obstruction: all F16 operators O(x,c) have derivative involving e^(±x) or constants, not (1/2)x^(-1/2); all O(c,x) fail via singularity or wrong power-function exponent under rational-terminal convention",
+      "gap_if_any": "Convention gap: EPL(-ln(2), x) = x^(1/2) is a 1-node construction under real-constant convention. Under rational-terminal convention (Q terminals only), -ln(2) is inadmissible as a leaf, so 2-node lower bound holds. T08 uses rational-terminal convention.",
+      "prior_source": null,
+      "new_in_audit": true
+    },
+    {
+      "op": "sub(x,y)",
+      "nodes_v4": 2,
+      "nodes_correct": 2,
+      "proved": true,
+      "method": "partial_derivative_T33",
+      "proof_type": "THEOREM",
+      "upper_bound": "LEdiv(x, EML(y, 1)) = x - ln(e^y) = x - y in 2 nodes",
+      "lower_bound": "T33 structural: no O in F16 achieves ∂O/∂x=+1 AND ∂O/∂y=-1 simultaneously; LEdiv is closest (∂x=1 but ∂y=-1/y≠-1)",
+      "gap_if_any": null,
+      "prior_source": "T33",
+      "new_in_audit": false
+    },
+    {
+      "op": "add(x,y) x>0",
+      "nodes_v4": 3,
+      "nodes_correct": 3,
+      "proved": true,
+      "method": "partial_derivative_T08A",
+      "proof_type": "THEOREM",
+      "upper_bound": "EML(LEAd(EXL(0,x), y), 1) = exp(ln(x+y)) = x+y in 3 nodes",
+      "lower_bound": "T08-A: ∂O/∂y ≠ 1 for all O in F16 (1-node); no 2-node tree achieves ∂T/∂y≡1 (2-node)",
+      "gap_if_any": null,
+      "prior_source": "T08-A in R16_T08_Structural_Proofs.tex",
+      "new_in_audit": false
+    },
+    {
+      "op": "mul(x,y)",
+      "nodes_v4": 2,
+      "nodes_correct": 2,
+      "proved": true,
+      "method": "derivative_obstruction_T10u_T32",
+      "proof_type": "THEOREM",
+      "upper_bound": "ELAd(EXL(0,x), y) = e^(ln x) * y = xy in 2 nodes",
+      "lower_bound": "T32: derivative obstruction shows no single F16-node computes xy",
+      "gap_if_any": null,
+      "prior_source": "T10u + T32",
+      "new_in_audit": false
+    },
+    {
+      "op": "pow(x,n)",
+      "nodes_v4": 3,
+      "nodes_correct": 3,
+      "proved": true,
+      "method": "intermediate_value_counting_T08P",
+      "proof_type": "THEOREM",
+      "upper_bound": "EML(EXL(ln(n), x), 1) = exp(n*ln(x)) = x^n in 2-3 nodes (3 under raw-integer-n convention)",
+      "lower_bound": "T08-P: x^n = exp(n*ln(x)) requires 3 distinct intermediates (ln x, n*ln x, exp) under raw-integer-n convention; derivative obstruction rules out 1-node",
+      "gap_if_any": "Convention gap: EPL(n, x) = (e^n)^(ln x) = x^n is 1-node if integer n is a compiled constant. Under raw-integer convention (n must be computed from unit constants), 3 nodes required. T08 uses raw-integer convention.",
+      "prior_source": "T08-P in R16_T08_Structural_Proofs.tex",
+      "new_in_audit": false
+    },
+    {
+      "op": "div(x,y)",
+      "nodes_v4": 1,
+      "nodes_correct": 2,
+      "proved": false,
+      "method": "inconsistency_found",
+      "proof_type": "INCONSISTENCY",
+      "upper_bound": "ELSb(EXL(0,x), y) = e^(ln x)/y = x/y in 2 nodes (not 1)",
+      "lower_bound": "Structural: no O in F16 computes x/y in 1 node. ELSb(x,y)=e^x/y requires e^x=x (impossible on (0,∞)); all Class-I operators have wrong derivative structure; Class-II operators similarly fail.",
+      "gap_if_any": "TABLE ERROR: v4 records div=1 node but structural proof shows SB(div)≥2. The 1-node claim appears to conflate recip(x)=1/x (ELSb(0,x), genuinely 1 node) with div(x,y)=x/y (requires 2 nodes). Correct the table to 2 nodes. Total SuperBEST corrected: 19 nodes.",
+      "prior_source": "R16_T08_Structural_Proofs.tex Remark 5.2 (div requires 2 nodes via ELSb)",
+      "new_in_audit": true
+    }
+  ],
+
+  "t08_verdict": "PROPOSITION",
+  "t08_verdict_explanation": "T08 cannot be upgraded to THEOREM as stated because the div entry contains a genuine table error (records 1 node, correct value is 2 nodes). Under the corrected 19-node table, all structural proofs are in place and T08 achieves THEOREM status.",
+
+  "t08_verdict_corrected_table": "THEOREM",
+  "corrected_table_nodes": 19,
+  "original_table_nodes": 18,
+  "all_proved": false,
+  "all_proved_explanation": "9 of 10 entries are proved (THEOREM-level structural proofs). The div entry is NOT proved at 1 node — it is an inconsistency. The corrected div=2 entry IS proved.",
+
+  "new_proofs_in_this_audit": [
+    {
+      "entry": "exp(x)",
+      "result": "SB(exp)=1, trivially proved",
+      "method": "primitive_argument"
+    },
+    {
+      "entry": "ln(x)",
+      "result": "SB(ln)=1, proved via EXL construction",
+      "method": "direct_construction_plus_nonconst"
+    },
+    {
+      "entry": "sqrt(x)",
+      "result": "SB(sqrt)=2, proved under rational-terminal convention",
+      "method": "derivative_obstruction_for_all_16_operators",
+      "convention_gap": "EPL(-ln2, x)=sqrt(x) is 1-node under real-constant convention"
+    },
+    {
+      "entry": "div(x,y)",
+      "result": "SB(div)=2 (corrected from table's erroneous 1)",
+      "method": "structural_lower_bound_plus_ELSb_upper_bound",
+      "table_correction_required": true
+    }
+  ],
+
+  "prior_proofs_imported": [
+    {"entry": "neg(x)",    "source": "T09",                               "type": "THEOREM"},
+    {"entry": "recip(x)",  "source": "R16-C1",                            "type": "THEOREM"},
+    {"entry": "sub(x,y)",  "source": "T33",                               "type": "THEOREM"},
+    {"entry": "add(x,y)",  "source": "T08-A (R16_T08_Structural_Proofs)", "type": "THEOREM"},
+    {"entry": "mul(x,y)",  "source": "T10u + T32",                        "type": "THEOREM"},
+    {"entry": "pow(x,n)",  "source": "T08-P (R16_T08_Structural_Proofs)", "type": "THEOREM"}
+  ],
+
+  "convention_registry": [
+    {
+      "convention": "rational_terminal",
+      "description": "Leaf constants drawn from Q (rationals). Transcendental values like ln(2) or ln(n) require their own nodes.",
+      "affects": ["sqrt (2-node)", "pow (3-node)"]
+    },
+    {
+      "convention": "raw_integer_n",
+      "description": "Integer exponent n is a raw terminal; ln(n) must be computed as a separate node.",
+      "affects": ["pow (3-node)"]
+    },
+    {
+      "convention": "full_F16",
+      "description": "All 16 operators including ELSb with raw second argument.",
+      "affects": ["recip (1-node via ELSb)", "div (2-node via ELSb chain)"]
+    }
+  ],
+
+  "recommendation": "Correct the SuperBEST v4 table: change div from 1 node to 2 nodes. Total: 19 nodes. Then all 10 entries have THEOREM-level structural proofs and T08 can be fully upgraded to THEOREM status."
+}

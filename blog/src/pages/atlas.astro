@@ -108,11 +108,11 @@ const superbest = [
   { op: 'neg(x)',   family: 'EXL+DEML', nodes: 2,  naive: 9,  note: 'T09' },
   { op: 'recip(x)', family: 'ELSb',     nodes: 1,  naive: 5,  note: 'R16-C1' },
   { op: 'sqrt(x)',  family: 'EXL',      nodes: 2,  naive: 7,  note: '' },
-  { op: 'sub(x,y)', family: 'EML',      nodes: 3,  naive: 5,  note: 'T11' },
+  { op: 'sub(x,y)', family: 'EML',      nodes: 2,  naive: 5,  note: 'T33' },
   { op: 'add(x,y)', family: 'EAL',      nodes: 3,  naive: 11, note: 'x>0' },
-  { op: 'mul(x,y)', family: 'EXL',      nodes: 3,  naive: 13, note: 'T10' },
+  { op: 'mul(x,y)', family: 'ELAd',     nodes: 2,  naive: 13, note: 'T10u' },
   { op: 'pow(x,n)', family: 'EXL',      nodes: 3,  naive: 15, note: '' },
-  { op: 'div(x,y)', family: 'EDL',      nodes: 1,  naive: 15, note: 'T08' },
+  { op: 'div(x,y)', family: 'ELSb',     nodes: 2,  naive: 15, note: 'T08' },
   { op: 'sin(x)',   family: 'ceml (ℂ)', nodes: 1,  naive: 101, note: 'complex, T07' },
   { op: 'cos(x)',   family: 'ceml (ℂ)', nodes: 1,  naive: 101, note: 'complex, T07' },
   { op: 'softplus', family: 'LEAd',     nodes: 1,  naive: 3,  note: 'T19' },
@@ -130,7 +130,7 @@ const savings = Math.round((1 - totalSuperbest/totalNaive)*100);
     Mathematical objects classified by EML depth and operator cost.
   </p>
   <p style="color: #4a4d62; font-size: 0.85rem; margin-bottom: 32px;">
-    Last updated: 2026-04-20 · R16-C1: recip drops 2n→1n (ELSb) · SuperBEST v4: 18n, 75.3% savings · T35/T40 → THEOREM
+    Last updated: 2026-04-20 · SuperBEST v4: 19n, all entries structurally proved · T08+T30+T35+T40 → THEOREM · recip=1n (ELSb), div corrected 1n→2n, sub/mul corrected to 2n
   </p>
 
   <div class="divider"></div>

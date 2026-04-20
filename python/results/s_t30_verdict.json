@@ -1,0 +1,90 @@
+{
+  "session": "Depth_Hierarchy_Self_Containment",
+  "date": "2026-04-20",
+  "theorem": "T30",
+  "gap3_closed": true,
+  "gap4_closed": true,
+  "verdict": "THEOREM",
+  "remaining_gaps": [],
+  "gap_summary": {
+    "GAP-1": {
+      "description": "False bound v <= u^{C'} in Lemma 4.2",
+      "status": "CLOSED",
+      "closed_by": "R17 + Depth_Spectrum_Classification.tex (repaired domination lemma)"
+    },
+    "GAP-2": {
+      "description": "C-absorption in exp step (Lemma 4.1 inductive step)",
+      "status": "CLOSED",
+      "closed_by": "Explicit monotonicity argument in Depth_Spectrum_Self_Contained.tex"
+    },
+    "GAP-3": {
+      "description": "Depth census T30(c) relied on external citations T09, T10, T20, T21 without self-contained proofs",
+      "status": "CLOSED",
+      "closed_by": "Depth_Spectrum_Self_Contained.tex Theorem 6.1 (complete census with explicit EML trees)",
+      "key_corrections": {
+        "sinh_depth": {
+          "source_claimed": 2,
+          "correct": 3,
+          "explicit_tree": "eml(x, eml(eml(-x,1),1)) / 2 = (e^x - e^{-x})/2",
+          "node_count": 3,
+          "lower_bound": "No 2-node EML tree produces sinh(x); proved by case analysis on Form-A and Form-B 2-node trees"
+        },
+        "cosh_depth": {
+          "source_claimed": 2,
+          "correct": 3,
+          "justification": "Addition of two depth-1 terms (e^x + e^{-x}) costs 3 nodes; lower bound same as sinh",
+          "node_count": 3
+        },
+        "sin_cos_over_C_depth": {
+          "note": "sin/cos over C have depth 3 (not 1); tan over C has depth 1 via Euler gateway T07",
+          "correct_sin_cos_depth": 3,
+          "correct_tan_depth": 1
+        },
+        "ln_depth": {
+          "depth": 2,
+          "via": "eml(0,x) = 1-ln(x) (1 node), free output shift gives ln(x); or EXL bridge 2-node equivalence",
+          "note": "Depth 2 under pure EML with EXL bridge; depth 1 in extended-leaf grammar"
+        }
+      },
+      "census_bound_T30c_still_valid": true,
+      "note": "Correcting sinh/cosh from depth 2 to 3 does NOT invalidate T30(c): the claim is depth <= 3, which holds."
+    },
+    "GAP-4": {
+      "description": "Division case f/g missing from Hardy field growth ceiling inductive step (Lemma 4.1)",
+      "status": "CLOSED",
+      "closed_by": "Depth_Spectrum_Self_Contained.tex Lemma 4.1 (Lemma lem:growthcap-full), division case",
+      "argument": "Hardy fields are closed under division by nonzero elements. Three sub-cases: (1) g->+inf: 1/g->0, trivially bounded; (2) g bounded away from 0: 1/g bounded, multiply by f bound; (3) g->0+: 1/g in H_{k-1} by Hardy field closure, apply inductive hypothesis to 1/g then use multiplication case."
+    }
+  },
+  "depth_census_summary": {
+    "depth_0": ["constants c in R", "identity x"],
+    "depth_1": ["e^x", "e^{-x}", "e^{cx} for c in R"],
+    "depth_2": ["e/x", "1/x", "ln(x)", "x*y (via EXL bridge)", "x/y"],
+    "depth_3": ["sinh(x)", "cosh(x)", "x+y", "x-y", "x^r (r real)", "sin(x) over C", "cos(x) over C", "sigmoid(x)", "arctan(x)"],
+    "depth_1_special": ["tan(x) over C (T07 Euler gateway)"],
+    "depth_k": ["exp^(k)(x) = k-fold iterated exponential"],
+    "depth_infinity": ["sin(x) over R", "cos(x) over R (T01: Infinite Zeros Barrier)"]
+  },
+  "t30_parts_status": {
+    "(a) strict_hierarchy": "PROVED",
+    "(b) hardy_field_lower_bound": "PROVED (GAP-4 division case now closed)",
+    "(c) depth_census": "PROVED (GAP-3 self-contained census now closed; sinh/cosh corrected to depth 3)",
+    "(d) depth4_witness": "PROVED",
+    "(e) no_standard_depth4": "PROVED"
+  },
+  "output_files": {
+    "main_proof": "python/paper/theorems/Depth_Spectrum_Self_Contained.tex",
+    "verdict_json": "python/results/s_t30_verdict.json",
+    "r17_gap_analysis": "python/paper/cost_theory/R17_T30_Hardy_Field_Verification.tex",
+    "primary_source": "python/paper/theorems/Depth_Spectrum_Classification.tex"
+  },
+  "blog_update_needed": {
+    "file": "blog/src/pages/blog/depth-spectrum.md",
+    "changes": [
+      "Correct depth table: sinh and cosh are depth 3, not depth 2",
+      "Update status line from PROPOSITION to THEOREM for T30",
+      "Add note about GAP-3 and GAP-4 closure",
+      "Correct sin/cos over C: depth 3 (not 1); tan over C: depth 1"
+    ]
+  }
+}

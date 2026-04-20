@@ -14,12 +14,12 @@ const C = {
   green:   "#5ec47a",
 };
 
-// SuperBEST FINAL (2026-04-20): neg=2n, mul=3n, sub=3n, add=3n
+// SuperBEST v4 FINAL (2026-04-20): neg=2n, mul=2n(T10u), sub=2n(T33), div=2n(corrected), recip=1n(R16-C1), add=3n
 const BENCH = [
   { op: "sin(x)  8-term Taylor", best: 63,  eml: 245, pct: 74 },
-  { op: "mul(x,y)",              best: 3,   eml: 13,  pct: 77 },
+  { op: "mul(x,y)",              best: 2,   eml: 13,  pct: 85 },
   { op: "pow(x, n)",             best: 3,   eml: 15,  pct: 80 },
-  { op: "div(x, y)",             best: 1,   eml: 15,  pct: 93 },
+  { op: "div(x, y)",             best: 2,   eml: 15,  pct: 87 },
   { op: "neg(x)",                best: 2,   eml: 6,   pct: 67 },
   { op: "add(x,y) x>0",         best: 3,   eml: 11,  pct: 73 },
   { op: "ln(x)",                 best: 1,   eml: 3,   pct: 67 },
@@ -144,8 +144,8 @@ export default function LandingPage({ onEnter }) {
           </div>
           <div style={{ display: "flex", gap: 28, flexWrap: "wrap", marginBottom: 12 }}>
             {[
-              { n: "19",  label: "theorems",     color: "#5ec47a", note: "complete proofs" },
-              { n: "8",   label: "propositions",  color: "#6ab0f5", note: "proved, routine" },
+              { n: "21",  label: "theorems",     color: "#5ec47a", note: "complete proofs" },
+              { n: "6",   label: "propositions",  color: "#6ab0f5", note: "proved, routine" },
               { n: "3",   label: "conjectures",   color: C.accent,  note: "open, unproved" },
               { n: "9",   label: "observations",  color: "#fbbf24", note: "empirical" },
               { n: "4",   label: "definitions",   color: "#a78bfa", note: "framework choices" },
@@ -319,8 +319,8 @@ export default function LandingPage({ onEnter }) {
               display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8,
             }}>
               <span>
-                SuperBEST FINAL: <strong style={{ color: C.green }}>21n / 71.2% savings</strong> across 9 standard ops.
-                All entries proved optimal by exhaustive search.
+                SuperBEST v4: <strong style={{ color: C.green }}>19n / 74% savings</strong> across 9 standard ops.
+                All entries structurally proved optimal (T08).
               </span>
               <button
                 onClick={() => onEnter("benchmarks")}

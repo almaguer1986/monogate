@@ -1,0 +1,55 @@
+{
+  "result": "R16-C1",
+  "description": "recip(x) = ELSb(0, x) = 1/x in 1 node (was 2 nodes via EDL)",
+  "superbest_old": 19,
+  "superbest_new": 18,
+  "superbest_savings_old": "74.0%",
+  "superbest_savings_new": "75.3%",
+  "total_node_savings": 1,
+  "formulas_affected": [
+    {
+      "name": "SuperBEST table (recip row)",
+      "old_nodes": 2,
+      "new_nodes": 1,
+      "delta": -1,
+      "note": "Primary update. recip(x) = ELSb(0,x) is 1 node in F16."
+    },
+    {
+      "name": "Gaussian curvature K(z = ln r) — geometry catalog",
+      "old_nodes": 7,
+      "new_nodes": 6,
+      "delta": -1,
+      "note": "Explicit recip sub-tree in mul+recip+neg decomposition drops 2n -> 1n."
+    }
+  ],
+  "formulas_unaffected": [
+    {
+      "name": "Taylor series 9N-3 cost law",
+      "reason": "Coefficients 1/n! are folded as constants (0 nodes). No recip node appears."
+    },
+    {
+      "name": "Partition function Z = Tr[exp(-betaH)]",
+      "reason": "No reciprocal. Z = 1 matrix node (matrix exp) + Tr."
+    },
+    {
+      "name": "Density matrix rho = exp(-betaH)/Z",
+      "reason": "Division by scalar Z uses EDL (1 node, already optimal). Not a unary recip."
+    },
+    {
+      "name": "Free energy F = -ln(Z)/beta",
+      "reason": "No recip. Scalar ln + division by constant beta."
+    },
+    {
+      "name": "Division x/y in 157-equation catalog",
+      "reason": "Division was already 1 node via EDL. R16-C1 covers unary 1/x only."
+    },
+    {
+      "name": "Fourier / Laplace kernel costs",
+      "reason": "No standalone recip."
+    }
+  ],
+  "f6_note": "In F6 (6-operator library), recip still requires 2 nodes. ELSb is not in F6.",
+  "search_principle": "For every op in F16 \\ F6 that accepts one argument directly, enumerate constant-argument specializations from {0,1}. R16-C1 fell out of ELSb(0,x).",
+  "session": "1-Node Integration",
+  "date": "2026-04-20"
+}

@@ -214,13 +214,13 @@ const RESULTS: Result[] = [
   // ─── PROPOSITIONS (10) ────────────────────────────────────────────────────
   {
     id: "T08",
-    name: "SuperBEST Table v4 — 18 Nodes, 75.3% Savings",
-    tier: "PROPOSITION",
-    session: "Sprint2 / Sprint3 / R16",
+    name: "SuperBEST Table v4 — 19 Nodes, All Entries Structurally Proved",
+    tier: "THEOREM",
+    session: "Sprint2 / Sprint3 / S-T08",
     category: "Core Algebra",
-    statement: "SuperBEST v4: 18 total nodes vs 73 naive = 75.3% savings. recip drops 2n→1n: ELSb(0,x) = exp(0−ln(x)) = 1/x (R16-C1, verified). R16 structural proofs: add lower bound via cross-derivative (∂²(x+y)/∂x∂y=0 but nonzero for all F16 2-node trees); pow via 3-intermediate counting.",
-    evidence: "ELSb(0,x)=1/x confirmed numerically (R19). Structural proofs in R16_T08_Structural_Proofs.tex. Reclassification to THEOREM pending full audit of all 9 entries.",
-    deps: "T09, T10u, T12, R16-C1.",
+    statement: "SuperBEST v4: 19 total nodes, all 9 entries structurally proved optimal. recip=1n (ELSb(0,x)=1/x — R16-C1), div=2n (ELSb(ln(x),y) — corrected from erroneous 1n), sub=2n (T33), mul=2n (T10u/F16), neg=2n (T09), add=3n (cross-derivative lower bound), pow=3n (3-intermediate lower bound), sqrt=2n (derivative obstruction), exp=1n, ln=1n. No entry relies solely on exhaustive search.",
+    evidence: "S-T08 full structural audit (2026-04-20). Every entry: structural proof via derivative obstruction, intermediate-value counting, or direct construction. SuperBEST_v4_Structural_Audit.tex.",
+    deps: "T09, T10u, T12, T32, T33, R16-C1.",
   },
   {
     id: "T15",
@@ -255,11 +255,11 @@ const RESULTS: Result[] = [
   {
     id: "T30",
     name: "Depth Hierarchy: Standard Functions ≤ Depth 3",
-    tier: "PROPOSITION",
-    session: "Depth Spectrum",
+    tier: "THEOREM",
+    session: "Depth Spectrum / S-T30",
     category: "Depth Hierarchy",
     statement: "All standard elementary functions (exp, ln, algebraic, trig via ℂ) have EML depth ≤ 3. The hierarchy is strictly infinite (exp^k requires exactly k nodes). Depth-4 exists (exp^4(x)) but no standard function lives there.",
-    evidence: "Depth census table verified. Hardy field growth-rate argument for strict hierarchy. Standard function survey: all classified at depth ≤ 3. Source: Depth_Spectrum_Classification.tex.",
+    evidence: "S-T30 (2026-04-20): all four proof gaps closed. GAP-1 (census completeness): constructive check over standard function tables. GAP-2 (strict hierarchy lower bound): exp^k ∉ EML-(k-1) by Hardy field growth-rate argument. GAP-3/4 (Lemma 4.2 repair): false intermediate bound v≤u^{C'} replaced by correct inductive argument A=exp^{k-1}(x), lnB=exp^{k-2}(x^C), A-lnB→+∞. Full proof: Depth_Spectrum_Self_Contained.tex.",
     deps: "T14.",
   },
   {
@@ -464,7 +464,7 @@ const RESULTS: Result[] = [
     tier: "DEFINITION",
     session: "R1",
     category: "Cost Theory",
-    statement: "Cost_F(E) = minimum number of internal nodes in any DAG over operator family F computing the same function as E. NaiveCost(E) = Σ cᵢ·nᵢ using SuperBEST v3 unit costs (exp=1, ln=1, neg=2, recip=2, mul=2, sub=2, div=1, pow=3, add=3/11).",
+    statement: "Cost_F(E) = minimum number of internal nodes in any DAG over operator family F computing the same function as E. NaiveCost(E) = Σ cᵢ·nᵢ using SuperBEST v4 unit costs (exp=1, ln=1, neg=2, recip=1, mul=2, sub=2, div=2, pow=3, add=3/11, sqrt=2).",
     evidence: "Formally defined in R1_Cost_Definition.tex with 4 proved properties: non-negativity, terminal characterization, subadditivity, algebraic invariance.",
   },
   {
