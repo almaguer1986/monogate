@@ -17,9 +17,6 @@ const nextConfig = {
   },
   async rewrites() {
     return [
-      // Proxy /lab/* to games.monogate.dev/play/* — URL stays at monogate.dev
-      { source: "/lab", destination: "https://games.monogate.dev/play" },
-      { source: "/lab/:path*", destination: "https://games.monogate.dev/play/:path*" },
       // Proxy /explorer/* to explorer.monogate.dev/explorer/* — URL stays at monogate.dev
       { source: "/explorer", destination: "https://explorer.monogate.dev/explorer" },
       { source: "/explorer/:path*", destination: "https://explorer.monogate.dev/explorer/:path*" },
