@@ -1,0 +1,58 @@
+{
+  "report": "R17_T30_Hardy_Field_Verification",
+  "date": "2026-04-20",
+  "subject": "T30 — EML Depth Spectrum Theorem (Hardy Field Argument)",
+  "verdict": "PROPOSITION",
+  "verdict_rationale": "The conclusion (strict infinite hierarchy) is mathematically correct, but Lemma 4.2 in Depth_Spectrum_Classification.tex contains a false intermediate step: the bound v <= u^{C'} (where u = exp^(k-1)(x) and v = exp^(k-1)(x^C)) does not hold for C > 1. The correct domination exp^(k)(x) >> exp^(k-1)(x^C) follows from exp(u)/exp(x^C) = exp(u - x^C) -> +inf since u = e^x >> x^C, but this argument is not what the source writes. A proof with a false intermediate step is not a complete proof even if the conclusion is correct. After repair, the result will be a THEOREM.",
+  "hierarchy_proved": false,
+  "hierarchy_correct": true,
+  "hierarchy_provable": true,
+  "no_standard_depth4_proved": false,
+  "no_standard_depth4_correct": true,
+  "gaps": [
+    {
+      "id": "GAP-1",
+      "description": "Inductive step for exp in Lemma 4.1: the claim 'the extra factor C is absorbed by a slight increase in the exponent of x' is asserted but not proved.",
+      "severity": "MEDIUM",
+      "affects_hierarchy": false,
+      "fix": "Add: C * exp^(k-2)(x^C) <= exp^(k-2)(x^C + ln C) <= exp^(k-2)(x^{C'}) for C' > C chosen so x^{C'} >= x^C + ln C for large x. This holds since x^{C'} - x^C = x^C(x^{C'-C} - 1) -> +inf."
+    },
+    {
+      "id": "GAP-2",
+      "description": "Lemma 4.2 states v <= u^{C'} as an intermediate step where u = exp^(k-1)(x) and v = exp^(k-1)(x^C). This is FALSE for C > 1: exp^(k-1)(x^C) grows faster than any power of exp^(k-1)(x). The domination exp^k(x) >> exp^(k-1)(x^C) is correct but must be proved by a different route: write exp^k(x)/exp^(k-1)(x^C) = exp(exp^(k-1)(x) - exp^(k-2)(x^C)) and argue the exponent -> +inf by induction.",
+      "severity": "HIGH",
+      "affects_hierarchy": true,
+      "fix": "Replace Lemma 4.2 with: exp^k(x)/exp^(k-1)(x^C) = exp(A - ln B) where A = exp^(k-1)(x) and ln B = exp^(k-2)(x^C). By inductive hypothesis A >> exp^(k-2)(x^C) = ln B, so A - ln B -> +inf and the ratio -> +inf. See corrected proof in R17 Section 5.1."
+    },
+    {
+      "id": "GAP-3",
+      "description": "Depth census T30(c) relies on external theorems T09 (negation at depth 2), T10 (multiplication at depth 2), T20 (ln at depth 2), T21 (1/x at depth 2), T12 (sinh/cosh at depth 2) without self-contained proofs. The source notes its own error in the sinh/cosh construction and defers to T12.",
+      "severity": "MEDIUM",
+      "affects_hierarchy": false,
+      "fix": "Either reproduce self-contained depth-2 constructions for each function, or add explicit pointers to the verified .tex files for T09/T10/T12/T20/T21 in the monogate theorem catalog."
+    },
+    {
+      "id": "GAP-4",
+      "description": "Division case f/g omitted from Lemma 4.1 inductive step (field operations). Hardy fields are closed under division but this case is not handled.",
+      "severity": "LOW",
+      "affects_hierarchy": false,
+      "fix": "Add: if g -> +inf then 1/g -> 0 (trivially bounded); if g is eventually bounded and bounded away from 0, then 1/g is bounded. Hardy field total ordering ensures g is in one of these regimes eventually."
+    }
+  ],
+  "sub_verdicts": {
+    "T30a_upper_bound": "THEOREM",
+    "T30b_lower_bound": "PROPOSITION",
+    "strict_hierarchy": "PROPOSITION",
+    "T30c_depth_census": "PROPOSITION",
+    "T30d_depth4_witness": "THEOREM",
+    "T30e_no_depth4_standard": "PROPOSITION"
+  },
+  "critical_repair_needed": "Lemma 4.2 in Depth_Spectrum_Classification.tex — replace false bound v <= u^{C'} with correct inductive domination argument",
+  "source_files_checked": [
+    "python/paper/theorems/Depth_Spectrum_Classification.tex",
+    "python/paper/theorems/EML4_Gap_Resolution.tex",
+    "python/paper/theorems/Unified_EML_Lower_Bound_Closure.tex",
+    "python/results/eml4_search_summary.json"
+  ],
+  "lean4_sketch": "python/paper/cost_theory/R17_T30_Hardy_Field_Verification.tex (Section 6)"
+}

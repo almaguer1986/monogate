@@ -131,15 +131,15 @@ const results: Result[] = [
     statement: 'All standard elementary functions (exp, ln, algebraic, trig via ℂ) have EML depth ≤ 3. The hierarchy is strictly infinite (exp^k requires exactly k nodes). Depth-4 exists but no standard function lives there.',
     evidence: 'Depth census table verified. Hardy field growth-rate argument for strict hierarchy.',
     deps: 'T14.' },
-  { id: 'T35', tier: 'PROPOSITION', name: 'Lower Bound Theorems',
+  { id: 'T35', tier: 'THEOREM', name: 'Lower Bound Theorems (Structural)',
     session: 'COST-3', category: 'Cost Theory',
-    statement: 'Three lower bounds for Cost(E): Cost ≥ 0. Cost ≥ ⌈depth(E)/2⌉. Cost ≥ n_exp + n_ln. All are non-trivial improvements on the trivial lower bound.',
-    evidence: 'Proved in COST3_Lower_Bound.tex. Each bound tight on specific expression families.',
+    statement: 'Three structural lower bounds on Cost(E): (T35) Cost(E) ≥ |O(E)| — each non-mergeable operator requires a distinct node, by F16 structure. (T36) Cost(E) ≥ d where d = distinct necessary intermediates — binary-tree counting identity. (T37) Cost(E) ≥ n_exp + n_ln — exp-nodes and ln-nodes are disjoint, each requiring a dedicated node.',
+    evidence: 'R18 audit confirmed all three are structural arguments appealing to F16 operator structure, not just definitional unwrapping. Each proof is 2-4 lines. Weak theorems are still theorems.',
     deps: 'T38.' },
-  { id: 'T40', tier: 'PROPOSITION', name: 'Linear Cost Law',
+  { id: 'T40', tier: 'THEOREM', name: 'Linear Cost Law',
     session: 'COST-9 / R5', category: 'Cost Theory',
-    statement: 'For N-term positive-domain summations: Cost = (α₀ + 3)·N − 3 exactly, where α₀ is the per-term cost. Softmax: 4N−3. Shannon entropy: 6N−3. Taylor: 8N−3.',
-    evidence: 'Induction on N. Base N=1: Cost = α₀. Step: each new term adds α₀ + 3 (term + positive-domain add). Proved in R5_Linear_Cost_Law.tex.',
+    statement: 'For N-term positive-domain summations: Cost(E_N) = (α₀ + 3)·N − 3 exactly, where α₀ is the per-term cost. Softmax: 4N−3. Shannon entropy: 6N−3. Taylor: 8N−3. The positive-domain assumption is genuine: licenses c_add=3 instead of 11, saving 8n per node.',
+    evidence: 'R18 audit confirmed induction proof is gap-free. Base N=1: Cost=α₀ (T38 with SD=PB=0). Step: new term costs α₀ (independent, T38) + 1 EAL node (cost 3, T40-DF) = α₀+3. Exact equality by T38. Proved in R5_Linear_Cost_Law.tex.',
     deps: 'T38, T34.' },
   { id: 'P-NNP', tier: 'PROPOSITION', name: 'No Nesting Penalty Lemma',
     session: 'COST-6 / R3', category: 'Cost Theory',
@@ -273,7 +273,7 @@ const obsCount = byTier['OBSERVATION'].length;
   </p>
   <p style="color: #4a4d62; font-size: 0.85rem; margin-bottom: 20px;">
     <span style="color: #4ade80; font-weight: 700;">{theoremCount} theorems</span> ·
-    <span style="color: #6ab0f5; font-weight: 700;">{propCount} propositions</span> ·
+    <span style="color: #6ab0f5; font-weight: 700;">{propCount} propositions</span> · <!-- T35+T40 reclassified from PROP→THEOREM (R18 audit) -->
     <span style="color: #e8a020; font-weight: 700;">{conjCount} open conjectures</span> ·
     <span style="color: #fbbf24; font-weight: 700;">{obsCount} observations</span>
   </p>

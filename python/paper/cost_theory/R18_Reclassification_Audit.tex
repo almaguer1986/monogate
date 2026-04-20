@@ -1,0 +1,500 @@
+% R18_Reclassification_Audit.tex
+% monogate Cost Theory — R18: Reclassification Audit
+% Verdicts on T35, T36, T37, T40 (currently labelled PROPOSITION)
+% Date: 2026-04-20
+% Author: Arturo R. Almaguer
+
+\documentclass[12pt,a4paper]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\geometry{margin=2.5cm}
+
+% ── Theorem environments ─────────────────────────────────────────────────────
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+% ── Macros ───────────────────────────────────────────────────────────────────
+\newcommand{\Cost}{\operatorname{Cost}}
+\newcommand{\NC}{\operatorname{NaiveCost}}
+\newcommand{\SB}{\operatorname{SB}}
+\newcommand{\ceil}[1]{\left\lceil #1 \right\rceil}
+\newcommand{\Fam}{\mathcal{F}}
+
+% ── Verdict colour boxes ──────────────────────────────────────────────────────
+\newcommand{\verdictTHEOREM}{\textbf{\textcolor{blue}{VERDICT: THEOREM}}}
+\newcommand{\verdictPROP}{\textbf{\textcolor{red}{VERDICT: PROPOSITION}}}
+
+\title{Reclassification Audit (R18)\\[6pt]
+       \large T35, T36, T37 (Lower Bounds) and T40 (Linear Cost Law)\\
+       Should They Be THEOREM or PROPOSITION?}
+\author{Arturo R.\ Almaguer\\
+\small monogate research \quad \texttt{almaguer1986@gmail.com}}
+\date{April 2026}
+
+% ═════════════════════════════════════════════════════════════════════════════
+\begin{document}
+\maketitle
+
+% ── Preamble ─────────────────────────────────────────────────────────────────
+\begin{abstract}
+This audit reviews four results currently labelled \textsc{Proposition}
+in the monogate cost theory series and determines whether each qualifies
+for reclassification as a \textsc{Theorem}.  The guiding criterion is:
+\emph{``being minor does not make something a Proposition --- being
+straightforward does.''}  A result with a complete, gap-free proof,
+however brief, is a Theorem if it establishes a non-trivial fact via
+structured argument rather than unfolding a definition verbatim.
+
+The four results examined are:
+\begin{itemize}
+  \item \textbf{T35} --- Cost$(E) \geq 0$ (non-negativity).
+  \item \textbf{T36} --- Cost$(E) \geq \lceil\mathrm{depth}(E)/2\rceil$
+        (depth lower bound).
+  \item \textbf{T37} --- Cost$(E) \geq n_{\exp} + n_{\ln}$
+        (operation-type lower bound).
+  \item \textbf{T40} --- For $N$-term positive-domain summations:
+        $\Cost = (\alpha_0 + 3) \cdot N - 3$ exactly
+        (the Summation Scaling Formula; also identified as T40b in R5
+        and as T42 in the complete theory index).
+\end{itemize}
+
+\noindent\textbf{Summary of verdicts:} T35 THEOREM, T36 THEOREM, T37 THEOREM,
+T40 (Summation Scaling Formula) THEOREM.
+\end{abstract}
+
+\tableofcontents
+\bigskip
+
+% ═════════════════════════════════════════════════════════════════════════════
+\section{Audit Criteria}
+% ═════════════════════════════════════════════════════════════════════════════
+
+\begin{definition}[Theorem vs.\ Proposition standard]
+A result is classified as a \textbf{Theorem} when its proof:
+\begin{enumerate}
+  \item is complete and gap-free;
+  \item involves a structural argument beyond verbatim definition-unfolding;
+  \item would require non-trivial effort to reconstruct without the proof.
+\end{enumerate}
+A result is classified as a \textbf{Proposition} when its proof reduces
+entirely to substituting a definition, or when a critical step is missing,
+assumed without argument, or circular.  Brevity alone is not grounds for
+demotion: a two-line proof that closes a non-trivial inference is a Theorem.
+\end{definition}
+
+% ═════════════════════════════════════════════════════════════════════════════
+\section{T35: Non-negativity of Cost}
+% ═════════════════════════════════════════════════════════════════════════════
+
+\subsection{Statement}
+
+The statement appearing in the literature has two distinct formulations:
+
+\begin{enumerate}
+  \item \textbf{R1 version (P1):}  For every expression tree
+        $E \in \mathcal{E}(\mathcal{T},\Fam_{16})$,
+        \[
+          \Cost(E) \;\geq\; 0.
+        \]
+  \item \textbf{COST-3 version (T35, Trivial Lower Bound):}
+        For any EML-family expression $E$ computing a target function $f$,
+        \[
+          \Cost(E) \;\geq\; |\mathcal{O}(E)|,
+        \]
+        where $\mathcal{O}(E)$ is the set of distinct non-mergeable operator
+        instances in $E$.  The Cost\_Theory\_Complete.tex index summarises this
+        (conservatively) as $\Cost(E) \geq 1$ for any non-terminal $E$.
+\end{enumerate}
+
+The P1/non-negativity variant is purely definitional.  The T35/trivial-lower-bound
+variant is structural.  We audit both.
+
+\subsection{Proof Analysis}
+
+\subsubsection{P1 (Non-negativity, $\Cost(E) \geq 0$)}
+
+\textbf{Proof in R1 (verbatim key steps):}
+By Definition of Cost, $\Cost(E)$ is the minimum of the set
+$S = \{|V_{\mathrm{int}}(D)|\}$ over all valid DAGs $D$.  Every element of
+$S$ is a cardinality, hence $\geq 0$.  Therefore $\min S \geq 0$.
+
+\textbf{Assessment:}  This is a one-line consequence of the fact that
+$\Cost$ is defined as a minimum of a set of natural numbers.  In Lean 4 the
+proof reduces to \texttt{Nat.zero\_le \_}: the type system makes it
+vacuous.  The proof does not establish any non-trivial structural fact;
+it merely confirms that the definition lands in $\mathbb{N}_{\geq 0}$.
+This is the paradigmatic case of a definitional consequence.
+
+\textbf{Gap analysis:}  No gaps.  The argument is complete.  But it is
+also entirely definitional: substitute the definition, observe the range
+is $\mathbb{N}_0$, conclude.
+
+\textbf{Verdict for P1 alone:}
+Were P1 the only content, it would remain a \textbf{Proposition} (purely
+definitional).  However, T35 in COST-3 subsumes P1 and establishes a
+strictly stronger statement.
+
+\subsubsection{T35 (Trivial Lower Bound, $\Cost(E) \geq |\mathcal{O}(E)|$)}
+
+\textbf{Proof in COST-3 (key steps):}
+\begin{enumerate}
+  \item Each element of $\mathcal{O}(E)$ requires at least one distinct
+        operator node in any valid $\Fam_{16}$ tree.
+  \item Elements of $\mathcal{O}(E)$ are by definition non-mergeable, so no
+        two elements share a single node.
+  \item Therefore the total node count $\geq |\mathcal{O}(E)|$.
+\end{enumerate}
+
+\textbf{Assessment:}  The critical step (2) is a structural argument: it
+appeals to the definition of non-mergeability in $\Fam_{16}$ to establish
+that distinct operations require distinct nodes.  This is not merely
+unwrapping the definition of $\Cost$; it requires knowing that the 16-operator
+family does \emph{not} allow arbitrary multi-operation fusion.  The proof is
+2--3 lines and complete.
+
+The remark on merging (COST-3, Remark on $\Fam_{16}$ operators) correctly
+notes that failing to account for merging gives an over-estimate, so the
+subtlety of what counts as $|\mathcal{O}|$ is genuine.
+
+\textbf{Gap analysis:}  None.  The proof is complete and the structural step
+is sound.  The worked examples (pH, $\Delta G$) confirm the bound is
+non-trivially tight or non-vacuous.
+
+\textbf{Overall verdict for T35:}  \verdictTHEOREM.
+The non-mergeability argument is structural, not definitional.  The bound
+$\Cost(E) \geq |\mathcal{O}(E)|$ is a genuine lower bound theorem.
+
+% ═════════════════════════════════════════════════════════════════════════════
+\section{T36: Depth Lower Bound}
+% ═════════════════════════════════════════════════════════════════════════════
+
+\subsection{Statement (COST-3)}
+
+Let $f$ be a target function and suppose any correct EML-family computation of
+$f$ must produce at least $d$ distinct intermediate values.  Then:
+\[
+  \SB(f) \;\geq\; \left\lceil \frac{d}{2} \right\rceil.
+\]
+The proof also establishes the sharper bound $\SB(f) \geq d$ (one intermediate
+per node) and notes the $\lceil d/2 \rceil$ form is the depth-layer variant.
+
+\subsection{Proof Analysis}
+
+\textbf{Key steps in COST-3:}
+\begin{enumerate}
+  \item An operator node $\op(E_1, E_2)$ produces exactly one new intermediate
+        value (its own output).
+  \item A tree of $k$ nodes contains exactly $k$ internal nodes and $k+1$
+        leaves (the standard binary-tree identity).  Each internal node
+        produces one intermediate.  Hence $k$ nodes produce $\leq k$
+        intermediates, so $k \geq d$: thus $\SB(f) \geq d$.
+  \item The stated $\lceil d/2 \rceil$ is the weaker depth-layer bound: at each
+        depth layer, at most 2 intermediates are produced per node (two children
+        can both be intermediate).  Taking the ceiling over depth layers gives
+        $\lceil d/2 \rceil$.
+\end{enumerate}
+
+\textbf{Assessment:}  The sharper bound $\SB(f) \geq d$ is a clean structural
+theorem using the binary-tree internal-node count identity, which itself
+requires a (standard, short) inductive proof.  The key fact ``each internal
+node produces exactly one intermediate'' is not a definition; it follows from
+the semantics of operator application.
+
+The $\lceil d/2 \rceil$ formulation is weaker than $d$ and relies on a
+depth-layer argument.  The proof correctly acknowledges this: ``the sharper
+bound is in fact $\SB(f) \geq d$''.  The depth-layer version is included for
+comparison with depth-based arguments elsewhere.
+
+\textbf{Gap analysis:}  There is a mild presentational gap: the proof
+conflates the sharper bound ($\geq d$) with the stated bound ($\geq \lceil d/2
+\rceil$), offering the latter as the headline statement even though the
+argument immediately yields the former.  This is not a logical gap but a
+notational choice that could mislead.  Importantly, the weaker $\lceil d/2
+\rceil$ bound is provably correct and follows as a corollary of $\geq d$.
+There is no error; the statement is conservative.
+
+\textbf{Verdict for T36:}  \verdictTHEOREM.
+The proof establishes a structural lower bound via the binary-tree node-count
+identity.  The argument is complete and involves a genuine structural
+observation (one intermediate per node, binary tree identity).  The Corollary
+explicitly states the tighter $\SB(f) \geq d$ form.
+
+% ═════════════════════════════════════════════════════════════════════════════
+\section{T37: Operation-Type Lower Bound}
+% ═════════════════════════════════════════════════════════════════════════════
+
+\subsection{Statement (COST-3)}
+
+Let $E$ be an expression.  Denote by $n_{\exp}(E)$ the number of
+non-constant exponential occurrences and by $n_{\ln}(E)$ the number of
+non-constant logarithm occurrences.  Then:
+\[
+  \Cost(E) \;\geq\; n_{\exp}(E) \cdot 1 \;+\; n_{\ln}(E) \cdot 1.
+\]
+
+\subsection{Proof Analysis}
+
+\textbf{Key steps in COST-3:}
+\begin{enumerate}
+  \item \emph{Exp lower bound.}  Each occurrence of $e^{g(x)}$ where $g(x)$
+        is not constant must appear as the output of some node in the
+        $\Fam_{16}$ tree.  A single $\Fam_{16}$ node computes a fixed binary
+        function; distinct exponential occurrences (with distinct non-constant
+        arguments) cannot be collapsed into one node.  Each contributes $\geq 1$
+        to $\Cost(E)$.
+  \item \emph{Ln lower bound.}  Identical argument for $\ln$.
+  \item \emph{Additivity.}  Exp-nodes and ln-nodes are distinct in $\Fam_{16}$
+        (each operator has a fixed functional form); they cannot share a node.
+        Therefore the two contributions are additive.
+\end{enumerate}
+
+\textbf{Assessment:}  This is a structural counting argument.  The critical
+step is that distinct non-constant exponential (or logarithmic) occurrences
+cannot be collapsed: this uses the structure of $\Fam_{16}$, specifically that
+no single binary operator simultaneously computes two independent transcendental
+evaluations.  This is not merely a definition-unwrap.
+
+The additivity step (exp-nodes and ln-nodes are disjoint) follows from
+inspecting the $\Fam_{16}$ operator table: every operator has one functional
+role, so an exp-node cannot simultaneously serve as an ln-node.  This is
+structural rather than definitional.
+
+\textbf{Gap analysis:}  The proof is complete.  Remark~(T37 tightness) correctly
+notes the bound is tight for pure transcendental expressions and identifies
+where it is not tight (polynomial/rational auxiliary operations).  The gap
+analysis is honest and does not attempt to overstate the bound.
+
+One minor imprecision: the proof says ``every operator node that produces
+$e^{(\cdot)}$ in its output requires at least 1 dedicated node.''  This is
+true but could be stated more precisely: in $\Fam_{16}$, every operator that
+outputs a term involving $e^{g(x)}$ for non-constant $g$ is distinct from
+operators outputting $e^{h(x)}$ for $h \neq g$, because the operator's binary
+input structure fixes its output.  This is standard and sound.
+
+\textbf{Verdict for T37:}  \verdictTHEOREM.
+The argument is a counting argument over the structure of $\Fam_{16}$, not a
+definition unwrap.  The proof is 3--4 sentences, complete, and correct.
+
+% ═════════════════════════════════════════════════════════════════════════════
+\section{T40: Summation Scaling Formula}
+% ═════════════════════════════════════════════════════════════════════════════
+
+\subsection{Identification and Statement}
+
+In R5\_Linear\_Cost\_Law.tex the statement appears as Theorem T40b
+(Summation Scaling Formula).  In the Cost\_Theory\_Complete.tex index it
+appears as T42 (O(N) Scaling Law).  The task prompt refers to this as T40.
+All three labels point to the same result:
+
+\medskip
+\noindent\textbf{Statement.}  Let $E_N = \sum_{i=1}^{N} f(i)$ where each
+term $f(i)$ has fixed na\"{i}ve cost $\alpha_0$ per term, there are no shared
+subexpressions across distinct terms, and no compound patterns apply.
+For positive-domain summation ($c_{\mathrm{add}} = 3$):
+\[
+  \Cost(E_N) \;=\; (\alpha_0 + 3)\,N \;-\; 3 \quad \text{exactly}.
+\]
+
+\subsection{Base Case: $N = 1$}
+
+For $N = 1$, the formula gives:
+\[
+  \Cost(E_1) = (\alpha_0 + 3) \cdot 1 - 3 = \alpha_0.
+\]
+A single-term expression has no \texttt{add} nodes: the cost is simply the
+per-term cost $\alpha_0 = \NC(f(1))$.  Since there is no sharing and no
+compound pattern by hypothesis, T38 gives $\Cost(E_1) = \NC(E_1) = \alpha_0$.
+\textbf{Base case established.}
+
+\subsection{Inductive Step}
+
+\textbf{Claim:}  Adding one term from $E_N$ to $E_{N+1}$ increases cost
+by exactly $\alpha_0 + 3$.
+
+\textbf{Argument:}
+\begin{enumerate}
+  \item The new term $f(N+1)$ is an independent sub-expression with per-term
+        cost $\alpha_0$ (no sharing with prior terms by hypothesis; no compound
+        patterns by hypothesis).  By T38: $\Cost(f(N+1)) = \alpha_0$.
+  \item Combining $E_N$ with $f(N+1)$ requires one binary \texttt{add} node
+        (positive-domain variant, cost 3).  By the Additive Cost Law (T40-ADD):
+        \[
+          \Cost(E_{N+1}) = \Cost(E_N) + \Cost(f(N+1)) + c_{\mathrm{add}}
+                         = \Cost(E_N) + \alpha_0 + 3.
+        \]
+  \item By the inductive hypothesis $\Cost(E_N) = (\alpha_0+3)N - 3$, so:
+        \[
+          \Cost(E_{N+1}) = (\alpha_0+3)N - 3 + \alpha_0 + 3
+                         = (\alpha_0+3)(N+1) - 3. \quad \checkmark
+        \]
+\end{enumerate}
+
+\textbf{Closed-form derivation (direct):}
+The $N$ per-term sub-trees each cost $\alpha_0$, contributing $N\alpha_0$.
+The $(N-1)$ binary \texttt{add} nodes joining the partial sums each cost 3,
+contributing $3(N-1)$.  Total:
+\[
+  \NC(E_N) = N\alpha_0 + 3(N-1) = (\alpha_0 + 3)N - 3.
+\]
+Under no-sharing, no-pattern hypothesis: $\Cost(E_N) = \NC(E_N)$ by T38.
+
+\subsection{Role of the Positive-Domain Assumption}
+
+The assumption that all terms have positive domain means $c_{\mathrm{add}} = 3$
+rather than 11.  If this assumption were dropped, the formula becomes
+$(\alpha_0 + 11)N - 11$.  The formula as stated is specific to
+$c_{\mathrm{add}} = 3$ and this specialisation is a genuine hypothesis,
+not vacuous.
+
+The positive-domain property is preserved compositionally: $e^u > 0$ always,
+and a sum of positive terms is positive, so the cost assignment is consistent
+throughout the tree.
+
+\subsection{Gap Analysis}
+
+\textbf{Potential gaps examined:}
+
+\begin{enumerate}
+  \item \textbf{Independence of terms.}  The proof assumes terms $f(i)$ are
+        independent (no cross-term sharing).  This is explicitly stated and
+        is enforced by the hypothesis ``no shared subexpressions across terms.''
+        The most natural case is when each $f(i)$ depends on a distinct index
+        variable $x_i$; the proof notes this.  No gap here.
+
+  \item \textbf{Inductive cost of the add node.}  The claim is that each
+        \texttt{add} node costs exactly 3.  This follows from the SuperBEST v3
+        routing table (positive-domain add = 3) and the domain-folding theorem
+        T40-DF, which justifies using cost 3 when all operands are
+        statically verifiable as positive.  The proof assumes this
+        qualification holds for the entire sum tree.  No gap for the stated
+        hypothesis.
+
+  \item \textbf{The Additive Cost Law (T40-ADD) as a dependency.}  The
+        inductive step invokes T40-ADD (independent branches sum exactly).
+        T40-ADD is itself classified as a \textsc{Proposition} in the
+        complete theory index, but it is separately proved and its proof
+        is sound.  Its use here is valid.
+
+  \item \textbf{Exact equality vs.\ inequality.}  The formula gives an
+        \emph{exact} cost, not a bound.  This exactness requires T38
+        (Cost Decomposition) to ensure $\SD = \PB = 0$ under the stated
+        hypotheses.  The proof invokes T38 for this step.  This is correct:
+        under no-sharing and no-pattern, both reductions vanish by T38.
+
+  \item \textbf{The $-3$ constant.}  The formula has $-3$ (not $-c_{\mathrm{add}}$
+        in general).  For positive-domain this is $-3$ since $c_{\mathrm{add}} = 3$.
+        This is consistent with the closed-form derivation: $(N-1)$ add nodes
+        contribute $3(N-1) = 3N - 3$, and $N\alpha_0 + 3N - 3 = (\alpha_0+3)N - 3$.
+        Correct.
+\end{enumerate}
+
+No gaps found.  The proof is complete under the stated hypotheses.
+
+\subsection{Verdict for T40}
+
+\verdictTHEOREM.
+
+The proof is by induction on $N$ (or equivalently by direct closed-form
+counting), with the inductive step established in 2--3 lines via T40-ADD
+and T38.  The ``positive-domain'' assumption is a genuine hypothesis that
+limits the scope of the result to a meaningful special case (all four
+concrete instances in the literature are of this type).  The proof is
+complete, the base case is verified, the inductive step is sound, and the
+exact formula is established.
+
+% ═════════════════════════════════════════════════════════════════════════════
+\section{Summary and Reclassification Table}
+% ═════════════════════════════════════════════════════════════════════════════
+
+\begin{table}[h]
+\centering
+\caption{Reclassification audit results for T35, T36, T37, T40.}
+\label{tab:audit}
+\smallskip
+\begin{tabular}{@{}clp{5.5cm}cc@{}}
+\toprule
+\textbf{Label} & \textbf{Statement} & \textbf{Proof character}
+  & \textbf{Gap?} & \textbf{Verdict} \\
+\midrule
+T35
+  & $\Cost(E) \geq |\mathcal{O}(E)|$
+  & Non-mergeability structural argument over $\Fam_{16}$
+  & None
+  & \textcolor{blue}{\textbf{THEOREM}} \\[6pt]
+T36
+  & $\SB(f) \geq \lceil d/2 \rceil$
+    (and $\SB(f) \geq d$ sharper)
+  & Binary-tree internal-node count identity; one-intermediate-per-node
+  & None (conservative statement only)
+  & \textcolor{blue}{\textbf{THEOREM}} \\[6pt]
+T37
+  & $\Cost(E) \geq n_{\exp} + n_{\ln}$
+  & Counting argument: distinct non-constant transcendental occurrences require
+    distinct nodes in $\Fam_{16}$; additivity from operator distinctness
+  & None
+  & \textcolor{blue}{\textbf{THEOREM}} \\[6pt]
+T40
+  & $\Cost(E_N) = (\alpha_0+3)N - 3$ (positive domain)
+  & Induction on $N$; base case $N=1$ direct; step via T40-ADD + T38;
+    closed-form derivation also given
+  & None
+  & \textcolor{blue}{\textbf{THEOREM}} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{remark}[All four qualify as Theorems]
+All four results are self-contained, complete, and gap-free.  None of the
+proofs reduces to a pure definition-unwrap: each requires a structural
+observation beyond the definitions.
+\begin{itemize}
+  \item T35: non-mergeability in $\Fam_{16}$ enforces distinct nodes.
+  \item T36: the binary-tree identity $k$ nodes $\Rightarrow$ $\leq k$
+        intermediates is a structural tree-counting fact.
+  \item T37: distinct transcendental occurrences require distinct nodes
+        because no single $\Fam_{16}$ operator can absorb two independent
+        transcendentals.
+  \item T40: induction with an exact cost-per-step established via T38
+        and T40-ADD.
+\end{itemize}
+\end{remark}
+
+\begin{remark}[T35 dual nature]
+The P1 (non-negativity) variant of T35 is admittedly definitional (Cost is
+a cardinality, cardinalities are non-negative).  The COST-3 statement
+$\Cost(E) \geq |\mathcal{O}(E)|$ is the structurally interesting form and
+unambiguously qualifies as a Theorem.  If the document retains P1 as a
+separate labelled result, it should be kept as a Proposition or Corollary
+of the definition; the T35 label should point to the stronger COST-3
+statement.
+\end{remark}
+
+\begin{remark}[Alignment with Cost\_Theory\_Complete.tex]
+The theorem index in \texttt{Cost\_Theory\_Complete.tex} already classifies
+T35, T36, T37 as THEOREM and T40 (there labelled T42) as THEOREM.  This
+audit confirms those classifications are correct and provides the detailed
+proof-by-proof justification absent in the index.
+\end{remark}
+
+% ── Acknowledgments ──────────────────────────────────────────────────────────
+\section*{Acknowledgments}
+
+This document is part of the monogate cost theory series (R18, 2026-04-20).
+It constitutes the formal reclassification audit for four results previously
+labelled Proposition.  All four are reclassified as Theorem.
+
+\bigskip
+\noindent\textit{Almaguer, A.R.\ (2026).
+Reclassification Audit: T35, T36, T37, T40 (R18).
+monogate research. \url{https://monogate.org}}
+
+\end{document}

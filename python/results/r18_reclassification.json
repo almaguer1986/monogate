@@ -1,0 +1,26 @@
+{
+  "T35": {
+    "verdict": "THEOREM",
+    "gap": null,
+    "proof_character": "Structural non-mergeability argument: distinct non-mergeable operator instances in F_16 require distinct nodes; no two elements of O(E) can share a single node. Not a definition-unwrap.",
+    "note": "The P1 (non-negativity, Cost >= 0) variant of T35 is definitional and could remain Proposition; the COST-3 statement Cost(E) >= |O(E)| is the structurally non-trivial form and qualifies as Theorem."
+  },
+  "T36": {
+    "verdict": "THEOREM",
+    "gap": null,
+    "proof_character": "Binary-tree counting identity (k nodes produce at most k intermediates => SB(f) >= d); depth-layer formulation yields the stated ceil(d/2) as a conservative corollary. Structural tree argument, not definitional.",
+    "note": "The stated bound ceil(d/2) is weaker than the sharper SB(f) >= d that the proof actually establishes. This is a conservative presentation choice, not a logical gap."
+  },
+  "T37": {
+    "verdict": "THEOREM",
+    "gap": null,
+    "proof_character": "Counting argument over F_16 structure: each non-constant exp occurrence requires a dedicated node; each non-constant ln occurrence requires a dedicated node; exp-nodes and ln-nodes are disjoint by operator distinctness. Three-step structural argument.",
+    "note": "Bound is tight for pure transcendental expressions (exp, ln only) and acknowledged to be non-tight when polynomial auxiliary operations are present. Honest and complete."
+  },
+  "T40": {
+    "verdict": "THEOREM",
+    "gap": null,
+    "proof_character": "Induction on N: base case N=1 gives Cost=alpha_0 directly from T38 under no-sharing/no-pattern hypothesis; inductive step adds alpha_0+3 per term via T40-ADD and T38. Closed-form derivation also given (N*alpha_0 + 3*(N-1) = (alpha_0+3)*N - 3).",
+    "note": "Identified as T40b in R5_Linear_Cost_Law.tex and as T42 in Cost_Theory_Complete.tex. The positive-domain assumption (c_add=3) is a genuine hypothesis, not vacuous. All four concrete instances (softmax, entropy, Taylor, PK model) satisfy it. No gaps found."
+  }
+}
