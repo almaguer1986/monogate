@@ -56,13 +56,23 @@ import Base from '../layouts/Base.astro';
 
   <ul style="margin: 16px 0 20px 24px; color: #d4d4d4; line-height: 2.2;">
     <li><strong style="color: #64748b;">Depth 0</strong> — arithmetic (polynomials, rationals)</li>
-    <li><strong style="color: #06b6d4;">Depth 1</strong> — exponential</li>
-    <li><strong style="color: #8b5cf6;">Depth 2</strong> — logarithmic</li>
-    <li><strong style="color: #ec4899;">Depth 3</strong> — oscillatory (sin, cos via complex bypass)</li>
+    <li><strong style="color: #06b6d4;">Depth 1</strong> — exponential · softplus(x) = 1 node via LEAd</li>
+    <li><strong style="color: #8b5cf6;">Depth 2</strong> — logarithmic · negation = 2 nodes · ln(x) = 1 node</li>
+    <li><strong style="color: #ec4899;">Depth 3</strong> — oscillatory (sin, cos via complex bypass) · mul/sub/add = 3 nodes</li>
     <li><strong style="color: #ef4444;">Depth ∞</strong> — non-constructible over ℝ</li>
   </ul>
 
-  <p>There is no depth 4. The jump is direct. <a href="/theorems">Full theorem catalog →</a></p>
+  <p>There is no depth 4. The jump is direct. <a href="/atlas">Full depth atlas →</a> · <a href="/theorems">Theorem catalog →</a></p>
+
+  <h2>The completeness theorem</h2>
+
+  <p>
+    Among all 16 exp-ln operators, exactly <strong>8 are completely expressive</strong>:
+    EML, EAL, EXL, EDL, EPL, LEAd, ELAd, ELSb. The structural rule is simple —
+    if the operator has exp(+x) with no domain restriction, it is exactly complete.
+    If it has exp(−x), it is incomplete. One rule explains all 16 cases (T26–T28).
+    <a href="/blog/completeness-characterization">Why exp(+x) means complete →</a>
+  </p>
 
   <h2>The open problem</h2>
 
@@ -77,15 +87,16 @@ import Base from '../layouts/Base.astro';
   <h2>Research blog</h2>
 
   <ul style="margin: 16px 0 20px 24px; line-height: 2.4;">
+    <li><a href="/blog/completeness-characterization">Why exp(+x) Means Complete: The Structural Theorem</a> <span style="color: #6b7280; font-size: 0.85em;">new</span></li>
+    <li><a href="/blog/superbest-complete">SuperBEST: All Operations Proved Optimal</a></li>
     <li><a href="/blog/infinite-zeros-barrier">The Infinite Zeros Barrier</a></li>
     <li><a href="/blog/near-miss">0.99999524: The Near-Miss</a></li>
     <li><a href="/blog/euler-formula-is-eml">Euler's Formula Is the EML Operator</a></li>
-    <li><a href="/blog/what-best-routing-saves">What BEST Routing Saves</a></li>
-    <li><a href="/blog/auditing-1200-sessions">Auditing 1200 Sessions</a></li>
+    <li><a href="/blog">All 30 posts →</a></li>
   </ul>
 
   <p style="color: #6b7280; font-size: 0.9rem; margin-top: 40px;">
-    Library: <a href="https://monogate.dev">monogate.dev</a> ·
+    28 theorems proved · <a href="/atlas">depth atlas</a> · <a href="https://monogate.dev">monogate.dev</a> ·
     Paper: <a href="https://arxiv.org/abs/2603.21852">arXiv:2603.21852</a> ·
     <a href="https://pypi.org/project/monogate/"><code>pip install monogate</code></a>
   </p>

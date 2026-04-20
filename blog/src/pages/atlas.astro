@@ -1,0 +1,348 @@
+---
+import Base from '../layouts/Base.astro';
+
+// ── DEPTH STRATA ───────────────────────────────────────────────────────────
+const strata = [
+  {
+    depth: '0',
+    name: 'Arithmetic',
+    color: '#64748b',
+    desc: 'Constants and polynomials. No exp or ln required.',
+    entries: [
+      { name: 'Integers, rationals',        cost: '0 nodes', proof: null },
+      { name: 'Polynomials p(x)',            cost: '0 nodes (constants only)', proof: null },
+      { name: 'Arithmetic: +, −, ×, ÷',    cost: 'see SuperBEST table', proof: 'T08' },
+      { name: 'π (as constant terminal)',   cost: '0 nodes', proof: null },
+    ],
+  },
+  {
+    depth: '1',
+    name: 'Exponential',
+    color: '#06b6d4',
+    desc: 'One application of exp or ln. The native depth of EML.',
+    entries: [
+      { name: 'exp(x)',                     cost: '1 node (EML)',  proof: 'T03' },
+      { name: 'exp(−x)',                    cost: '1 node (DEML)', proof: 'T08' },
+      { name: 'sin(x) over ℂ',             cost: '1 node (ceml(ix, 1))', proof: 'T07, T16' },
+      { name: 'cos(x) over ℂ',             cost: '1 node (ceml(ix, 1))', proof: 'T07' },
+      { name: 'softplus(x) = ln(1+eˣ)',    cost: '1 node (LEAd(x,1))', proof: 'T19 (new)' },
+      { name: 'x · y  (multiplication)',    cost: '1 node (ELAd)', proof: 'T22 (new)' },
+      { name: 'x / y  (division)',          cost: '1 node (EDL)',  proof: 'T08' },
+      { name: 'Fourier kernel exp(iωt)',    cost: '1 complex node', proof: 'T16' },
+      { name: 'Laplace kernel exp(−st)',    cost: '1 real node',   proof: 'T16' },
+    ],
+  },
+  {
+    depth: '2',
+    name: 'Logarithmic',
+    color: '#8b5cf6',
+    desc: 'Requires composing exp and ln once. Power functions, reciprocals.',
+    entries: [
+      { name: 'ln(x)',                      cost: '1 node (EXL)', proof: 'T04, T08' },
+      { name: 'neg(x) = −x',               cost: '2 nodes (EXL∘DEML)', proof: 'T09' },
+      { name: 'recip(x) = 1/x',            cost: '2 nodes (EDL)', proof: 'T08' },
+      { name: 'x^n  (integer power)',       cost: '3 nodes (EXL)', proof: 'T08' },
+      { name: 'x^r  (real power)',          cost: '3 nodes',       proof: 'T08' },
+      { name: 'sqrt(x)',                    cost: '2 nodes',       proof: 'T08' },
+      { name: 'add(x,y)  x>0',             cost: '3 nodes (EAL)', proof: 'T11 (new)' },
+      { name: 'sub(x,y)',                   cost: '3 nodes (EML)', proof: 'T11 (new)' },
+      { name: 'mul(x,y)  x>0',             cost: '3 nodes (EXL)', proof: 'T10' },
+      { name: 'abs(x)',                     cost: '4 nodes',       proof: 'T08' },
+      { name: 'Gaussian exp(−x²/2)',        cost: '3 nodes',       proof: 'T08' },
+      { name: 'log-sum-exp (N terms)',       cost: 'N−1 LEAd nodes', proof: 'T19 (new)' },
+      { name: 'softmax denominator (N)',    cost: 'N−1 nodes',     proof: 'T19 (new)' },
+    ],
+  },
+  {
+    depth: '3',
+    name: 'Oscillatory (ℂ path)',
+    color: '#ec4899',
+    desc: 'Requires the complex bypass — sin, cos, trig via Euler. Depth-∞ over ℝ, depth-1 to 3 over ℂ.',
+    entries: [
+      { name: 'sin(x) Taylor, 8 terms',    cost: '101 nodes (real path)', proof: 'T16' },
+      { name: 'Fourier series, N terms',    cost: 'N nodes (complex path)', proof: 'T16' },
+      { name: 'Heat equation mode eᵏᵗ',    cost: '2 nodes',               proof: 'CAL-4' },
+      { name: 'tan(x)',                     cost: '3 complex nodes',        proof: null },
+    ],
+  },
+  {
+    depth: '∞',
+    name: 'Non-constructible (ℝ)',
+    color: '#ef4444',
+    desc: 'Provably unreachable as finite real EML trees. Require either infinite depth or complex domain.',
+    entries: [
+      { name: 'sin(x)  over ℝ',            cost: '∞ (Infinite Zeros Barrier)', proof: 'T01' },
+      { name: 'cos(x)  over ℝ',            cost: '∞',                          proof: 'T01' },
+      { name: 'i = √−1 (strict branch)',   cost: '∞ (nearest: 4.76×10⁻⁶ at depth 6)', proof: 'T17' },
+    ],
+  },
+];
+
+// ── OPERATOR CENSUS ────────────────────────────────────────────────────────
+const operators = [
+  // complete
+  { name: 'EML',   formula: 'exp(x) − ln(y)',        complete: 'exact',  mechanism: 'exp(+x), no restriction' },
+  { name: 'EAL',   formula: 'exp(x) + ln(y)',         complete: 'exact',  mechanism: 'exp(+x), add' },
+  { name: 'EXL',   formula: 'exp(x) · ln(y)',         complete: 'exact',  mechanism: 'exp(+x), mul' },
+  { name: 'EDL',   formula: 'exp(x) / ln(y)',         complete: 'exact',  mechanism: 'exp(+x), div' },
+  { name: 'EPL',   formula: 'exp(x) ^ ln(y)',         complete: 'exact',  mechanism: 'exp(+x), pow' },
+  { name: 'LEAd',  formula: 'ln(exp(x) + y)',         complete: 'exact',  mechanism: 'exp(+x), composition' },
+  { name: 'ELAd',  formula: 'exp(x + ln(y))',         complete: 'exact',  mechanism: 'exp(+x), composition' },
+  { name: 'ELSb',  formula: 'exp(x − ln(y))',         complete: 'exact',  mechanism: 'exp(+x), composition' },
+  // approximate
+  { name: 'EMN',   formula: 'ln(y) − exp(x)',         complete: 'approx', mechanism: '−exp(x) outside: unbounded ↓ but exp residual' },
+  // incomplete
+  { name: 'DEML',  formula: 'exp(−x) − ln(y)',        complete: 'no',     mechanism: 'Slope barrier: self-comp slope = +1' },
+  { name: 'DEMN',  formula: 'ln(y) − exp(−x)',        complete: 'no',     mechanism: 'Domain failure: output always < 0' },
+  { name: 'DEAL',  formula: 'exp(−x) + ln(y)',        complete: 'no',     mechanism: 'Domain collapse: offset e⁻¹ irremovable' },
+  { name: 'DEXL',  formula: 'exp(−x) · ln(y)',        complete: 'no',     mechanism: 'Dead constant: dexl(x,1) ≡ 0' },
+  { name: 'DEDL',  formula: 'exp(−x) / ln(y)',        complete: 'no',     mechanism: 'Decay barrier: outputs → 0' },
+  { name: 'DEPL',  formula: 'exp(−x) ^ ln(y)',        complete: 'no',     mechanism: 'Decay barrier: bounded above by 1' },
+  { name: 'LEX',   formula: 'ln(exp(x) − y)',         complete: 'no',     mechanism: 'Domain barrier: domain → ∅ at depth 2' },
+];
+
+// ── SUPERBEST TABLE ────────────────────────────────────────────────────────
+const superbest = [
+  { op: 'exp(x)',   family: 'EML',      nodes: 1,  naive: 1,  note: 'native' },
+  { op: 'ln(x)',    family: 'EXL',      nodes: 1,  naive: 3,  note: '' },
+  { op: 'neg(x)',   family: 'EXL+DEML', nodes: 2,  naive: 9,  note: 'T09' },
+  { op: 'recip(x)', family: 'EDL',      nodes: 2,  naive: 5,  note: '' },
+  { op: 'sqrt(x)',  family: 'EXL',      nodes: 2,  naive: 7,  note: '' },
+  { op: 'sub(x,y)', family: 'EML',      nodes: 3,  naive: 5,  note: 'T11' },
+  { op: 'add(x,y)', family: 'EAL',      nodes: 3,  naive: 11, note: 'x>0' },
+  { op: 'mul(x,y)', family: 'EXL',      nodes: 3,  naive: 13, note: 'T10' },
+  { op: 'pow(x,n)', family: 'EXL',      nodes: 3,  naive: 15, note: '' },
+  { op: 'div(x,y)', family: 'EDL',      nodes: 1,  naive: 15, note: 'T08' },
+  { op: 'sin(x)',   family: 'ceml (ℂ)', nodes: 1,  naive: 101, note: 'complex, T07' },
+  { op: 'cos(x)',   family: 'ceml (ℂ)', nodes: 1,  naive: 101, note: 'complex, T07' },
+  { op: 'softplus', family: 'LEAd',     nodes: 1,  naive: 3,  note: 'T19' },
+];
+
+const totalSuperbest = superbest.reduce((s,r) => s + r.nodes, 0);
+const totalNaive = superbest.reduce((s,r) => s + r.naive, 0);
+const savings = Math.round((1 - totalSuperbest/totalNaive)*100);
+---
+
+<Base title="EML Atlas — monogate.org" description="Classification of mathematical objects and functions by EML depth and node cost. The complete reference for the exp-ln operator family.">
+
+  <h1>EML Atlas</h1>
+  <p style="color: #6b7280; font-style: italic; margin-bottom: 8px;">
+    Mathematical objects classified by EML depth and operator cost.
+  </p>
+  <p style="color: #4a4d62; font-size: 0.85rem; margin-bottom: 32px;">
+    Last updated: 2026-04-20 · T26–T28 (Exponential Position Theorem) · 16-operator census complete
+  </p>
+
+  <div class="divider"></div>
+
+  <!-- ── DEPTH STRATA ──────────────────────────────────────────────────── -->
+  <h2>Depth Strata</h2>
+  <p style="color: #6b7280; margin-bottom: 24px; font-size: 0.9rem;">
+    EML depth measures how many nested exponentiations a function requires.
+    Depth 0 = no exp/ln. Depth 1 = one application. Depth ∞ = impossible as a finite real tree.
+  </p>
+
+  {strata.map(s => (
+    <section style={`border-left: 3px solid ${s.color}; padding: 0 0 0 20px; margin-bottom: 32px;`}>
+      <div style="display: flex; align-items: baseline; gap: 12px; margin-bottom: 4px;">
+        <span style={`font-family: var(--mono); font-size: 1.4rem; font-weight: 700; color: ${s.color};`}>
+          Depth {s.depth}
+        </span>
+        <span style={`font-size: 1rem; font-weight: 600; color: ${s.color};`}>{s.name}</span>
+      </div>
+      <p style="color: #6b7280; font-size: 0.85rem; margin-bottom: 14px;">{s.desc}</p>
+      <table style="width: 100%; border-collapse: collapse; font-size: 0.82rem;">
+        <thead>
+          <tr style="border-bottom: 1px solid #1c1f2e;">
+            <th style="text-align: left; padding: 4px 8px 6px 0; color: #4a4d62; font-weight: 600; width: 46%;">Object</th>
+            <th style="text-align: left; padding: 4px 8px 6px 8px; color: #4a4d62; font-weight: 600; width: 32%;">Cost</th>
+            <th style="text-align: left; padding: 4px 0 6px 8px; color: #4a4d62; font-weight: 600;">Ref</th>
+          </tr>
+        </thead>
+        <tbody>
+          {s.entries.map(e => (
+            <tr style="border-bottom: 1px solid #0d0f18;">
+              <td style="padding: 5px 8px 5px 0; color: #d4d4d4; font-family: var(--mono); font-size: 0.8rem;">{e.name}</td>
+              <td style={`padding: 5px 8px; color: ${s.color}; font-family: var(--mono); font-size: 0.78rem;`}>{e.cost}</td>
+              <td style="padding: 5px 0 5px 8px; color: #4a4d62; font-size: 0.75rem; font-family: var(--mono);">
+                {e.proof ? <a href="/theorems" style={`color: ${s.color}; opacity: 0.7;`}>{e.proof}</a> : '—'}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+  ))}
+
+  <div class="divider"></div>
+
+  <!-- ── SUPERBEST TABLE ───────────────────────────────────────────────── -->
+  <h2>SuperBEST Routing Table</h2>
+  <p style="color: #6b7280; margin-bottom: 6px; font-size: 0.9rem;">
+    Minimum node counts across the 16-operator family. All entries proved optimal by exhaustive search (T08).
+    Total: <strong style="color: #4ade80;">{totalSuperbest} nodes</strong> vs {totalNaive} naive = <strong style="color: #4ade80;">{savings}% savings</strong>.
+  </p>
+  <p style="color: #4a4d62; font-size: 0.8rem; margin-bottom: 20px;">
+    * sin/cos column compares 1-node complex path vs 101-node real Taylor path
+  </p>
+
+  <table style="width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-bottom: 32px;">
+    <thead>
+      <tr style="border-bottom: 1px solid #252836;">
+        <th style="text-align: left; padding: 6px 8px 8px 0; color: #4a4d62; font-weight: 600;">Operation</th>
+        <th style="text-align: left; padding: 6px 8px; color: #4a4d62; font-weight: 600;">Best family</th>
+        <th style="text-align: right; padding: 6px 8px; color: #4ade80; font-weight: 600;">Nodes</th>
+        <th style="text-align: right; padding: 6px 0 8px 8px; color: #4a4d62; font-weight: 600;">Naive</th>
+      </tr>
+    </thead>
+    <tbody>
+      {superbest.map(r => (
+        <tr style="border-bottom: 1px solid #0d0f18;">
+          <td style="padding: 5px 8px 5px 0; font-family: var(--mono); color: #d4d4d4; font-size: 0.8rem;">{r.op}</td>
+          <td style="padding: 5px 8px; font-family: var(--mono); color: #6ab0f5; font-size: 0.78rem;">{r.family}</td>
+          <td style="padding: 5px 8px; text-align: right; font-family: var(--mono); color: #4ade80; font-weight: 700;">{r.nodes}</td>
+          <td style="padding: 5px 0 5px 8px; text-align: right; font-family: var(--mono); color: #4a4d62;">{r.naive}</td>
+        </tr>
+      ))}
+      <tr style="border-top: 1px solid #252836; font-weight: 700;">
+        <td style="padding: 8px 8px 4px 0; color: #d4d4d4; font-family: var(--mono);" colspan="2">Total</td>
+        <td style="padding: 8px 8px 4px 8px; text-align: right; color: #4ade80; font-family: var(--mono);">{totalSuperbest}</td>
+        <td style="padding: 8px 0 4px 8px; text-align: right; color: #4a4d62; font-family: var(--mono);">{totalNaive}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="divider"></div>
+
+  <!-- ── OPERATOR CENSUS ───────────────────────────────────────────────── -->
+  <h2>16-Operator Census</h2>
+  <p style="color: #6b7280; margin-bottom: 6px; font-size: 0.9rem;">
+    Every binary combination of exp(±x) with ln(y) via arithmetic.
+    Completeness class determined by the position of negation relative to exp (T26–T28).
+  </p>
+  <p style="color: #4a4d62; font-size: 0.8rem; margin-bottom: 20px;">
+    <span style="color: #4ade80;">■</span> Exactly complete (8) ·
+    <span style="color: #fbbf24;">■</span> Approximately complete (1) ·
+    <span style="color: #ef4444;">■</span> Incomplete (7)
+  </p>
+
+  <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-bottom: 32px;">
+    <thead>
+      <tr style="border-bottom: 1px solid #252836;">
+        <th style="text-align: left; padding: 6px 8px 8px 0; color: #4a4d62; font-weight: 600; width: 12%;">Name</th>
+        <th style="text-align: left; padding: 6px 8px; color: #4a4d62; font-weight: 600; width: 28%;">Formula</th>
+        <th style="text-align: left; padding: 6px 8px; color: #4a4d62; font-weight: 600; width: 14%;">Complete?</th>
+        <th style="text-align: left; padding: 6px 0 8px 8px; color: #4a4d62; font-weight: 600;">Why</th>
+      </tr>
+    </thead>
+    <tbody>
+      {operators.map(o => {
+        const c = o.complete === 'exact' ? '#4ade80' : o.complete === 'approx' ? '#fbbf24' : '#ef4444';
+        const label = o.complete === 'exact' ? 'YES' : o.complete === 'approx' ? 'APPROX' : 'NO';
+        return (
+          <tr style="border-bottom: 1px solid #0d0f18;">
+            <td style={`padding: 5px 8px 5px 0; font-family: var(--mono); font-weight: 600; color: ${c}; font-size: 0.78rem;`}>{o.name}</td>
+            <td style="padding: 5px 8px; font-family: var(--mono); color: #6b7280; font-size: 0.75rem;">{o.formula}</td>
+            <td style={`padding: 5px 8px; font-family: var(--mono); font-weight: 700; color: ${c}; font-size: 0.75rem;`}>{label}</td>
+            <td style="padding: 5px 0 5px 8px; color: #4a4d62; font-size: 0.73rem; line-height: 1.4;">{o.mechanism}</td>
+          </tr>
+        );
+      })}
+    </tbody>
+  </table>
+
+  <p style="color: #4a4d62; font-size: 0.82rem; margin-bottom: 32px;">
+    Structural rule: <em style="color: #d4d4d4;">exp(+x) with no domain restriction ↔ exactly complete</em> (T26, T27, T28).
+    See <a href="/blog/completeness-characterization">Why exp(+x) Means Complete →</a>
+  </p>
+
+  <div class="divider"></div>
+
+  <!-- ── SPECIAL FUNCTIONS ─────────────────────────────────────────────── -->
+  <h2>Special Functions — EML Classification</h2>
+  <p style="color: #6b7280; margin-bottom: 20px; font-size: 0.9rem;">
+    Exact depth and cost over ℝ and ℂ for standard special functions.
+  </p>
+
+  <table style="width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-bottom: 32px;">
+    <thead>
+      <tr style="border-bottom: 1px solid #252836;">
+        <th style="text-align: left; padding: 6px 8px 8px 0; color: #4a4d62; font-weight: 600; width: 22%;">Function</th>
+        <th style="text-align: center; padding: 6px 8px; color: #4a4d62; font-weight: 600; width: 14%;">Depth ℝ</th>
+        <th style="text-align: center; padding: 6px 8px; color: #4a4d62; font-weight: 600; width: 14%;">Depth ℂ</th>
+        <th style="text-align: left; padding: 6px 0 8px 8px; color: #4a4d62; font-weight: 600;">Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      {[
+        { fn: 'exp(x)', dr: '1', dc: '1', note: 'Native. eml(x,1).' },
+        { fn: 'exp(−x)', dr: '1', dc: '1', note: 'deml(x,1).' },
+        { fn: 'ln(x)', dr: '2', dc: '2', note: '1 EXL node.' },
+        { fn: 'x^r', dr: '2', dc: '2', note: '3 nodes via EXL.' },
+        { fn: 'neg(x)', dr: '2', dc: '2', note: '2 nodes. T09.' },
+        { fn: 'x + y', dr: '2', dc: '2', note: '3 nodes (EAL, x>0). 11n (general).' },
+        { fn: 'x · y', dr: '2', dc: '2', note: '1 node (ELAd) or 3n (EXL).' },
+        { fn: 'softplus(x)', dr: '2', dc: '2', note: '1 LEAd node. T19.' },
+        { fn: 'sin(x)', dr: '∞', dc: '1', note: 'T01 (ℝ barrier). T07 (ℂ bypass).' },
+        { fn: 'cos(x)', dr: '∞', dc: '1', note: 'T01 (ℝ barrier). T07 (ℂ bypass).' },
+        { fn: 'tan(x)', dr: '∞', dc: '3', note: 'sin/cos ratio.' },
+        { fn: 'sinh(x)', dr: '3', dc: '3', note: '(eˣ − e⁻ˣ)/2: 3 real nodes.' },
+        { fn: 'cosh(x)', dr: '3', dc: '3', note: '(eˣ + e⁻ˣ)/2: 3 real nodes.' },
+        { fn: 'sigmoid σ(x)', dr: '3', dc: '3', note: '1/(1+e⁻ˣ): 2–3 nodes.' },
+        { fn: 'i = √−1', dr: '∞', dc: '∞*', note: 'T17. *Nearest depth-6: gap 4.76×10⁻⁶.' },
+      ].map(r => (
+        <tr style="border-bottom: 1px solid #0d0f18;">
+          <td style="padding: 5px 8px 5px 0; font-family: var(--mono); color: #d4d4d4; font-size: 0.8rem;">{r.fn}</td>
+          <td style="padding: 5px 8px; text-align: center; font-family: var(--mono); color: #8b5cf6; font-size: 0.8rem;">{r.dr}</td>
+          <td style="padding: 5px 8px; text-align: center; font-family: var(--mono); color: #06b6d4; font-size: 0.8rem;">{r.dc}</td>
+          <td style="padding: 5px 0 5px 8px; color: #6b7280; font-size: 0.76rem;">{r.note}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+
+  <div class="divider"></div>
+
+  <!-- ── CALCULUS COSTS ─────────────────────────────────────────────────── -->
+  <h2>Calculus Costs</h2>
+  <p style="color: #6b7280; margin-bottom: 20px; font-size: 0.9rem;">
+    Node counts for standard calculus operations under SuperBEST routing (T08, T25).
+  </p>
+
+  <table style="width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-bottom: 32px;">
+    <thead>
+      <tr style="border-bottom: 1px solid #252836;">
+        <th style="text-align: left; padding: 6px 8px 8px 0; color: #4a4d62; font-weight: 600; width: 36%;">Operation</th>
+        <th style="text-align: left; padding: 6px 8px; color: #4a4d62; font-weight: 600; width: 24%;">Cost</th>
+        <th style="text-align: left; padding: 6px 0 8px 8px; color: #4a4d62; font-weight: 600;">Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      {[
+        { op: 'Taylor series, N terms', cost: '9N − 3 nodes', note: 'T25. sin(x) 8 terms = 69n.' },
+        { op: 'Fourier series, N harmonics', cost: 'N complex nodes', note: 'T16. Each harmonic 1 ceml.' },
+        { op: 'Derivative d/dx [exp(f)]', cost: '+ 0 nodes', note: 'Native: d/dx eml(f,1) = exp(f)·f′.' },
+        { op: 'Gaussian integral ∫e^(−x²)dx', cost: '3 nodes (no elementary antiderivative)', note: 'Depth-2 approx.' },
+        { op: 'Heat equation mode exp(−kt)sin(nx)', cost: '4 nodes', note: '2 real + 2 complex.' },
+        { op: 'U(t) = exp(−iHt) (quantum)', cost: '1 matrix EML node', note: 'Q-3. Exact.' },
+        { op: 'Partition function Z = Tr[exp(−βH)]', cost: '2 matrix nodes', note: 'Q-1. Tr + matrix exp.' },
+        { op: 'Softmax over N logits', cost: 'N − 1 LEAd + N EML nodes', note: 'T19.' },
+      ].map(r => (
+        <tr style="border-bottom: 1px solid #0d0f18;">
+          <td style="padding: 5px 8px 5px 0; font-family: var(--mono); color: #d4d4d4; font-size: 0.78rem;">{r.op}</td>
+          <td style="padding: 5px 8px; color: #a78bfa; font-family: var(--mono); font-size: 0.78rem;">{r.cost}</td>
+          <td style="padding: 5px 0 5px 8px; color: #6b7280; font-size: 0.76rem;">{r.note}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+
+  <div class="divider"></div>
+
+  <p style="color: #4a4d62; font-size: 0.82rem; line-height: 1.9;">
+    <a href="/theorems">Theorem catalog →</a> ·
+    <a href="/blog">Research blog →</a> ·
+    <a href="https://monogate.dev/theorems" target="_blank" rel="noopener noreferrer">Full catalog on monogate.dev ↗</a>
+  </p>
+
+</Base>
