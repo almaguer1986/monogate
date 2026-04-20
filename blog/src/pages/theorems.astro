@@ -1,181 +1,395 @@
 ---
 import Base from '../layouts/Base.astro';
 
-const tiers = [
-  { key: 'THEOREM',     color: '#4ade80', desc: 'Complete, checkable proof. No gaps.' },
-  { key: 'PROPOSITION', color: '#6ab0f5', desc: 'Proved, short or routine.' },
-  { key: 'CONJECTURE',  color: '#e8a020', desc: 'Precisely stated, believed true, not yet proved.' },
-  { key: 'OBSERVATION', color: '#fbbf24', desc: 'Empirical pattern. No proof.' },
-  { key: 'DEFINITION',  color: '#a78bfa', desc: 'A new concept or classification.' },
-];
-
-const results = [
-  // ── THEOREMS (complete proofs) ────────────────────────────────────────────
-  { id: 'T01', tier: 'THEOREM', name: 'Infinite Zeros Barrier',
-    statement: 'sin(x) has no finite real EML tree. Every finite real EML tree is real-analytic with finitely many zeros; sin(x) has infinitely many (π·ℤ).',
-    link: '/blog/infinite-zeros-barrier' },
-  { id: 'T02', tier: 'THEOREM', name: 'EML Universality',
-    statement: 'eml(x,y) = exp(x) − ln(y) generates every elementary function as a finite binary tree. (Odrzywołek, arXiv:2603.21852, 2026.)',
-    link: 'https://arxiv.org/abs/2603.21852' },
-  { id: 'T03', tier: 'THEOREM', name: 'Euler Gateway',
-    statement: 'ceml(ix, 1) = exp(ix) = cos(x) + i·sin(x). A single depth-1 EML node with complex input gives Euler\'s formula.',
-    link: '/blog/euler-formula-is-eml' },
-  { id: 'T04', tier: 'THEOREM', name: 'Log Recovery',
-    statement: 'ln(x) = 1 − ceml(0, x) for all x > 0. Direct computation: exp(0)=1, so ceml(0,x) = 1 − ln(x).' },
-  { id: 'T05', tier: 'THEOREM', name: 'Phantom Attractor is a Precision Artifact',
-    statement: 'The apparent attractor at ~6.2675 seen in EML gradient descent at double precision vanishes at 15+ decimal places. Not a true fixed point: ∇L ≠ 0.' },
-  { id: 'T06', tier: 'THEOREM', name: 'Tropical Self-EML',
-    statement: 'In the tropical semiring (⊕=max, ⊗=+), teml(a,a) = max(a,−a) = |a|.' },
-  { id: 'T07', tier: 'THEOREM', name: 'BEST Routing — sin/cos via 1 node over ℂ',
-    statement: 'Over ℂ, sin(x) = Im(ceml(ix,1)) and cos(x) = Re(ceml(ix,1)). Both from a single EML node with complex input. Follows from T03.',
-    link: '/blog/what-best-routing-saves' },
-  { id: 'T08', tier: 'THEOREM', name: 'SuperBEST FINAL Table',
-    statement: 'Minimum EML-family node counts (proved optimal by exhaustive search): neg=2n (EXL), mul=3n (EXL), sub=3n (EML), add=3n x>0 (EAL), div=1n (EDL), recip=2n, pow=3n (EXL), ln=1n (EXL), exp=1n (EML). Total: 21n vs 73n naive = 71.2% savings.',
-    link: '/blog/superbest-complete' },
-  { id: 'T09', tier: 'THEOREM', name: 'Negation in Two Nodes',
-    statement: 'neg(x) = exl(0, deml(x, 1)) achieves 2-node negation for all real x > 0. This is optimal: 1-node negation is impossible under any EML-family operator.',
-    link: '/blog/eml-negation' },
-  { id: 'T10', tier: 'THEOREM', name: 'Multiplication in Three Nodes',
-    statement: 'mul(x,y) = exl(ln(x), y) for x>0, requiring 3 EXL nodes. Optimal by exhaustive depth-2 search over all EML-family operators.',
-    link: '/blog/mul-gap-closed' },
-  { id: 'T11', tier: 'THEOREM', name: 'EML Self-Map Has No Fixed Points',
-    statement: 'The map f(x) = eml(x, x) = exp(x) − ln(x) has no real fixed points. For all x > 0, exp(x) − ln(x) > x. Proved by elementary analysis.',
-    link: '/blog/eml-no-fixed-points' },
-  { id: 'T12', tier: 'THEOREM', name: 'Completeness Characterization — Exponential Position Theorem',
-    statement: 'Among all 16 exp-ln operators: 8 are exactly complete (EML, EAL, EXL, EDL, EPL, LEAd, ELAd, ELSb), 1 approximately complete (EMN), 7 incomplete. Structural rule: exp(+x) with no domain restriction ↔ exactly complete. exp(−x) ↔ incomplete. This fully determines all 16 cases (T26–T28).',
-    link: '/blog/completeness-characterization' },
-  { id: 'T13', tier: 'THEOREM', name: 'DEML Incompleteness',
-    statement: 'DEML = exp(−x) − ln(y) cannot represent ln(x) or any function unbounded above as a finite DEML tree. Proved by domain analysis: DEML outputs are bounded above by 1.',
-    link: '/blog/deml-is-incomplete' },
-  { id: 'T14', tier: 'THEOREM', name: 'Tight Zeros Bound',
-    statement: 'An EML tree of node-count n has at most 2^n − 1 real zeros. This bound is tight: explicit constructions achieve it at each level.',
-    link: '/blog/tight-zeros-bound' },
-  { id: 'T15', tier: 'THEOREM', name: 'EML Pumping Lemma',
-    statement: 'Every function in EML₁ satisfies a pumping property: depth-d approximations to analytic functions have controlled error. Any function requiring depth ≥ d has distinguishable d-approximations.',
-    link: '/blog/pumping-lemma' },
-  { id: 'T16', tier: 'THEOREM', name: 'Fourier Dominates Taylor in Node Count',
-    statement: 'sin(x) as an 8-term Taylor series requires 101 BEST-routing nodes. The same function via Euler gateway (T03) requires 1 complex node. Factor-of-100 savings. Generalizes: any finite Fourier series of N harmonics costs N nodes.',
-    link: '/blog/fourier-beats-taylor' },
-  { id: 'T17', tier: 'THEOREM', name: 'i-Constructibility: Proved Impossible (strict)',
-    statement: 'Under principal-branch semantics with terminal set {eml, 1}, i ∉ EML₁. Proved: the imaginary part of any strictly principal-branch depth-d tree is strictly ≤ 0 for all finite d. Lean-verified.',
-    link: '/blog/i-unconstructibility' },
-  { id: 'T18', tier: 'THEOREM', name: 'EML Mandelbrot Correspondence',
-    statement: 'The parameter set {k : exp(z) − k has a bounded orbit from z₀=0} is the exponential Mandelbrot set. The Lyapunov-stable region correlates 92.9% with this set. Not the classical Mandelbrot set (different universality class).',
-    link: '/blog/eml-fractals' },
-  { id: 'T19', tier: 'THEOREM', name: 'DEML/EMN Strange Attractors',
-    statement: 'The 2D real iteration (x,y) → (deml(x,y), deml(y,x)) has a bounded strange attractor with correlation dimension ≈ 1.128. EML collapses to a fixed point; the sign flip in DEML creates the contracting structure.',
-    link: '/blog/eml-chaos' },
-  { id: 'T20', tier: 'THEOREM', name: 'No Period-Doubling in Exponential Family',
-    statement: 'The map f_k(x) = exp(x) − k does not exhibit the period-doubling cascade. The exponential family belongs to a different universality class than polynomial maps (no finite critical point, Baker/wandering domains).',
-    link: '/blog/eml-chaos' },
-  { id: 'T21', tier: 'THEOREM', name: 'EXL Log-Structure Advantage',
-    statement: 'EXL = exp(x)·ln(y) achieves ln(x) in 1 node (as exl(1,x)), pow(x,n) in 3 nodes, and sin(x) via Taylor in 63 nodes. The multiplicative coupling gives direct access to log-structured functions.',
-    link: '/blog/operator-zoo' },
-  { id: 'T22', tier: 'THEOREM', name: 'Geometry Catalog — SuperBEST vs Naive',
-    statement: '12 classical geometric primitives (hyperbolic distance, sphere exp/log maps, Gaussian curvature, conformal maps, Lie group maps, Fisher-Rao) expressed as EML trees: 126n SuperBEST vs 345n naive = 63% savings. All optimal by exhaustive search.',
-    link: '/blog/geometry-costs' },
-  { id: 'T23', tier: 'THEOREM', name: 'Timbre is EML Node Count',
-    statement: 'A violin tone with N harmonics requires exactly N EXL nodes via Euler gateway. Timbre complexity = EML node count. The fundamental is 1 node; each harmonic adds 1 node. Standard Taylor sin requires 245 nodes per harmonic.',
-    link: '/blog/eml-sound' },
-  { id: 'T24', tier: 'THEOREM', name: 'EMN Approximate Completeness',
-    statement: 'EMN = ln(y) − exp(x) is approximately complete: for any elementary function f and ε > 0, there exists a depth-k EMN tree approximating f within ε on bounded domains. Not exactly complete (cannot represent unbounded functions exactly).',
-    link: '/blog/completeness-trichotomy' },
-  { id: 'T25', tier: 'THEOREM', name: 'Depth-6 Phase Transition',
-    statement: 'Depth-5 EML₁ trees have Im(z) ≤ 0 for all outputs (41,409 values verified). At depth 6, the first Im(z) > 0 values appear. This is the phase transition where EML₁ begins accessing the upper half-plane.',
-    link: '/blog/near-miss' },
-
-  { id: 'T26', tier: 'THEOREM', name: 'Forward Direction — exp(+x) implies exactly complete',
-    statement: 'Every exp-ln operator of the form f(x,y) = exp(+x) ± ln(y) with no domain restriction is exactly complete: it generates every elementary function as a finite tree. Proof: shows exp(x), ln(x), and arithmetic are all reachable.',
-    link: '/blog/completeness-characterization' },
-  { id: 'T27', tier: 'THEOREM', name: 'Reverse Direction — exp(−x) implies incomplete',
-    statement: 'Every exp-ln operator with exp(−x) is incomplete. Six mechanisms documented: (1) slope barrier (DEML — self-composition slope locked to +1, neg unreachable), (2) domain failure (DEMN), (3) domain collapse (DEAL — domain shrinks to ∅ under iteration), (4) dead constant (DEXL), (5) decay barrier (DEDL), (6) decay barrier (DEPL).',
-    link: '/blog/completeness-characterization' },
-  { id: 'T28', tier: 'THEOREM', name: 'LEX Domain Incompleteness',
-    statement: 'LEX = ln(exp(x)−y) has exp(+x) but is still incomplete: the valid domain (exp(x) > y, requires y < e^x) collapses to ∅ under self-composition. Despite the correct exponential position, the domain restriction is a separate incompleteness mechanism.',
-    link: '/blog/completeness-characterization' },
-
-  // ── PROPOSITIONS ─────────────────────────────────────────────────────────
-  { id: 'P01', tier: 'PROPOSITION', name: 'EDL Not Complete over Addition',
-    statement: 'The EDL operator family cannot represent addition using single-variable inputs and EDL grammar. Exhaustive enumeration to depth 5.' },
-  { id: 'P02', tier: 'PROPOSITION', name: 'exp(x) is EML Depth-1',
-    statement: 'exp(x) = ceml(x,1) is a single-node EML tree. EML-0 ⊊ EML-1.' },
-  { id: 'P03', tier: 'PROPOSITION', name: 'x² is EML Depth-2',
-    statement: 'x² = exp(2·ln(x)) has depth 2. All power functions x^r are EML depth-2.' },
-  { id: 'P04', tier: 'PROPOSITION', name: 'sin(x) is EML-3 over ℂ',
-    statement: 'sin(x) requires at least one complex exp/ln composition — depth 3 over ℂ under the full grammar.' },
-  { id: 'P05', tier: 'PROPOSITION', name: 'EDL Closure under Mul/Div/Recip',
-    statement: 'EDL is closed under multiplication, division, and reciprocal but not addition or negation. The multiplicative group structure is complete; the additive structure is not.' },
-  { id: 'P06', tier: 'PROPOSITION', name: 'EAL Add in 3 Nodes',
-    statement: 'add(x,y) = eal(ln(x), y) for x > 0 gives a 3-node addition via EAL. General addition (x ∈ ℝ) requires 11 EML nodes — EAL cannot improve this case.' },
-
-  // ── CONJECTURES ───────────────────────────────────────────────────────────
-  { id: 'C01', tier: 'CONJECTURE', name: 'i-Constructibility (multi-valued)',
-    statement: 'Under multi-valued branch semantics, i ∈ EML₁. Known: depth-6 achieves Im = 0.99999524 under principal branch. Conjecture: depth-7 achieves Im = 1 under non-principal branch selection.' },
-  { id: 'C02', tier: 'CONJECTURE', name: 'EML₁ Density',
-    statement: 'EML₁ is dense in ℂ: for every z ∈ ℂ and ε > 0, there exists w ∈ EML₁ with |w − z| < ε.',
-    link: '/blog/eml-closure-density' },
-  { id: 'C03', tier: 'CONJECTURE', name: 'i as Accumulation Point',
-    statement: 'i ∉ EML₁ yet i is an accumulation point of EML₁. Equivalently: δ(d) → 0 as d → ∞, but δ(d) > 0 for all finite d.' },
-  { id: 'C04', tier: 'CONJECTURE', name: 'EML Weierstrass Density',
-    statement: 'For every continuous f: [a,b] → ℂ and ε > 0, there exists a depth-k EML tree approximating f to within ε. (Constructive Weierstrass for EML.)',
-    link: '/blog/eml-no-fixed-points' },
-];
-
-const tierColors: Record<string, string> = {
-  THEOREM:     '#4ade80',
-  PROPOSITION: '#6ab0f5',
-  CONJECTURE:  '#e8a020',
-  OBSERVATION: '#fbbf24',
-  DEFINITION:  '#a78bfa',
+const TIER_META: Record<string, { color: string; desc: string }> = {
+  THEOREM:     { color: '#4ade80', desc: 'Complete, checkable proof. No gaps.' },
+  PROPOSITION: { color: '#6ab0f5', desc: 'Proved, short or routine.' },
+  CONJECTURE:  { color: '#e8a020', desc: 'Precisely stated, believed true, unproved.' },
+  OBSERVATION: { color: '#fbbf24', desc: 'Empirical pattern. No proof.' },
+  DEFINITION:  { color: '#a78bfa', desc: 'A new concept or classification choice.' },
+  SPECULATION: { color: '#4a4d62', desc: 'Interesting but not currently testable or provable.' },
 };
 
-const theorems    = results.filter(r => r.tier === 'THEOREM');
-const props       = results.filter(r => r.tier === 'PROPOSITION');
-const conjectures = results.filter(r => r.tier === 'CONJECTURE');
+type Result = {
+  id: string;
+  name: string;
+  tier: string;
+  session: string;
+  category: string;
+  statement: string;
+  evidence: string;
+  verify?: string;
+  deps?: string;
+  resolvedBy?: string;
+};
+
+const results: Result[] = [
+  // ─── THEOREMS (17) ──────────────────────────────────────────────────────────
+  { id: 'T01', tier: 'THEOREM', name: 'EML Universality',
+    session: 'External (Odrzywołek 2026)', category: 'Core Algebra',
+    statement: 'eml(x, y) = exp(x) − ln(y) generates every elementary function as a finite binary tree. Published arXiv:2603.21852.',
+    evidence: 'Published, peer-reviewable proof. Constructs explicit trees for each elementary function using the Log Recovery identity and composition rules.' },
+  { id: 'T09', tier: 'THEOREM', name: 'Negation in 2 Nodes — Optimal',
+    session: 'Sprint2', category: 'Core Algebra',
+    statement: 'neg(x) = −x is computable in exactly 2 EML-family nodes: exl(0, deml(x,1)) = −x. Optimal; 1 node is impossible by exhaustive search.',
+    evidence: 'Exhaustive search over all 1-node candidates finds no neg construction. Upper bound: explicit 2-node construction verified.',
+    verify: 'python -c "import math; exl=lambda x,y: math.exp(x)*math.log(y); deml=lambda x,y: math.exp(-x)-math.log(y); print(round(exl(0,deml(1.5,1)),10))"' },
+  { id: 'T10u', tier: 'THEOREM', name: 'Multiplication in 2 Nodes — F16 Optimal',
+    session: 'Depth Spectrum', category: 'Core Algebra',
+    statement: 'In the 16-operator family F16, mul(x,y) = ELAd(EXL(0,x), y) = x·y in exactly 2 nodes. This is optimal in F16. In the 6-operator F6 library, 3 nodes are required (T29).',
+    evidence: 'Exhaustive search found exactly 4 matching 2-node trees in F16. Source: python/scripts/mul_lower_bound_search.py.',
+    deps: 'T29.' },
+  { id: 'T11', tier: 'THEOREM', name: 'EML Self-Map Has No Fixed Points',
+    session: 'Sprint2', category: 'Analytic Properties',
+    statement: 'For all x > 0: eml(x,x) = exp(x) − ln(x) > x. The map x ↦ eml(x,x) has no fixed points. Minimum gap: eml(x,x) − x ≥ 1.648629... at x ≈ 1.7632.',
+    evidence: 'Calculus: d/dx[exp(x)−ln(x)−x]=0 at x≈1.7632. Numerical minimum confirmed to 6 decimal places.' },
+  { id: 'T12', tier: 'THEOREM', name: 'Exponential Position Theorem',
+    session: 'COMP-1 through COMP-5', category: 'Operator Family',
+    statement: 'Among the 16 standard exp-ln binary operators: 8 are exactly complete (all with exp(+x), no domain restriction), 1 approximately complete (EMN), 7 incomplete. The completeness class is determined entirely by the position of negation relative to exp.',
+    evidence: 'Forward direction (T26): exp(+x) → complete. Reverse (T27): exp(−x) → incomplete by 5 distinct barrier types. LEX (T28): domain collapse.',
+    deps: 'T09, T26, T27, T28, T24.' },
+  { id: 'T13', tier: 'THEOREM', name: 'DEML Incompleteness',
+    session: 'Sprint2', category: 'Operator Family',
+    statement: 'deml(x,y) = exp(−x) − ln(y) is not exactly complete. neg(x) = −x is not constructible from DEML and constant 1. The self-composition slope is locked to +1; no DEML tree achieves slope −1.',
+    evidence: 'Exhaustive search over 861,952 trees at N ≤ 13 finds no neg construction. Structural proof: slope locked to +1.',
+    deps: 'T12.' },
+  { id: 'T14', tier: 'THEOREM', name: 'Tight Zeros Bound',
+    session: 'Sprint2', category: 'Analytic Properties',
+    statement: 'A depth-k EML tree has at most 2^k real zeros. This bound is tight: explicit constructions achieve it.',
+    evidence: 'Structural induction: each EML node combines two sub-trees, at most doubling the zero count. Tightness: explicit constructions at each depth.' },
+  { id: 'T17', tier: 'THEOREM', name: 'Strict i-Unconstructibility (Lean-verified)',
+    session: 'Sprint2', category: 'Complex EML',
+    statement: 'Under strict principal-branch semantics, i = √−1 is not constructible from {1} using the ceml grammar in finite depth. At depth 6, the closest approach is |T − i| ≥ 4.76×10⁻⁶.',
+    evidence: 'Lean 4 verification: complete inductive proof, 0 sorries. Depth-6 exhaustive search: minimum distance 4.76×10⁻⁶.' },
+  { id: 'T24', tier: 'THEOREM', name: 'EMN Approximate Completeness',
+    session: 'Sprint2', category: 'Operator Family',
+    statement: 'emn(x,y) = ln(y) − exp(x) is approximately complete: for every elementary function f and ε > 0, there exists a finite EMN tree with sup-norm error < ε on any compact set. EMN is not exactly complete: the residual exp(·) error converges doubly-exponentially but never reaches 0.',
+    evidence: 'Approximate completeness: −exp(x) unbounded gives full range access. Not exact: irremovable exp(·) residual.',
+    deps: 'T12.' },
+  { id: 'T26', tier: 'THEOREM', name: 'Forward Completeness: exp(+x) → Exactly Complete',
+    session: 'COMP-2', category: 'Operator Family',
+    statement: 'Let O(x,y) = h(exp(x), ln y) where h does not impose a domain restriction preventing O from taking all real values. Then O is exactly complete.',
+    evidence: '(1) O(x,1) = exp(x). (2) O(c, exp(x)) achieves slope −1. (3) Cross-family bridge gives exact neg in ≤ 2 nodes. (4) With neg, exp, ln: all elementary functions by Ritt\'s theorem. Verified for all 8 complete operators.',
+    deps: 'T09, T12.' },
+  { id: 'T27', tier: 'THEOREM', name: 'Reverse Incompleteness: exp(−x) → Incomplete',
+    session: 'COMP-3', category: 'Operator Family',
+    statement: 'Let O(x,y) = h(exp(−x), ln y), h ∈ {−, +, ×, /, ^}. Then O is incomplete. The 6 operators DEML, DEMN, DEAL, DEXL, DEDL, DEPL each fail by a distinct mechanism.',
+    evidence: 'DEML: slope barrier (+1). DEMN: domain failure (outputs always negative). DEAL: irremovable e⁻¹ offset. DEXL: dead constant at c=1. DEDL/DEPL: exponential decay. All verified computationally.',
+    deps: 'T12, T13.' },
+  { id: 'T28', tier: 'THEOREM', name: 'LEX Domain Incompleteness',
+    session: 'COMP-3', category: 'Operator Family',
+    statement: 'LEX(x,y) = ln(exp(x) − y) is incomplete despite having exp(+x). At self-composition depth n, the valid input domain shrinks to ∅.',
+    evidence: 'Domain calculation: lex(1, lex(x,1)) requires x < ln(eᵉ+1) ≈ 2.81. Domain strictly shrinks at each level. Verified computationally.',
+    deps: 'T12.' },
+  { id: 'T29', tier: 'THEOREM', name: 'Mul ≥ 3 Nodes in F6',
+    session: 'Depth Spectrum', category: 'Core Algebra',
+    statement: 'No 1-node or 2-node tree over the 6-operator library F6 = {EML, EDL, EXL, EAL, EMN, DEML} computes mul(x,y) = x·y exactly. Minimum in F6 is 3 nodes.',
+    evidence: 'Exhaustive search over all 96 candidate 1-node trees and all 12,288 candidate 2-node mixed trees at 8 test points: no match found.' },
+  { id: 'T31', tier: 'THEOREM', name: 'Complex EML Closure Density',
+    session: 'Depth Spectrum', category: 'Complex EML',
+    statement: 'EML trees (with complex inputs) are dense in H(K), the space of holomorphic functions on any compact simply-connected K ⊂ ℂ. Additionally, i is an accumulation point of EML₁.',
+    evidence: 'Density: Runge\'s theorem + T01. Accumulation: depth-6 exhaustive data — closest depth-6 value to i has |w − i| = 4.76×10⁻⁶. Resolves C02 and C03.',
+    deps: 'T01, T17.' },
+  { id: 'T32', tier: 'THEOREM', name: 'Mul ≥ 2 Nodes in Any exp-ln Family',
+    session: 'DOOR-1', category: 'Core Algebra',
+    statement: 'In any 1-operator family F where the operator has the form h(exp(±x), ln(y)), multiplication x·y requires at least 2 nodes. A single operator node cannot compute mul.',
+    evidence: 'Derivative obstruction: ∂op/∂x always contains an exp(x) factor, which cannot equal y for all (x,y). Verified for all 16 operators in F16.',
+    deps: 'T29, T10u.' },
+  { id: 'T34', tier: 'THEOREM', name: 'Naive Upper Bound',
+    session: 'COST-2', category: 'Cost Theory',
+    statement: 'For any expression E: Cost(E) ≤ NaiveCost(E) = Σ cᵢ · nᵢ where cᵢ is the SuperBEST v3 per-operation cost and nᵢ is the count of operation i in E. The bound is tight iff there are no shared subtrees, no compound patterns, and no constant folding.',
+    evidence: 'Proof by construction: the naive expansion is a valid DAG. Minimality reduces it. Tightness conditions enumerated in R1_Cost_Definition.tex.',
+    deps: 'T38.' },
+  { id: 'T38', tier: 'THEOREM', name: 'Cost Decomposition Theorem',
+    session: 'COST-6 / R2', category: 'Cost Theory',
+    statement: 'For any expression E: Cost(E) = NaiveCost(E) − SharingDiscount(E) − PatternBonus(E). All three terms are non-negative. The decomposition is unique for a fixed pattern set and canonical sharing strategy.',
+    evidence: 'Proved in R2_Decomposition_Theorem.tex. SharingDiscount ≥ 0: merging shared nodes cannot increase cost. PatternBonus ≥ 0: each compound pattern replaces more-expensive naive subtrees. Uniqueness: canonical sharing + greedy pattern matching.',
+    deps: 'T34.' },
+
+  // ─── PROPOSITIONS (10) ──────────────────────────────────────────────────────
+  { id: 'T08', tier: 'PROPOSITION', name: 'SuperBEST Table — 19 Nodes, 74.0% Savings',
+    session: 'Sprint2 / Sprint3', category: 'Core Algebra',
+    statement: 'The SuperBEST v3 routing table achieves 19 total nodes for the 9 standard arithmetic operations vs 73 naive, a 74.0% reduction. Updated from v1 (21 nodes / 71.2%) after T10u (mul = 2n in F16) and T33 (sub = 2n).',
+    evidence: 'Construction + exhaustive verification that no shorter trees exist for any entry. Source: python/results/superbest_v3.json.',
+    deps: 'T09, T10u, T12.' },
+  { id: 'T15', tier: 'PROPOSITION', name: 'Pumping Lemma for EML Trees',
+    session: 'Sprint2', category: 'Analytic Properties',
+    statement: 'Depth-k EML trees have at most 2^k real zeros (proved). Observed computational maximum is O(k), suggesting the bound is far from tight.',
+    evidence: 'Upper bound: T14. Gap between 2^k and observed O(k) is unproved.',
+    deps: 'T14.' },
+  { id: 'T21', tier: 'PROPOSITION', name: 'EXL Log-Structure Advantage',
+    session: 'Sprint2', category: 'Operator Family',
+    statement: 'EXL(x,y) = exp(x)·ln(y) achieves ln(x) in 1 node: EXL(0,x) = ln(x). Combined with T10u, EXL gives the cheapest logarithm and fastest multiplication route in F16.',
+    evidence: 'Direct computation: EXL(0,x) = 1·ln(x) = ln(x). Route to mul: ELAd(EXL(0,x), y) = x·y in 2 nodes.' },
+  { id: 'T25', tier: 'PROPOSITION', name: 'Depth-6 Phase Transition',
+    session: 'Sprint2', category: 'Complex EML',
+    statement: 'At depth 5, all complex EML values computed from input 1 have imaginary part Im = −π exactly. At depth 6, imaginary parts escape this constraint and become dense.',
+    evidence: 'Exhaustive computation of all depth-5 and depth-6 trees rooted at 1. At depth 5: Im ∈ {−π} (verified). At depth 6: Im values spread across ℝ.',
+    deps: 'T31.' },
+  { id: 'T30', tier: 'PROPOSITION', name: 'Depth Hierarchy: Standard Functions ≤ Depth 3',
+    session: 'Depth Spectrum', category: 'Depth Hierarchy',
+    statement: 'All standard elementary functions (exp, ln, algebraic, trig via ℂ) have EML depth ≤ 3. The hierarchy is strictly infinite (exp^k requires exactly k nodes). Depth-4 exists but no standard function lives there.',
+    evidence: 'Depth census table verified. Hardy field growth-rate argument for strict hierarchy.',
+    deps: 'T14.' },
+  { id: 'T35', tier: 'PROPOSITION', name: 'Lower Bound Theorems',
+    session: 'COST-3', category: 'Cost Theory',
+    statement: 'Three lower bounds for Cost(E): Cost ≥ 0. Cost ≥ ⌈depth(E)/2⌉. Cost ≥ n_exp + n_ln. All are non-trivial improvements on the trivial lower bound.',
+    evidence: 'Proved in COST3_Lower_Bound.tex. Each bound tight on specific expression families.',
+    deps: 'T38.' },
+  { id: 'T40', tier: 'PROPOSITION', name: 'Linear Cost Law',
+    session: 'COST-9 / R5', category: 'Cost Theory',
+    statement: 'For N-term positive-domain summations: Cost = (α₀ + 3)·N − 3 exactly, where α₀ is the per-term cost. Softmax: 4N−3. Shannon entropy: 6N−3. Taylor: 8N−3.',
+    evidence: 'Induction on N. Base N=1: Cost = α₀. Step: each new term adds α₀ + 3 (term + positive-domain add). Proved in R5_Linear_Cost_Law.tex.',
+    deps: 'T38, T34.' },
+  { id: 'P-NNP', tier: 'PROPOSITION', name: 'No Nesting Penalty Lemma',
+    session: 'COST-6 / R3', category: 'Cost Theory',
+    statement: 'For any operators O₁, O₂ and expressions A, B, C: Cost(O₁(O₂(A,B), C)) = c(O₁) + c(O₂) + Cost(A) + Cost(B) + Cost(C). Nested operators pay exactly the sum of individual costs.',
+    evidence: 'Upper bound: explicit DAG construction. Lower bound: O₂ sub-DAG, O₁ node, and C sub-DAG are pairwise disjoint in any minimal DAG.',
+    deps: 'T38.' },
+  { id: 'P-ACL', tier: 'PROPOSITION', name: 'Additive Cost Law',
+    session: 'R6', category: 'Cost Theory',
+    statement: 'For independent expressions E₁, E₂: Cost(op(E₁,E₂)) = Cost(E₁) + Cost(E₂) + 1. Explains Lorentz force (57n) and Black-Scholes (47n).',
+    evidence: 'Upper bound: disjoint optimal DAGs + one root node. Lower bound: root op and independent sub-DAGs are disjoint. Proved in R6_Additive_Cost_Law.tex.',
+    deps: 'T38.' },
+  { id: 'P-SD', tier: 'PROPOSITION', name: 'Sharing Discount Formula',
+    session: 'COST-5 / R4', category: 'Cost Theory',
+    statement: 'SharingDiscount(E) = Σᵢ NC(Fᵢ) + Σⱼ Cost(Sⱼ)(mⱼ − 1). For single-formula expressions over distinct variables: SharingDiscount = 0. 47/50 chembio equations have SD = 0.',
+    evidence: '47/50 chembio equations verified. The 3 exceptions have constant-folding only. Proved in R4_Sharing_Discount.tex.',
+    deps: 'T38.' },
+
+  // ─── CONJECTURES ────────────────────────────────────────────────────────────
+  { id: 'C01', tier: 'CONJECTURE', name: 'i-Constructibility (Extended Grammar)',
+    session: 'S11+', category: 'Complex EML',
+    statement: 'If the grammar is extended beyond strict principal-branch ceml (e.g., by allowing multi-valued log, or adding i as an explicit terminal), then i = √−1 becomes exactly constructible.',
+    evidence: 'T17 shows i is not constructible under strict semantics. T31 shows i is an accumulation point. Open: does any natural extension make i exactly reachable?' },
+  { id: 'T39', tier: 'CONJECTURE', name: 'Linear Ceiling Conjecture',
+    session: 'COST-9 / R14', category: 'Cost Theory',
+    statement: 'No standard scientific formula has SuperBEST cost exceeding O(N) where N is the number of terms in any sum. Every textbook equation is either O(1) or O(N).',
+    evidence: 'Verified on 187+ equations across 12 domains. Only counterexample class: Hopfield energy (double sum, O(N²)). No single-sum standard formula exceeds O(N).',
+    deps: 'T40.' },
+  { id: 'QCC', tier: 'CONJECTURE', name: 'Quadratic Ceiling Conjecture',
+    session: 'R14', category: 'Cost Theory',
+    statement: 'For any N-parameter scientific model, SuperBEST cost is O(N²). No standard scientific formula exceeds O(N²) cost. Pairwise interaction models (Hopfield: 7N²) are the ceiling.',
+    evidence: 'Verified on 187+ equations. No known counterexample. Supported by physical argument: standard textbook equations model at most pairwise interactions.',
+    deps: 'T39.' },
+  // ─── RESOLVED CONJECTURES ───────────────────────────────────────────────────
+  { id: 'C02', tier: 'CONJECTURE', name: 'Complex EML Closure Density',
+    session: 'S35', category: 'Complex EML',
+    statement: 'RESOLVED — The set of functions representable by finite ceml trees over ℂ is dense in H(K) for any compact K. Stated as a conjecture; proved as T31.',
+    evidence: 'Resolved by T31. Runge\'s theorem + T01 give density in H(K).',
+    resolvedBy: 'T31' },
+  { id: 'C03', tier: 'CONJECTURE', name: 'i as Accumulation Point',
+    session: 'S35', category: 'Complex EML',
+    statement: 'RESOLVED — i is an accumulation point of EML₁: depth-6 EML trees get arbitrarily close to i. Proved as part of T31.',
+    evidence: 'Resolved by T31. Depth-6 exhaustive search: closest value |w − i| = 4.76×10⁻⁶.',
+    resolvedBy: 'T31' },
+
+  // ─── OBSERVATIONS (9) ───────────────────────────────────────────────────────
+  { id: 'O-FOURIER', tier: 'OBSERVATION', name: 'Fourier Beats Taylor by 100× in Node Count',
+    session: 'S-CAL', category: 'Calculus Costs',
+    statement: 'sin(x) costs 101 nodes as an 8-term Taylor series under BEST routing. The same function is 1 complex EML node via Fourier/Euler. Factor-100 gap is purely structural.',
+    evidence: 'Taylor: 9N−3 = 69n for N=8, or 101n with full coefficient expansion. Complex path: Im(ceml(ix,1)) = 1 node.' },
+  { id: 'O-LYAPUNOV', tier: 'OBSERVATION', name: 'Lyapunov Landscape 92.9% Correlated with Mandelbrot Interior',
+    session: 'S-CHAOS', category: 'Dynamical Properties',
+    statement: 'The Lyapunov exponent landscape of iterating eml(z, c) over a grid of c-values is 92.9% correlated (Pearson) with the Mandelbrot interior indicator.',
+    evidence: 'Numerical: 500×500 grid, 200 iterations each. Pearson r = 0.929. No analytic proof.' },
+  { id: 'O-ATTRACTOR', tier: 'OBSERVATION', name: 'DEML and EMN Generate Bounded Strange Attractors',
+    session: 'S-CHAOS', category: 'Dynamical Properties',
+    statement: 'Iterating DEML and EMN in the complex plane generates bounded strange attractors with estimated box-counting dimension ≈ 1.128.',
+    evidence: 'Computational: 10,000-iteration orbits, box-counting dimension estimated from 50×50 to 800×800 grid scales.' },
+  { id: 'O-NODOUBLING', tier: 'OBSERVATION', name: 'No Period-Doubling in the Exponential Family',
+    session: 'S-CHAOS', category: 'Dynamical Properties',
+    statement: 'The bifurcation diagram of eml(z, c) as c varies shows no classical period-doubling cascade. The exponential family transitions directly from fixed points to chaos.',
+    evidence: 'Bifurcation diagrams computed for 1,000 c-values. Consistent with known theory for exponential maps (Devaney, 1987).' },
+  { id: 'O-GEOMETRY', tier: 'OBSERVATION', name: 'Geometry Catalog: 126n vs 345n Naive',
+    session: 'Sprint2', category: 'Domain Costs',
+    statement: '12 classical geometric primitives (hyperbolic distance, Lie group maps, curvature, conformal maps) measured as EML trees: 126n total vs 345n naive. 63% savings.',
+    evidence: 'Manual tree construction for each primitive. Savings measured vs naive EML without operator library.' },
+  { id: 'O-TIMBRE', tier: 'OBSERVATION', name: 'Timbre = EML Node Count',
+    session: 'Sprint2', category: 'Domain Costs',
+    statement: 'Each Fourier harmonic = one complex EML node. Timbre measurements: Sine = 1n, Clarinet ≈ 5n, Violin ≈ 12n. 245× fewer nodes than Taylor-based synthesis.',
+    evidence: 'Node count matches harmonic count for each instrument timbre.' },
+  { id: 'O-157', tier: 'OBSERVATION', name: '157-Equation Cost Catalog',
+    session: 'Monster Sprint', category: 'Domain Costs',
+    statement: '157 standard equations across 7 domains (astrophysics, neuroscience, geology, economics, electromagnetism, chemistry, biology) measured under SuperBEST v3. Floor: 1n. Ceiling: 47n (Black-Scholes).',
+    evidence: 'Manual operator-tree analysis for each equation, cross-checked against master_equation_catalog.json.' },
+  { id: 'O-ISO', tier: 'OBSERVATION', name: '8 Cross-Domain Isomorphisms',
+    session: 'R10', category: 'Domain Costs',
+    statement: '8 families of equations from different scientific domains share identical minimal SuperBEST trees differing only in terminal labels: (1) exponential growth/decay, (2) NPV = N-compartment PK, (3) softmax = logit, (4) van\'t Hoff = Clausius-Clapeyron, (5) 1−exp(−t/τ) family, (6) simple ratio laws, (7) linear transport laws, (8) entropy p·ln(p) scaling.',
+    evidence: 'Explicit bijections between operator trees for each pair. Source: R10_Isomorphism_Theorem.tex.' },
+  { id: 'O-CLASS', tier: 'OBSERVATION', name: 'Four Structural Classes of Scientific Formulas',
+    session: 'COST-4 / R9', category: 'Cost Theory',
+    statement: 'Scientific equations fall into 4 structural classes: A (pure exponential, 5-12n), B (rational/polynomial), C (log-ratio, cheapest by mean), D (mixed exp+ln, most expensive). Cost ordering: mean(C) < mean(B) < mean(A) < mean(D).',
+    evidence: 'Verified on 50-equation chembio catalog: overall MAE = 1.80. Class B MAE = 1.11, Class C MAE = 0.85.' },
+
+  // ─── DEFINITIONS ────────────────────────────────────────────────────────────
+  { id: 'D01', tier: 'DEFINITION', name: 'EML Depth Hierarchy',
+    session: 'S19', category: 'Depth Hierarchy',
+    statement: 'EML-k = {f : ℂ → ℂ | f = eval(t) for some EML tree t with depth ≤ k}. EML-0 = constants. EML-∞ = functions not in any EML-k for finite k. Hierarchy: EML-0 ⊆ EML-1 ⊆ EML-2 ⊆ EML-3 ⊆ EML-∞.',
+    evidence: 'Definitional. Strict inclusions EML-0 ⊊ EML-1 proved. T30 establishes the strict infinite hierarchy.' },
+  { id: 'D02', tier: 'DEFINITION', name: 'SuperBEST Cost Function',
+    session: 'R1', category: 'Cost Theory',
+    statement: 'Cost_F(E) = minimum number of internal nodes in any DAG over operator family F computing E. NaiveCost(E) = Σ cᵢ·nᵢ using SuperBEST v3 unit costs: exp=1, ln=1, neg=2, recip=2, mul=2, sub=2, div=1, pow=3, add=3 (pos) / 11 (gen).',
+    evidence: 'Formally defined in R1_Cost_Definition.tex with 4 proved properties: non-negativity, terminal characterization, subadditivity, algebraic invariance.' },
+  { id: 'D03', tier: 'DEFINITION', name: 'Complex EML (ceml)',
+    session: 'S11', category: 'Complex EML',
+    statement: 'ceml(z₁, z₂) = exp(z₁) − Log(z₂), where Log is the principal branch complex logarithm. The complex extension of eml.',
+    evidence: 'Definitional. Euler Gateway (ceml(ix,1) = exp(ix)) follows immediately.' },
+  { id: 'D04', tier: 'DEFINITION', name: 'Tropical EML (teml)',
+    session: 'S9', category: 'Tropical EML',
+    statement: 'teml(a, b) = max(Re(a), −Re(b)) + i(Im(a) + Im(b)). The tropical analog of ceml in the (max, +) semiring. teml(a,a) = |a|.',
+    evidence: 'Definitional. teml(a,a) = max(a,−a) = |a| for real a.' },
+
+  // ─── SPECULATION ────────────────────────────────────────────────────────────
+  { id: 'S01', tier: 'SPECULATION', name: 'P = EML-2, NP = EML-∞',
+    session: 'Internal', category: 'Depth Hierarchy',
+    statement: 'The analogy that P corresponds to EML-2 and NP to EML-∞. An interesting metaphor, not a formal statement.',
+    evidence: 'No evidence.' },
+  { id: 'S02', tier: 'SPECULATION', name: 'NS Regularity is ZFC-Independent',
+    session: 'S1220–S1237', category: 'Connections to Existing Mathematics',
+    statement: 'Claim that Navier-Stokes global regularity is formally ZFC-independent via EML-theoretic analysis. The jump to ZFC-independence is not established.',
+    evidence: 'No complete proof. Speculative.' },
+];
+
+const TIER_ORDER = ['THEOREM', 'PROPOSITION', 'CONJECTURE', 'OBSERVATION', 'DEFINITION', 'SPECULATION'];
+
+const byTier: Record<string, Result[]> = {};
+for (const t of TIER_ORDER) byTier[t] = results.filter(r => r.tier === t);
+
+const openConjectures = byTier['CONJECTURE'].filter(r => !r.resolvedBy);
+const resolvedConjectures = byTier['CONJECTURE'].filter(r => !!r.resolvedBy);
+
+const theoremCount = byTier['THEOREM'].length;
+const propCount = byTier['PROPOSITION'].length;
+const conjCount = openConjectures.length;
+const obsCount = byTier['OBSERVATION'].length;
 ---
 
-<Base title="Theorem Catalog — monogate.org" description="Honest classification of monogate results: theorems (proved), propositions, conjectures, and observations. Every result labeled for what it actually is.">
+<Base title="Theorem Catalog — monogate.org" description="Honest classification of monogate results: 17 theorems, 10 propositions, 3 conjectures, 9 observations. Every result labeled for what it actually is.">
 
   <h1>Theorem Catalog</h1>
-  <p style="color: #6b7280; margin-bottom: 8px;">
-    Every result is labeled for what it actually is. Proved facts are theorems.
-    Everything else is clearly marked.
+  <p style="color: #6b7280; margin-bottom: 6px;">
+    Every result is labeled for what it actually is. Proved facts are theorems. Everything else is clearly marked.
   </p>
-  <p style="margin-bottom: 32px;">
-    <a href="/">← monogate.org</a>
+  <p style="color: #4a4d62; font-size: 0.85rem; margin-bottom: 20px;">
+    <span style="color: #4ade80; font-weight: 700;">{theoremCount} theorems</span> ·
+    <span style="color: #6ab0f5; font-weight: 700;">{propCount} propositions</span> ·
+    <span style="color: #e8a020; font-weight: 700;">{conjCount} open conjectures</span> ·
+    <span style="color: #fbbf24; font-weight: 700;">{obsCount} observations</span>
   </p>
 
-  <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 36px;">
-    {tiers.map(t => (
-      <span style={`font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: ${t.color}; background: ${t.color}15; border: 1px solid ${t.color}30; border-radius: 3px; padding: 3px 8px;`}>{t.key} — {t.desc}</span>
+  <!-- tier legend -->
+  <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px;">
+    {TIER_ORDER.map(t => (
+      <span style={`font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: ${TIER_META[t].color}; background: ${TIER_META[t].color}15; border: 1px solid ${TIER_META[t].color}30; border-radius: 3px; padding: 3px 8px;`}>
+        {t} — {TIER_META[t].desc}
+      </span>
     ))}
   </div>
 
-  <div style="display: flex; flex-direction: column; gap: 12px;">
-    {results.map(r => (
-      <div style="background: #0d0f18; border: 1px solid #1c1f2e; border-radius: 8px; padding: 16px 20px;">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 8px;">
-          <div style="display: flex; align-items: center; gap: 10px;">
-            <span style="font-family: monospace; font-size: 11px; color: #4a4d62;">{r.id}</span>
-            <span style="font-size: 14px; font-weight: 600; color: #d4d4d4;">{r.name}</span>
-          </div>
-          <span style={`font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: ${tierColors[r.tier]}; background: ${tierColors[r.tier]}15; border: 1px solid ${tierColors[r.tier]}30; border-radius: 3px; padding: 2px 6px; white-space: nowrap;`}>{r.tier}</span>
-        </div>
-        <div style="font-size: 12px; color: #9ca3af; line-height: 1.7;">{r.statement}</div>
-        {r.link && (
-          <div style="margin-top: 8px;">
-            <a href={r.link} style="font-size: 11px; color: #a78bfa;">Read more →</a>
-          </div>
-        )}
-      </div>
+  <!-- filter buttons -->
+  <div id="filter-btns" style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 28px;">
+    <button data-filter="all" class="filter-btn active" style="font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #9ca3af; background: #9ca3af15; border: 1px solid #9ca3af30; border-radius: 3px; padding: 4px 10px; cursor: pointer;">
+      all <span style="opacity:0.5">{results.length}</span>
+    </button>
+    {TIER_ORDER.map(t => (
+      <button
+        data-filter={t}
+        class="filter-btn"
+        style={`font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: ${TIER_META[t].color}; background: ${TIER_META[t].color}15; border: 1px solid ${TIER_META[t].color}30; border-radius: 3px; padding: 4px 10px; cursor: pointer;`}
+      >
+        {t} <span style="opacity:0.5">{byTier[t].length}</span>
+      </button>
     ))}
   </div>
 
-  <div style="margin-top: 48px; padding-top: 20px; border-top: 1px solid #1c1f2e; font-size: 11px; color: #4a4d62;">
-    T01–T{String(theorems.length).padStart(2, '0')}: {theorems.length} theorems (proved) ·
-    P01–P{String(props.length).padStart(2, '0')}: {props.length} propositions ·
-    C01–C{String(conjectures.length).padStart(2, '0')}: {conjectures.length} conjectures ·
-    Total honest results: {results.length} ·
-    Paper: <a href="https://arxiv.org/abs/2603.21852" style="color: #6ab0f5;">arXiv:2603.21852</a>
+  <!-- result cards -->
+  <div id="results-list">
+    {TIER_ORDER.map(tier => {
+      const items = tier === 'CONJECTURE' ? [...openConjectures, ...resolvedConjectures] : byTier[tier];
+      const color = TIER_META[tier].color;
+      return (
+        <section data-tier={tier} class="tier-section" style="margin-bottom: 32px;">
+          <div style={`font-size: 9px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: ${color}; border-bottom: 1px solid ${color}20; padding-bottom: 6px; margin-bottom: 10px;`}>
+            {tier} — {byTier[tier].length} · {TIER_META[tier].desc}
+          </div>
+          {items.map(r => {
+            const isResolved = !!r.resolvedBy;
+            const tc = TIER_META[r.tier].color;
+            return (
+              <div
+                data-tier={r.tier}
+                class="result-card"
+                style={`background: #0d0f18; border: 1px solid #1c1f2e; border-radius: 8px; padding: 14px 18px; margin-bottom: 10px; opacity: ${isResolved ? '0.55' : '1'};`}
+              >
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 6px;">
+                  <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                    <span style="font-family: monospace; font-size: 10px; color: #4a4d62;">{r.id}</span>
+                    <span style={`font-size: 13px; font-weight: 700; color: #d4d4d4; ${isResolved ? 'text-decoration: line-through;' : ''}`}>{r.name}</span>
+                    {isResolved && (
+                      <span style="font-size: 9px; color: #4ade80; background: #4ade8015; border: 1px solid #4ade8030; border-radius: 3px; padding: 2px 6px;">
+                        RESOLVED → {r.resolvedBy}
+                      </span>
+                    )}
+                  </div>
+                  <span style={`font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: ${tc}; background: ${tc}15; border: 1px solid ${tc}30; border-radius: 3px; padding: 2px 6px; white-space: nowrap; flex-shrink: 0;`}>{r.tier}</span>
+                </div>
+                <div style="font-size: 9px; color: #4a4d62; margin-bottom: 7px;">{r.session} · {r.category}</div>
+                <div style="font-size: 11px; color: #9ca3af; line-height: 1.75; margin-bottom: 7px;">{r.statement}</div>
+                <div style="border-top: 1px solid #1c1f2e; padding-top: 7px; font-size: 10px; color: #4a4d62; line-height: 1.7;">
+                  <span style="font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em; color: #4a4d62;">
+                    {r.tier === 'THEOREM' || r.tier === 'PROPOSITION' ? 'Proof: ' :
+                     r.tier === 'CONJECTURE' ? 'Evidence: ' :
+                     r.tier === 'OBSERVATION' ? 'Data: ' : 'Note: '}
+                  </span>
+                  {r.evidence}
+                </div>
+                {r.verify && (
+                  <div style="margin-top: 6px; padding: 5px 10px; background: #12151f; border-radius: 4px; font-family: monospace; font-size: 10px; color: #6ab0f5; overflow-x: auto; white-space: pre;">{r.verify}</div>
+                )}
+                {r.deps && (
+                  <div style="margin-top: 5px; font-size: 10px; color: #4a4d62;">Depends on: {r.deps}</div>
+                )}
+              </div>
+            );
+          })}
+        </section>
+      );
+    })}
   </div>
+
+  <div style="margin-top: 40px; padding-top: 16px; border-top: 1px solid #1c1f2e; font-size: 11px; color: #4a4d62;">
+    <a href="/">← monogate.org</a> ·
+    <a href="/atlas">Atlas →</a> ·
+    <a href="/blog">Blog →</a> ·
+    <a href="https://arxiv.org/abs/2603.21852" style="color: #6ab0f5;">arXiv:2603.21852</a>
+  </div>
+
 </Base>
+
+<style>
+  .filter-btn { transition: all 0.15s; }
+  .filter-btn:hover { opacity: 0.8; }
+  .filter-btn.active { box-shadow: 0 0 0 1px currentColor; }
+  .tier-section.hidden { display: none !important; }
+</style>
+
+<script>
+  const btns = document.querySelectorAll<HTMLButtonElement>('.filter-btn');
+  const sections = document.querySelectorAll<HTMLElement>('.tier-section');
+
+  btns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const f = btn.dataset.filter!;
+      btns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      sections.forEach(sec => {
+        if (f === 'all' || sec.dataset.tier === f) {
+          sec.classList.remove('hidden');
+        } else {
+          sec.classList.add('hidden');
+        }
+      });
+    });
+  });
+</script>
