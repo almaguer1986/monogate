@@ -363,7 +363,7 @@ export default function OneOperator() {
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10, marginBottom: 30 }}>
         {[
-          { label: "Play with it", href: "https://monogate.dev", color: "#EC4899", desc: "Interactive tools" },
+          { label: "Try the lab", href: "https://monogate.dev/lab", color: "#EC4899", desc: "Interactive experiments" },
           { label: "Read the paper", href: "https://arxiv.org/abs/2603.21852", color: "#06B6D4", desc: "Odrzywołek 2026" },
           { label: "pip install monogate", href: "https://pypi.org/project/monogate/", color: "#A78BFA", desc: "Python package" },
         ].map(door => (

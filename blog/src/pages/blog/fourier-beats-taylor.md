@@ -3,7 +3,7 @@ layout: ../../layouts/Base.astro
 title: "Fourier Beats Taylor by 100x in EML Node Count"
 date: 2026-04-19
 tag: theorem
-description: "sin(x) costs 101 nodes as a Taylor series in BEST routing. The same function is 1 complex EML node using Fourier. This 100x gap validates the games' sound design and reveals a deep structural fact about the operator."
+description: "sin(x) costs 101 nodes as a Taylor series in BEST routing. The same function is 1 complex EML node using Fourier. This 100x gap validates the lab's sound design and reveals a deep structural fact about the operator."
 ---
 
 # Fourier Beats Taylor by 100x in EML Node Count
@@ -108,11 +108,11 @@ exp, ln, sin, and cos all cost **1 node** in BEST. The trig functions are not sp
 
 ---
 
-## Why the Games Use This
+## Why the Lab Uses This
 
-The sound engine in the Monogate experiences synthesizes waveforms by computing exp(iωt) for each harmonic frequency ω. Each harmonic is one EML node. A 16-harmonic instrument timbre is 16 nodes — one per frequency component.
+The sound engine in the Monogate lab synthesizes waveforms by computing exp(iωt) for each harmonic frequency ω. Each harmonic is one EML node. A 16-harmonic instrument timbre is 16 nodes — one per frequency component.
 
-This is exactly the Fourier representation, implemented as EML trees. The games aren't using Fourier synthesis as an analogy — they are literally computing EML trees, one per harmonic, taking the imaginary part.
+This is exactly the Fourier representation, implemented as EML trees. The lab isn't using Fourier synthesis as an analogy — it is literally computing EML trees, one per harmonic, taking the imaginary part.
 
 When you hear a note in the sound experience, you're hearing the output of an EML tree.
 
