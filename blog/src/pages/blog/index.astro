@@ -2,61 +2,84 @@
 import Base from '../../layouts/Base.astro';
 
 const posts = [
-  { href: '/blog/completeness-characterization', title: 'Why exp(+x) Means Complete: The Structural Theorem', tag: 'theorem', date: '2026-04-20', desc: '16 operators, one rule: exp(+x) with no domain restriction implies exactly complete. 8 complete operators, 1 approximate, 7 incomplete. T26–T28 proved. T12 updated from Trichotomy to full characterization.' },
-  { href: '/blog/fourier-beats-taylor', title: 'Fourier Beats Taylor by 100x in EML Node Count', tag: 'theorem', date: '2026-04-19', desc: 'sin(x) costs 101 nodes as an 8-term Taylor series in BEST routing. The same function is 1 complex EML node via Fourier/Euler. The 100x gap validates the lab\'s sound design.' },
-  { href: '/blog/eml-no-fixed-points', title: 'The EML Self-Map Has No Fixed Points', tag: 'theorem', date: '2026-04-19', desc: 'exp(x)−ln(x) > x for all x > 0, with minimum gap 1.648629. The EML self-map diverges catastrophically. Among 8 operators, only EML and LEX have no real fixed points.' },
-  { href: '/blog/mul-gap-closed', title: 'We Found a Faster Multiplication: 4 Nodes Instead of 7', tag: 'theorem', date: '2026-04-19', desc: 'The EAL bridge identity eal(ln(a), exp(b)) = a+b enables a 4-node mixed mul tree. Exhaustive search confirms optimality. Also: mixed add drops from 11n to 3n.' },
-  { href: '/blog/completeness-trichotomy', title: 'The Completeness Trichotomy: EML, EMN, and Everyone Else', tag: 'theorem', date: '2026-04-19', desc: 'Three completeness classes for exp-ln gates: exactly complete (EML), approximately complete (EMN), incomplete (all others). Two new theorems close the EMN question.' },
-  { href: '/blog/eml-closure-density', title: 'Is the EML Closure Dense in ℂ?', tag: 'conjecture', date: '2026-04-19', desc: 'We tested 20 random complex targets. All approached within depth 6. π appears as an Im-part at depth 7. Strong evidence for density — not yet proved.' },
-  { href: '/blog/tight-zeros-bound', title: 'The Tight Zeros Bound', tag: 'theorem', date: '2026-04-19', desc: 'A depth-k EML tree has at most 2k+2 real zeros. Computationally the true max is just 2 for all k from 3 to 6. Strengthens the Infinite Zeros Barrier from qualitative to quantitative.' },
-  { href: '/blog/operator-zoo', title: 'The Operator Zoo: Which exp-ln Gates Are Complete?', tag: 'theorem', date: '2026-04-19', desc: 'Eight operators classified. Six incomplete. One exactly complete (EML). One approximately complete (EMN): converges to any elementary function but cannot compute ln(x) exactly.' },
+  { href: '/blog/completeness-characterization', title: 'Why exp(+x) Means Complete: The Structural Theorem', tag: 'theorem', date: '2026-04-20', desc: '16 operators, one rule: exp(+x) with no domain restriction implies exactly complete. 8 complete operators, 1 approximate, 7 incomplete. T26–T28 proved.' },
+  { href: '/blog/superbest-complete', title: 'The SuperBEST Table Is Complete', tag: 'theorem', date: '2026-04-20', desc: 'Every arithmetic operation has a proved-optimal node count. 21 nodes total, 71.2% savings vs naive EML. All entries exhaustively verified.' },
+  { href: '/blog/eml-negation', title: 'Negation in Two Nodes — For All Real x', tag: 'theorem', date: '2026-04-20', desc: 'exl(0, deml(x,1)) computes −x in exactly 2 nodes for all x ∈ ℝ, no domain restriction. Proved optimal by exhaustive search.' },
+  { href: '/blog/geometry-costs', title: 'The SuperBEST Cost of Geometry', tag: 'theorem', date: '2026-04-20', desc: '12 classical geometric primitives — hyperbolic distance, Lie group maps, curvature, conformal maps — as EML trees. 126n vs 345n naive = 63% savings. All exact.' },
+  { href: '/blog/calculus-costs', title: 'The SuperBEST Cost of Calculus', tag: 'observation', date: '2026-04-20', desc: 'Taylor series, ODEs, Fourier transforms, and autodiff measured in EML nodes. Taylor: 9N−3 nodes per N terms. Fourier kernel: 1 node.' },
+  { href: '/blog/quantum-costs', title: 'The SuperBEST Cost of Quantum Mechanics', tag: 'observation', date: '2026-04-20', desc: 'Partition functions, time evolution U(t)=exp(−iHt), density matrices measured in matrix EML nodes. U(t) = 1 matrix EML node.' },
+  { href: '/blog/sixteen-operators', title: '16 Operators: The Complete exp-ln Census', tag: 'observation', date: '2026-04-20', desc: 'Every binary combination of exp(±x) with ln(y) via arithmetic — completeness classification of all 16 operators by structural rule.' },
+  { href: '/blog/fourier-beats-taylor', title: 'Fourier Beats Taylor by 100x in EML Node Count', tag: 'theorem', date: '2026-04-19', desc: 'sin(x) costs 101 nodes as an 8-term Taylor series in BEST routing. The same function is 1 complex EML node via Fourier/Euler. Factor-100 gap.' },
+  { href: '/blog/eml-no-fixed-points', title: 'The EML Self-Map Has No Fixed Points', tag: 'theorem', date: '2026-04-19', desc: 'exp(x)−ln(x) > x for all x > 0, minimum gap 1.648629. The EML self-map diverges. Only EML and LEX have no real fixed points among 8 operators.' },
+  { href: '/blog/mul-gap-closed', title: 'We Found a Faster Multiplication: 3 Nodes Instead of 13', tag: 'theorem', date: '2026-04-19', desc: 'The EXL identity mul(x,y) = exl(ln(x), y) achieves 3-node multiplication. Exhaustive search confirms optimality.' },
+  { href: '/blog/completeness-trichotomy', title: 'The Completeness Trichotomy: EML, EMN, and Everyone Else', tag: 'theorem', date: '2026-04-19', desc: 'Three completeness classes for exp-ln gates: exactly complete (EML), approximately complete (EMN), incomplete (others). Updated by T26–T28.' },
+  { href: '/blog/eml-closure-density', title: 'Is the EML Closure Dense in ℂ?', tag: 'conjecture', date: '2026-04-19', desc: '20 random complex targets all approached within depth 6. π appears as an Im-part at depth 7. Strong evidence for density — not yet proved.' },
+  { href: '/blog/tight-zeros-bound', title: 'The Tight Zeros Bound', tag: 'theorem', date: '2026-04-19', desc: 'A depth-k EML tree has at most 2^k real zeros. Tight bound: explicit constructions achieve it. Quantifies the Infinite Zeros Barrier.' },
+  { href: '/blog/operator-zoo', title: 'The Operator Zoo: Which exp-ln Gates Are Complete?', tag: 'theorem', date: '2026-04-19', desc: '8 operators classified. EML exactly complete. EMN approximately complete: converges to any elementary function but cannot compute ln(x) exactly.' },
   { href: '/blog/deml-is-incomplete', title: 'DEML Is Incomplete', tag: 'theorem', date: '2026-04-19', desc: 'deml(x,y) = exp(−x) − ln(y) cannot construct exp(+x) or neg(x). Structural proof + exhaustive search over 861,952 trees.' },
   { href: '/blog/pumping-lemma', title: 'The Pumping Lemma for EML Trees', tag: 'conjecture', date: '2026-04-19', desc: 'Depth-k trees have at most 2^k zeros (proved). Observed maximum is O(k). The gap suggests a tighter bound — still open.' },
-  { href: '/blog/complexity-census', title: 'The EML Complexity Census', tag: 'observation', date: '2026-04-19', desc: '23 elementary functions classified by minimum EML approximation depth. What is proved, what is computational, and what is still open.' },
+  { href: '/blog/eml-sound', title: 'Timbre Is EML Node Count', tag: 'research', date: '2026-04-19', desc: 'Each Fourier harmonic = one complex EML node. Timbre measurements: Sine=1n, Clarinet=5n, Violin=12n. 245× fewer nodes than Taylor-based synthesis.' },
+  { href: '/blog/eml-fractals', title: 'EML Generates the Exponential Mandelbrot Set', tag: 'research', date: '2026-04-19', desc: "Iterating eml(z,c) is Devaney's exponential family. 8 operator fractal zoos computed. DEML/EMN generate bounded strange attractors with box dimension ≈ 1.128." },
+  { href: '/blog/eml-chaos', title: 'EML Chaos: Attractors, Bifurcation, and Lyapunov Exponents', tag: 'research', date: '2026-04-19', desc: 'DEML and EMN generate bounded 2D strange attractors. No classical period-doubling — the exponential family is a different universality class. Lyapunov landscape 92.9% correlated with Mandelbrot interior.' },
+  { href: '/blog/complexity-census', title: 'The EML Complexity Census', tag: 'observation', date: '2026-04-19', desc: '23 elementary functions classified by minimum EML approximation depth. What is proved, what is computational, what is open.' },
   { href: '/blog/depth-6-phase-transition', title: 'The Depth-6 Phase Transition', tag: 'observation', date: '2026-04-19', desc: 'At depth 5, all complex EML values have Im = −π exactly. At depth 6, imaginary parts explode. A structural phase transition.' },
   { href: '/blog/negative-exponent', title: 'exp(−x) and the Five-Operator Barrier', tag: 'observation', date: '2026-04-19', desc: 'exp(−x) is blocked for 1-node EML across five operator families. DEML breaks through: deml(x,1) = exp(−x) exactly.' },
-  { href: '/blog/phantom-attractor', title: 'The Phantom Attractor Is Not Real', tag: 'observation', date: '2026-04-19', desc: 'EML gradient descent converges to ~3.17 on 40/40 seeds when targeting π. PSLQ found no relation. It vanishes at higher precision.' },
-  { href: '/blog/weierstrass-theorem', title: 'The EML Weierstrass Theorem', tag: 'theorem', date: '2026-04-19', desc: 'EML trees are dense in C([a,b]). Any continuous function can be approximated to arbitrary precision — but not always represented exactly.' },
-  { href: '/blog/i-unconstructibility', title: 'T19: Why You Can\'t Build i from 1', tag: 'theorem', date: '2026-04-19', desc: 'Under strict principal-branch semantics, i is unreachable from {eml, 1}. Lean-verified. At depth 6, the closest approach is 0.99999524.' },
-  { href: '/blog/infinite-zeros-barrier', title: 'The Infinite Zeros Barrier', tag: 'theorem', date: '2026-04-19', desc: 'Why sin(x) cannot be expressed as a finite real EML tree.' },
-  { href: '/blog/near-miss', title: '0.99999524: The Near-Miss', tag: 'research', date: '2026-04-19', desc: 'How close can an EML tree get to i? A gap of 4.76×10⁻⁶ and the transcendental obstruction.' },
-  { href: '/blog/euler-formula-is-eml', title: "Euler's Formula Is the EML Operator", tag: 'exposition', date: '2026-04-19', desc: 'eml(ix, 1) = exp(ix). One node. The deepest identity in mathematics.' },
-  { href: '/blog/what-best-routing-saves', title: 'What BEST Routing Saves', tag: 'engineering', date: '2026-04-19', desc: 'Node-count and wall-clock benchmarks across 8 elementary functions.' },
-  { href: '/blog/auditing-1200-sessions', title: 'Auditing 1200 Sessions', tag: 'meta', date: '2026-04-19', desc: 'From 957 claimed theorems to 18 honest ones. What changed and why.' },
+  { href: '/blog/weierstrass-theorem', title: 'The EML Weierstrass Theorem', tag: 'theorem', date: '2026-04-19', desc: 'EML trees are dense in C([a,b]). Any continuous function approximable to arbitrary precision — but not always exactly representable.' },
+  { href: '/blog/phantom-attractor', title: 'The Phantom Attractor Is Not Real', tag: 'observation', date: '2026-04-19', desc: 'EML gradient descent converges to ~3.17 on 40/40 seeds when targeting π. PSLQ found no relation. Vanishes at higher precision.' },
+  { href: '/blog/i-unconstructibility', title: "Why You Can't Build i from 1", tag: 'theorem', date: '2026-04-19', desc: 'Under strict principal-branch semantics, i is unreachable from {eml, 1}. Lean-verified. Depth-6 closest approach: 0.99999524.' },
+  { href: '/blog/infinite-zeros-barrier', title: 'The Infinite Zeros Barrier', tag: 'theorem', date: '2026-04-19', desc: 'Why sin(x) cannot be expressed as a finite real EML tree. Every real EML tree is real-analytic with finitely many zeros.' },
+  { href: '/blog/near-miss', title: '0.99999524: The Near-Miss', tag: 'research', date: '2026-04-19', desc: 'How close can an EML tree get to i? A gap of 4.76×10⁻⁶ and the transcendental obstruction via Lindemann–Weierstrass.' },
+  { href: '/blog/euler-formula-is-eml', title: "Euler's Formula Is the EML Operator", tag: 'exposition', date: '2026-04-19', desc: 'eml(ix, 1) = exp(ix). One node. The deepest identity in mathematics, as a single binary tree leaf.' },
+  { href: '/blog/what-best-routing-saves', title: 'What BEST Routing Saves', tag: 'engineering', date: '2026-04-19', desc: 'Node-count and wall-clock benchmarks across 8 elementary functions. BEST dispatch vs naive EML.' },
+  { href: '/blog/auditing-1200-sessions', title: 'Auditing 1200 Sessions', tag: 'meta', date: '2026-04-19', desc: 'From 957 claimed theorems to 18 honest ones. What the audit process revealed and why it matters.' },
 ];
 
-const tagColors: Record<string, string> = {
-  theorem:     '#4ade80',
-  conjecture:  '#f87171',
-  observation: '#fbbf24',
-  research:    '#a78bfa',
-  exposition:  '#06b6d4',
-  engineering: '#fbbf24',
-  meta:        '#f87171',
+const tagMeta: Record<string, { color: string; label: string }> = {
+  theorem:     { color: '#4ade80', label: 'theorem' },
+  conjecture:  { color: '#f87171', label: 'conjecture' },
+  observation: { color: '#fbbf24', label: 'observation' },
+  research:    { color: '#a78bfa', label: 'research' },
+  exposition:  { color: '#06b6d4', label: 'exposition' },
+  engineering: { color: '#e8a020', label: 'engineering' },
+  meta:        { color: '#9ca3af', label: 'meta' },
 };
 
-const tagOrder = ['theorem', 'conjecture', 'observation', 'exposition', 'engineering', 'research', 'meta'];
+const tagOrder = ['theorem', 'conjecture', 'observation', 'research', 'exposition', 'engineering', 'meta'];
+const counts = tagOrder.reduce((acc, t) => { acc[t] = posts.filter(p => p.tag === t).length; return acc; }, {} as Record<string, number>);
 ---
 
 <Base title="Blog — monogate.org" description="Research blog on the EML operator: theorems, proofs, near-misses, and open problems.">
   <h1>Research Blog</h1>
-  <p style="color: #6b7280; margin-bottom: 12px;">
-    Findings from the EML operator research program.
-    <a href="/">← Back to monogate.org</a>
+  <p style="color: #6b7280; margin-bottom: 20px;">
+    {posts.length} posts · <a href="/">← monogate.org</a>
   </p>
 
-  <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 32px;">
+  <div id="tag-filters" style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 28px;">
+    <button
+      data-tag="all"
+      class="tag-btn active"
+      style={`font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #d4d4d4; background: #d4d4d415; border: 1px solid #d4d4d430; border-radius: 3px; padding: 4px 10px; cursor: pointer;`}
+    >all <span style="opacity:0.5">{posts.length}</span></button>
     {tagOrder.map(tag => (
-      <span style={`font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: ${tagColors[tag]}; background: ${tagColors[tag]}15; border: 1px solid ${tagColors[tag]}30; border-radius: 3px; padding: 2px 8px;`}>{tag}</span>
+      <button
+        data-tag={tag}
+        class="tag-btn"
+        style={`font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: ${tagMeta[tag].color}; background: ${tagMeta[tag].color}15; border: 1px solid ${tagMeta[tag].color}30; border-radius: 3px; padding: 4px 10px; cursor: pointer;`}
+      >{tag} <span style="opacity:0.5">{counts[tag]}</span></button>
     ))}
   </div>
 
-  <div style="display: flex; flex-direction: column; gap: 16px;">
+  <div id="post-list" style="display: flex; flex-direction: column; gap: 12px;">
     {posts.map(p => (
-      <a href={p.href} style="display: block; border: 1px solid #1c1f2e; border-radius: 8px; padding: 18px 22px; text-decoration: none; color: inherit; background: #0d0f18;">
+      <a
+        href={p.href}
+        data-tag={p.tag}
+        class="post-card"
+        style="display: block; border: 1px solid #1c1f2e; border-radius: 8px; padding: 16px 20px; text-decoration: none; color: inherit; background: #0d0f18;"
+      >
         <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 6px;">
-          <div style="font-size: 15px; font-weight: 600; color: #d4d4d4;">{p.title}</div>
-          <span style={`font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: ${tagColors[p.tag]}; background: ${tagColors[p.tag]}15; border: 1px solid ${tagColors[p.tag]}30; border-radius: 3px; padding: 2px 6px; white-space: nowrap;`}>{p.tag}</span>
+          <div style="font-size: 14px; font-weight: 600; color: #d4d4d4; line-height: 1.4;">{p.title}</div>
+          <span style={`font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: ${tagMeta[p.tag].color}; background: ${tagMeta[p.tag].color}15; border: 1px solid ${tagMeta[p.tag].color}30; border-radius: 3px; padding: 2px 6px; white-space: nowrap; flex-shrink: 0;`}>{p.tag}</span>
         </div>
         <div style="font-size: 12px; color: #6b7280; line-height: 1.6;">{p.desc}</div>
         <div style="font-size: 10px; color: #4a4d62; margin-top: 8px; font-family: monospace;">{p.date}</div>
@@ -64,3 +87,32 @@ const tagOrder = ['theorem', 'conjecture', 'observation', 'exposition', 'enginee
     ))}
   </div>
 </Base>
+
+<style>
+  .tag-btn { transition: opacity 0.15s; }
+  .tag-btn:hover { opacity: 0.8; }
+  .tag-btn.active { box-shadow: 0 0 0 1px currentColor; }
+  .post-card { transition: border-color 0.15s; }
+  .post-card:hover { border-color: #2d3148; }
+  .post-card.hidden { display: none !important; }
+</style>
+
+<script>
+  const btns = document.querySelectorAll<HTMLButtonElement>('.tag-btn');
+  const cards = document.querySelectorAll<HTMLAnchorElement>('.post-card');
+
+  btns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tag = btn.dataset.tag!;
+      btns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      cards.forEach(card => {
+        if (tag === 'all' || card.dataset.tag === tag) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+    });
+  });
+</script>
