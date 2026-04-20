@@ -2,6 +2,8 @@
 // Landing page — shown on first visit (no URL params).
 // onEnter(tab?) — enters the explorer, optionally jumping to a specific tab.
 
+import EMLFractalExplorer from "./EMLFractalExplorer.jsx";
+
 const C = {
   bg:      "#07080f",
   surface: "#0d0e1c",
@@ -58,10 +60,15 @@ export default function LandingPage({ onEnter }) {
     <div style={{
       background: C.bg, minHeight: "100vh", color: C.text,
       fontFamily: "'Space Mono', monospace",
-      padding: "60px 24px 100px",
       boxSizing: "border-box",
       overflowX: "hidden",
     }}>
+
+      {/* ── Fractal Explorer Hero ─────────────────────────────────────── */}
+      <EMLFractalExplorer />
+
+      {/* ── Below-the-fold content ───────────────────────────────────── */}
+      <div style={{ padding: "48px 24px 100px" }}>
       <div style={{ maxWidth: 760, margin: "0 auto" }}>
 
         {/* ── Headline ─────────────────────────────────────────────────── */}
@@ -74,7 +81,7 @@ export default function LandingPage({ onEnter }) {
           </div>
 
           <h1 style={{
-            fontSize: "clamp(44px, 9vw, 76px)", fontWeight: 700,
+            fontSize: "clamp(32px, 7vw, 56px)", fontWeight: 700,
             color: "#fff", margin: "0 0 14px",
             letterSpacing: "-0.03em", lineHeight: 1,
           }}>
@@ -82,11 +89,12 @@ export default function LandingPage({ onEnter }) {
           </h1>
 
           <p style={{
-            fontSize: "clamp(14px, 2.2vw, 17px)", color: C.muted,
+            fontSize: "clamp(13px, 2vw, 16px)", color: C.muted,
             margin: "0 0 24px", lineHeight: 1.6, maxWidth: 540,
           }}>
             A symbolic math optimizer built on a single binary operator.
-            Many elementary functions as finite binary trees — with proved limits on what EML cannot reach.
+            8 fractal universes — each operator above is a different Mandelbrot set.
+            Scroll to zoom, drag to pan, switch operators.
           </p>
 
           <code style={{
@@ -136,11 +144,11 @@ export default function LandingPage({ onEnter }) {
           </div>
           <div style={{ display: "flex", gap: 28, flexWrap: "wrap", marginBottom: 12 }}>
             {[
-              { n: "25",  label: "theorems",     color: "#5ec47a", note: "complete proofs" },
-              { n: "67",  label: "propositions",  color: "#6ab0f5", note: "proved, routine" },
-              { n: "12",  label: "conjectures",   color: C.accent,  note: "stated, unproved" },
-              { n: "41",  label: "observations",  color: "#fbbf24", note: "empirical" },
-              { n: "28",  label: "definitions",   color: "#a78bfa", note: "framework choices" },
+              { n: "17",  label: "theorems",     color: "#5ec47a", note: "complete proofs" },
+              { n: "10",  label: "propositions",  color: "#6ab0f5", note: "proved, routine" },
+              { n: "3",   label: "conjectures",   color: C.accent,  note: "open, unproved" },
+              { n: "9",   label: "observations",  color: "#fbbf24", note: "empirical" },
+              { n: "4",   label: "definitions",   color: "#a78bfa", note: "framework choices" },
             ].map(({ n, label, color, note }) => (
               <div key={label}>
                 <span style={{ fontSize: 20, fontWeight: 700, color, letterSpacing: "-0.02em" }}>{n}</span>
@@ -438,6 +446,7 @@ export default function LandingPage({ onEnter }) {
           .is-not-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>
+      </div>
     </div>
   );
 }
