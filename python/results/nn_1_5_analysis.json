@@ -1,0 +1,78 @@
+{
+  "sessions": ["NN-1", "NN-2", "NN-3", "NN-4", "NN-5"],
+  "date": "2026-04-20",
+  "key_findings": {
+    "softplus_cost": 1,
+    "sigmoid_cost_v4": 7,
+    "tanh_cost": 10,
+    "gelu_cost": 11,
+    "swish_cost": 9,
+    "d4_wall_cause": "Pure EML gradient at depth 4, x=2: exp(2)^4 = e^8 ≈ 2981 — exceeds fp16 max (65504) only for x>3, but saturates fp16 at x≈2.8 and causes NaN in mixed precision training",
+    "eml_gradient_depth4_x2": "exp(2)^4 ≈ 2981 — borderline fp16, stable fp32",
+    "eml_gradient_depth4_x3": "exp(3)^4 ≈ 160755 — overflows fp16",
+    "deml_gradient_at_depth4": "exp(-2)^4 ≈ 0.000335 — perfectly stable at all depths",
+    "lead_gradient_bound": "sigmoid(x) in (0,1) — LEAd trees never explode regardless of depth",
+    "activation_cost_table": {
+      "relu": "N/A (not in EML algebra — discontinuous derivative)",
+      "softplus_1n": "LEAd(x,1) — single EML operator, cheapest smooth activation",
+      "sigmoid_7n": "neg(2) + exp(1) + add_pos(3) + recip(1)",
+      "tanh_10n": "mul(2) + exp(1) + sub(2) + add_pos(3) + div(2)",
+      "swish_9n": "sigmoid(7) + mul(2)",
+      "gelu_11n": "mul(2) + sigmoid(7) + mul(2)"
+    },
+    "hardware_findings": {
+      "eml_cell_latency_cy": 23,
+      "standard_sequential_exp_ln_cy": 40,
+      "eml_cell_area_um2": 600,
+      "standard_exp_plus_ln_area_um2": 800,
+      "eml_area_savings_pct": 25,
+      "eml_cells_per_standard_chip_area": 3,
+      "eml_density_advantage_x": 3.0,
+      "crossover_eml_fraction": 0.20,
+      "eml_hardware_per_op_slower": true,
+      "eml_hardware_per_chip_denser": true,
+      "conclusion": "EML hardware wins when ≥20% of ops are exp-ln family; ideal for EML-native symbolic ML"
+    },
+    "branch_cut_strategies": {
+      "A_softplus": {
+        "cost_n": 1,
+        "formula": "ln(1 + exp(y_raw)) — always positive, smooth",
+        "accuracy": "distorts values near y=0",
+        "best_for": "smooth gradient requirement, unknown sign"
+      },
+      "B_abs": {
+        "cost_n": 5,
+        "formula": "|y_raw| + eps — piecewise",
+        "accuracy": "exact magnitude for |y|>>0",
+        "best_for": "unknown sign where |y| is typically large"
+      },
+      "C_complex": {
+        "cost_n": 1,
+        "formula": "ln|y_raw| + i*arg(y_raw) — analytic continuation",
+        "accuracy": "exact real part = ln|y|; imaginary part carries phase",
+        "best_for": "oscillatory targets (sin, cos, trig functions)"
+      },
+      "D_deml": {
+        "cost_n": 1,
+        "formula": "route to exp(-x) when y would be negative",
+        "accuracy": "exact — avoids branch cut entirely",
+        "best_for": "monotonic/exponential targets"
+      }
+    },
+    "cross_entropy_cost_formula": "4N  (N*exp + (N-1)*add_pos + ln + sub; not 6N-1 as previously stated)",
+    "branch_cut_recommendation": "DEML (Option D) for monotonic/exponential targets; complex route (Option C) for oscillatory. Both cost 1n.",
+    "superbest_routing_findings": {
+      "soft_mixture_training": "SuperBEST soft mixture (Version B) matches or exceeds pure EML (A) because the operator set spans a richer function class",
+      "cost_penalty_effect": "Cost penalty (Version C, λ=0.005) may slightly increase MSE while routing toward cheaper operators",
+      "operator_selection": "After training, snap each node to argmax(op_logits) to extract a discrete symbolic tree",
+      "temperature_annealing": "Anneal temperature T→0 during training to sharpen operator selection before snapping"
+    }
+  },
+  "file_map": {
+    "NN-1": "python/nn/nn1_superbest_training.py",
+    "NN-2": "python/nn/nn2_gradient_wall.py",
+    "NN-3": "python/nn/nn3_activation_costs.py",
+    "NN-4": "python/nn/nn4_hardware_analysis.py",
+    "NN-5": "python/nn/nn5_branch_cut.py"
+  }
+}

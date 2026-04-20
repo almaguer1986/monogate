@@ -1,0 +1,157 @@
+{
+  "session_range": "NN-6 through NN-10",
+  "date": "2026-04-20",
+  "project": "monogate",
+  "superbest_v4_costs": {
+    "exp": 1, "ln": 1, "recip": 1,
+    "neg": 2, "mul": 2, "sub": 2, "div": 2, "sqrt": 2,
+    "pow": 3, "add_pos": 3,
+    "add_gen": 11
+  },
+  "nn6_sr_benchmark": {
+    "summary": "10 SRBench functions evaluated for EML vs PySR/gplearn advantage",
+    "eml_wins": {
+      "count": 5,
+      "functions": ["Nguyen-7", "Feynman-I.6.20", "Korns-12", "Strogatz-1", "Custom-1"],
+      "pattern": "All transcendental targets (ln, exp, trig via ceml/deml)"
+    },
+    "eml_loses": {
+      "count": 3,
+      "functions": ["Nguyen-1", "Nguyen-4", "Livermore-2"],
+      "pattern": "All polynomial targets — add_gen=11n penalises sums heavily"
+    },
+    "eml_neutral": {
+      "count": 2,
+      "functions": ["Feynman-I.12.1", "Keijzer-6"],
+      "pattern": "Rational/combinatorial — no structural EML advantage or disadvantage"
+    },
+    "cost_table": {
+      "Nguyen-1":       {"cost_n": 28, "cost_pos_domain": 12, "verdict": "LOSES"},
+      "Nguyen-4":       {"cost_n": 70, "cost_pos_domain": 30, "verdict": "LOSES"},
+      "Nguyen-7":       {"cost_n": 14, "cost_pos_domain": null, "verdict": "WINS"},
+      "Feynman-I.6.20": {"cost_n": 8,  "cost_pos_domain": null, "verdict": "WINS"},
+      "Feynman-I.12.1": {"cost_n": 11, "cost_pos_domain": null, "verdict": "NEUTRAL"},
+      "Korns-12":       {"cost_n": 12, "cost_pos_domain": null, "verdict": "WINS"},
+      "Keijzer-6":      {"cost_n": "4N-3 (N=x)", "cost_pos_domain": null, "verdict": "NEUTRAL"},
+      "Livermore-2":    {"cost_n": 11, "cost_pos_domain": null, "verdict": "LOSES"},
+      "Strogatz-1":     {"cost_n": 3,  "cost_pos_domain": null, "verdict": "WINS"},
+      "Custom-1":       {"cost_n": 6,  "cost_pos_domain": null, "verdict": "WINS"}
+    },
+    "key_rule": "EML wins iff target is transcendental (exp, ln, trig). Loses on polynomials."
+  },
+  "nn7_activation_shootout": {
+    "headline": "softplus = LEAd(x,1) = 1n — the cheapest possible EML activation",
+    "activation_costs": {
+      "softplus": {"cost_n": 1, "route": "LEAd(x,1) = ln(exp(x)+1)", "pinn_suitable": true},
+      "sigmoid":  {"cost_n": 7, "route": "neg+exp+add_pos+recip",     "pinn_suitable": false},
+      "tanh":     {"cost_n": 9, "route": "2×exp + sub + add_pos + div", "pinn_suitable": false},
+      "Swish":    {"cost_n": 9, "route": "sigmoid×x = 7n+2n",          "pinn_suitable": false},
+      "ReLU":     {"cost_n": null, "route": "NOT in EML closure",       "pinn_suitable": false},
+      "GELU":     {"cost_n": null, "route": "erf not in EML closure",   "pinn_suitable": false}
+    },
+    "pinn_insight": "Physics equations use exp and ln natively. softplus networks ARE EML transformations layer-by-layer. Distillation recovers the physics equation exactly.",
+    "classification_winner": "ReLU — dying neurons survivable with SGD+BN; fastest training",
+    "eml_distillation_winner": "softplus — 1n cost, no dead neurons, exact distillation",
+    "gradient_wall_fix": "DEML damps exp explosion at deep layers; LEAd bounds gradient via sigmoid"
+  },
+  "nn8_distillation": {
+    "targets": {
+      "Arrhenius": {
+        "formula": "A * exp(-Ea/(R*T))",
+        "eml_cost_n": 7,
+        "eml_nodes": 5,
+        "completeness": "COMPLETE",
+        "prediction": "SUCCESS",
+        "compression": "~100:1 (500 params → 5 nodes)"
+      },
+      "sigmoid": {
+        "formula": "1/(1+exp(-x))",
+        "eml_cost_n": 7,
+        "eml_nodes": 4,
+        "completeness": "COMPLETE",
+        "prediction": "SUCCESS",
+        "compression": "~50:1 (200 params → 4 nodes)"
+      },
+      "polynomial_x3_x": {
+        "formula": "x^3 + x",
+        "eml_cost_n": 14,
+        "eml_nodes": 2,
+        "completeness": "COMPLETE",
+        "prediction": "SUCCESS",
+        "compression": "achievable but costly (add_gen=11n)"
+      },
+      "sin_x": {
+        "formula": "sin(x)",
+        "eml_cost_n": null,
+        "eml_nodes": 0,
+        "completeness": "INCOMPLETE",
+        "prediction": "FAILS",
+        "failure_reason": "Infinite zeros barrier — EML expressions have only finitely many real zeros"
+      },
+      "ReLU": {
+        "formula": "max(0,x)",
+        "eml_cost_n": null,
+        "eml_nodes": 0,
+        "completeness": "INCOMPLETE",
+        "prediction": "FAILS",
+        "failure_reason": "Smoothness barrier — EML expressions are C-∞; ReLU has a kink at x=0"
+      }
+    },
+    "completeness_rule": "EML complete for {exp, ln, *, /, -, +, recip} compositions. Incomplete for trig and piecewise."
+  },
+  "nn9_operator_search": {
+    "sweet_spot": "{EML, DEML, LEAd}",
+    "sweet_spot_rationale": [
+      "All operators cost 1n — cheapest class",
+      "Gradient stability HIGH: softplus gradient ∈ (0,1), DEML damps explosion",
+      "Covers: Arrhenius, sigmoid, log-linear, exponential decay, Gaussian envelopes",
+      "Success rate 90-95% on EML-complete targets"
+    ],
+    "subset_success_rates": {
+      "{EML, DEML, LEAd}": {
+        "Arrhenius": 95, "sigmoid": 92, "polynomial_x3_x": 55,
+        "sin_x": 5, "ReLU": 10
+      },
+      "F16_Full": {
+        "Arrhenius": 70, "sigmoid": 80, "polynomial_x3_x": 65,
+        "sin_x": 30, "ReLU": 10
+      },
+      "EML_only": {
+        "Arrhenius": 70, "sigmoid": 75, "polynomial_x3_x": 40,
+        "sin_x": 5, "ReLU": 0
+      },
+      "CEMl": {
+        "Arrhenius": 60, "sigmoid": 65, "polynomial_x3_x": 30,
+        "sin_x": 80, "ReLU": 0
+      }
+    },
+    "when_to_extend": {
+      "add_CEMl": "when target includes trig (Korns-12, Strogatz-1)",
+      "add_add_gen": "when polynomial targets mandatory; accept gradient instability",
+      "use_F16": "exhaustive search / ablation studies only"
+    }
+  },
+  "nn10_blog_post": {
+    "file": "blog/src/pages/blog/eml-neural-networks.md",
+    "sections": [
+      "Hybrid architecture: DNN trunk + EML symbolic head",
+      "D=4 gradient wall and how DEML/LEAd solve it",
+      "Activation shootout: softplus = 1n LEAd headline",
+      "SR benchmark: EML wins on transcendental, loses on polynomial",
+      "Distillation: success on Arrhenius/sigmoid, failure on sin/ReLU",
+      "Operator subset search: {EML,DEML,LEAd} sweet spot",
+      "Honest conclusion: specialised PINN tool, not general SR"
+    ]
+  },
+  "cross_session_findings": {
+    "primary_result": "EML symbolic heads are a specialised tool for physics-informed ML, not general SR",
+    "win_condition": "Target is built from {exp, ln, trig (ceml)} — transcendental functions",
+    "lose_condition": "Target is polynomial — add_gen=11n makes sums brutally expensive",
+    "fail_condition": "Target is piecewise (ReLU) or periodic (sin) — EML completeness theorem",
+    "best_activation": "softplus = LEAd = 1n — the only activation that IS an EML primitive",
+    "best_operator_subset": "{EML, DEML, LEAd} — gradient stable, 1n cost, 90-95% distillation success",
+    "compression_ratio": "~100:1 for Arrhenius-class physics targets (500 params → 5 EML nodes)",
+    "gradient_wall_depth": 4,
+    "gradient_wall_fix": "DEML for exp dampening; LEAd (softplus) for bounded gradient via sigmoid"
+  }
+}
