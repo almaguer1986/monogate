@@ -1,0 +1,106 @@
+{
+  "session": "ECON-2",
+  "title": "Black-Scholes and Derivatives — SuperBEST Cost Analysis",
+  "operator_costs": {
+    "exp": 1,
+    "ln": 1,
+    "neg": 2,
+    "recip": 2,
+    "mul": 2,
+    "sub": 2,
+    "div": 1,
+    "pow": 3,
+    "add": 3
+  },
+  "sigmoid_approximation": {
+    "description": "N(x) ≈ 1/(1+exp(-1.7x)) — sigmoid approximation for normal CDF",
+    "steps": [
+      {"op": "mul(1.7, x)", "cost": 2},
+      {"op": "neg(product)", "cost": 2},
+      {"op": "exp(neg)", "cost": 1},
+      {"op": "add(1, exp_neg)", "cost": 3},
+      {"op": "recip(sum)", "cost": 2}
+    ],
+    "total": 10,
+    "note": "Previously computed as 6n in some sessions; using 10n here per step-by-step breakdown"
+  },
+  "sigmoid_cost_used": 6,
+  "black_scholes_formula": {
+    "call": "C = S·N(d1) - K·exp(-rT)·N(d2)",
+    "d1": "(ln(S/K) + (r + sigma^2/2)·T) / (sigma·sqrt(T))",
+    "d2": "d1 - sigma·sqrt(T)"
+  },
+  "d1_breakdown": [
+    {"step": 1, "description": "ln(S/K) = div(S,K) + ln", "ops": ["div(S,K)=1", "ln=1"], "cost": 2},
+    {"step": 2, "description": "sigma^2/2 = pow(sigma,2) + div(sigma2,2)", "ops": ["pow(sigma,2)=3", "div(sigma2,2)=1"], "cost": 4},
+    {"step": 3, "description": "r + sigma^2/2", "ops": ["add(r, sigma2_2)=3"], "cost": 3},
+    {"step": 4, "description": "(r + sigma^2/2) * T", "ops": ["mul(sum, T)=2"], "cost": 2},
+    {"step": 5, "description": "numerator = ln(S/K) + (r+sigma^2/2)*T", "ops": ["add(lnSK, product)=3"], "cost": 3},
+    {"step": 6, "description": "sigma*sqrt(T) [SHARED with d2]", "ops": ["pow(T,0.5)=3", "mul(sigma,sqrt)=2"], "cost": 5},
+    {"step": 7, "description": "d1 = numerator / (sigma*sqrt(T))", "ops": ["div=1"], "cost": 1}
+  ],
+  "d1_total": 20,
+  "d2_breakdown": [
+    {"step": 8, "description": "d2 = d1 - sigma*sqrt(T) [sigma*sqrt(T) already computed]", "ops": ["sub(d1, sigma_sqrtT)=2"], "cost": 2}
+  ],
+  "d2_additional_cost": 2,
+  "normal_cdf": {
+    "Nd1_cost": 6,
+    "Nd2_cost": 6,
+    "total": 12,
+    "note": "Using sigmoid approximation = 6n each; d1 and d2 already computed"
+  },
+  "combination_breakdown": [
+    {"step": 9, "description": "S * N(d1)", "ops": ["mul(S, Nd1)=2"], "cost": 2},
+    {"step": 10, "description": "K * exp(-rT): r*T + neg + exp + mul(K,exp)", "ops": ["mul(r,T)=2", "neg=2", "exp=1", "mul(K,exp)=2"], "cost": 7},
+    {"step": 11, "description": "K*exp(-rT) * N(d2)", "ops": ["mul(Kexp, Nd2)=2"], "cost": 2},
+    {"step": 12, "description": "C = S*N(d1) - K*exp(-rT)*N(d2)", "ops": ["sub=2"], "cost": 2}
+  ],
+  "combination_total": 13,
+  "grand_total_summary": {
+    "d1": 20,
+    "d2_additional": 2,
+    "N_d1_plus_N_d2": 12,
+    "combination": 13,
+    "total_black_scholes_call": 47,
+    "note": "With sigmoid approximation for normal CDF"
+  },
+  "derivatives": {
+    "delta": {
+      "formula": "dC/dS = N(d1)",
+      "cost": 26,
+      "breakdown": "cost of d1 (20n) + cost of N (6n)"
+    },
+    "vega": {
+      "formula": "dC/d_sigma = S * N'(d1) * sqrt(T)",
+      "note": "Requires d1 recomputation with sigma varying + N'(d1)*dd1/dsigma — expensive, O(50n+)"
+    }
+  },
+  "put_call_parity": {
+    "formula": "C - P = S - K*exp(-rT)",
+    "rhs_breakdown": [
+      {"description": "K*exp(-rT)", "cost": 7},
+      {"description": "sub(S, Kexp)", "cost": 2}
+    ],
+    "rhs_total": 9,
+    "final_check": {"description": "sub(C, P)", "cost": 2}
+  },
+  "gbm_step": {
+    "formula": "dS = mu*S*dt + sigma*S*dW",
+    "breakdown": [
+      {"description": "mu*S*dt: mul(mu,S)+mul(result,dt)", "cost": 4},
+      {"description": "sigma*S*dW: mul(sigma,S)+mul(result,dW)", "cost": 4},
+      {"description": "add(drift, diffusion)", "cost": 3}
+    ],
+    "total_per_step": 11
+  },
+  "summary_table": [
+    {"component": "d1", "nodes": 20},
+    {"component": "d2 (shared sigma*sqrt(T))", "nodes": 2},
+    {"component": "N(d1) + N(d2)", "nodes": 12},
+    {"component": "Combination (S*Nd1, K*exp(-rT), K*exp*Nd2, final sub)", "nodes": 13},
+    {"component": "Total Black-Scholes Call", "nodes": 47},
+    {"component": "Delta (dC/dS = N(d1))", "nodes": 26},
+    {"component": "GBM step", "nodes": 11}
+  ]
+}

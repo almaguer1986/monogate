@@ -1,0 +1,280 @@
+{
+  "session": "NEURO-3",
+  "title": "SuperBEST Cost Analysis — Computational Neuroscience Models",
+  "version": "SuperBEST v3",
+  "operator_costs": {
+    "exp": 1,
+    "ln": 1,
+    "neg": 2,
+    "recip": 2,
+    "mul": 2,
+    "sub": 2,
+    "div": 1,
+    "pow": 3,
+    "add_pos": 3,
+    "add_gen": 11,
+    "constants": 0
+  },
+  "domain_note": "V (voltage) is in general domain (can be negative). add/sub involving V or general-domain intermediates uses add_gen=11. Positive-domain approximation uses add_pos=3.",
+  "models": [
+    {
+      "id": 1,
+      "name": "Integrate-and-Fire",
+      "equation": "dV/dt = -(V - VL)/tau + I/C",
+      "breakdown": {
+        "sub(V, VL)": 2,
+        "div(sub, tau)": 1,
+        "neg(div_result)": 2,
+        "div(I, C)": 1,
+        "add_gen(neg_term, div_I_C)": 11
+      },
+      "total_gen_domain": 17,
+      "breakdown_pos_approx": {
+        "sub(V, VL)": 2,
+        "div(sub, tau)": 1,
+        "neg(div_result)": 2,
+        "div(I, C)": 1,
+        "add_pos(neg_term, div_I_C)": 3
+      },
+      "total_pos_approx": 9,
+      "n_dependence": "O(1)"
+    },
+    {
+      "id": 2,
+      "name": "FitzHugh-Nagumo — V equation",
+      "equation": "dV/dt = V - V^3/3 - W + I",
+      "breakdown_gen": {
+        "pow(V, 3)": 3,
+        "div(V3, 3)": 1,
+        "sub(V, V3_over_3)": 2,
+        "sub(result, W)": 2,
+        "add_gen(result, I)": 11
+      },
+      "total_gen_domain": 19,
+      "breakdown_pos_approx": {
+        "pow(V, 3)": 3,
+        "div(V3, 3)": 1,
+        "sub(V, V3_over_3)": 2,
+        "sub(result, W)": 2,
+        "add_pos(result, I)": 3
+      },
+      "total_pos_approx": 11,
+      "n_dependence": "O(1)",
+      "notes": "div(V3,3)=1 preferred over mul(V3, 1/3)=2"
+    },
+    {
+      "id": 3,
+      "name": "FitzHugh-Nagumo — W equation",
+      "equation": "dW/dt = epsilon*(V + a - b*W)",
+      "breakdown_gen": {
+        "mul(b, W)": 2,
+        "add_gen(V, a)": 11,
+        "sub(add_result, bW)": 2,
+        "mul(epsilon, sub)": 2
+      },
+      "total_gen_domain": 17,
+      "breakdown_pos_approx": {
+        "mul(b, W)": 2,
+        "add_pos(V, a)": 3,
+        "sub(add_result, bW)": 2,
+        "mul(epsilon, sub)": 2
+      },
+      "total_pos_approx": 9,
+      "n_dependence": "O(1)"
+    },
+    {
+      "id": 4,
+      "name": "Wilson-Cowan — Excitatory equation",
+      "equation": "tau*dE/dt = -E + S(wEE*E - wEI*I + hE)",
+      "sigmoid_cost": 6,
+      "sigmoid_note": "S(x) = sigmoid(x) approximated as 6n",
+      "breakdown": {
+        "mul(wEE, E)": 2,
+        "mul(wEI, I)": 2,
+        "sub(wEE_E, wEI_I)": 2,
+        "add_pos(sub, hE)": 3,
+        "sigmoid(inner)": 6,
+        "sub(S_result, E)": 2,
+        "div_or_mul_tau": 2
+      },
+      "total": 19,
+      "n_dependence": "O(1)",
+      "notes": "Inner argument of sigmoid treated as positive-domain after construction. Final mul by 1/tau uses mul=2 (or div=1 if tau is a constant divisor)."
+    },
+    {
+      "id": 5,
+      "name": "Izhikevich — V equation",
+      "equation": "dv/dt = 0.04*v^2 + 5*v + 140 - u + I",
+      "breakdown_gen": {
+        "pow(v, 2)": 3,
+        "mul(0.04, v2)": 2,
+        "mul(5, v)": 2,
+        "add_pos(0.04v2, 5v)": 3,
+        "add_pos(result, 140)": 3,
+        "sub(result, u)": 2,
+        "add_gen(result, I)": 11
+      },
+      "total_gen_domain": 26,
+      "breakdown_pos_approx": {
+        "pow(v, 2)": 3,
+        "mul(0.04, v2)": 2,
+        "mul(5, v)": 2,
+        "add_pos(0.04v2, 5v)": 3,
+        "add_pos(result, 140)": 3,
+        "sub(result, u)": 2,
+        "add_pos(result, I)": 3
+      },
+      "total_pos_approx": 18,
+      "n_dependence": "O(1)",
+      "notes": "Polynomial terms 0.04v^2+5v+140 are positive for biologically plausible v; final +I uses gen-domain cost if I can be negative."
+    },
+    {
+      "id": 6,
+      "name": "Izhikevich — u equation",
+      "equation": "du/dt = a*(b*v - u)",
+      "breakdown": {
+        "mul(b, v)": 2,
+        "sub(bv, u)": 2,
+        "mul(a, sub)": 2
+      },
+      "total": 6,
+      "n_dependence": "O(1)"
+    },
+    {
+      "id": 7,
+      "name": "Hopfield Network Energy",
+      "equation": "E = -0.5 * sum_ij(w_ij * s_i * s_j) - sum_i(theta_i * s_i)",
+      "breakdown_symbolic": {
+        "weight_term_per_pair": {
+          "mul(si, sj)": 2,
+          "mul(w_ij, mul_result)": 2,
+          "subtotal_per_pair": 4
+        },
+        "N2_pairs_cost": "4*N^2",
+        "N2_additions": "3*(N^2 - 1)",
+        "weight_sum_total": "7*N^2 - 3",
+        "bias_term_per_i": {
+          "mul(theta_i, s_i)": 2,
+          "subtotal_per_i": 2
+        },
+        "N_bias_terms_cost": "2*N",
+        "N_minus1_additions": "3*(N-1)",
+        "bias_sum_total": "5*N - 3",
+        "neg(weight_sum)": 2,
+        "neg(bias_sum)": 2,
+        "add(neg_weight, neg_bias)": 3
+      },
+      "total_formula": "7*N^2 + 5*N + 4",
+      "total_approx": "~7N^2 + 5N nodes",
+      "n_dependence": "O(N^2)",
+      "notes": "Additions between scalar results treated as pos-domain (3n each). N^2 counts pairs i≠j; can adjust to N*(N-1) for strict off-diagonal."
+    },
+    {
+      "id": 8,
+      "name": "Shannon Entropy of Spike Train",
+      "equation": "H = -sum_k(p(pattern_k) * ln(p_k))",
+      "breakdown_symbolic": {
+        "per_term": {
+          "ln(p_k)": 1,
+          "mul(p_k, ln_result)": 2,
+          "subtotal_per_term": 3
+        },
+        "K_terms_cost": "3*K",
+        "K_minus1_additions_pos": "3*(K-1)",
+        "neg(sum)": 2,
+        "total_formula": "6*K - 1"
+      },
+      "total_formula": "6*K - 1",
+      "total_example_K10": 59,
+      "n_dependence": "O(K)",
+      "notes": "p_k in (0,1] so all positive domain; add_pos=3 applies. neg applied once to the final sum."
+    }
+  ],
+  "summary_table": [
+    {
+      "id": 1,
+      "model": "Integrate-and-Fire",
+      "equation_short": "dV/dt = -(V-VL)/tau + I/C",
+      "domain": "General",
+      "nodes": 17,
+      "nodes_pos_approx": 9,
+      "n_dependence": "O(1)"
+    },
+    {
+      "id": 2,
+      "model": "FitzHugh-Nagumo V",
+      "equation_short": "dV/dt = V - V^3/3 - W + I",
+      "domain": "General",
+      "nodes": 19,
+      "nodes_pos_approx": 11,
+      "n_dependence": "O(1)"
+    },
+    {
+      "id": 3,
+      "model": "FitzHugh-Nagumo W",
+      "equation_short": "dW/dt = eps*(V+a-bW)",
+      "domain": "General",
+      "nodes": 17,
+      "nodes_pos_approx": 9,
+      "n_dependence": "O(1)"
+    },
+    {
+      "id": 4,
+      "model": "Wilson-Cowan E",
+      "equation_short": "tau*dE/dt = -E + S(wEE*E - wEI*I + hE)",
+      "domain": "Mixed (sigmoid output positive)",
+      "nodes": 19,
+      "nodes_pos_approx": 19,
+      "n_dependence": "O(1)"
+    },
+    {
+      "id": 5,
+      "model": "Izhikevich V",
+      "equation_short": "dv/dt = 0.04v^2 + 5v + 140 - u + I",
+      "domain": "General (I can be negative)",
+      "nodes": 26,
+      "nodes_pos_approx": 18,
+      "n_dependence": "O(1)"
+    },
+    {
+      "id": 6,
+      "model": "Izhikevich u",
+      "equation_short": "du/dt = a*(bv - u)",
+      "domain": "Positive approx",
+      "nodes": 6,
+      "nodes_pos_approx": 6,
+      "n_dependence": "O(1)"
+    },
+    {
+      "id": 7,
+      "model": "Hopfield Energy",
+      "equation_short": "E = -0.5*sum_ij(w_ij*s_i*s_j) - sum_i(theta_i*s_i)",
+      "domain": "Positive (binary states)",
+      "nodes": "7N^2 + 5N + 4",
+      "nodes_pos_approx": "7N^2 + 5N + 4",
+      "n_dependence": "O(N^2)"
+    },
+    {
+      "id": 8,
+      "model": "Shannon Entropy",
+      "equation_short": "H = -sum_k(p_k * ln(p_k))",
+      "domain": "Positive (probabilities)",
+      "nodes": "6K - 1",
+      "nodes_pos_approx": "6K - 1",
+      "n_dependence": "O(K)"
+    }
+  ],
+  "metadata": {
+    "date": "2026-04-20",
+    "author": "Art",
+    "notes": [
+      "SuperBEST v3 operator costs used throughout.",
+      "General-domain add costs 11n; positive-domain add costs 3n.",
+      "Sub always costs 2n regardless of domain.",
+      "div costs 1n (constant divisor); mul costs 2n.",
+      "Sigmoid approximated as 6n composite operator.",
+      "Hopfield: N^2 weight pairs (i!=j), binary s_i in {0,1} so positive domain.",
+      "Shannon entropy: p_k in (0,1], ln(p_k) <= 0 but p*ln(p) terms collected before negation."
+    ]
+  }
+}

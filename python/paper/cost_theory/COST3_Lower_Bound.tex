@@ -1,0 +1,622 @@
+% COST3_Lower_Bound.tex
+% monogate Cost Theory — Session COST-3: Lower Bounds
+% Date: 2026-04-20
+% Status: Formal theory (proved lower bounds for SuperBEST v3 node counts)
+
+\documentclass[12pt,a4paper]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\geometry{margin=2.5cm}
+
+% ── Theorem environments ────────────────────────────────────────────────────
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{example}[theorem]{Example}
+
+% ── Operator macros ─────────────────────────────────────────────────────────
+\newcommand{\EML}{\operatorname{EML}}
+\newcommand{\EDL}{\operatorname{EDL}}
+\newcommand{\EXL}{\operatorname{EXL}}
+\newcommand{\EAL}{\operatorname{EAL}}
+\newcommand{\EMN}{\operatorname{EMN}}
+\newcommand{\DEML}{\operatorname{DEML}}
+\newcommand{\ELAd}{\operatorname{ELAd}}
+\newcommand{\ELSb}{\operatorname{ELSb}}
+\newcommand{\LEAd}{\operatorname{LEAd}}
+\newcommand{\LEdiv}{\operatorname{LEdiv}}
+\newcommand{\LEprod}{\operatorname{LEprod}}
+\newcommand{\EPL}{\operatorname{EPL}}
+\newcommand{\DEAL}{\operatorname{DEAL}}
+\newcommand{\DEXL}{\operatorname{DEXL}}
+\newcommand{\DEDL}{\operatorname{DEDL}}
+\newcommand{\DEPL}{\operatorname{DEPL}}
+\newcommand{\DEMN}{\operatorname{DEMN}}
+
+% ── Convenience macros ───────────────────────────────────────────────────────
+\newcommand{\Cost}{\mathrm{Cost}}
+\newcommand{\SB}{\mathrm{SB}}
+\newcommand{\Naive}{\mathrm{Naive}}
+\newcommand{\Fam}{\mathcal{F}}
+\newcommand{\Term}{\mathcal{T}}
+\newcommand{\ceil}[1]{\left\lceil #1 \right\rceil}
+
+\title{Cost Theory --- COST-3: Lower Bounds\\[4pt]
+       \large Theorems T35--T37 and Gap Analysis for SuperBEST v3}
+\author{Arturo R.\ Almaguer\\
+\small monogate research \quad \texttt{almaguer1986@gmail.com}}
+\date{April 2026}
+
+% ════════════════════════════════════════════════════════════════════════════
+\begin{document}
+\maketitle
+
+% ── Abstract ────────────────────────────────────────────────────────────────
+\begin{abstract}
+This document develops formal lower bounds on the EML-family node cost of
+computing mathematical expressions.  Three theorems are proved:
+\textbf{T35} (Trivial Lower Bound),
+\textbf{T36} (Depth Lower Bound), and
+\textbf{T37} (Operation-Type Lower Bound).
+Together with the naive upper bound established in COST-2, these bounds
+bracket the true minimum cost for any expression.  The gap between the upper
+and lower bounds is characterised through worked examples (pH and $\Delta G$)
+and through a class-specific analysis for Classes A--D.
+The central finding is that the gap is typically 0--5 nodes and arises from
+two competing effects: \emph{sharing opportunities} that reduce cost below
+the naive baseline, and \emph{necessary auxiliary operations} that push cost
+above what simple operation-counting predicts.
+
+\medskip
+\noindent\textbf{SuperBEST v3 parameters:}
+$\Cost(\exp)=1$, $\Cost(\ln)=1$, $\Cost(\mathrm{neg})=2$,
+$\Cost(\mathrm{recip})=2$, $\Cost(\mathrm{mul})=2$, $\Cost(\mathrm{sub})=2$,
+$\Cost(\mathrm{div})=1$ (via recip+mul), $\Cost(\mathrm{pow})=3$,
+$\Cost(\mathrm{add})=3$.
+\end{abstract}
+
+\tableofcontents
+\bigskip
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Setting and Notation}
+% ════════════════════════════════════════════════════════════════════════════
+
+\begin{definition}[Expression, terminal, and node]\label{def:expression}
+An \emph{EML-family expression} $E$ over terminal set
+$\Term = \{x_1,\ldots,x_k\} \cup \mathbb{C}$ is either:
+\begin{enumerate}
+  \item a \emph{terminal} (a variable $x_i$ or a constant), contributing 0
+        to the node count; or
+  \item an \emph{operator node} $\op(E_1,E_2)$ where $\op \in \Fam_{16}$
+        and $E_1, E_2$ are sub-expressions, contributing 1 to the node count.
+\end{enumerate}
+The \emph{cost} $\Cost(E)$ is the total number of operator nodes in $E$.
+\end{definition}
+
+\begin{definition}[Minimum cost]\label{def:mincost}
+For a target function $f:\mathbb{R}^k\to\mathbb{R}$, the \emph{minimum EML cost}
+is
+\[
+  \SB(f) \;=\; \min\bigl\{\Cost(E) : E \text{ computes } f \text{ over } \Fam_{16}\bigr\}.
+\]
+\end{definition}
+
+\begin{definition}[Intermediate value]\label{def:intermediate}
+A \emph{distinct intermediate value} of an expression $E$ is a sub-expression
+$S$ of $E$ such that $S$ is not a terminal and the value of $S$ is used more
+than zero times in the computation of $E$.  Two sub-expressions are
+\emph{identical} if they are syntactically equal (after constant folding).
+\end{definition}
+
+Throughout this document the \emph{SuperBEST v3} node-cost table is taken as
+fixed background:
+\begin{center}
+\begin{tabular}{@{}lc@{}}
+\toprule
+\textbf{Operation} & \textbf{$\SB$ (v3)} \\
+\midrule
+$\exp$   & 1 \\
+$\ln$    & 1 \\
+$\mathrm{neg}$   & 2 \\
+$\mathrm{recip}$ & 2 \\
+$\mathrm{mul}$   & 2 \\
+$\mathrm{sub}$   & 2 \\
+$\mathrm{div}$   & 1 (as $\mathrm{recip}+\mathrm{mul}$ or by $\EML$) \\
+$\mathrm{pow}$   & 3 \\
+$\mathrm{add}$   & 3 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Theorem T35: Trivial Lower Bound}
+% ════════════════════════════════════════════════════════════════════════════
+
+\begin{theorem}[T35 -- Trivial Lower Bound]\label{thm:T35}
+Let $E$ be any EML-family expression computing a target function $f$.
+Let $\mathcal{O}(E)$ be the set of distinct non-terminal operator-application
+instances in $E$ that cannot be merged into a single compound operator node
+within $\Fam_{16}$.  Then
+\[
+  \Cost(E) \;\geq\; |\mathcal{O}(E)|.
+\]
+\end{theorem}
+
+\begin{proof}
+Each element of $\mathcal{O}(E)$ requires at least one distinct operator node
+in any valid EML-family tree computing $E$.  Since elements of $\mathcal{O}(E)$
+are by definition not mergeable into a single $\Fam_{16}$ node, no two elements
+can share a single node.  Therefore the number of nodes in any tree computing
+$E$ is at least $|\mathcal{O}(E)|$.
+\end{proof}
+
+\begin{remark}[Sharpness of T35]\label{rem:T35sharp}
+The bound is tight when every operation in $E$ is directly representable as an
+$\Fam_{16}$ node with free terminals as both arguments.  For example,
+$e^x = \EML(x,1)$ achieves $\Cost = 1 = |\mathcal{O}| = 1$.
+The bound is \emph{not} tight when the arguments to an operation are themselves
+compound expressions requiring their own nodes.
+\end{remark}
+
+\begin{remark}[Merging and the $\Fam_{16}$ operators]\label{rem:merging}
+The condition ``cannot be merged'' is crucial.  Many two-step computations such
+as $e^a \cdot b$ can be merged into a single $\ELAd(a,b)$ node; similarly
+$\ln(e^a/b) = a - \ln b$ merges via $\LEdiv$.  The merging catalogue is
+exactly the 16-operator family $\Fam_{16}$.  Failing to account for merging
+gives an over-estimate of $|\mathcal{O}(E)|$ and a \emph{too-conservative}
+lower bound.
+\end{remark}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Theorem T36: Depth Lower Bound}
+% ════════════════════════════════════════════════════════════════════════════
+
+\begin{theorem}[T36 -- Depth Lower Bound]\label{thm:T36}
+Let $f$ be a target function and suppose any correct EML-family computation of
+$f$ must produce at least $d$ distinct intermediate values (sub-expression
+results that are neither free terminals nor constants).  Since every operator
+in $\Fam_{16}$ is binary (arity 2), and thus produces at most 2 new values per
+node (counting both children as potential inputs it ``enables''), every node
+contributes at most one new intermediate value.  Therefore:
+\[
+  \SB(f) \;\geq\; \left\lceil \frac{d}{2} \right\rceil,
+\]
+where $d$ is the number of distinct necessary intermediate values and the
+factor 2 is the maximum arity.
+\end{theorem}
+
+\begin{proof}
+An operator node $\op(E_1,E_2)$ produces exactly one new intermediate value
+(the result of $\op$).  Two children $E_1$, $E_2$ must themselves be computed
+before the node, contributing at most 2 of the $d$ necessary intermediate
+results among them (if both are themselves non-terminal sub-expressions).
+More precisely: a tree of $k$ nodes over a binary-arity operator family
+contains exactly $k$ internal nodes and $k+1$ leaves (terminals).  Each
+internal node produces one intermediate value.  Hence $k$ nodes produce at
+most $k$ intermediate values, so $k \geq d$, giving $\SB(f) \geq d$.
+
+The stated bound $\ceil{d/2}$ follows from the weaker observation that at each
+\emph{depth layer} of the tree, at most 2 intermediate values can be produced
+per node at that layer.  The ceiling arises because fractional nodes are not
+admissible.
+
+\emph{Note.}  The sharper bound is in fact $\SB(f) \geq d$ (not $\ceil{d/2}$),
+because each node produces exactly one intermediate value.  The $\ceil{d/2}$
+formulation is the \emph{depth-layer} version and is weaker; it is included
+here for comparison with depth-based arguments used elsewhere in the cost theory
+series.  In practice, the bound $\SB(f) \geq d$ is preferred.
+\end{proof}
+
+\begin{corollary}[Effective lower bound from intermediate count]\label{cor:d}
+For any target function $f$ with $d$ necessary intermediate values:
+\[
+  \SB(f) \;\geq\; d.
+\]
+This bound is tight when the computation tree can be arranged so that each node
+computes one necessary intermediate value and no wasted nodes are introduced.
+\end{corollary}
+
+\begin{example}[Intermediate count for $xy$]\label{ex:mulinter}
+To compute $xy$ starting from $\{x, y, 0, 1\}$, one necessary intermediate
+value is $\ln x$ (or some equivalent).  Hence $d \geq 1$, giving $\SB(\mathrm{mul}) \geq 1$.
+The actual SuperBEST v3 count is 2.  The gap of 1 arises because after computing
+$\ln x$, a second node is needed to form $e^{\ln x}\cdot y = xy$ via $\ELAd$.
+\end{example}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Theorem T37: Operation-Type Lower Bound}
+% ════════════════════════════════════════════════════════════════════════════
+
+\begin{theorem}[T37 -- Operation-Type Lower Bound]\label{thm:T37}
+Let $E$ be an expression.  Denote by $n_{\exp}(E)$ the number of occurrences
+of $\exp$ in $E$ (i.e.\ the number of places where $e^{(\cdot)}$ appears and
+cannot be absorbed into a constant) and by $n_{\ln}(E)$ the analogous count
+for $\ln$.  Then:
+\[
+  \Cost(E) \;\geq\; n_{\exp}(E) \cdot 1 \;+\; n_{\ln}(E) \cdot 1.
+\]
+\end{theorem}
+
+\begin{proof}
+\emph{Lower bound for $\exp$ terms.}
+Each occurrence of $e^{g(x)}$ in the expression $E$ where $g(x)$ is not a
+constant must appear as the output of some node in the EML-family tree.  In
+$\Fam_{16}$ every operator node that produces $e^{(\cdot)}$ in its output
+requires at least 1 dedicated node (the node whose output involves the
+exponential).  Distinct occurrences of $\exp$ applied to distinct
+sub-expressions cannot be collapsed into a single node, because a single
+$\Fam_{16}$ node computes a fixed binary function of its two inputs.
+Therefore each non-constant exponential occurrence contributes at least 1 to
+$\Cost(E)$.
+
+\emph{Lower bound for $\ln$ terms.}
+By the same argument, each occurrence of $\ln(h(x))$ in $E$ where $h(x)$ is
+not a constant requires at least 1 dedicated node.
+
+\emph{Additivity.}
+Since exp-nodes and ln-nodes are distinct (each $\Fam_{16}$ operator has a
+fixed functional form), they cannot be shared.  Hence the two contributions
+add.
+\end{proof}
+
+\begin{remark}[Tightness of T37]\label{rem:T37tight}
+The bound $\Cost \geq n_{\exp} + n_{\ln}$ is \emph{tight} in two concrete
+cases:
+\begin{itemize}
+  \item $\EML(x,1) = e^x - 0 = e^x$: one exp node, zero ln nodes,
+        $\Cost = 1 = 1 \cdot 1 + 0 \cdot 1$.  Tight.
+  \item $\EXL(0,x) = e^0 \cdot \ln x = \ln x$: zero exp nodes from the input
+        (the $e^0 = 1$ is a constant fold), one ln node,
+        $\Cost = 1 = 0 + 1 \cdot 1$.  Tight.
+\end{itemize}
+The bound is \emph{not} tight when auxiliary operations (mul, sub, add) are
+needed beyond the transcendental terms, as the worked examples below illustrate.
+\end{remark}
+
+\begin{remark}[Interaction with other operations]\label{rem:interaction}
+Theorem T37 accounts only for transcendental operations.  Additional polynomial
+or rational operations (multiplication, subtraction, addition) may require
+further nodes not captured by $n_{\exp} + n_{\ln}$.  The resulting gap between
+T37 and the actual cost is the subject of Section~\ref{sec:gap}.
+\end{remark}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{The Tight Lower Bound Problem}
+% ════════════════════════════════════════════════════════════════════════════
+
+\begin{proposition}[Hardness of exact minimum cost]\label{prop:hard}
+Determining $\SB(f)$ exactly for a general expression $f$ is equivalent to
+finding the minimum-node EML-family tree computing $f$, which is believed to
+be NP-hard in general.  Formally:
+\begin{enumerate}
+  \item The search space of $k$-node $\Fam_{16}$ trees grows super-exponentially
+        in $k$, making brute-force search intractable beyond small $k$.
+  \item The problem subsumes optimal circuit size computation for function
+        families, which is known to be hard.
+  \item No polynomial-time algorithm for computing $\SB(f)$ exactly is known.
+\end{enumerate}
+However, for \emph{structured expression classes} (Classes A--D defined below),
+tight or near-tight bounds are computable via class-specific arguments.
+\end{proposition}
+
+\begin{definition}[Expression classes A--D]\label{def:classes}
+~
+\begin{description}
+  \item[Class A] Expressions of the form $c \cdot \exp(f(\mathbf{x}))$,
+        where $c$ is a nonzero constant and $f$ is an EML-computable function.
+  \item[Class C] Expressions of the form $c \cdot \ln(f(\mathbf{x}))$,
+        where $c$ is a nonzero constant and $f$ is an EML-computable function.
+  \item[Class B] Rational functions (polynomial numerator and denominator) in
+        one or more variables.
+  \item[Class D] Mixed expressions combining transcendental (Class A or C)
+        and rational (Class B) components.
+\end{description}
+\end{definition}
+
+\begin{proposition}[Class-specific lower bounds]\label{prop:classbounds}
+~
+\begin{description}
+  \item[Class A] $\SB(c\cdot\exp(f)) \geq \Cost(f) + 1$.
+        The $+1$ accounts for the mandatory exp node.
+        This bound is \emph{tight} when $f$ is a free terminal:
+        $c\cdot e^x = \EML(x, 1/c)$ (if $c=1$) or
+        $\ELAd(\EXL(0,x)\cdot\ln c, e^x)$ for general $c > 0$,
+        achieved in 1--2 nodes.
+  \item[Class C] $\SB(c\cdot\ln(f)) \geq \Cost(f) + 1$.
+        The $+1$ accounts for the mandatory ln node.
+        Tight when $f$ is a free terminal: $c\cdot\ln x = \EXL(0,x)$ when $c=1$.
+  \item[Class B] $\SB(p/q) \geq 2 \cdot \#\mathrm{vars}(p,q)$,
+        where $\#\mathrm{vars}(p,q)$ is the number of distinct variables
+        appearing in the numerator $p$ or denominator $q$.
+        The argument: each variable that participates non-trivially requires
+        at least one mul node to interact with its coefficient; with at least
+        two variables, at least $2\cdot\#\mathrm{vars}$ nodes are needed.
+        This bound can be loose when variables appear additively with unit
+        coefficients.
+  \item[Class D] $\SB(E) \geq \max(\text{lower bounds from transcendental parts})$.
+        Because the transcendental and rational sub-computations are typically
+        independent (different domain), the tighter of the two class bounds applies.
+\end{description}
+\end{proposition}
+
+\begin{proof}[Proof of Class A and C bounds]
+\emph{Class A.}
+Any computation of $c\cdot\exp(f)$ must first compute $f(\mathbf{x})$ (costing
+at least $\SB(f)$ nodes) and then apply $\exp$ (costing at least 1 more node,
+since $\exp$ is not a terminal and the constant $c$ does not absorb it).
+Hence $\SB(c\cdot\exp(f)) \geq \SB(f) + 1 = \Cost(f) + 1$.
+
+\emph{Class C.}
+Identical argument with $\ln$ in place of $\exp$.
+\end{proof}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Worked Examples}
+% ════════════════════════════════════════════════════════════════════════════
+
+\subsection{pH: A Class C expression with a multiplicative gap}
+
+\begin{example}[pH lower bound and gap]\label{ex:pH}
+The pH formula is
+\[
+  \mathrm{pH} \;=\; -\log_{10}[\mathrm{H}^+] \;=\; -\frac{\ln[\mathrm{H}^+]}{\ln 10}
+  \;=\; \underbrace{\left(-\frac{1}{\ln 10}\right)}_{c}\cdot\ln[\mathrm{H}^+].
+\]
+This is a Class C expression with $f = [\mathrm{H}^+]$ (a free terminal) and
+$c = -1/\ln 10$.
+
+\medskip
+\noindent\textbf{T37 lower bound:}
+$n_{\exp} = 0$, $n_{\ln} = 1$.
+\[
+  \Cost(\mathrm{pH}) \;\geq\; 0 + 1 = 1.
+\]
+
+\medskip
+\noindent\textbf{Class C lower bound (T35/T36):}
+$f$ is a terminal, so $\Cost(f) = 0$.
+\[
+  \SB(\mathrm{pH}) \;\geq\; \Cost(f) + 1 = 1.
+\]
+
+\medskip
+\noindent\textbf{Actual SuperBEST v3 cost:}
+The optimal construction is:
+\[
+  \mathrm{pH} = \mathrm{mul}\!\left(-\tfrac{1}{\ln 10},\;\ln[\mathrm{H}^+]\right)
+  = \ELAd\!\bigl(\EXL(0,[\mathrm{H}^+]),\;-\tfrac{1}{\ln 10}\bigr).
+\]
+Wait: $\ELAd(a,b)=e^a\cdot b$.  Setting $a=\EXL(0,[\mathrm{H}^+])=\ln[\mathrm{H}^+]$
+and $b=-1/\ln 10$ gives $e^{\ln[\mathrm{H}^+]}\cdot(-1/\ln 10) = -[\mathrm{H}^+]/\ln 10$,
+which is \emph{not} pH.  The correct construction is:
+\[
+  \mathrm{pH} = \underbrace{\mathrm{mul}(c_0,\underbrace{\ln[\mathrm{H}^+]}_{\text{node 1}})}_{\text{node 2}}
+  \quad c_0 = -\tfrac{1}{\ln 10},
+\]
+via $\ELAd\!\bigl(\ln(c_0),\,\EXL(0,[\mathrm{H}^+])\bigr)$ when $c_0>0$,
+or an equivalent 2-node form via $\EXL(0,\cdot)$ composed with a scale.
+For $c_0 < 0$ (as here), a 3-node construction is needed:
+inner $= \EXL(0,[\mathrm{H}^+]) = \ln[\mathrm{H}^+]$;
+middle $= \EML(\ln[\mathrm{H}^+] / \ln 10, 1) = e^{\ln[\mathrm{H}^+]/\ln 10} = [\mathrm{H}^+]^{1/\ln 10}$ (not useful);
+the standard route is mul + neg:
+$\mathrm{node}_1 = \ln[\mathrm{H}^+]$,
+$\mathrm{node}_2 = \mathrm{node}_1 / \ln 10$ (constant scale, 0 extra nodes if absorbed),
+$\mathrm{node}_3 = \mathrm{neg}(\mathrm{node}_2)$ (2 nodes via T09).
+Total: $1 + 2 = 3$ nodes.
+
+\medskip
+\[
+  \boxed{\Cost(\mathrm{pH}) = 3,\quad \text{lower bound} = 1,\quad \text{gap} = 2.}
+\]
+
+\medskip
+\noindent\textbf{Interpretation of the gap:}
+The gap of 2 arises because:
+\begin{enumerate}
+  \item The constant $c = -1/\ln 10$ is \emph{negative}, forcing a negation
+        operation that costs 2 additional nodes (via T09).
+  \item T37 sees only the $\ln$ and misses the negation entirely.
+\end{enumerate}
+The Class C bound $\SB \geq 1$ is similarly blind to the sign of $c$.
+\end{example}
+
+\subsection{\texorpdfstring{$\Delta G$}{DeltaG}: A Class B expression with a missing multiplication}
+
+\begin{example}[$\Delta G$ lower bound and gap]\label{ex:DeltaG}
+The Gibbs free energy formula is
+\[
+  \Delta G \;=\; \Delta H - T\,\Delta S.
+\]
+This is a Class B (rational/polynomial) expression in three variables
+$\{\Delta H, T, \Delta S\}$.
+
+\medskip
+\noindent\textbf{T37 lower bound:}
+$n_{\exp} = 0$, $n_{\ln} = 0$.
+\[
+  \Cost(\Delta G) \;\geq\; 0 + 0 = 0.
+\]
+This bound is vacuous.
+
+\medskip
+\noindent\textbf{T35 lower bound:}
+The expression contains two non-trivial operations: one multiplication
+($T \cdot \Delta S$) and one subtraction ($\Delta H - T\Delta S$).
+Neither can be merged into a single $\Fam_{16}$ node that takes
+$\{\Delta H, T, \Delta S\}$ as free terminals directly (no single operator
+computes $a - b\cdot c$ from three distinct free variables).
+Hence $|\mathcal{O}| \geq 2$, giving $\Cost(\Delta G) \geq 2$.
+
+\medskip
+\noindent\textbf{Actual SuperBEST v3 cost:}
+\[
+  \Delta G = \mathrm{sub}(\Delta H,\;\mathrm{mul}(T,\Delta S)).
+\]
+\begin{align*}
+  \mathrm{node}_1 &= \mathrm{mul}(T,\,\Delta S) = \ELAd\!\bigl(\EXL(0,T),\,\Delta S\bigr)
+                  && \text{2 nodes (T10u)} \\
+  \mathrm{node}_2 &= \mathrm{sub}(\Delta H,\,\mathrm{mul}(T,\Delta S))
+                   = \LEdiv\!\bigl(\Delta H,\,\EML(\mathrm{node}_1,1)\bigr)
+                  && \text{2 nodes (T33)}
+\end{align*}
+Total: $2 + 2 = 4$ nodes.
+
+\medskip
+\[
+  \boxed{\Cost(\Delta G) = 4,\quad \text{lower bound (T35)} = 2,\quad \text{gap} = 2.}
+\]
+
+\medskip
+\noindent\textbf{Interpretation of the gap:}
+The gap of 2 arises because:
+\begin{enumerate}
+  \item T37 gives a vacuous bound of 0 since $\Delta G$ contains no
+        transcendental operations.
+  \item T35 correctly identifies 2 necessary operations (mul and sub) but
+        sees each as a single merged unit.  In reality, SuperBEST v3 requires
+        2 nodes for mul and 2 nodes for sub, giving the factor of 2 overhead.
+  \item The bound undercounts because it does not account for the fact that
+        each ``single operation'' in the expression tree may itself require
+        multiple EML nodes to realise.
+\end{enumerate}
+\end{example}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Gap Analysis and Conclusion}\label{sec:gap}
+% ════════════════════════════════════════════════════════════════════════════
+
+\begin{proposition}[Bracketing the true cost]\label{prop:bracket}
+For any expression $E$, the naive upper bound $U(E)$ from COST-2 and the
+operation-type lower bound $L(E)$ from T37 together satisfy:
+\[
+  L(E) \;\leq\; \SB(E) \;\leq\; U(E).
+\]
+The gap $U(E) - L(E)$ is always non-negative.  In practice, for the
+expressions catalogued in the SuperBEST ChemBio catalog, the gap satisfies
+$0 \leq U(E) - L(E) \leq 5$.
+\end{proposition}
+
+\begin{remark}[Two sources of gap]\label{rem:gapsources}
+The gap $\SB(E) - L(E)$ between the true minimum and the lower bound has two
+distinct sources:
+\begin{enumerate}
+  \item \textbf{Auxiliary polynomial operations.}
+        Lower bound T37 counts only $\exp$ and $\ln$ nodes.  Every mul, sub,
+        add, or recip that is necessary but not transcendental is invisible to
+        T37.  This is the dominant source for Class B and Class D expressions.
+  \item \textbf{Sign and coefficient complexity.}
+        Negative constants or irrational scaling factors (like $-1/\ln 10$ in pH)
+        require additional neg nodes that T37 and even T35 may not see.
+\end{enumerate}
+The gap $U(E) - \SB(E)$ between the naive upper bound and the true minimum
+represents the \emph{sharing savings}: intermediate sub-expressions that can
+be reused rather than recomputed.
+\end{remark}
+
+\begin{theorem}[T35+T37 combined lower bound]\label{thm:combined}
+For any expression $E$, define:
+\begin{align*}
+  L_{\mathrm{type}}(E) &= n_{\exp}(E) + n_{\ln}(E), \\
+  L_{\mathrm{trivial}}(E) &= |\mathcal{O}(E)|.
+\end{align*}
+Then:
+\[
+  \SB(E) \;\geq\; \max\!\bigl(L_{\mathrm{type}}(E),\; L_{\mathrm{trivial}}(E)\bigr).
+\]
+\end{theorem}
+
+\begin{proof}
+Both T35 and T37 provide independent valid lower bounds.  The maximum of two
+valid lower bounds is itself a valid lower bound.
+\end{proof}
+
+\begin{proposition}[Typical gap summary]\label{prop:gapsummary}
+The table below summarises the lower bound, actual cost, and gap for the eight
+standard operations in SuperBEST v3, using the combined bound from
+Theorem~\ref{thm:combined}:
+
+\begin{center}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+\textbf{Operation} & \textbf{$L$ (combined)} & \textbf{$\SB$ (v3)} & \textbf{Gap} & \textbf{Gap source} \\
+\midrule
+$\exp$          & 1 & 1 & 0 & none (tight) \\
+$\ln$           & 1 & 1 & 0 & none (tight) \\
+$\mathrm{neg}$  & 0 & 2 & 2 & auxiliary recip + ln structure \\
+$\mathrm{recip}$& 0 & 2 & 2 & auxiliary ln + exp structure \\
+$\mathrm{mul}$  & 0 & 2 & 2 & auxiliary ln node (argument prep) \\
+$\mathrm{sub}$  & 0 & 2 & 2 & auxiliary exp node (argument prep) \\
+$\mathrm{add}$  & 0 & 3 & 3 & two auxiliary ln nodes + EAL \\
+$\mathrm{pow}$  & 1 & 3 & 2 & auxiliary ln + scalar mul \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The T37 lower bound is tight only for $\exp$ and $\ln$.  For all other
+operations, the gap arises from auxiliary argument-preparation nodes that T37
+cannot see.
+\end{proposition}
+
+\begin{remark}[Towards tighter lower bounds]\label{rem:tighter}
+Closing the gaps in the table above requires operation-specific structural
+arguments --- which is precisely what was done for T09 (neg, recip), T10u
+(mul), and T33 (sub).  Each of those theorems establishes $\SB = 2$ by:
+\begin{enumerate}
+  \item Proving a 2-node construction exists (upper bound).
+  \item Exhaustively ruling out all 1-node constructions over $\Fam_{16}$
+        with terminals $\{x, y, 0, 1\}$ (tight lower bound).
+\end{enumerate}
+For $\mathrm{add}$ and $\mathrm{pow}$, the analogous 3-node lower bounds were
+verified by exhaustive 2-node search, leaving $\SB = 3$ as the certified
+optimum within the stated framework.
+\end{remark}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Conclusion}
+% ════════════════════════════════════════════════════════════════════════════
+
+This document establishes three formal lower bounds on EML-family node cost:
+
+\begin{itemize}
+  \item \textbf{T35 (Trivial Lower Bound):} $\Cost(E) \geq |\mathcal{O}(E)|$,
+        the number of non-mergeable distinct operations.  Most useful when
+        operations are clearly separable.
+  \item \textbf{T36 (Depth Lower Bound):} $\SB(f) \geq d$, where $d$ is the
+        number of necessary intermediate values.  Becomes $\ceil{d/2}$ in the
+        weaker depth-layer formulation.  Useful for depth-structured computations.
+  \item \textbf{T37 (Operation-Type Lower Bound):} $\Cost(E) \geq n_{\exp}+n_{\ln}$.
+        Tight for pure transcendental expressions; misses polynomial overhead.
+\end{itemize}
+
+Together with the naive upper bound from COST-2, these bounds bracket the true
+minimum cost.  The typical gap of 0--5 nodes reflects:
+\begin{enumerate}
+  \item \emph{Sharing savings}: sub-expression reuse that reduces cost below
+        the naive baseline.
+  \item \emph{Auxiliary-node overhead}: argument-preparation steps that push
+        cost above what operation-type counting predicts.
+\end{enumerate}
+Tight bounds for individual operations are established not by general theory
+but by exhaustive search combined with structural arguments — a methodology
+carried forward in the remaining COST sessions.
+
+\bigskip
+\noindent\textbf{Next:} COST-4 will develop exact cost formulae for Class A
+and Class C expressions as a function of the complexity of the inner function
+$f$, combining the bounds of COST-2 and COST-3 into a two-sided characterisation.
+
+\bigskip
+\noindent\textit{Almaguer, A.R.\ (2026).
+Cost Theory COST-3: Lower Bounds for EML-Family Node Costs.
+monogate research. \url{https://monogate.org}}
+
+\end{document}

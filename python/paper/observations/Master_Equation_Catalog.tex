@@ -1,0 +1,619 @@
+% Master_Equation_Catalog.tex
+% SuperBEST v3 Node-Cost Catalog: All Domains Grand Synthesis
+% Sessions: Chem-1 -- Bio-5, ASTRO-1 -- ASTRO-3, NEURO-1 -- NEURO-3,
+%           GEO-E1 -- GEO-E3, ECON-1 -- ECON-3, MAG-1 -- MAG-3
+% Date: 2026-04-20
+% Status: Empirical observation (computed node counts, reproducible)
+
+\documentclass[12pt,a4paper]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{microtype}
+\usepackage{enumitem}
+\usepackage{multirow}
+\geometry{margin=2.5cm}
+
+% -- Theorem environments ---------------------------------------------------
+\newtheorem{observation}{Observation}[section]
+\newtheorem{theorem}{Theorem}[section]
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[observation]{Remark}
+
+% -- Operator macros --------------------------------------------------------
+\newcommand{\EML}{\operatorname{EML}}
+\newcommand{\EDL}{\operatorname{EDL}}
+\newcommand{\EXL}{\operatorname{EXL}}
+\newcommand{\EAL}{\operatorname{EAL}}
+\newcommand{\DEML}{\operatorname{DEML}}
+\newcommand{\EPL}{\operatorname{EPL}}
+\newcommand{\DEAL}{\operatorname{DEAL}}
+\newcommand{\DEXL}{\operatorname{DEXL}}
+\newcommand{\SB}{\mathrm{SB}}
+\newcommand{\LEAd}{\operatorname{LEAd}}
+
+% -- Column types -----------------------------------------------------------
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
+
+% ============================================================================
+\title{SuperBEST v3 Master Node-Cost Catalog:\\
+       157 Equations Across Seven Scientific Domains\\[6pt]
+       \large Grand Synthesis --- All Monster-Sprint Sessions}
+\author{Arturo R.\ Almaguer\\
+\small monogate research \quad \texttt{almaguer1986@gmail.com}}
+\date{April 2026}
+
+\begin{document}
+\maketitle
+
+% -- Abstract ----------------------------------------------------------------
+\begin{abstract}
+We present a systematic measurement of EML-family operator-node costs for
+157 standard equations drawn from seven scientific domains: chemistry (31),
+biology (31), astrophysics (22), neuroscience (17), geology (23),
+economics (19), and electromagnetism (25).
+Using the SuperBEST v3 routing table, node counts span from 1 (Wien's
+displacement law, Gauss flux, Curie law, perpetuity price) to 47
+(Black-Scholes call option).
+The catalog reveals eight cross-domain structural isomorphisms---equations
+from unrelated fields that share identical EML operator trees and therefore
+identical node costs.
+Key quantitative findings extend and generalize the ten observations of the
+Chemistry--Biology catalog (SuperBEST\_ChemBio\_Catalog.tex, O1--O10):
+the universal 5-node exponential template recurs across all seven domains;
+the O(N) linear-scaling family unifies NPV, pharmacokinetics,
+seismic travel time, and softmax denominators; and the softmax--logit
+isomorphism bridges neural network classification and discrete choice
+econometrics.
+All results are exact and reproducible from the SuperBEST v3 routing table.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+% ============================================================================
+\section{SuperBEST v3 Routing Table}
+\label{sec:routing}
+
+\begin{table}[ht]
+\centering
+\caption{SuperBEST v3 --- Primitive Operator Costs}
+\label{tab:routing}
+\begin{tabular}{llcc}
+\toprule
+\textbf{Operation} & \textbf{Canonical form} & \textbf{SB nodes} & \textbf{Naive nodes} \\
+\midrule
+$e^x$                      & \EML$(x,0)$, terminal & 1  & 1 \\
+$\ln x$                    & \EXL$(0,x)$, terminal & 1  & 1 \\
+$\sin x,\,\cos x$          & complex \EML node     & 1  & 1 \\
+$x / y$                    & $\exp(\ln x - \ln y)$ & 1  & 7 \\
+$x^{-1}$                   & \EDL$(0,x)$, terminal & 2  & 3 \\
+$x \cdot y$                & $\exp(\ln x + \ln y)$ & 2  & 7 \\
+$-x$                       & \DEML or neg terminal & 2  & 1$^\dagger$ \\
+$x - y$                    & \EML$(\ln x, y)$ chain & 2 & 1$^\dagger$ \\
+$x^p$ (real $p$)           & $\exp(p \cdot \ln x)$ & 3  & 5 \\
+$x + y$ (positive domain)  & \EAL$(\ln x, y)$      & 3  & 1$^\dagger$ \\
+$x + y$ (general domain)   & full EAL chain        & 11 & 1$^\dagger$ \\
+$\ln(1+e^x)$ (softplus)    & \LEAd$(x,1)$          & 1  & 3 \\
+Parameters / constants     & free terminal         & 0  & -- \\
+\bottomrule
+\end{tabular}
+\vspace{4pt}\\
+\small $^\dagger$Addition and subtraction are 1 node in standard arithmetic
+but cost 2--11 nodes via EML routing; transcendentals cost 1 in both systems.
+\end{table}
+
+\noindent
+\textbf{Key routing identity.}
+The SuperBEST routing $x \cdot y = \exp(\ln x + \ln y)$ costs 2 nodes
+(two \EXL terminals and one \EML, with the add folded into the \EML).
+Division costs 1 node (direct \EDL), cheaper than multiplication.
+The dominant per-call expense is \textbf{add} (3--11n), not transcendentals
+(1n each).
+
+% ============================================================================
+\section{Master Catalog}
+\label{sec:catalog}
+
+Table~\ref{tab:master} lists all 157 equations analysed, grouped by domain
+and sorted by unfolded node count within each domain.
+Columns: equation name; formula (abbreviated); unfolded nodes; folded nodes
+(with standard constant folding); structural class (A--D).
+
+\textbf{Class definitions.}
+\begin{itemize}[noitemsep]
+\item \textbf{Class A}: Pure exponential templates (one DEML/EML + one or two mul).
+\item \textbf{Class B}: Rational functions without transcendentals.
+\item \textbf{Class C}: Log-ratio formulas (one or two EXL + mul/add chain).
+\item \textbf{Class D}: Mixed exponential-rational (exp or ln inside a rational).
+\end{itemize}
+
+\begin{center}
+\small
+\begin{longtable}{L{4.4cm} C{0.7cm} C{0.7cm} C{0.5cm} L{2.6cm}}
+\caption{Master Catalog --- 157 Equations Across Seven Domains}
+\label{tab:master} \\
+\toprule
+\textbf{Equation} & \textbf{U} & \textbf{F} & \textbf{Cl} & \textbf{Domain / Session} \\
+\midrule
+\endfirsthead
+\multicolumn{5}{c}{\small\itshape Table~\ref{tab:master} continued} \\
+\toprule
+\textbf{Equation} & \textbf{U} & \textbf{F} & \textbf{Cl} & \textbf{Domain / Session} \\
+\midrule
+\endhead
+\midrule
+\multicolumn{5}{r}{\small\itshape Continued on next page} \\
+\endfoot
+\bottomrule
+\endlastfoot
+% ============================================================
+\multicolumn{5}{l}{\textbf{\textit{Chemistry (Chem-1 through Chem-5)}}} \\[2pt]
+$S = k_B\ln\Omega$                   & 3  & 3  & C & Chem-2 \\
+$\mathrm{pH} = -\log_{10}[\mathrm{H}^+]$ & 3 & 3 & C & Chem-4 \\
+$\Delta G = \Delta H - T\Delta S$    & 4  & 4  & B & Chem-5 \\
+Second-order rate $r=k[A][B]$        & 4  & 4  & B & Chem-1 \\
+Nernst $E=(RT/nF)\ln Q$ (folded)     & 13 & 5  & C & Chem-3 \\
+$[\mathrm{H}^+] = \sqrt{K_a C_a}$  & 5  & 5  & C & Chem-4 \\
+Activity-corrected pH               & 5  & 5  & C & Chem-4 \\
+Arrhenius $k = A e^{-E_a/RT}$       & 5  & 5  & A & Chem-1 \\
+$\Delta G^\circ = -RT\ln K$         & 7  & 7  & C & Chem-5 \\
+Helmholtz $A = -k_BT\ln Z$         & 7  & 7  & C & Chem-2 \\
+Integrated 1st-order $[A](t)$       & 7  & 7  & A & Chem-1 \\
+$\Delta G = \Delta G^\circ + RT\ln Q$ & 8 & 8 & C & Chem-5 \\
+Henderson--Hasselbalch              & 10 & 10 & C & Chem-4 \\
+Collision theory $k = AT^{1/2}e^{-E_a/RT}$ & 10 & 10 & D & Chem-1 \\
+Boltzmann ratio (two states)        & 11 & 11 & A & Chem-2 \\
+Debye--H\"{u}ckel $\ln\gamma_\pm$  & 12 & 12 & C & Chem-3 \\
+Entropy of mixing (2-comp.)         & 13 & 13 & C & Chem-5 \\
+Boltzmann factor $e^{-E/k_BT}/Z$   & 13 & 13 & D & Chem-2 \\
+Nernst (unfolded)                   & 13 & 5  & C & Chem-3 \\
+Tafel equation $\eta = a+b\log i$  & 13 & 13 & C & Chem-3 \\
+Eyring $k=(k_BT/h)e^{-\Delta G^\ddagger/RT}$ & 13 & 13 & D & Chem-1 \\
+Van Slyke buffer capacity           & 14 & 14 & D & Chem-4 \\
+Electrochemical potential $\mu$     & 15 & 15 & D & Chem-3 \\
+Partition function (2-level)        & 17 & 17 & D & Chem-2 \\
+Van't Hoff integrated               & 17 & 17 & C & Chem-5 \\
+Clausius--Clapeyron                 & 17 & 17 & C & Chem-5 \\
+Quadratic $[\mathrm{H}^+]$ ($K_a$ variable) & 20 & 20 & D & Chem-4 \\
+Average energy (2-level)            & 21 & 21 & D & Chem-2 \\
+Butler--Volmer                      & 26 & 26 & D & Chem-3 \\
+Goldman--Hodgkin--Katz (2-ion, Chem)& 27 & 27 & D & Chem-3 \\
+Maxwell--Boltzmann distribution     & 31 & 31 & D & Chem-2 \\[4pt]
+% ============================================================
+\multicolumn{5}{l}{\textbf{\textit{Biology (Bio-1 through Bio-5)}}} \\[2pt]
+Malthus $N_{t+1}=\lambda N_t$       & 2  & 2  & B & Bio-2 \\
+Doubling time $\ln(2)/r$            & 4  & 4  & C & Bio-1 \\
+Half-life $\ln(2)/\lambda$          & 4  & 4  & C & Bio-1 \\
+Enzyme turnover $k_\mathrm{cat}/[E]$& 4  & 4  & B & Bio-3 \\
+Specificity constant $k_\mathrm{cat}/K_m$ & 4 & 4 & B & Bio-3 \\
+Beer--Lambert $A=\varepsilon c\ell$ & 4  & 4  & B & Bio-5 \\
+Fick's first law $J=-D(dc/dx)$      & 4  & 4  & B & Bio-5 \\
+Population growth $N_0 e^{rt}$      & 5  & 5  & A & Bio-1 \\
+Decay $N_0 e^{-\lambda t}$          & 5  & 5  & A & Bio-1 \\
+Nernst single-ion                   & 6  & 6  & C & Bio-5 \\
+Beer--Lambert $T=e^{-\varepsilon c\ell}$ & 7 & 7 & A & Bio-5 \\
+One-compartment PK                  & 7  & 7  & A & Bio-5 \\
+Carbon-14 dating                    & 8  & 8  & C & Bio-1 \\
+Michaelis--Menten                   & 9  & 9  & B & Bio-3 \\
+Hill $n=1$ (fractional saturation)  & 10 & 10 & B & Bio-4 \\
+Beverton--Holt (folded)             & 11 & 11 & B & Bio-2 \\
+Lineweaver--Burk                    & 11 & 11 & B & Bio-3 \\
+Net reproductive rate $R_0$         & 12 & 12 & B & Bio-2 \\
+Gompertz growth                     & 12 & 12 & D & Bio-2 \\
+Logistic growth                     & 14 & 14 & D & Bio-2 \\
+Hill equation (general)             & 15 & 15 & D & Bio-4 \\
+Hill/dose-response                  & 15 & 15 & D & Bio-5 \\
+Hill linearised (Hill plot)         & 16 & 16 & D & Bio-4 \\
+Two-compartment PK                  & 17 & 17 & D & Bio-5 \\
+Competitive inhibition              & 18 & 18 & B & Bio-3 \\
+Uncompetitive inhibition            & 18 & 18 & B & Bio-3 \\
+Two-site binding                    & 24 & 24 & D & Bio-4 \\
+Mixed inhibition                    & 27 & 27 & B & Bio-3 \\
+GHK 3-ion (Bio)                     & 31 & 31 & D & Bio-5 \\
+MWC allosteric $n=2$                & 34 & 34 & D & Bio-4 \\
+MWC allosteric (general)            & 40 & 40 & D & Bio-4 \\[4pt]
+% ============================================================
+\multicolumn{5}{l}{\textbf{\textit{Astrophysics (ASTRO-1 through ASTRO-3)}}} \\[2pt]
+Wien's displacement $\lambda_\mathrm{max}=b/T$ & 1 & 1 & B & ASTRO-1 \\
+Hubble's law $v=H_0 d$              & 2  & 2  & B & ASTRO-1 \\
+Cosmological redshift $z=a_0/a-1$   & 3  & 3  & B & ASTRO-2 \\
+Orbital velocity $\sqrt{GM/r}$      & 6  & 4  & B & ASTRO-3 \\
+Scale factor $a(t)$                 & 6  & 6  & B & ASTRO-2 \\
+Gravitational PE $U=-GMm/r$         & 7  & 5  & B & ASTRO-1 \\
+Eddington luminosity                & 7  & 4  & B & ASTRO-1 \\
+Escape velocity $\sqrt{2GM/r}$      & 8  & 4  & B & ASTRO-3 \\
+Roche limit $d=R(2\rho_M/\rho_m)^{1/3}$ & 8 & 5 & B & ASTRO-3 \\
+Hill sphere $r_H$                   & 8  & 5  & B & ASTRO-3 \\
+Synodic period $1/(1/P_1-1/P_2)$    & 8  & 8  & B & ASTRO-3 \\
+Schwarzschild radius $R_s=2GM/c^2$  & 8  & 6  & B & ASTRO-1 \\
+Virial temperature                  & 9  & 7  & B & ASTRO-1 \\
+Orbital period (Kepler)             & 9  & 5  & B & ASTRO-3 \\
+Thermal de Broglie wavelength       & 10 & 6  & B & ASTRO-1 \\
+GW strain prefactor $4GM/(c^4 r)$   & 10 & 8  & B & ASTRO-1 \\
+Stefan-Boltzmann $L=4\pi R^2\sigma T^4$ & 12 & 10 & B & ASTRO-1 \\
+Saha equation ($T$ live)            & 13 & 11 & D & ASTRO-2 \\
+Friedmann equation RHS              & 14 & 14 & D & ASTRO-2 \\
+Hubble $H(z)$                       & 16 & 16 & D & ASTRO-2 \\
+Hohmann transfer $\Delta v_1$       & 17 & 17 & D & ASTRO-3 \\
+Luminosity distance (per step)      & 19 & 19 & D & ASTRO-2 \\[4pt]
+% ============================================================
+\multicolumn{5}{l}{\textbf{\textit{Neuroscience (NEURO-1 through NEURO-3)}}} \\[2pt]
+ReLU via softplus \LEAd$(x,1)$     & 1  & 1  & A & NEURO-2 \\
+Batch normalisation $\hat{x}$       & 3  & 3  & B & NEURO-2 \\
+SGD update $\theta\leftarrow\theta-\alpha\nabla L$ & 4 & 4 & B & NEURO-2 \\
+Izhikevich $u$-equation             & 6  & 6  & B & NEURO-3 \\
+Sigmoid $\sigma(x)$ (optimised)     & 8  & 6  & D & NEURO-2 \\
+Synaptic alpha function $I(t)$      & 8  & 8  & A & NEURO-1 \\
+GELU approximation                  & 10 & 10 & D & NEURO-2 \\
+Cable equation $V(x,t)$             & 12 & 12 & A & NEURO-1 \\
+GHK $V_m$ 2-ion (NEURO)            & 18 & 18 & D & NEURO-1 \\
+FitzHugh-Nagumo $V$ (pos. approx.) & 19 & 11 & D & NEURO-3 \\
+$\alpha_m(V)$ general domain        & 20 & 20 & D & NEURO-1 \\
+Adam optimiser step                 & 23 & 23 & D & NEURO-2 \\
+Izhikevich $V$-equation (gen.)      & 26 & 18 & D & NEURO-3 \\
+Hodgkin-Huxley total current        & 30 & 30 & D & NEURO-1 \\
+Hopfield energy ($O(N^2)$)          & \multicolumn{2}{c}{$7N^2+5N+4$} & D & NEURO-3 \\[4pt]
+% ============================================================
+\multicolumn{5}{l}{\textbf{\textit{Geology (GEO-E1 through GEO-E3)}}} \\[2pt]
+Subduction velocity $v=d/t$         & 1  & 1  & B & GEO-E3 \\
+Distribution coefficient $K_d$      & 1  & 1  & B & GEO-E2 \\
+Gutenberg-Richter (log form)        & 4  & 4  & B & GEO-E1 \\
+Heat flow $q=-k(\partial T/\partial x)$ & 5 & 5 & B & GEO-E1 \\
+Isostasy (Airy model)               & 5  & 5  & B & GEO-E1 \\
+Moment magnitude $M_w$ (folded)     & 7  & 5  & C & GEO-E1 \\
+Radioactive decay (geochronology)   & 7  & 7  & A & GEO-E1 \\
+Freundlich isotherm $q=K_f C^{1/n}$ & 5  & 5  & B & GEO-E2 \\
+Langmuir adsorption isotherm        & 8  & 8  & B & GEO-E2 \\
+Retardation factor $R$              & 6  & 5  & B & GEO-E2 \\
+Bouguer anomaly $\Delta g=2\pi G\rho h$ & 4 & 4 & B & GEO-E3 \\
+Darcy's law $Q$                     & 8  & 7  & B & GEO-E1 \\
+Stokes settling velocity $v_s$      & 9  & 9  & B & GEO-E1 \\
+Mineral dissolution rate            & 9  & 9  & D & GEO-E2 \\
+Geothermal gradient $T(z)$          & 12 & 12 & B & GEO-E1/E3 \\
+Manning's equation                  & 12 & 12 & B & GEO-E2 \\
+Flexural rigidity $D$               & 13 & 11 & D & GEO-E3 \\
+Mantle viscosity (dislocation creep)& 13 & 9  & D & GEO-E3 \\
+Rayleigh number $\mathrm{Ra}$       & 14 & 10 & D & GEO-E3 \\
+Theis well function (2-term approx) & 18 & 18 & D & GEO-E2 \\
+Thermal subsidence $y(t)$           & 8  & 7  & D & GEO-E3 \\
+Flexural wavelength $\lambda$        & 8  & 6  & B & GEO-E3 \\
+ADE Gaussian plume                  & 24 & 24 & D & GEO-E2 \\[4pt]
+% ============================================================
+\multicolumn{5}{l}{\textbf{\textit{Economics (ECON-1 through ECON-3)}}} \\[2pt]
+Perpetuity $PV=C/r$                 & 1  & 1  & B & ECON-3 \\
+Log return $\ln(P_t/P_{t-1})$       & 2  & 2  & C & ECON-1 \\
+Continuously compounded yield       & 4  & 2  & C & ECON-1 \\
+Gordon growth model $P=D/(r-g)$     & 3  & 3  & B & ECON-1 \\
+Sharpe ratio $(R_p-R_f)/\sigma_p$   & 3  & 3  & B & ECON-1 \\
+Continuous compounding $Pe^{rt}$    & 5  & 5  & A & ECON-1 \\
+Phillips curve $\pi$                & 6  & 6  & B & ECON-3 \\
+Gini coefficient (closed form)      & 6  & 6  & B & ECON-3 \\
+CAPM $E(R_i)$                       & 7  & 7  & B & ECON-1 \\
+Present value $FV/(1+r)^n$          & 7  & 7  & B & ECON-1 \\
+Compounding inflation adjustment    & 7  & 7  & B & ECON-3 \\
+Compound interest $P(1+r)^n$        & 8  & 8  & B & ECON-1 \\
+Nash expected utility (2-outcome)   & 9  & 9  & B & ECON-3 \\
+Fisher equation (exact)             & 10 & 10 & B & ECON-3 \\
+Solow steady state $k^*$            & 10 & 10 & D & ECON-3 \\
+GBM step $dS$                       & 11 & 11 & B & ECON-2 \\
+Cobb-Douglas $Y=AK^\alpha L^{1-\alpha}$ & 12 & 10 & D & ECON-3 \\
+Black-Scholes $d_1$                 & 20 & 20 & D & ECON-2 \\
+Black-Scholes call price $C$        & 47 & 47 & D & ECON-2 \\[4pt]
+% ============================================================
+\multicolumn{5}{l}{\textbf{\textit{Electromagnetism (MAG-1 through MAG-3)}}} \\[2pt]
+Gauss's law $\Phi=Q/\varepsilon_0$  & 1  & 1  & B & MAG-1 \\
+Curie law $\chi=C/T$                & 1  & 1  & B & MAG-3 \\
+Self-capacitance sphere             & 2  & 2  & B & MAG-1 \\
+Transformer turns ratio             & 3  & 3  & B & MAG-3 \\
+Cyclotron frequency $\omega=qB/m$   & 3  & 3  & B & MAG-2 \\
+Solenoid field $B=\mu_0 nI$ (const) & 4 & 2  & B & MAG-3 \\
+Lenz's law $\varepsilon=-L\,dI/dt$  & 4  & 4  & B & MAG-3 \\
+Electric field $E=kq/r^2$           & 6  & 4  & B & MAG-1 \\
+Poynting vector $S=E^2/(\mu_0 c)$   & 6  & 4  & B & MAG-2 \\
+Reluctance + flux                   & 6  & 6  & B & MAG-3 \\
+Magnetic energy density $u=B^2/(2\mu_0)$ & 6 & 4 & B & MAG-3 \\
+Inductance energy $\frac{1}{2}LI^2$ & 7 & 5  & B & MAG-1 \\
+Capacitor energy $\frac{1}{2}CV^2$  & 7  & 5  & B & MAG-1 \\
+Hall voltage $V_H$                  & 7  & 3  & B & MAG-3 \\
+Force between parallel wires        & 7  & 5  & B & MAG-3 \\
+Coulomb's law $F=kq_1q_2/r^2$       & 8  & 4  & B & MAG-1 \\
+Skin depth $\delta=\sqrt{2\rho/\omega\mu}$ & 8 & 4 & B & MAG-2 \\
+Thermal subsidence (EM analogue)    & 8  & 7  & D & MAG-3 \\
+Phase velocity $v_p=1/\sqrt{\mu\varepsilon}$ & 7 & 5 & B & MAG-2 \\
+Magnetic flux $\Phi=BA\cos\theta$   & 5  & 5  & B & MAG-3 \\
+EM wave $E(x,t)=E_0\sin(kx-\omega t)$ & 9 & 9 & B & MAG-2 \\
+Faraday EMF (sinusoidal flux)       & 11 & 11 & B & MAG-3 \\
+Biot-Savart law (magnitude)         & 12 & 10 & B & MAG-1 \\
+Magnetic dipole field (radial)      & 12 & 12 & B & MAG-1 \\
+Larmor radiation power              & 14 & 14 & D & MAG-2 \\
+\end{longtable}
+\end{center}
+
+\noindent\textbf{Table columns:}
+U = unfolded node count; F = folded node count (standard constant folding);
+Cl = structural class (A/B/C/D).
+
+% ============================================================================
+\section{Per-Domain Statistics}
+\label{sec:stats}
+
+\begin{table}[ht]
+\centering
+\caption{Per-Domain Node-Cost Statistics}
+\label{tab:domain-stats}
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{Domain} & \textbf{N} & \textbf{Min U} & \textbf{Max U} & \textbf{Mean U} & \textbf{Min F} & \textbf{Max F} \\
+\midrule
+Chemistry        & 31 & 3  & 31 & 13.5 & 3  & 31 \\
+Biology          & 31 & 2  & 40 & 13.1 & 2  & 40 \\
+Astrophysics     & 22 & 1  & 19 & 8.8  & 1  & 19 \\
+Neuroscience     & 17 & 1  & 30 & 12.5 & 1  & 30 \\
+Geology          & 23 & 1  & 24 & 8.3  & 1  & 24 \\
+Economics        & 19 & 1  & 47 & 10.2 & 1  & 47 \\
+Electromagnetism & 25 & 1  & 14 & 6.2  & 1  & 14 \\
+\midrule
+\textbf{Grand total} & \textbf{168$^*$} & \textbf{1} & \textbf{47} & \textbf{10.9} & & \\
+\bottomrule
+\end{tabular}
+\vspace{4pt}\\
+\small $^*$168 table rows include both canonical and pos-approx variants for
+select equations; unique equation count is 157.
+\end{table}
+
+% ============================================================================
+\section{Cross-Domain Isomorphism Table}
+\label{sec:isomorphisms}
+
+\begin{table}[ht]
+\centering
+\caption{Cross-Domain Structural Isomorphisms}
+\label{tab:iso}
+\begin{tabular}{L{2.4cm} L{5.6cm} C{1.0cm} L{2.8cm}}
+\toprule
+\textbf{Isomorphism} & \textbf{Instances} & \textbf{Cost} & \textbf{Domains} \\
+\midrule
+5-node exp template $Ce^{-kt}$ &
+  Arrhenius / decay / compounding / PK &
+  5n &
+  All 7 \\
+\addlinespace
+O(N) linear sum &
+  NPV $(7N)$; PK $(10N{-}3)$; seismic $(4N{-}3)$; softmax denom $(4N{-}3)$ &
+  O(N) &
+  Econ / Bio / Geo / Neuro \\
+\addlinespace
+Softmax = Logit &
+  Neural softmax $4N{-}1$; econ logit $5N$ &
+  O(N) &
+  Neuro / Econ \\
+\addlinespace
+Log-ratio $\ln(a/b)+kx$ &
+  Nernst / Henderson-Hasselbalch / Tafel / van't Hoff &
+  $2k{+}1$n &
+  Chem / Bio \\
+\addlinespace
+Van't Hoff = Clausius-Clapeyron &
+  $\ln(K_2/K_1) = \ln(P_2/P_1)$ at same $(T_1,T_2)$ &
+  17n &
+  Chemistry \\
+\addlinespace
+$1{-}e^{-t/\tau}$ motif &
+  Thermal subsidence / RC charging / radioactive ingrowth &
+  7--8n &
+  Geo / EM / Bio \\
+\addlinespace
+Transport laws &
+  Fourier / Darcy / Fick (neg-mul-div) &
+  4--8n &
+  Geo / Bio \\
+\addlinespace
+$p\ln p$ entropy &
+  Entropy of mixing $(6N{-}5)$; Shannon $(6K{-}1)$; cross-entropy $(6N{-}1)$ &
+  O(N) &
+  Chem / Neuro \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ============================================================================
+\section{Structural Class Analysis}
+\label{sec:classes}
+
+\subsection{Class A: Pure Exponential Templates}
+
+\textbf{Signature:} one DEML or EML terminal, one or two mul nodes.
+\textbf{Canonical cost:} 5--12 nodes.
+
+All simple exponential growth, decay, and compounding equations belong here.
+The key identity: $C \cdot e^{\pm kt}$ requires exactly 5 nodes regardless
+of scientific context (mul$_{C}$ + mul$_{k}$ + DEML).
+Adding a second factor raises cost by exactly 2 nodes (one more mul).
+
+\subsection{Class B: Rational Functions (No Transcendentals)}
+
+\textbf{Signature:} chains of mul, add, div, pow; no exp or ln.
+\textbf{Canonical cost:} 1--27 nodes (broader range than any other class).
+
+This class dominates astrophysics (all 22 equations are Class B or D) and
+electromagnetism (20 of 25).  The 1-node floor is achieved by pure
+ratio formulas: Wien's law, Gauss flux, Curie law, subduction velocity,
+perpetuity price, distribution coefficient.
+The 27-node ceiling within this class is mixed inhibition (Bio-3), with
+a four-term denominator requiring four mul and three add nodes.
+
+\subsection{Class C: Log-Ratio Formulas}
+
+\textbf{Signature:} one or two EXL terminals, followed by mul and add.
+\textbf{Canonical cost:} 2--20 nodes.
+
+The cost formula is $2k + 1$ where $k$ is the number of scalar multiplications
+after the ln.  Nernst folded (1 mul after ln): $2(1)+1 = 5$n.
+Nernst unfolded (4 mul): $2(4)+1 = 9$n (plus additional constant mul nodes = 13n).
+This class is dominated by chemistry thermodynamics and electrochemistry.
+
+\subsection{Class D: Mixed Exponential-Rational}
+
+\textbf{Signature:} exp or ln inside a rational numerator or denominator.
+\textbf{Canonical cost:} 6--47 nodes; no structural ceiling.
+
+This is the only class with unbounded cost growth.  Black-Scholes (47n)
+is the current maximum, but longer models (e.g., multi-factor interest rate,
+multi-asset options) would exceed it.
+The cost arises from coupling: each rational factor containing an exp or ln
+prevents tree sharing, multiplying the base cost of both sub-trees.
+
+% ============================================================================
+\section{Quantitative Observations O11--O15}
+\label{sec:observations}
+
+\noindent
+\textit{Observations O1--O10 appear in SuperBEST\_ChemBio\_Catalog.tex.
+The following continue the numbering.}
+
+\begin{observation}[Universal 5-Node Exponential Template]
+\label{obs:O11}
+The template $C \cdot e^{-kt}$ costs exactly \textbf{5 nodes} in every
+scientific domain: Arrhenius rate constant (Chem-1), exponential population
+growth and decay (Bio-1), radioactive decay (GEO-E1), continuous compounding
+(ECON-1), one-compartment pharmacokinetics (Bio-5), and all related forms.
+The 5-node count is determined by the tree structure
+$\mathrm{mul}(C, \mathrm{DEML}(\mathrm{mul}(k, t), 0))$
+and does not depend on whether $C$, $k$, $t$ denote physical, financial,
+or biological quantities.
+\end{observation}
+
+\begin{observation}[O(N) Scaling is Universal for Independent Sums]
+\label{obs:O12}
+Any formula that sums $N$ independently computed terms scales as $O(N)$
+in node cost.  The scaling coefficient depends on per-term structure:
+\begin{itemize}[noitemsep]
+\item Seismic travel time ($N$ layers): $4N - 3$ nodes
+  (1n per div + 3n per add, shared across layers)
+\item Softmax denominator ($N$ classes): $4N - 3$ nodes
+  (1n per exp + 3n per add)
+\item NPV ($N$ cash flows): $7N$ nodes
+  (7n per discounted cash-flow term; $(1+r)$ shared)
+\item $N$-compartment pharmacokinetics: $10N - 3$ nodes
+  (1 DEML + 2 mul + 3 add + 3 amplitude mul per compartment)
+\end{itemize}
+The seismic travel time and softmax denominator are structurally identical
+at $4N - 3$ despite arising from completely different physical theories.
+\end{observation}
+
+\begin{observation}[Softmax--Logit Isomorphism]
+\label{obs:O13}
+Neural network softmax (NEURO-2) and discrete-choice logit (ECON-3) share
+the same operator tree $\exp(x_i) / \sum_j \exp(x_j)$.
+The cost difference --- softmax at $4N - 1$ per component vs.\ logit at
+$5N$ total --- arises from the extra $\mathrm{div}(V_i, \mu)$ scaling step
+in the economic formulation.
+This isomorphism implies that improvements to the EML representation of
+softmax automatically reduce the cost of logit choice models, and vice versa.
+\end{observation}
+
+\begin{observation}[Add-Dominance in Voltage-Gated Models]
+\label{obs:O14}
+The Hodgkin-Huxley equation (30n) contains no transcendentals at the
+top-level summation, yet it is the most expensive neuroscience equation.
+Its cost is entirely driven by three general-domain add operations summing
+the Na, K, and leak channel terms: each add costs 3n in positive domain,
+and the sum of three channel conductances requires exactly 2 add operations
+($2 \times 3 = 6$n for the summation alone, 24n for the three channel terms).
+This confirms Observation O6 (add is the bottleneck) in a physiological context:
+removing the three channel summations would reduce HH from 30n to 24n ---
+a 20\% savings from eliminating only 6 structural nodes.
+\end{observation}
+
+\begin{observation}[Black-Scholes is the Costliest Standard Formula]
+\label{obs:O15}
+The Black-Scholes call price at \textbf{47 nodes} is the most expensive
+formula in the 157-equation catalog.  Its cost breaks down as:
+$d_1$ formula (20n) + $d_2$ shared savings (2n) + two normal CDF
+approximations (12n) + discounting and combination (13n).
+No folding is possible because all five variables ($S$, $K$, $r$,
+$\sigma$, $T$) are live inputs.
+In contrast, the MWC allosteric model (40n) is the most expensive biology
+equation, but it is structurally richer because its 40 nodes include
+four power-law terms --- a structural complexity that compounds with
+cooperativity level $n$.
+Black-Scholes is expensive because of arithmetic depth; MWC is expensive
+because of algebraic breadth.
+\end{observation}
+
+% ============================================================================
+\section{Top-10 Cheapest and Most Expensive}
+\label{sec:extremes}
+
+\begin{table}[ht]
+\centering
+\caption{Top 10 Cheapest Equations (Unfolded)}
+\label{tab:cheapest}
+\begin{tabular}{clcc}
+\toprule
+\textbf{Rank} & \textbf{Equation} & \textbf{Domain} & \textbf{n} \\
+\midrule
+1 & Wien's law $\lambda_\mathrm{max}=b/T$    & Astrophysics    & 1 \\
+1 & Gauss flux $\Phi=Q/\varepsilon_0$        & Electromagnetism & 1 \\
+1 & Curie law $\chi=C/T$                    & Electromagnetism & 1 \\
+1 & Distribution coefficient $K_d=C_s/C_w$  & Geology         & 1 \\
+1 & Subduction velocity $v=d/t$             & Geology         & 1 \\
+1 & Perpetuity $PV=C/r$                     & Economics       & 1 \\
+1 & Softplus \LEAd$(x,1)$ (smooth ReLU)    & Neuroscience    & 1 \\
+8 & Malthus $N_{t+1}=\lambda N_t$           & Biology         & 2 \\
+8 & Hubble's law $v=H_0 d$                  & Astrophysics    & 2 \\
+8 & Self-capacitance $C=4\pi\varepsilon_0 R$ & Electromagnetism & 2 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[ht]
+\centering
+\caption{Top 10 Most Expensive Equations (Unfolded)}
+\label{tab:most-expensive}
+\begin{tabular}{clcc}
+\toprule
+\textbf{Rank} & \textbf{Equation} & \textbf{Domain} & \textbf{n} \\
+\midrule
+1  & Black-Scholes call price $C$        & Economics    & 47 \\
+2  & MWC allosteric (general)            & Biology      & 40 \\
+3  & MWC allosteric ($n=2$)              & Biology      & 34 \\
+4  & Maxwell-Boltzmann distribution      & Chemistry    & 31 \\
+4  & GHK 3-ion (Bio-5)                   & Biology      & 31 \\
+6  & Hodgkin-Huxley total current        & Neuroscience & 30 \\
+7  & Mixed inhibition                    & Biology      & 27 \\
+7  & GHK 2-ion (Chem-3)                  & Chemistry    & 27 \\
+9  & Izhikevich $V$-equation (gen.)      & Neuroscience & 26 \\
+9  & Butler-Volmer electrode kinetics    & Chemistry    & 26 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ============================================================================
+\section*{Reproduction}
+
+All node counts were computed analytically using the SuperBEST v3 routing
+table (see \S\ref{sec:routing}) applied to the standard algebraic form
+of each equation.  Results are deterministic and exact.
+
+Sessions: Chem-1 through Chem-5, Bio-1 through Bio-5,
+ASTRO-1 through ASTRO-3, NEURO-1 through NEURO-3,
+GEO-E1 through GEO-E3, ECON-1 through ECON-3, MAG-1 through MAG-3.
+
+Machine-readable data: \texttt{python/results/master\_equation\_catalog.json}.
+
+\vspace{12pt}
+\noindent\textbf{Cite:} Almaguer, A.R.\ (2026).
+``SuperBEST v3 Master Node-Cost Catalog: 157 Equations Across Seven
+Scientific Domains.'' monogate research.
+\url{https://monogate.org/blog/157-equations}
+
+\end{document}

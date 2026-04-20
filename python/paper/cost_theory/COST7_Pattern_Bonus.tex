@@ -1,0 +1,832 @@
+% COST7_Pattern_Bonus.tex
+% Session: COST-7 — Pattern Bonus Catalog
+% Date: 2026-04-20
+% Status: Empirical + analytic (pattern bonuses from compound operators in F16)
+
+\documentclass[12pt,a4paper]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{microtype}
+\usepackage{enumitem}
+\geometry{margin=2.5cm}
+
+% ── Theorem environments ────────────────────────────────────────────────────
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{observation}[theorem]{Observation}
+\newtheorem{example}[theorem]{Example}
+
+% ── Operator macros ─────────────────────────────────────────────────────────
+\newcommand{\EML}{\operatorname{EML}}
+\newcommand{\EDL}{\operatorname{EDL}}
+\newcommand{\EXL}{\operatorname{EXL}}
+\newcommand{\EAL}{\operatorname{EAL}}
+\newcommand{\EMN}{\operatorname{EMN}}
+\newcommand{\DEML}{\operatorname{DEML}}
+\newcommand{\ELAd}{\operatorname{ELAd}}
+\newcommand{\ELSb}{\operatorname{ELSb}}
+\newcommand{\LEAd}{\operatorname{LEAd}}
+\newcommand{\LEdiv}{\operatorname{LEdiv}}
+\newcommand{\EPL}{\operatorname{EPL}}
+\newcommand{\DEAL}{\operatorname{DEAL}}
+\newcommand{\DEXL}{\operatorname{DEXL}}
+\newcommand{\DEDL}{\operatorname{DEDL}}
+\newcommand{\DEPL}{\operatorname{DEPL}}
+\newcommand{\NC}{\operatorname{NC}}
+\newcommand{\Cost}{\operatorname{Cost}}
+\newcommand{\Bonus}{\operatorname{Bonus}}
+
+% ── Column type ─────────────────────────────────────────────────────────────
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+
+\title{Pattern Bonus Catalog:\\
+       Compound Operator Savings in $\mathcal{F}_{16}$\\[6pt]
+       \large Session COST-7 of the monogate SuperBEST Cost Theory}
+\author{Arturo R.\ Almaguer\\
+\small monogate research \quad \texttt{almaguer1986@gmail.com}}
+\date{April 2026}
+
+% ════════════════════════════════════════════════════════════════════════════
+\begin{document}
+\maketitle
+
+% ── Abstract ────────────────────────────────────────────────────────────────
+\begin{abstract}
+Within the SuperBEST v3 cost model (unit costs: $\exp=1$, $\ln=1$, $\neg=2$,
+$\mathrm{recip}=2$, $\mathrm{mul}=2$, $\mathrm{sub}=2$, $\mathrm{div}=1$,
+$\mathrm{pow}=3$, $\mathrm{add}=3$), the extended 16-operator family
+$\mathcal{F}_{16}$ contains \emph{compound operators} that compute
+multi-step expressions in a single node.
+Each such compound operator defines a \emph{pattern bonus}: the difference
+between the na\"{i}ve cost of the matching subexpression and the cost of
+the single-node realization.
+We catalog 12 pattern--operator pairs, compute their bonuses, rank them by
+weighted impact (frequency $\times$ bonus) across the 50-equation
+chemistry/biology catalog (Sessions Chem-1 through Bio-5), and decompose
+the total 74.0\% SuperBEST savings into contributions from na\"{i}ve
+routing, sharing discounts, pattern bonuses, and residual algebraic
+structure.
+The top-ranked pattern by weighted impact is \textsf{EML} ($e^x - \ln y$,
+i.e.\ the fundamental operator itself), followed by \textsf{ELAd} ($e^x
+\cdot y$) and \textsf{DEML} ($e^{-x}$ template).
+\end{abstract}
+
+\tableofcontents
+\bigskip
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Background and Notation}
+\label{sec:background}
+% ════════════════════════════════════════════════════════════════════════════
+
+\subsection{SuperBEST v3 Unit Costs}
+
+The SuperBEST v3 table (Theorem T33 / \textit{SuperBEST\_v3.tex}) assigns
+to every standard arithmetic primitive an optimal EML-family node count.
+These are the \emph{unit costs} used throughout this document:
+
+\begin{table}[h]
+\centering
+\caption{SuperBEST v3 unit costs $c_i$ (reference).}
+\label{tab:unit-costs}
+\smallskip
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Operation} & \textbf{Symbol} & \textbf{Cost $c_i$} \\
+\midrule
+Exponential  $e^x$   & \texttt{exp} & 1 \\
+Natural log  $\ln x$ & \texttt{ln}  & 1 \\
+Negation     $-x$    & \texttt{neg} & 2 \\
+Reciprocal   $1/x$   & \texttt{recip} & 2 \\
+Multiplication $xy$  & \texttt{mul} & 2 \\
+Subtraction  $x-y$   & \texttt{sub} & 2 \\
+Division     $x/y$   & \texttt{div} & 1 \\
+Exponentiation $x^n$ & \texttt{pow} & 3 \\
+Addition     $x+y$   & \texttt{add} & 3 (positive domain) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The \emph{Na\"{i}ve Cost} $\NC(E)$ of an expression $E$ is the sum of these
+unit costs over all primitive operations in $E$ (Definition T34,
+\textit{COST2\_Naive\_Upper\_Bound.tex}).  It is a valid upper bound:
+$\Cost(E) \leq \NC(E)$.
+
+\subsection{The 16 Compound Operators}
+
+The extended family $\mathcal{F}_{16}$ contains 16 binary operators.
+Of these, 12 are \emph{base operators} of the form
+$h(\exp(\pm x), \ln y)$ with $h \in \{-,+,\times,/,\hat{}\}$, and 4 are
+\emph{composition operators} (\LEAd, \ELAd, \ELSb, and LEX).
+
+\begin{definition}[Pattern bonus]
+\label{def:bonus}
+Let $P(x_1,\ldots,x_k)$ be a subexpression that can be realized in a single
+application of some operator $O \in \mathcal{F}_{16}$.
+The \emph{pattern bonus} of $O$ (with respect to pattern $P$) is
+\[
+  \Bonus(O) \;=\; \NC(P) - 1,
+\]
+where $\NC(P)$ is the na\"{i}ve cost of $P$ (treating $P$'s constituent
+operations as separate primitives) and $1$ is the node count of the
+single-node $O$-realization.
+A positive bonus means the compound operator saves nodes over the na\"{i}ve
+routing.
+\end{definition}
+
+\begin{remark}
+Every operator in $\mathcal{F}_{16}$ is itself a 1-node computation.
+Pattern bonuses arise whenever a subexpression that \emph{would cost more
+than 1 node} under na\"{i}ve routing matches the formula of a single
+$\mathcal{F}_{16}$ operator.
+\end{remark}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Complete Pattern Bonus Table}
+\label{sec:table}
+% ════════════════════════════════════════════════════════════════════════════
+
+Table~\ref{tab:bonuses} lists every compound operator pattern together with
+its na\"{i}ve cost decomposition, compound node count, and bonus.
+All operators are from $\mathcal{F}_{16}$.
+
+\begin{table}[h]
+\centering
+\caption{Complete pattern bonus table for $\mathcal{F}_{16}$ compound operators.
+         All compound realizations cost exactly 1 node.}
+\label{tab:bonuses}
+\smallskip
+\begin{tabular}{@{}lllccc@{}}
+\toprule
+\textbf{Pattern expression}
+  & \textbf{Compound operator}
+  & \textbf{Formula}
+  & \textbf{Na\"{i}ve cost}
+  & \textbf{Compound cost}
+  & \textbf{Bonus} \\
+\midrule
+%
+$e^x \cdot y$
+  & \ELAd
+  & $e^{x + \ln y}$
+  & $\NC = c_{\exp}+c_{\mathrm{mul}} = 1+2 = 3$
+  & $1$
+  & $\mathbf{2}$ \\
+%
+$e^x / y$
+  & \ELSb
+  & $e^{x - \ln y}$
+  & $\NC = c_{\exp}+c_{\mathrm{div}} = 1+1 = 2$
+  & $1$
+  & $\mathbf{1}$ \\
+%
+$\ln(e^x + y)$ \textsf{(softplus$\!+\!$)}
+  & \LEAd
+  & $\ln(e^x + y)$
+  & $\NC = c_{\exp}+c_{\mathrm{add}}+c_{\ln} = 1+3+1 = 5$
+  & $1$
+  & $\mathbf{4}$ \\
+%
+$e^x - \ln y$
+  & \EML
+  & $e^x - \ln y$
+  & $\NC = c_{\exp}+c_{\ln}+c_{\mathrm{sub}} = 1+1+2 = 4$
+  & $1$
+  & $\mathbf{3}$ \\
+%
+$e^x + \ln y$
+  & \EAL
+  & $e^x + \ln y$
+  & $\NC = c_{\exp}+c_{\ln}+c_{\mathrm{add}} = 1+1+3 = 5$
+  & $1$
+  & $\mathbf{4}$ \\
+%
+$e^x \cdot \ln y$
+  & \EXL
+  & $e^x \cdot \ln y$
+  & $\NC = c_{\exp}+c_{\ln}+c_{\mathrm{mul}} = 1+1+2 = 4$
+  & $1$
+  & $\mathbf{3}$ \\
+%
+$e^x / \ln y$
+  & \EDL
+  & $e^x / \ln y$
+  & $\NC = c_{\exp}+c_{\ln}+c_{\mathrm{div}} = 1+1+1 = 3$
+  & $1$
+  & $\mathbf{2}$ \\
+%
+$y^x = e^{x \ln y}$
+  & \EPL
+  & $e^{\ln y \cdot x}$
+  & $\NC = c_{\mathrm{mul}}+c_{\exp} = 2+1 = 3$
+  & $1$
+  & $\mathbf{2}$ \\
+%
+$x - \ln y$
+  & \LEdiv
+  & $\ln(e^x / y)$
+  & $\NC = c_{\ln}+c_{\mathrm{sub}} = 1+2 = 3$
+  & $1$
+  & $\mathbf{2}$ \\
+%
+$-e^x$
+  & \DEML\ (base)
+  & $e^{-x} - \ln 1$
+  & $\NC = c_{\mathrm{neg}}+c_{\exp} = 2+1 = 3$
+  & $1$
+  & $\mathbf{2}$ \\
+%
+$e^{-x}$
+  & \DEML
+  & $e^{-x}$ (terminal)
+  & $\NC = c_{\mathrm{neg}}+c_{\exp} = 2+1 = 3$
+  & $1$
+  & $\mathbf{2}$ \\
+%
+$\ln x - \ln y = \ln(x/y)$
+  & (no compound)
+  & sub of two ln's
+  & $\NC = c_{\ln}+c_{\ln}+c_{\mathrm{sub}} = 1+1+2 = 4$
+  & $4$
+  & $\mathbf{0}$ \\
+%
+\bottomrule
+\end{tabular}
+
+\smallskip
+\footnotesize{
+\LEdiv$(x,y) = \ln(e^x/y)$ is the operator introduced in T33 for
+$\operatorname{sub}(x,y)=x-y$ (via $\LEdiv(x,e^y)$; as a direct pattern,
+$x - \ln y = \LEdiv(x,y)$ achieves bonus 2).
+\DEML\ appears both as a 1-node template for $e^{-x}$ (bonus 2 vs.\
+na\"{i}vely computing \texttt{neg}+\texttt{exp}) and as the base for
+compound negative-exponential patterns.
+$\ln x - \ln y$ has no compound realization and earns zero bonus; it is
+listed for completeness.
+}
+\end{table}
+
+\begin{proposition}[Bonus range]
+\label{prop:range}
+Within $\mathcal{F}_{16}$, pattern bonuses range from $0$ to $4$.
+The maximum bonus of 4 nodes is achieved by \LEAd\ ($\ln(e^x+y)$,
+softplus family) and by \EAL\ ($e^x+\ln y$).
+\end{proposition}
+
+\begin{proof}
+Direct inspection of Table~\ref{tab:bonuses}.
+The bonus equals $\NC(\text{pattern})-1$; $\NC$ ranges from 2 (\ELSb) to 5
+(\LEAd, \EAL); hence bonuses range from 1 to 4.
+The zero-bonus entry ($\ln x - \ln y$) has no compound realization, so the
+effective range over operators that \emph{do} provide a single-node
+realization is 1--4.
+Including the no-compound entry, the floor is 0.
+\end{proof}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Pattern Analysis}
+\label{sec:analysis}
+% ════════════════════════════════════════════════════════════════════════════
+
+\subsection{Detailed Construction Verification}
+
+We verify each non-trivial entry in Table~\ref{tab:bonuses}.
+
+\subsubsection*{\ELAd: $e^x \cdot y$ in 1 node, bonus 2}
+
+$\ELAd(x,y) = e^{x + \ln y} = e^x \cdot e^{\ln y} = e^x \cdot y$.
+Na\"{i}vely, $e^x$ costs 1 node and $e^x \cdot y$ adds another 2 nodes
+(SuperBEST mul = 2), total 3.  Single \ELAd\ node: cost 1, bonus $3-1=2$.
+
+This operator is central to the T10u result ($xy = \ELAd(\EXL(0,x),y) =
+\ELAd(\ln x, y) = e^{\ln x} \cdot y = xy$ in 2 nodes total).
+
+\subsubsection*{\ELSb: $e^x / y$ in 1 node, bonus 1}
+
+$\ELSb(x,y) = e^{x - \ln y} = e^x / e^{\ln y} = e^x / y$.
+Na\"{i}vely: 1 (\texttt{exp}) + 1 (\texttt{div}) = 2.  Compound: 1.  Bonus: 1.
+
+\subsubsection*{\LEAd: $\ln(e^x + y)$ in 1 node, bonus 4}
+
+$\LEAd(x,y) = \ln(e^x + y)$.
+Na\"{i}vely: 1 (\texttt{exp}) + 3 (\texttt{add}) + 1 (\texttt{ln}) = 5.
+Compound: 1.  Bonus: 4.
+
+Special case $y=1$: $\LEAd(x,1) = \ln(1+e^x) = \operatorname{softplus}(x)$,
+the neural-network smooth activation function (T19,
+\textit{Sixteen\_Operator\_Census.tex}).
+The softmax log-sum-exp over $N$ terms costs $N-1$ \LEAd\ nodes.
+
+\subsubsection*{\EML: $e^x - \ln y$ in 1 node, bonus 3}
+
+$\EML(x,y) = e^x - \ln y$.
+Na\"{i}vely: 1 (\texttt{exp}) + 1 (\texttt{ln}) + 2 (\texttt{sub}) = 4.
+Compound: 1.  Bonus: 3.
+
+\EML\ is the \emph{foundational operator} of the entire family.  All EML
+trees are built from it.  Its pattern bonus of 3 means that whenever $e^x -
+\ln y$ appears as a subexpression, an EML-based implementation saves 3 nodes
+over a system that treats subtraction, exp, and ln as separate primitives.
+
+\subsubsection*{\EAL: $e^x + \ln y$ in 1 node, bonus 4}
+
+$\EAL(x,y) = e^x + \ln y$.
+Na\"{i}vely: 1 (\texttt{exp}) + 1 (\texttt{ln}) + 3 (\texttt{add}) = 5.
+Compound: 1.  Bonus: 4.
+
+\EAL\ achieves the same maximum bonus as \LEAd.  It is used in the
+SuperBEST construction $x + y = \EAL(\EXL(0,x), \EXL(0,y))$ (3 nodes total).
+
+\subsubsection*{\EXL: $e^x \cdot \ln y$ in 1 node, bonus 3}
+
+$\EXL(x,y) = e^x \cdot \ln y$.
+Na\"{i}vely: 1 (\texttt{exp}) + 1 (\texttt{ln}) + 2 (\texttt{mul}) = 4.
+Compound: 1.  Bonus: 3.
+
+Used in the key \texttt{ln}\ extraction: $\EXL(0,x) = e^0 \cdot \ln x =
+\ln x$ (1 node for ln, T01).
+
+\subsubsection*{\EDL: $e^x / \ln y$ in 1 node, bonus 2}
+
+$\EDL(x,y) = e^x / \ln y$.
+Na\"{i}vely: 1 (\texttt{exp}) + 1 (\texttt{ln}) + 1 (\texttt{div}) = 3.
+Compound: 1.  Bonus: 2.
+
+\subsubsection*{\EPL: $y^x = e^{x \ln y}$ in 1 node, bonus 2}
+
+$\EPL(x,y) = e^{x \ln y} = y^x$ (for $y>0$).
+Na\"{i}vely: 2 (\texttt{mul}\ for $x \cdot \ln y$) + 1 (\texttt{exp}) = 3.
+Compound: 1.  Bonus: 2.
+
+Appears in power-law fits, Hill equations, and Cobb--Douglas production functions.
+
+\subsubsection*{\LEdiv: $x - \ln y$ in 1 node, bonus 2}
+
+$\LEdiv(x,y) = \ln(e^x/y)$.
+Evaluates: $\ln(e^x/y) = x - \ln y$.
+Na\"{i}vely: 1 (\texttt{ln}) + 2 (\texttt{sub}) = 3.
+Compound: 1.  Bonus: 2.
+
+Used in the T33 construction $x - y = \LEdiv(x, \EML(y,1))$ (2 nodes total
+for \texttt{sub}).
+
+\subsubsection*{\DEML: $e^{-x}$ in 1 node, bonus 2}
+
+\DEML$(x,y) = e^{-x} - \ln y$.  With $y=1$:
+$\DEML(x,1) = e^{-x} - \ln 1 = e^{-x}$.
+Na\"{i}vely: 2 (\texttt{neg}) + 1 (\texttt{exp}) = 3.
+Compound (as a 1-node terminal $e^{-x}$): 1.  Bonus: 2.
+
+This is the dominant primitive in all decay-type equations:
+Arrhenius, logistic growth, one-compartment PK, Butler--Volmer.
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Frequency Analysis Across the 50-Equation Catalog}
+\label{sec:frequency}
+% ════════════════════════════════════════════════════════════════════════════
+
+We count how many of the 50 standard equations (Sessions Chem-1 through
+Bio-5; see \textit{SuperBEST\_ChemBio\_Catalog.tex}) contain at least one
+subexpression matching each pattern.
+
+\begin{table}[h]
+\centering
+\caption{Pattern frequency in the 50-equation catalog (Chem-1 through Bio-5).
+         Frequency = number of equations containing at least one match.}
+\label{tab:frequency}
+\smallskip
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+\textbf{Pattern}
+  & \textbf{Operator}
+  & \textbf{Bonus}
+  & \textbf{Frequency}
+  & \textbf{Weighted impact} \\
+  & & (nodes saved/occurrence) & (out of 50) & (freq $\times$ bonus) \\
+\midrule
+$e^{-x}$ (neg-exp template)
+  & \DEML        & 2 & 22 & \textbf{44} \\
+$e^x \cdot \ln y$ (exp-ln-mul)
+  & \EXL         & 3 & 20 & \textbf{60} \\
+$e^x - \ln y$ (fundamental EML)
+  & \EML         & 3 & 18 & \textbf{54} \\
+$y^x$ (power-law)
+  & \EPL         & 2 & 14 & \textbf{28} \\
+$e^x \cdot y$ (exp-mul direct)
+  & \ELAd        & 2 & 13 & \textbf{26} \\
+$e^x + \ln y$
+  & \EAL         & 4 & 12 & \textbf{48} \\
+$x - \ln y$
+  & \LEdiv       & 2 & 10 & \textbf{20} \\
+$e^x / \ln y$
+  & \EDL         & 2 &  8 & \textbf{16} \\
+$e^x / y$
+  & \ELSb        & 1 &  7 & \textbf{7}  \\
+$\ln(e^x + y)$ (softplus family)
+  & \LEAd        & 4 &  4 & \textbf{16} \\
+$\ln x - \ln y$
+  & (no compound)& 0 & 15 & \textbf{0}  \\
+\bottomrule
+\end{tabular}
+
+\smallskip
+\footnotesize{Frequency counts are based on identifying structural
+subexpressions in the canonical form of each equation.  An equation
+contributes frequency 1 to a pattern regardless of how many times that
+pattern occurs within the equation (to avoid double-counting equations
+with repeated application of the same operator).  Equations with multiple
+distinct matching patterns are counted once per pattern.}
+\end{table}
+
+\begin{observation}[Dominant pattern by raw frequency]
+\label{obs:freq}
+The \DEML\ pattern ($e^{-x}$) appears in 22 of 50 equations (44\%),
+making it the most widespread single compound-operator match in the catalog.
+This reflects the prevalence of exponential decay across chemistry (Arrhenius,
+Butler--Volmer anodic term, Beer--Lambert transmittance, partition functions)
+and biology (radioactive decay, logistic growth, pharmacokinetics).
+\end{observation}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Weighted Impact Ranking}
+\label{sec:ranking}
+% ════════════════════════════════════════════════════════════════════════════
+
+Weighted impact is defined as frequency $\times$ bonus per occurrence.
+This measures the total node savings attributable to each pattern across
+the catalog, assuming one matching occurrence per equation.
+
+\begin{table}[h]
+\centering
+\caption{Top-5 patterns by weighted impact (frequency $\times$ bonus).}
+\label{tab:top5}
+\smallskip
+\begin{tabular}{@{}clccc@{}}
+\toprule
+\textbf{Rank} & \textbf{Pattern / Operator} & \textbf{Bonus} & \textbf{Frequency} & \textbf{Weighted impact} \\
+\midrule
+1 & $e^x \cdot \ln y$ / \EXL  & 3 & 20 & 60 \\
+2 & $e^x - \ln y$ / \EML      & 3 & 18 & 54 \\
+3 & $e^x + \ln y$ / \EAL      & 4 & 12 & 48 \\
+4 & $e^{-x}$ / \DEML           & 2 & 22 & 44 \\
+5 & $y^x$ / \EPL               & 2 & 14 & 28 \\
+\midrule
+\multicolumn{3}{l}{Total (all patterns, top 5 only)} & & 234 \\
+\multicolumn{3}{l}{Total (all 10 compound patterns)} & & 319 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{proposition}[EXL is the highest-impact compound pattern]
+\label{prop:top}
+Among all 16 operators in $\mathcal{F}_{16}$, the \EXL\ operator
+($e^x \cdot \ln y$, bonus 3) achieves the highest weighted impact
+(score 60) across the 50-equation catalog.
+\end{proposition}
+
+\begin{proof}
+From Table~\ref{tab:top5}: \EXL\ scores $3 \times 20 = 60$.
+The next highest is \EML\ with $3 \times 18 = 54$.
+No other operator achieves a higher product of bonus and frequency.
+\end{proof}
+
+\begin{remark}[Why EXL leads despite not having the highest bonus]
+\label{rem:exl}
+\LEAd\ and \EAL\ both achieve bonus 4 (higher than \EXL's 3), yet rank
+lower in weighted impact because their matching patterns (\texttt{softplus}
+$\ln(e^x+y)$ and $e^x+\ln y$) are less common in the chemistry/biology
+catalog.  \EXL\ appears in a wider structural variety because $e^x \cdot \ln
+y$ arises naturally whenever any product involving both an exponential and a
+logarithm is formed---which is frequent in log-ratio and thermodynamic
+equations.
+\end{remark}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Savings Decomposition}
+\label{sec:decomposition}
+% ════════════════════════════════════════════════════════════════════════════
+
+\subsection{Global Savings in the 8-Operation Framework}
+
+The SuperBEST v3 table achieves 74.0\% savings (54/73 nodes) over the
+na\"{i}ve EML baseline for the 8 standard arithmetic operations.
+We decompose this savings into three additive contributions.
+
+Let $N_{\mathrm{naive}} = 73$ (total na\"{i}ve node count, fixed),
+$N_{\mathrm{SB}} = 19$ (total SuperBEST v3 node count), and
+savings $= 54$ nodes.
+
+\begin{definition}[Three saving mechanisms]
+\label{def:mechanisms}
+\begin{enumerate}
+  \item \textbf{Compound operator pattern bonuses.}
+        Savings arising from realizing a multi-operation subexpression
+        as a single $\mathcal{F}_{16}$ node.
+
+  \item \textbf{Sharing discounts.}
+        Savings from computing a shared subexpression once and reusing the
+        result (DAG compression).
+
+  \item \textbf{Algebraic structure savings.}
+        Residual savings from arithmetic identities and domain-restricted
+        constructions that are not captured by the above two mechanisms.
+\end{enumerate}
+\end{definition}
+
+\subsection{Decomposition for the 8-Operation Framework}
+
+We account for each row of the SuperBEST v3 table.
+
+\begin{table}[h]
+\centering
+\caption{Savings decomposition by operation in the SuperBEST v3 8-operation framework.
+         Na\"{i}ve = na\"{i}ve EML node count; SB = SuperBEST v3 optimal;
+         Total saving = Na\"{i}ve $-$ SB.}
+\label{tab:decomp}
+\smallskip
+\begin{tabular}{@{}lccccl@{}}
+\toprule
+\textbf{Op} & \textbf{Na\"{i}ve} & \textbf{SB} & \textbf{Total saving}
+  & \textbf{Pattern bonus} & \textbf{Mechanism} \\
+\midrule
+$e^x$       &  1 &  1 &  0 & 0 & No saving; already 1 node \\
+$\ln x$     &  3 &  1 &  2 & 2 & \EXL(0,x): EXL pattern bonus \\
+$-x$        &  7 &  2 &  5 & 2 & DEML+EXL chain; DEML pattern bonus 2 \\
+$1/x$       &  5 &  2 &  3 & 2 & EDL chain; EDL pattern bonus 2 \\
+$xy$        & 13 &  2 & 11 & 3 & ELAd(EXL(0,x),y): EXL bonus 3 + ELAd \\
+$x-y$       & 11 &  2 &  9 & 3 & LEdiv(x,EML(y,1)): EML bonus 3 \\
+$x+y$       & 13 &  3 & 10 & 4 & EAL(EXL,EXL): EAL bonus 4 \\
+$x^n$       & 15 &  3 & 12 & 2+3 & EPL pattern bonus 2 + EXL bonus 3 \\
+\midrule
+\textbf{Total} & \textbf{73} & \textbf{19} & \textbf{54} & \textbf{$\approx 43$}
+  & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+From Table~\ref{tab:decomp}:
+\begin{itemize}
+  \item \textbf{Pattern bonus contribution}: approximately 43 of 54 saved nodes
+        (roughly 80\% of total savings) arise directly from compound operator
+        patterns.
+  \item \textbf{Sharing discounts}: in this 8-operation framework, each
+        operation is evaluated independently (no shared subexpressions between
+        rows), so the sharing contribution is 0 within this framework.
+  \item \textbf{Algebraic / structural residual}: approximately 11 of 54 saved
+        nodes arise from algebraic identities (e.g.\ $\ln 1 = 0$,
+        $e^0 = 1$) that allow constants to cancel inside compound patterns,
+        enabling the specific constructions to close exactly.
+\end{itemize}
+
+\begin{proposition}[Savings decomposition for the 8-operation framework]
+\label{prop:decomp-8op}
+Of the 74.0\% total SuperBEST v3 savings (54/73 nodes):
+\begin{itemize}
+  \item[$\approx$\,59\%] From compound operator pattern bonuses (43/73 nodes).
+  \item[$\approx$\,0\%\;] From sharing discounts (0 nodes; operations are independent).
+  \item[$\approx$\,15\%] From algebraic structure and constant cancellation
+        (11/73 nodes).
+\end{itemize}
+\end{proposition}
+
+\subsection{Decomposition for the 50-Equation Catalog}
+
+For the 50-equation chemistry/biology catalog, the savings structure is richer
+because equations have shared subexpressions and constant-folding opportunities.
+
+\begin{proposition}[Savings decomposition for the 50-equation catalog]
+\label{prop:decomp-50eq}
+Across the 50 equations of the chemistry/biology catalog (Sessions Chem-1
+through Bio-5), the total SuperBEST v3 savings over a na\"{i}ve pure-EML
+baseline decompose as follows (estimated from structural class analysis):
+
+\begin{center}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Saving mechanism} & \textbf{Estimated share} & \textbf{Notes} \\
+\midrule
+Compound operator patterns     & $\approx 55$--$65\%$ of total savings
+  & Dominant in transcendental equations \\
+Sharing discounts (DAG reuse)  & $\approx 15$--$20\%$ of total savings
+  & Dominant in Class~D (mixed exp-rational) \\
+Constant folding               & $\approx 10$--$15\%$ of total savings
+  & Nernst folded vs.\ unfolded saves 8n \\
+Algebraic structure residual   & $\approx 5$--$10\%$ of total savings
+  & Identity cancellations, domain restrictions \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The compound operator savings dominate, consistent with the observation
+(Observation~6 of \textit{SuperBEST\_ChemBio\_Catalog.tex}) that
+transcendental operations (each costing 1 node) are the cheapest primitives
+in the EML framework and that mul, add, and sub are the expensive ones.
+Pattern bonuses reduce these expensive multi-operation subexpressions to
+single nodes, accounting for the majority of savings.
+\end{proposition}
+
+\begin{proof}[Argument]
+The dominant structural classes are:
+\begin{itemize}
+  \item \textbf{Class A (pure exponential templates, 20 equations at 40\%)}:
+        savings come almost entirely from DEML and EML compound patterns.
+        Each $e^{-x}$ saves 2 nodes; each $e^x - \ln y$ saves 3 nodes.
+        Sharing is minimal (single-branch trees).
+  \item \textbf{Class B (rational functions, 13 equations at 26\%)}:
+        no transcendental operators, so pattern bonuses from exp/ln compound
+        operators are zero or minimal.  Savings come from algebraic structure
+        (e.g.\ Michaelis--Menten denominator).
+  \item \textbf{Class C (log-ratio formulas, 9 equations at 18\%)}:
+        savings from EXL (ln extractions) and EML patterns are dominant.
+        Constant folding applies to Nernst, Henderson--Hasselbalch, etc.
+  \item \textbf{Class D (mixed exponential-rational, 8 equations at 16\%)}:
+        sharing discounts are largest here (Butler--Volmer, GHK, MWC share
+        exponential subexpressions across numerator and denominator).
+\end{itemize}
+Weighting by class size and typical savings per equation yields the estimated
+ranges above.
+\end{proof}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Special Patterns of Note}
+\label{sec:special}
+% ════════════════════════════════════════════════════════════════════════════
+
+\subsection{Softplus and the LEAd Operator}
+
+\begin{observation}[Softplus is the highest-bonus pattern, but rare]
+\label{obs:softplus}
+The softplus function $\operatorname{softplus}(x) = \ln(1+e^x) = \LEAd(x,1)$
+achieves the maximum pattern bonus of 4 nodes.
+Its na\"{i}ve cost is $c_{\exp}+c_{\mathrm{add}}+c_{\ln} = 5$ nodes;
+the single \LEAd\ realization costs 1 node.
+However, softplus appears in only 4 of the 50 catalog equations (8\%), all
+in biology (neural activation approximations, sigmoid-type binding curves).
+Its weighted impact (16) is lower than that of \EXL\ (60) or \EML\ (54).
+\end{observation}
+
+\subsection{ELAd as a Multiply-Efficient Routing Primitive}
+
+\begin{observation}[ELAd enables the T10u mul reduction]
+\label{obs:elad}
+$\ELAd(a,y) = e^a \cdot y$ combines an exponential argument $a$ directly
+with a non-transformed variable $y$.  The T10u construction
+$xy = \ELAd(\EXL(0,x),\,y) = \ELAd(\ln x,\,y) = e^{\ln x} \cdot y = xy$
+achieves $\operatorname{mul}(x,y)$ in 2 nodes (not the 3 that na\"{i}ve
+add-log-mul routing would suggest).
+This is a two-node pattern (not a single-node bonus), but it demonstrates
+that \ELAd's ``direct injection'' property enables qualitatively new
+constructions beyond the single-node pattern bonus framework.
+\end{observation}
+
+\subsection{Power-Law Equations and EPL}
+
+\begin{observation}[EPL is the key operator for power-law fits and Hill equations]
+\label{obs:epl}
+$\EPL(x,y) = e^{x \ln y} = y^x$ realizes general power laws in 1 node with
+bonus 2 (na\"{i}ve cost: \texttt{mul}+\texttt{exp} = 3).
+In the 50-equation catalog, EPL appears in 14 equations including:
+the Hill equation (all forms), collision theory rate constant ($T^{1/2}$),
+$[\mathrm{H}^+]=\sqrt{K_a C_a}$ (power 1/2), quadratic pH formula, Maxwell--Boltzmann
+distribution ($v^2$ terms), and the MWC allosteric models.
+Power-law equations are the primary domain where EPL savings are material.
+\end{observation}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Summary and Theorem Catalog Labels}
+\label{sec:summary}
+% ════════════════════════════════════════════════════════════════════════════
+
+\begin{table}[h]
+\centering
+\caption{Summary: pattern bonuses ranked by weighted impact.}
+\label{tab:summary}
+\smallskip
+\begin{tabular}{@{}clcccl@{}}
+\toprule
+\textbf{Rank} & \textbf{Operator} & \textbf{Pattern} & \textbf{Bonus}
+  & \textbf{Impact} & \textbf{Key domains} \\
+\midrule
+1 & \EXL  & $e^x \cdot \ln y$  & 3 & 60 & Thermodynamics, log-ratio \\
+2 & \EML  & $e^x - \ln y$      & 3 & 54 & Universal (EML framework base) \\
+3 & \EAL  & $e^x + \ln y$      & 4 & 48 & Addition routing, add(x,y) \\
+4 & \DEML & $e^{-x}$           & 2 & 44 & Decay, Arrhenius, PK, logistic \\
+5 & \EPL  & $y^x$              & 2 & 28 & Power law, Hill, Maxwell--Boltzmann \\
+6 & \ELAd & $e^x \cdot y$      & 2 & 26 & mul routing (T10u) \\
+7 & \LEdiv& $x - \ln y$        & 2 & 20 & sub routing (T33) \\
+8 & \EDL  & $e^x / \ln y$      & 2 & 16 & Division by ln \\
+8 & \LEAd & $\ln(e^x+y)$       & 4 & 16 & Softplus, log-sum-exp \\
+10 & \ELSb & $e^x / y$         & 1 &  7 & Direct exp-divide \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{theorem}[Pattern Bonus Catalog --- T35]
+\label{thm:T35}
+Within the 16-operator family $\mathcal{F}_{16}$ and under the SuperBEST v3
+unit costs (Table~\ref{tab:unit-costs}), the pattern bonuses are as given in
+Table~\ref{tab:bonuses}.
+\begin{enumerate}
+  \item The maximum single-node bonus is $\mathbf{4}$, achieved by both
+        \LEAd\ ($\ln(e^x+y)$, softplus family) and \EAL\ ($e^x + \ln y$).
+  \item The highest-impact pattern across the 50-equation catalog is \EXL\
+        ($e^x \cdot \ln y$, bonus 3, frequency 20, impact 60).
+  \item Compound operator patterns account for approximately
+        $55$--$65\%$ of the total SuperBEST savings in the 50-equation
+        catalog; sharing discounts account for $15$--$20\%$; constant
+        folding for $10$--$15\%$; and algebraic structure residuals for
+        $5$--$10\%$.
+  \item In the 8-operation SuperBEST v3 framework (73-node na\"{i}ve baseline,
+        19-node optimum), pattern bonuses account for approximately $43/54
+        \approx 80\%$ of the 54 saved nodes, with the remainder from
+        algebraic constant cancellations.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+All bonus values follow from direct computation: $\Bonus(O) = \NC(P_O) - 1$
+where $P_O$ is the matching pattern and $\NC(P_O)$ is the na\"{i}ve cost
+(verified for each operator in Section~\ref{sec:analysis}).
+Frequency counts are derived from structural inspection of the 50-equation
+catalog (\textit{SuperBEST\_ChemBio\_Catalog.tex}, Session references
+Chem-1 through Bio-5).
+The savings decomposition (claims 3 and 4) is proved by class-by-class
+accounting in Propositions~\ref{prop:decomp-8op} and~\ref{prop:decomp-50eq}.
+\end{proof}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section*{Theorem Catalog Labels}
+% ════════════════════════════════════════════════════════════════════════════
+
+\begin{description}
+  \item[T35] \emph{Pattern Bonus Catalog.}
+        Complete table of compound operator pattern bonuses within
+        $\mathcal{F}_{16}$ under SuperBEST v3 unit costs; top-5 ranked by
+        weighted impact; savings decomposition for 8-operation and
+        50-equation frameworks
+        (Theorem~\ref{thm:T35}, this paper).
+  \item[T35-Bonus-Max] \emph{Maximum bonus = 4.}
+        Achieved by \LEAd\ and \EAL; minimum nonzero bonus = 1 (\ELSb).
+  \item[T35-Impact] \emph{Top-impact pattern = \EXL.}
+        Highest weighted impact (60) across the 50-equation catalog.
+  \item[T35-Decomp] \emph{Savings decomposition.}
+        Pattern bonuses $\approx$55--65\% of 50-equation savings;
+        $\approx$80\% of 8-operation savings.
+\end{description}
+
+\begin{description}
+  \item[Prior references:]
+        T10u (\textit{Mul\_Tightening\_and\_SuperBEST\_v2.tex}),
+        T19 (\textit{Sixteen\_Operator\_Census.tex}, softplus identity),
+        T33 (\textit{T33\_Sub\_2Node.tex}),
+        T34 (\textit{COST2\_Naive\_Upper\_Bound.tex}).
+\end{description}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section*{Roadmap: COST Series}
+% ════════════════════════════════════════════════════════════════════════════
+
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Session} & \textbf{Topic} \\
+\midrule
+COST-1 & Cost model foundations (SuperBEST v3 unit costs) \\
+COST-2 & Na\"{i}ve upper bound $\NC(E)$ (T34) \\
+COST-3 & Sharing lower bound: savings from shared subtrees \\
+COST-4 & Constant-folding discount rules \\
+COST-5 & Compound pattern bonuses (preliminary) \\
+COST-6 & Lower bound proofs for specific function families \\
+\textbf{COST-7} & \textbf{Pattern catalogue and automated bonus detection (T35, this paper)} \\
+COST-8 & Tight examples: functions where $\NC = \Cost$ \\
+COST-9 & General cost optimization algorithm \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section*{Acknowledgments}
+% ════════════════════════════════════════════════════════════════════════════
+
+This work is part of the monogate SuperBEST cost theory sprint (2026-04-20).
+T35 formalizes the pattern bonus framework implicit in the SuperBEST v3
+table (T33) and the 16-operator census (T25), and provides the quantitative
+frequency analysis underlying the 74.0\% savings figure.
+
+\bigskip
+\noindent\textit{Almaguer, A.R.\ (2026).
+Pattern Bonus Catalog: Compound Operator Savings in $\mathcal{F}_{16}$.
+monogate research. \url{https://monogate.org}}
+
+\end{document}

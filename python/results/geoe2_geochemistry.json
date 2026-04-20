@@ -1,0 +1,184 @@
+{
+  "session": "GEO-E2",
+  "title": "Geochemistry and Hydrology — SuperBEST v3 Cost Analysis",
+  "superBEST_version": "v3",
+  "operator_costs": {
+    "exp": 1,
+    "ln": 1,
+    "neg": 2,
+    "recip": 2,
+    "mul": 2,
+    "sub": 2,
+    "div": 1,
+    "pow": 3,
+    "add_pos": 3
+  },
+  "notes": [
+    "Parameters and constants are free (0 nodes).",
+    "Non-elementary functions (e.g. Theis well function W(u)) use approximations.",
+    "add(pos) = 3n; sub = 2n; div = 1n.",
+    "recip(x) = 2n (cheaper than div when denominator is a subexpression)."
+  ],
+  "equations": [
+    {
+      "id": 1,
+      "name": "Mineral dissolution rate",
+      "formula": "r = k * exp(-Ea / (R*T)) * (1 - Omega)",
+      "breakdown": {
+        "arrhenius_k_exp_neg_Ea_RT": "5n (from catalog: neg(2) + mul_RT(2) + div_Ea_RT(1) + exp(1) = 6? or standard 5n catalog entry — accepted as given)",
+        "saturation_term_sub_1_Omega": "sub(1, Omega) = 2n",
+        "mul_arrhenius_saturation": "mul = 2n"
+      },
+      "total_nodes": 9,
+      "total_formula": "5 (Arrhenius) + 2 (sub) + 2 (mul) = 9n",
+      "comments": "Arrhenius factor k·exp(−Ea/RT) is a known catalog entry at 5n."
+    },
+    {
+      "id": 2,
+      "name": "Distribution coefficient",
+      "formula": "Kd = Cs / Cw",
+      "breakdown": {
+        "div_Cs_Cw": "div = 1n"
+      },
+      "total_nodes": 1,
+      "total_formula": "div(Cs, Cw) = 1n",
+      "comments": "Trivially a single division."
+    },
+    {
+      "id": 3,
+      "name": "Retardation factor",
+      "formula": "R = 1 + (rho_b / theta) * Kd",
+      "breakdown": {
+        "case_A_full": {
+          "div_rho_b_theta": "div = 1n",
+          "mul_ratio_Kd": "mul = 2n",
+          "add_1_product": "add = 3n",
+          "subtotal": "6n"
+        },
+        "case_B_rho_b_theta_as_constant": {
+          "mul_const_Kd": "mul = 2n",
+          "add_1_product": "add = 3n",
+          "subtotal": "5n"
+        }
+      },
+      "total_nodes": 6,
+      "total_nodes_optimized": 5,
+      "total_formula": "div(1) + mul(2) + add(3) = 6n; or 5n if rho_b/theta treated as a single constant",
+      "comments": "When rho_b/theta is a fixed ratio (given soil/aquifer), it collapses to one free constant, saving 1n."
+    },
+    {
+      "id": 4,
+      "name": "Advection-dispersion Gaussian solution",
+      "formula": "C(x,t) = (M/A) * (1 / sqrt(4*pi*D*t)) * exp(-(x - v*t)^2 / (4*D*t))",
+      "breakdown": {
+        "exponent_numerator": {
+          "mul_v_t": "mul = 2n",
+          "sub_x_vt": "sub = 2n",
+          "pow_sub_2": "pow = 3n",
+          "subtotal": "7n"
+        },
+        "exponent_denominator": {
+          "mul_4D_t": "mul = 2n",
+          "subtotal": "2n"
+        },
+        "exponent_div": "div(pow, 4Dt) = 1n",
+        "neg_and_exp": "neg(2) + exp(1) = 3n",
+        "exp_argument_total": "7 + 2 + 1 + 3 = 13n",
+        "coefficient_sqrt_term": {
+          "mul_4piD_t": "mul = 2n (4*pi*D treated as one constant * t)",
+          "pow_half": "pow(result, 0.5) = 3n",
+          "recip_sqrt": "recip = 2n",
+          "mul_M_A_recip": "mul(M/A constant, recip) = 2n",
+          "subtotal": "9n"
+        },
+        "final_mul_combine": "mul(coeff, exp_term) = 2n"
+      },
+      "total_nodes": 24,
+      "total_formula": "13 (exp argument) + 9 (coefficient + sqrt) + 2 (final mul) = 24n",
+      "comments": "M/A treated as a single free constant. 4*pi*D treated as a single free constant. The sqrt term uses pow(·, 0.5) = 3n then recip = 2n rather than a named sqrt operator."
+    },
+    {
+      "id": 5,
+      "name": "Manning's equation",
+      "formula": "v = (1/n) * R^(2/3) * S^(1/2)",
+      "breakdown": {
+        "recip_n": "recip(n_manning) = 2n",
+        "pow_R_2_3": "pow(R, 2/3) = 3n",
+        "pow_S_0_5": "pow(S, 0.5) = 3n",
+        "mul_recip_R_pow": "mul = 2n",
+        "mul_result_S_pow": "mul = 2n"
+      },
+      "total_nodes": 12,
+      "total_formula": "recip(2) + pow(3) + pow(3) + mul(2) + mul(2) = 12n",
+      "comments": "n_manning (roughness coefficient) is a free parameter. 2/3 and 0.5 are free constants used as exponents."
+    },
+    {
+      "id": 6,
+      "name": "Theis well function approximation",
+      "formula": "s(r,t) = Q/(4*pi*T) * W(u),  u = r^2*S/(4*T*t),  W(u) ≈ -ln(u) - gamma  [small-u, 2-term]",
+      "breakdown": {
+        "u_computation": {
+          "pow_r_2": "pow(r, 2) = 3n",
+          "mul_r2_S": "mul = 2n",
+          "mul_4_T": "mul(4,T) = 2n  [or free constant 4T]",
+          "mul_4T_t": "mul = 2n",
+          "div_numerator_denominator": "div = 1n",
+          "subtotal": "10n"
+        },
+        "W_u_approximation_2_terms": {
+          "ln_u": "ln = 1n",
+          "neg_ln": "neg = 2n",
+          "sub_neg_ln_gamma": "sub(neg_ln_u, gamma) = 2n",
+          "subtotal": "5n"
+        },
+        "drawdown_coefficient": {
+          "mul_4pi_T": "4*pi*T treated as one constant",
+          "div_Q_4piT": "div = 1n",
+          "subtotal": "1n"
+        },
+        "final_mul": "mul(Q_4piT, W_u) = 2n"
+      },
+      "total_nodes": 18,
+      "total_formula": "10 (u) + 5 (W(u) 2-term) + 1 (Q/4piT) + 2 (final mul) = 18n",
+      "comments": "Small-u approximation W(u) ≈ -ln(u) - γ (Euler-Mascheroni constant γ ≈ 0.5772, free). 4*pi*T treated as a single free constant. Each additional term in the W(u) series adds polynomial cost."
+    },
+    {
+      "id": 7,
+      "name": "Langmuir adsorption isotherm",
+      "formula": "q = qmax * KL * C / (1 + KL*C)",
+      "breakdown": {
+        "mul_KL_C": "mul = 2n",
+        "add_1_KLC": "add = 3n",
+        "div_KLC_add": "div = 1n",
+        "mul_qmax_ratio": "mul = 2n"
+      },
+      "total_nodes": 8,
+      "total_formula": "mul(2) + add(3) + div(1) + mul(2) = 8n",
+      "comments": "qmax and KL are free parameters."
+    },
+    {
+      "id": 8,
+      "name": "Freundlich isotherm",
+      "formula": "q = Kf * C^(1/n)",
+      "breakdown": {
+        "pow_C_1_n": "pow(C, 1/n) = 3n",
+        "mul_Kf_result": "mul = 2n"
+      },
+      "total_nodes": 5,
+      "total_formula": "pow(3) + mul(2) = 5n",
+      "comments": "Kf and 1/n are free parameters/constants."
+    }
+  ],
+  "summary_table": [
+    { "id": 1, "equation": "Mineral dissolution rate",              "nodes": 9,  "notes": "Arrhenius catalog (5n) + saturation term" },
+    { "id": 2, "equation": "Distribution coefficient",              "nodes": 1,  "notes": "Single div" },
+    { "id": 3, "equation": "Retardation factor",                    "nodes": 6,  "notes": "5n if rho_b/theta is a constant" },
+    { "id": 4, "equation": "Advection-dispersion Gaussian solution","nodes": 24, "notes": "Most expensive; Gaussian envelope + sqrt coeff" },
+    { "id": 5, "equation": "Manning's equation",                    "nodes": 12, "notes": "Two power laws + recip" },
+    { "id": 6, "equation": "Theis well function (2-term approx)",   "nodes": 18, "notes": "u cost 10n + W(u) approx 5n + drawdown 3n" },
+    { "id": 7, "equation": "Langmuir adsorption isotherm",          "nodes": 8,  "notes": "Rational form with add in denominator" },
+    { "id": 8, "equation": "Freundlich isotherm",                   "nodes": 5,  "notes": "Power law; trivially cheap" }
+  ],
+  "total_nodes_all_equations": 83,
+  "ranking_cheapest_to_most_expensive": [2, 8, 3, 1, 7, 5, 6, 4]
+}

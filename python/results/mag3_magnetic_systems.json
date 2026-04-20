@@ -1,0 +1,183 @@
+{
+  "session": "MAG-3",
+  "title": "Magnetic Systems and Devices",
+  "superBEST_version": "v3",
+  "cost_model": {
+    "exp": 1,
+    "ln": 1,
+    "neg": 2,
+    "recip": 2,
+    "mul": 2,
+    "sub": 2,
+    "div": 1,
+    "pow": 3,
+    "add_pos": 3,
+    "cos_complex_EML": 1,
+    "constants_parameters": 0
+  },
+  "equations": [
+    {
+      "id": 1,
+      "name": "Magnetic flux",
+      "formula": "Phi = B * A * cos(theta)",
+      "cost_breakdown": {
+        "cos(theta)": 1,
+        "mul(B, A)": 2,
+        "mul(result, cos)": 2
+      },
+      "nodes": 5,
+      "notes": "cos treated as 1 complex EML node"
+    },
+    {
+      "id": 2,
+      "name": "Transformer turns ratio",
+      "formula": "V2 = V1 * (N2 / N1)",
+      "cost_breakdown": {
+        "div(N2, N1)": 1,
+        "mul(V1, ratio)": 2
+      },
+      "nodes": 3,
+      "notes": "Among the cheapest in electromagnetism"
+    },
+    {
+      "id": 3,
+      "name": "Solenoid field",
+      "formula": "B = mu0 * n * I",
+      "cost_breakdown_full": {
+        "mul(n, I)": 2,
+        "mul(mu0, result)": 2
+      },
+      "nodes_full": 4,
+      "cost_breakdown_with_constant": {
+        "mul(mu0_n_const, I)": 2
+      },
+      "nodes_with_constant": 2,
+      "notes": "If mu0*n treated as a single compound constant, cost reduces to 2n"
+    },
+    {
+      "id": 4,
+      "name": "Hall voltage",
+      "formula": "VH = I * B / (n * q * d)",
+      "cost_breakdown_full": {
+        "mul(I, B)": 2,
+        "mul(q, d)": 2,
+        "mul(n, result)": 2,
+        "div(IB, nqd)": 1
+      },
+      "nodes_full": 7,
+      "cost_breakdown_with_constant": {
+        "mul(I, B)": 2,
+        "div(result, nqd_const)": 1
+      },
+      "nodes_with_constant": 3,
+      "notes": "With nqd as compound constant, cost reduces to 3n"
+    },
+    {
+      "id": 5,
+      "name": "Force between parallel wires per unit length",
+      "formula": "F_per_L = mu0 * I1 * I2 / (2 * pi * d)",
+      "cost_breakdown_full": {
+        "mul(I1, I2)": 2,
+        "mul(mu0, result)": 2,
+        "mul(2pi, d)": 2,
+        "div(numerator, denominator)": 1
+      },
+      "nodes_full": 7,
+      "cost_breakdown_with_constant": {
+        "mul(I1, I2)": 2,
+        "mul(mu0_over_2pi_const, result)": 2,
+        "div(result, d)": 1
+      },
+      "nodes_with_constant": 5,
+      "notes": "With mu0/(2*pi) as constant, cost reduces to 5n"
+    },
+    {
+      "id": 6,
+      "name": "Magnetic susceptibility (Curie law)",
+      "formula": "chi = C / T",
+      "cost_breakdown": {
+        "div(C, T)": 1
+      },
+      "nodes": 1,
+      "notes": "Minimal cost; among the cheapest in all of electromagnetism alongside transformer ratio"
+    },
+    {
+      "id": 7,
+      "name": "EMF by Faraday's law (sinusoidal flux)",
+      "formula": "epsilon = -N * d(B*A*cos(theta(t)))/dt = N * B * A * sin(theta) * (d_theta/dt)",
+      "cost_breakdown": {
+        "sin(theta)": 1,
+        "mul(B, A)": 2,
+        "mul(result, sin)": 2,
+        "mul(result, d_theta_dt)": 2,
+        "mul(N, result)": 2,
+        "neg": 2
+      },
+      "nodes": 11,
+      "notes": "sin counts as 1 complex EML node analogous to cos; total for full sinusoidal flux EMF; dtheta/dt is a terminal input"
+    },
+    {
+      "id": 8,
+      "name": "Reluctance and flux in magnetic circuit",
+      "formula": "R = L / (mu * A); Phi = N * I / R",
+      "cost_breakdown": {
+        "reluctance_mul(mu, A)": 2,
+        "reluctance_div(L, result)": 1,
+        "flux_mul(N, I)": 2,
+        "flux_div(result, R)": 1
+      },
+      "nodes": 6,
+      "notes": "Reluctance sub-expression: 3n; flux from MMF/reluctance: 3n; combined: 6n"
+    },
+    {
+      "id": 9,
+      "name": "Magnetic energy density",
+      "formula": "u = B^2 / (2 * mu0)",
+      "cost_breakdown_full": {
+        "pow(B, 2)": 3,
+        "mul(2, mu0)": 2,
+        "div(result_num, result_den)": 1
+      },
+      "nodes_full": 6,
+      "cost_breakdown_with_constant": {
+        "pow(B, 2)": 3,
+        "div(result, 2mu0_const)": 1
+      },
+      "nodes_with_constant": 4,
+      "notes": "With 2*mu0 as compound constant, cost reduces to 4n"
+    },
+    {
+      "id": 10,
+      "name": "Lenz's law (induced EMF for solenoid)",
+      "formula": "epsilon = -L * dI/dt",
+      "cost_breakdown": {
+        "mul(L, dI_dt)": 2,
+        "neg": 2
+      },
+      "nodes": 4,
+      "notes": "dI/dt is a terminal input; very compact"
+    }
+  ],
+  "summary_table": [
+    {"id": 1, "name": "Magnetic flux",                            "nodes_full": 5,  "nodes_with_constants": 5,  "tier": "medium-low"},
+    {"id": 2, "name": "Transformer turns ratio",                  "nodes_full": 3,  "nodes_with_constants": 3,  "tier": "cheap"},
+    {"id": 3, "name": "Solenoid field",                           "nodes_full": 4,  "nodes_with_constants": 2,  "tier": "cheap"},
+    {"id": 4, "name": "Hall voltage",                             "nodes_full": 7,  "nodes_with_constants": 3,  "tier": "medium / cheap-with-const"},
+    {"id": 5, "name": "Force between parallel wires per unit L",  "nodes_full": 7,  "nodes_with_constants": 5,  "tier": "medium"},
+    {"id": 6, "name": "Curie law (susceptibility)",               "nodes_full": 1,  "nodes_with_constants": 1,  "tier": "trivial"},
+    {"id": 7, "name": "EMF via Faraday (sinusoidal flux)",        "nodes_full": 11, "nodes_with_constants": 11, "tier": "expensive"},
+    {"id": 8, "name": "Reluctance + flux in magnetic circuit",    "nodes_full": 6,  "nodes_with_constants": 6,  "tier": "medium"},
+    {"id": 9, "name": "Magnetic energy density",                  "nodes_full": 6,  "nodes_with_constants": 4,  "tier": "medium / medium-low-with-const"},
+    {"id": 10,"name": "Lenz's law (solenoid EMF)",                "nodes_full": 4,  "nodes_with_constants": 4,  "tier": "cheap"}
+  ],
+  "key_findings": [
+    "Curie law (chi = C/T) costs only 1n — the minimum possible non-trivial expression.",
+    "Transformer turns ratio costs 3n, making it among the cheapest expressions in electromagnetism.",
+    "Solenoid field drops to 2n when mu0*n is a compound constant.",
+    "Hall voltage drops from 7n to 3n with a compound nqd constant.",
+    "Faraday EMF for sinusoidal flux is the most expensive at 11n, driven by the sin node and the mul chain.",
+    "Lenz's law (epsilon = -L * dI/dt) is cheap at 4n because dI/dt is a terminal.",
+    "Magnetic energy density benefits from folding 2*mu0 into a constant, saving 2n.",
+    "Force between parallel wires is 7n full / 5n with mu0/(2pi) as constant."
+  ]
+}

@@ -1,0 +1,209 @@
+{
+  "session": "ECON-1",
+  "title": "SuperBEST Cost Analysis — Core Finance",
+  "system": "SuperBEST v3",
+  "operator_costs": {
+    "exp": 1,
+    "ln": 1,
+    "neg": 2,
+    "recip": 2,
+    "mul": 2,
+    "sub": 2,
+    "div": 1,
+    "pow": 3,
+    "add": 3
+  },
+  "note": "Parameters and constants are free (0 cost).",
+  "equations": [
+    {
+      "id": 1,
+      "name": "Compound interest (discrete)",
+      "formula": "A = P * (1 + r)^n",
+      "breakdown": {
+        "add(1, r)": 3,
+        "pow(sum, n)": 3,
+        "mul(P, result)": 2
+      },
+      "total_nodes": 8,
+      "complexity": "O(1)",
+      "key_insight": "Discrete compounding requires pow on a sum, contributing 3+3=6 nodes for the exponential part."
+    },
+    {
+      "id": 2,
+      "name": "Continuous compounding",
+      "formula": "A = P * exp(r * t)",
+      "breakdown": {
+        "mul(r, t)": 2,
+        "exp(product)": 1,
+        "mul(P, exp)": 2
+      },
+      "total_nodes": 5,
+      "complexity": "O(1)",
+      "key_insight": "Continuous compounding (5 nodes) is mathematically cheaper than discrete (8 nodes). exp costs 1 vs pow costs 3; the (1+r) add is also avoided."
+    },
+    {
+      "id": 3,
+      "name": "Present value",
+      "formula": "PV = FV / (1 + r)^n",
+      "breakdown": {
+        "add(1, r)": 3,
+        "pow(sum, n)": 3,
+        "div(FV, result)": 1
+      },
+      "total_nodes": 7,
+      "complexity": "O(1)",
+      "key_insight": "div costs only 1 node vs mul costs 2, so PV (7n) is cheaper than compound interest A (8n) despite the same base structure."
+    },
+    {
+      "id": 4,
+      "name": "Net present value (N cash flows)",
+      "formula": "NPV = sum_t [ CF_t / (1 + r)^t ]",
+      "breakdown": {
+        "add(1, r)": 3,
+        "pow(sum, t)_per_period": 3,
+        "div(CF_t, pow)_per_period": 1,
+        "add_terms_per_period": 3,
+        "note": "With (1+r) computed once and shared; each period t needs pow(1+r, t) independently"
+      },
+      "per_term_nodes": 7,
+      "total_nodes_formula": "7N (approx); exact with sharing: 3 + 7*(N-1) + 3 = 7N - 1 ≈ 7N",
+      "complexity": "O(N)",
+      "key_insight": "NPV scales as O(N) with N cash flows — same asymptotic scaling as N-compartment pharmacokinetics models. Each discount factor (1+r)^t is an independent pow call (different exponent t), so sharing saves only the add(1,r) = 3 nodes across all terms."
+    },
+    {
+      "id": 5,
+      "name": "Gordon growth model (dividend discount)",
+      "formula": "P = D / (r - g)",
+      "breakdown": {
+        "sub(r, g)": 2,
+        "div(D, sub)": 1
+      },
+      "total_nodes": 3,
+      "complexity": "O(1)",
+      "key_insight": "Minimal cost formula — closed-form perpetuity requires only subtraction and division."
+    },
+    {
+      "id": 6,
+      "name": "CAPM (Capital Asset Pricing Model)",
+      "formula": "E(R_i) = Rf + beta_i * (E(Rm) - Rf)",
+      "breakdown": {
+        "sub(Rm, Rf)": 2,
+        "mul(beta, premium)": 2,
+        "add(Rf, product)": 3
+      },
+      "total_nodes": 7,
+      "complexity": "O(1)",
+      "key_insight": "Linear pricing model; add costs 3 (positive add) while sub costs 2, making the final summation the most expensive single step."
+    },
+    {
+      "id": 7,
+      "name": "Sharpe ratio",
+      "formula": "S = (Rp - Rf) / sigma_p",
+      "breakdown": {
+        "sub(Rp, Rf)": 2,
+        "div(sub, sigma)": 1
+      },
+      "total_nodes": 3,
+      "complexity": "O(1)",
+      "key_insight": "Same minimal cost as Gordon growth model (3 nodes). Risk-adjusted return collapses to sub + div."
+    },
+    {
+      "id": 8,
+      "name": "Macaulay duration (bond)",
+      "formula": "D = sum_t [ t * CF_t * (1+r)^(-t) ] / sum_t [ CF_t * (1+r)^(-t) ]",
+      "breakdown": {
+        "add(1, r)": 3,
+        "pow(sum, neg_t)_per_period": 3,
+        "mul(CF_t, discount)_per_period": 2,
+        "mul(t, CF_discount)_per_period_numerator": 2,
+        "add_terms_per_period": 3,
+        "div(numerator, denominator)": 1,
+        "note": "Denominator reuses CF_t * discount factors; numerator adds one mul(t, ...) per term"
+      },
+      "per_term_nodes_denominator": 8,
+      "per_term_nodes_numerator_extra": 2,
+      "total_nodes_formula": "O(N) — approximately 10N nodes for N cash flows (8N denom + 2N extra for t weighting + 1 for final div)",
+      "complexity": "O(N)",
+      "key_insight": "Duration is the most expensive per-term formula due to negative exponent (pow with neg_t) and double mul weighting. Denominator alone matches discrete compound interest (8n per term)."
+    },
+    {
+      "id": 9,
+      "name": "Log return",
+      "formula": "r_log = ln(Pt / Pt_minus_1)",
+      "breakdown_naive": {
+        "ln(Pt)": 1,
+        "ln(Pt_minus_1)": 1,
+        "sub(ln_Pt, ln_Pt1)": 2,
+        "total_naive": 4
+      },
+      "breakdown_optimal": {
+        "div(Pt, Pt_minus_1)": 1,
+        "ln(ratio)": 1,
+        "total_optimal": 2
+      },
+      "total_nodes": 2,
+      "complexity": "O(1)",
+      "key_insight": "Optimal form ln(Pt/Pt-1) uses div(1n) + ln(1n) = 2 nodes total. The naive form ln(Pt) - ln(Pt-1) costs 4 nodes. SuperBEST prefers the ratio-then-log form — a 2x cost reduction via algebraic identity ln(a/b) = ln(a) - ln(b)."
+    },
+    {
+      "id": 10,
+      "name": "Continuously compounded yield",
+      "formula": "y = (1/T) * ln(FV / PV)",
+      "breakdown": {
+        "div(FV, PV)": 1,
+        "ln(ratio)": 1,
+        "mul(1_over_T, ln)": 2,
+        "note": "1/T treated as a free constant parameter when T is fixed"
+      },
+      "breakdown_with_constant": {
+        "div(FV, PV)": 1,
+        "ln(ratio)": 1,
+        "total_with_1_T_as_constant": 2
+      },
+      "total_nodes": 2,
+      "total_nodes_if_T_variable": 4,
+      "complexity": "O(1)",
+      "key_insight": "When T is a fixed parameter (free), cost is 2 nodes — identical to log return. When T is variable, mul(1/T, ln) adds 2 nodes for 4 total. The div+ln pattern recurs across financial log formulas."
+    }
+  ],
+  "summary_table": [
+    {"id": 1, "name": "Compound interest (discrete)", "nodes": 8, "complexity": "O(1)"},
+    {"id": 2, "name": "Continuous compounding", "nodes": 5, "complexity": "O(1)"},
+    {"id": 3, "name": "Present value", "nodes": 7, "complexity": "O(1)"},
+    {"id": 4, "name": "NPV (N cash flows)", "nodes": "7N", "complexity": "O(N)"},
+    {"id": 5, "name": "Gordon growth model", "nodes": 3, "complexity": "O(1)"},
+    {"id": 6, "name": "CAPM", "nodes": 7, "complexity": "O(1)"},
+    {"id": 7, "name": "Sharpe ratio", "nodes": 3, "complexity": "O(1)"},
+    {"id": 8, "name": "Macaulay duration (N cash flows)", "nodes": "~10N", "complexity": "O(N)"},
+    {"id": 9, "name": "Log return", "nodes": 2, "complexity": "O(1)"},
+    {"id": 10, "name": "Continuously compounded yield", "nodes": "2 (T fixed) / 4 (T variable)", "complexity": "O(1)"}
+  ],
+  "cross_domain_findings": [
+    {
+      "finding": "Continuous vs discrete compounding cost asymmetry",
+      "detail": "Continuous compounding (5 nodes) is cheaper than discrete compounding (8 nodes) in SuperBEST. The savings come from: (1) exp costs 1 vs pow costs 3, and (2) the add(1,r) step (3 nodes) is eliminated. This formalizes why exponential growth is the 'natural' representation for compounding."
+    },
+    {
+      "finding": "O(N) scaling: NPV mirrors N-compartment pharmacokinetics",
+      "detail": "NPV with N cash flows scales as O(7N) nodes, identical in asymptotic structure to N-compartment pharmacokinetic models. Both require one independent discount/decay factor per period/compartment with no cross-term sharing possible."
+    },
+    {
+      "finding": "Minimal finance formulas cluster at 2-3 nodes",
+      "detail": "Gordon growth model (3n), Sharpe ratio (3n), log return (2n), and continuously compounded yield (2n with fixed T) represent the irreducible core of finance. All are single-operation compositions of sub/div/ln."
+    },
+    {
+      "finding": "Log identity provides 2x cost reduction",
+      "detail": "The algebraic identity ln(a/b) = ln(a) - ln(b) applied in reverse (grouping before logging) reduces log return from 4 nodes to 2 nodes. SuperBEST naturally discovers this form as the minimum-cost representation."
+    },
+    {
+      "finding": "add costs more than div in SuperBEST",
+      "detail": "add = 3 nodes, div = 1 node. This is counterintuitive relative to computational complexity but reflects operator expressiveness. Formulas that replace add with div (e.g., log return using ratio form) are cheaper."
+    }
+  ],
+  "metadata": {
+    "session_id": "ECON-1",
+    "domain": "Finance / Economics",
+    "date": "2026-04-20",
+    "superBEST_version": "v3"
+  }
+}

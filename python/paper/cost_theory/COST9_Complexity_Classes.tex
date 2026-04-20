@@ -1,0 +1,784 @@
+% COST9_Complexity_Classes.tex
+% Session: COST-9 — Complexity Classes of SuperBEST Cost
+% Date: 2026-04-20
+% Status: Conjecture T39 (Linear Ceiling Conjecture for Standard Scientific Equations)
+
+\documentclass[12pt,a4paper]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{hyperref}
+\geometry{margin=2.5cm}
+
+% ── Theorem environments ────────────────────────────────────────────────────
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{observation}[theorem]{Observation}
+
+% ── Operator macros ─────────────────────────────────────────────────────────
+\newcommand{\EML}{\operatorname{EML}}
+\newcommand{\EDL}{\operatorname{EDL}}
+\newcommand{\EXL}{\operatorname{EXL}}
+\newcommand{\EAL}{\operatorname{EAL}}
+\newcommand{\EMN}{\operatorname{EMN}}
+\newcommand{\DEML}{\operatorname{DEML}}
+\newcommand{\ELAd}{\operatorname{ELAd}}
+\newcommand{\ELSb}{\operatorname{ELSb}}
+\newcommand{\LEAd}{\operatorname{LEAd}}
+\newcommand{\LEdiv}{\operatorname{LEdiv}}
+\newcommand{\LEprod}{\operatorname{LEprod}}
+\newcommand{\EPL}{\operatorname{EPL}}
+\newcommand{\NC}{\operatorname{NC}}
+\newcommand{\Cost}{\operatorname{Cost}}
+\newcommand{\SB}{\mathrm{SB}}
+
+% ── Column type ──────────────────────────────────────────────────────────────
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+
+\title{Complexity Classes of SuperBEST Cost:\\
+       O(1), O(N), and the Linear Ceiling Conjecture\\[6pt]
+       \large COST-9 --- monogate Cost Theory}
+\author{Arturo R.\ Almaguer\\
+\small monogate research \quad \texttt{almaguer1986@gmail.com}}
+\date{April 2026}
+
+% ════════════════════════════════════════════════════════════════════════════
+\begin{document}
+\maketitle
+
+% ── Abstract ────────────────────────────────────────────────────────────────
+\begin{abstract}
+We classify the SuperBEST v3 cost of scientific equations by asymptotic
+complexity class, using $N$ to denote the structural parameter (number of
+terms in any sum, number of components, number of compartments, etc.).
+Two classes suffice: \textbf{O(1) constant cost}, for equations whose
+formula structure is fixed and contains no summation; and \textbf{O(N)
+linear cost}, for equations containing one summation over $N$ terms.
+Nested sums produce O(N$^2$) or higher polynomial cost, but we establish
+that no standard textbook equation has a nested summation in its
+\emph{closed-form formula}---only the discretization of continuous
+integrals introduces higher-order terms.
+
+We state the \textbf{Linear Ceiling Conjecture (T39 candidate)}: every
+standard scientific equation (a textbook formula with fixed operator
+structure) has SuperBEST cost that is at most O(N) in the number of
+summands $N$.  Equations with no sums have O(1) cost.  No standard
+scientific equation has super-linear cost in its structural parameter.
+
+We identify the structural parameters that govern O(N) scaling (number
+of Fourier terms, Taylor terms, entropy components, pharmacokinetic
+compartments, softmax classes, etc.), examine the addition bottleneck
+(cost 3n positive-domain vs.\ 11n general-domain), and verify the
+conjecture against the 80$+$ equation catalog built in sessions Chem-1
+through Bio-5.
+\end{abstract}
+
+\tableofcontents
+\bigskip
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{SuperBEST v3 Cost Table and Notation}
+\label{sec:background}
+% ════════════════════════════════════════════════════════════════════════════
+
+All costs below are \emph{SuperBEST v3} node counts in the extended
+16-operator EML family $\mathcal{F}_{16}$ (established by T33).
+
+\begin{table}[h]
+\centering
+\caption{SuperBEST v3 unit costs $c_i$.}
+\label{tab:superbest3}
+\smallskip
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Operation} & \textbf{Symbol} & \textbf{Cost $c_i$} \\
+\midrule
+Exponential $e^x$    & \texttt{exp}   & 1 \\
+Natural log $\ln x$  & \texttt{ln}    & 1 \\
+Negation $-x$        & \texttt{neg}   & 2 \\
+Reciprocal $1/x$     & \texttt{recip} & 2 \\
+Multiplication $xy$  & \texttt{mul}   & 2 \\
+Subtraction $x-y$    & \texttt{sub}   & 2 \\
+Division $x/y$       & \texttt{div}   & 1 \\
+Exponentiation $x^n$ & \texttt{pow}   & 3 \\
+Addition $x+y$       & \texttt{add}   & 3 (positive domain) or 11 (general) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent
+We use $c_{\mathrm{add}} \in \{3, 11\}$ depending on whether both operands
+are guaranteed positive.  In the positive domain the identity
+$\ln(e^x + e^y) - \text{offset}$ implements addition in 3 nodes; in the
+general domain the best known construction uses 11 nodes.
+
+\medskip
+
+\begin{definition}[Structural parameter $N$]
+\label{def:N}
+For an equation family $\mathcal{E}(N)$, the \emph{structural parameter}
+$N$ is the integer that indexes the number of repeated terms in the
+defining formula.  Examples:
+\begin{itemize}
+  \item $N$-term Fourier series: number of harmonics.
+  \item $N$-term Taylor series: truncation order.
+  \item $N$-component Shannon entropy: alphabet size.
+  \item $N$-compartment pharmacokinetics: number of compartments.
+  \item Softmax over $N$ classes: number of classes.
+  \item MWC allosteric model with cooperativity $n$: Hill coefficient $n$.
+\end{itemize}
+\end{definition}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Complexity Class Definitions}
+\label{sec:classes}
+% ════════════════════════════════════════════════════════════════════════════
+
+\begin{definition}[O(1) --- Constant Cost]
+\label{def:O1}
+An equation family $\mathcal{E}$ has \emph{constant cost} if
+$\Cost(\mathcal{E}) = c$ for some fixed constant $c$ independent of
+all parameters.  Equivalently, the formula has a fixed operator tree
+with no summation over a variable-length collection of terms.
+\end{definition}
+
+\begin{definition}[O(N) --- Linear Cost]
+\label{def:ON}
+An equation family $\mathcal{E}(N)$ has \emph{linear cost} if
+$\Cost(\mathcal{E}(N)) = \alpha N + \beta$ for constants
+$\alpha, \beta \geq 0$ independent of $N$.  Equivalently, the formula
+contains exactly one summation (or loop) over $N$ terms, each of
+fixed cost.
+\end{definition}
+
+\begin{definition}[O(N$^k$) --- Polynomial Cost]
+\label{def:ONk}
+An equation family $\mathcal{E}(N)$ has \emph{polynomial cost of
+degree $k$} if $\Cost(\mathcal{E}(N)) = \Theta(N^k)$.  This arises
+from $k$ nested summations, each running over $N$ terms.
+\end{definition}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{O(1) Equations: The Constant-Cost Class}
+\label{sec:O1}
+% ════════════════════════════════════════════════════════════════════════════
+
+An equation has O(1) cost when its formula is a fixed-structure
+expression with no summation over a free parameter $N$.  The cost is
+simply the sum of SuperBEST v3 unit costs over the (fixed) list of
+primitive operations.
+
+\begin{example}[Canonical O(1) equations]
+\label{ex:O1_examples}
+All of the following have O(1) cost because their formulas are
+fixed-length regardless of any physical parameter:
+
+\begin{center}
+\small
+\begin{tabular}{@{}llcc@{}}
+\toprule
+\textbf{Equation} & \textbf{Formula} & \textbf{Operations} & \textbf{Cost} \\
+\midrule
+Exponential $e^x$         & $e^x$                    & 1 exp         & 1n \\
+Natural log $\ln x$       & $\ln x$                  & 1 ln          & 1n \\
+Wien's displacement law   & $\lambda_{\max} = b/T$   & 1 div         & 1n \\
+Gauss's law               & $\Phi = Q/\varepsilon_0$ & 1 div         & 1n \\
+Malthus recursion         & $N_{t+1} = \lambda N_t$  & 1 mul         & 2n \\
+Boltzmann entropy         & $S = k_B \ln \Omega$     & 1 ln + 1 mul  & 3n \\
+pH formula                & $\mathrm{pH} = -\log_{10}[\mathrm{H}^+]$ & 1 ln + 1 mul & 3n \\
+Gibbs free energy         & $\Delta G = \Delta H - T\Delta S$ & 1 mul + 1 sub & 4n \\
+Second-order rate         & $r = k[A][B]$            & 2 mul         & 4n \\
+Arrhenius                 & $k = Ae^{-E_a/RT}$       & 1 exp + 1 mul & 5n \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+None of these equations depend on a summation index $N$; their cost is
+a fixed integer regardless of the values of their parameters.
+\end{example}
+
+\begin{remark}[Characterization of O(1)]
+\label{rem:O1_characterization}
+An equation has O(1) SuperBEST cost if and only if its formula is a
+composition of a fixed finite number of primitive operations applied to
+a fixed finite number of variable and constant terminals.  Equivalently,
+its expression tree has a fixed number of internal nodes independent of
+any parameter.
+
+The entire Tier-1 and Tier-2 catalog from sessions Chem-1 through
+Bio-5 (all 50+ equations with costs between 1n and 21n) consists of
+O(1) equations: each formula has a fixed structure, and the cost is
+a specific integer, not a function of a structural parameter.
+\end{remark}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{O(N) Equations: The Linear-Cost Class}
+\label{sec:ON}
+% ════════════════════════════════════════════════════════════════════════════
+
+O(N) cost arises from a single summation over $N$ terms, each of
+fixed cost $\alpha$ (the per-term contribution).  The $N-1$ additions
+connecting $N$ terms each cost $c_{\mathrm{add}}$, and the $N$ terms
+themselves each cost some fixed $\alpha_0$.
+
+\begin{proposition}[General linear cost formula]
+\label{prop:linear_formula}
+If an equation consists of a sum of $N$ terms, where each term has
+fixed SuperBEST cost $\alpha_0$, and where all additions operate in
+the positive domain (cost 3n each), then
+\[
+  \Cost = \alpha_0 \cdot N + 3(N-1) = (\alpha_0 + 3)N - 3.
+\]
+If additions are in the general domain (cost 11n),
+\[
+  \Cost = (\alpha_0 + 11)N - 11.
+\]
+Both formulas are O(N) in $N$ with leading coefficient $(\alpha_0 + c_{\mathrm{add}})$.
+\end{proposition}
+
+\begin{proof}
+There are $N$ term computations each costing $\alpha_0$, plus $N-1$
+binary additions (a left-fold over the terms) each costing
+$c_{\mathrm{add}}$.  Total: $\alpha_0 N + c_{\mathrm{add}}(N-1)
+= (\alpha_0 + c_{\mathrm{add}})N - c_{\mathrm{add}}$.
+\end{proof}
+
+\subsection{Worked Examples of O(N) Equations}
+
+\begin{example}[$N$-term Taylor series]
+\label{ex:taylor}
+The $N$-term Taylor expansion of a function $f$ around $x=0$:
+\[
+  f(x) \approx \sum_{k=0}^{N-1} \frac{f^{(k)}(0)}{k!}\, x^k.
+\]
+Each term $\frac{f^{(k)}(0)}{k!} x^k$ costs at most one \texttt{pow}
+(3n) plus one \texttt{mul} by the constant $f^{(k)}(0)/k!$ (2n): cost
+$\alpha_0 = 5n$ per term (with the constant coefficient folded in:
+$\alpha_0 = 2n$).  Additions run in the positive-domain for typical
+function values.  Session T25 established:
+\[
+  \boxed{\Cost(\text{Taylor}_N) = 9N - 3.}
+\]
+Leading coefficient: $9$ (term cost 6 + add cost 3).
+\end{example}
+
+\begin{example}[$N$-term Fourier series]
+\label{ex:fourier}
+The $N$-term Fourier series:
+\[
+  f(x) \approx \frac{a_0}{2} + \sum_{k=1}^{N} \bigl(a_k \cos(k\omega x) + b_k \sin(k\omega x)\bigr).
+\]
+Each harmonic requires: $k\omega x$ (1 mul, 2n), $\cos(\cdot)$ (via
+EML chain, $\sim$2n), $a_k \cos(\cdot)$ (2n), $b_k \sin(\cdot)$ (2n),
+plus one add (3n) within each pair and one add (3n) between harmonics.
+The per-term cost is approximately $\alpha_0 \approx 7n$, giving:
+\[
+  \boxed{\Cost(\text{Fourier}_N) \approx 10N - 3.}
+\]
+\end{example}
+
+\begin{example}[$N$-component Shannon entropy]
+\label{ex:entropy}
+The Shannon entropy over $N$ classes:
+\[
+  H = -\sum_{i=1}^{N} p_i \ln p_i.
+\]
+Each term $p_i \ln p_i$ costs: 1 ln (1n) + 1 mul (2n) = 3n; the
+leading negation is applied once to the sum.  Each addition costs 3n
+(positive domain, since $p_i \ln p_i \geq 0$ for $p_i \leq 1$).
+Session observations established:
+\[
+  \boxed{\Cost(H_N) = 6N - 5.}
+\]
+Leading coefficient: $6$ (term cost 3 + add cost 3).
+\end{example}
+
+\begin{example}[$N$-compartment pharmacokinetics]
+\label{ex:pk}
+The $N$-compartment pharmacokinetic concentration model:
+\[
+  C(t) = \sum_{i=1}^{N} A_i \, e^{-\lambda_i t}.
+\]
+Each term $A_i e^{-\lambda_i t}$ costs: 1 exp (1n) + 1 mul (2n) + the
+argument $\lambda_i t$ (2n) = $\approx 5n$ per term; additions at 3n
+each.  Session observations established:
+\[
+  \boxed{\Cost(\mathrm{PK}_N) = 10N - 3.}
+\]
+The two-compartment case ($N=2$) gives $\Cost = 17n$, consistent with
+the catalog entry.  The one-compartment case ($N=1$) gives $\Cost = 7n$,
+also consistent.
+\end{example}
+
+\begin{example}[Softmax denominator over $N$ classes]
+\label{ex:softmax}
+The softmax denominator:
+\[
+  Z = \sum_{i=1}^{N} e^{x_i}.
+\]
+Each term costs 1 exp (1n); additions at 3n each.  Session observations:
+\[
+  \boxed{\Cost(\mathrm{Softmax}_N) = 4N - 3.}
+\]
+Leading coefficient: $4$ (term cost 1 + add cost 3).
+\end{example}
+
+\subsection{The O(N) Pattern Table}
+
+\begin{table}[h]
+\centering
+\caption{O(N) equation families: linear cost formulas and leading coefficients.}
+\label{tab:ON}
+\smallskip
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Family} & \textbf{Per-term cost $\alpha_0$} & \textbf{Cost formula} & \textbf{Leading coeff.} \\
+\midrule
+Softmax denominator $\sum e^{x_i}$     & 1 (exp)         & $4N - 3$  & 4 \\
+Shannon entropy $-\sum p_i \ln p_i$    & 3 (ln + mul)    & $6N - 5$  & 6 \\
+Taylor series (folded)                 & 6 (pow + mul)   & $9N - 3$  & 9 \\
+PK concentration $\sum A_i e^{-\lambda_i t}$ & 5 (exp + mul chain) & $10N - 3$ & 10 \\
+Fourier series (per harmonic pair)     & $\sim$7         & $\sim 10N - 3$ & 10 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{remark}[Leading coefficient interpretation]
+The leading coefficient equals $\alpha_0 + c_{\mathrm{add}}$, where
+$\alpha_0$ is the per-term cost and $c_{\mathrm{add}} = 3$ for
+positive-domain additions.  The smallest possible leading coefficient
+is 4 (when $\alpha_0 = 1$, i.e., each term is a bare exponential as
+in softmax).  The largest for typical scientific equations is
+$\approx 10$--$12$.
+\end{remark}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{O(N\texorpdfstring{$^2$}{²}) and Higher: Nested Sums}
+\label{sec:ON2}
+% ════════════════════════════════════════════════════════════════════════════
+
+Nested double sums produce O(N$^2$) cost.
+
+\begin{example}[Hopfield network energy]
+\label{ex:hopfield}
+The Hopfield energy:
+\[
+  E = -\frac{1}{2}\sum_{i=1}^{N}\sum_{j=1}^{N} w_{ij} s_i s_j.
+\]
+The double sum runs over $N^2$ pairs.  Each pair $(i,j)$ requires
+$s_i s_j$ (2n mul) and $w_{ij} s_i s_j$ (2n mul), plus $N^2 - 1$
+additions (3n each).  Total:
+\[
+  \Cost(E) \approx 4N^2 + 3N^2 - 3 = 7N^2 - 3 + O(N).
+\]
+This is \textbf{O(N$^2$)}: the double sum introduces quadratic cost.
+\end{example}
+
+\begin{observation}[O(N$^2$) requires literal nested summation]
+\label{obs:ON2_condition}
+A formula achieves O(N$^2$) cost only if its defining equation contains
+two \emph{explicit} nested summation signs, each running over $N$ terms.
+In the catalog of 80+ standard scientific equations (sessions Chem-1
+through Bio-5), the Hopfield energy is the only example identified with
+a double sum.  It is a statistical mechanics / neural network formula,
+not a single-variable textbook formula.
+\end{observation}
+
+\begin{remark}[No O(exp(N)) equations exist]
+An O($e^N$) equation would require a formula whose node count grows
+exponentially in the structural parameter $N$.  This would necessitate
+an exponential number of nested operations, contradicting the fixed
+formula structure of any textbook equation.  We conclude:
+\textbf{No standard scientific textbook equation has O($e^N$) cost.}
+Exponential-time complexity can arise only in enumeration algorithms,
+not in the evaluation of a fixed closed-form expression.
+\end{remark}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{The Addition Bottleneck}
+\label{sec:add_bottleneck}
+% ════════════════════════════════════════════════════════════════════════════
+
+\begin{proposition}[Addition bottleneck in O(N) equations]
+\label{prop:add_bottleneck}
+For an O(N) equation with $K = N-1$ binary additions, the cost
+difference between general-domain and positive-domain evaluation is:
+\[
+  \Delta\Cost = (11 - 3) \cdot K = 8(N-1).
+\]
+This grows linearly in $N$: the bottleneck is proportional to the
+number of terms summed.  For large $N$ (e.g., a 100-term Fourier
+series), the domain assumption changes the cost by $8 \times 99 = 792$
+nodes.
+\end{proposition}
+
+\begin{remark}[Positive domain is the typical case]
+In practice, the overwhelming majority of scientific equations sum
+\emph{physically non-negative quantities}:
+\begin{itemize}
+  \item Probabilities $p_i \geq 0$ (Shannon entropy),
+  \item Concentrations $[X_i] \geq 0$ (pharmacokinetics),
+  \item Squared amplitudes $A_i^2 \geq 0$ (spectral decompositions),
+  \item Boltzmann factors $e^{-E_i/k_BT} \geq 0$ (partition functions).
+\end{itemize}
+Signed additions ($c_{\mathrm{add}} = 11$) arise only for explicitly
+signed physical quantities: voltages, displacements, temperature
+differences $\Delta T = T_1 - T_2$, and similar.  In these cases the
+signed additions are typically implemented as subtractions (cost 2n),
+not as general additions (cost 11n).
+\end{remark}
+
+\begin{remark}[Subtraction vs.\ general addition]
+Subtraction $x - y$ costs 2n in SuperBEST v3 (T33), much less than a
+general-domain addition (11n).  Whenever a sum contains negative terms,
+it is algebraically equivalent to rearranging as a difference of
+positive sums.  This substitution is always beneficial:
+$-\sum_i p_i \ln p_i$ is computed as negation of a positive-domain sum,
+not as a general-domain sum of signed terms.
+\end{remark}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{The Linear Ceiling Conjecture (T39 Candidate)}
+\label{sec:conjecture}
+% ════════════════════════════════════════════════════════════════════════════
+
+\begin{conjecture}[T39: Linear Ceiling Conjecture]
+\label{conj:T39}
+Let $\mathcal{E}(N)$ be any standard scientific equation family,
+defined as a closed-form formula drawn from a physics, chemistry,
+biology, or engineering textbook, where $N$ is a structural parameter
+(number of terms in a sum, Hill coefficient, compartment count, etc.).
+Then:
+\begin{enumerate}
+  \item[\textup{(i)}] If $\mathcal{E}$ contains no summation over $N$,
+        then $\Cost(\mathcal{E}) = O(1)$ (constant cost).
+  \item[\textup{(ii)}] If $\mathcal{E}$ contains exactly one summation
+        over $N$ terms, then $\Cost(\mathcal{E}(N)) = O(N)$ (linear cost).
+  \item[\textup{(iii)}] No standard scientific equation family has
+        $\Cost(\mathcal{E}(N)) = \omega(N)$, i.e., no standard equation
+        has super-linear cost in its structural parameter.
+\end{enumerate}
+\end{conjecture}
+
+\begin{remark}[Scope of the conjecture]
+The conjecture applies to \emph{formula evaluation}, not to algorithms
+that use the formula.  A simulation that evaluates an $N$-body
+interaction by calling $O(N^2)$ pairwise formulas has O(N$^2$) total
+cost, but each individual pairwise formula has O(1) cost.  The
+conjecture concerns the cost of a single formula evaluation at fixed
+$N$, not the total cost of a simulation.
+
+The qualifier ``standard scientific'' excludes:
+\begin{itemize}
+  \item Formulas involving explicit double sums (like Hopfield energy),
+        which are structural O(N$^2$) but are not typical textbook
+        single-variable formulas.
+  \item Generating functions and partition functions with infinitely many
+        terms (treated as $N \to \infty$ limits, not finite closed forms).
+  \item Combinatorial formulas involving $N!$ or $\binom{N}{k}$,
+        which are not standard EML-tree expressions.
+\end{itemize}
+\end{remark}
+
+\begin{remark}[Why super-linear does not arise]
+A standard textbook equation is a finite composition of arithmetic
+operations applied to a finite number of variables and constants.
+The structural parameter $N$ controls only the \emph{length} of a
+single summation loop, not the \emph{nesting depth} of the loops.
+Since nesting depth is fixed (at most 1 for typical equations),
+the total cost is at most linear in $N$.  Super-linear cost would
+require equations with a variable nesting depth, which do not appear
+in standard scientific notation.
+\end{remark}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Testing the Conjecture Against the Catalog}
+\label{sec:catalog_test}
+% ════════════════════════════════════════════════════════════════════════════
+
+\subsection{O(1) Equations: The 80+ Equation Catalog}
+
+All 50+ equations from the ChemBio catalog (sessions Chem-1 through
+Bio-5) are O(1): each has a fixed formula with a specific integer
+node count.  The catalog spans costs from 1n (bare exponential) to
+40n (MWC allosteric general form).  No equation in this catalog has a
+cost that grows with any parameter---they are all O(1) in the sense
+of Definition~\ref{def:O1}.
+
+\begin{table}[h]
+\centering
+\caption{Selected O(1) equations from the ChemBio catalog.}
+\label{tab:O1_catalog}
+\smallskip
+\begin{tabular}{@{}llcc@{}}
+\toprule
+\textbf{Equation} & \textbf{Field} & \textbf{Cost} & \textbf{Class} \\
+\midrule
+Wien's law $\lambda_{\max}=b/T$             & Physics      & 1n  & O(1) \\
+Gauss's law $\Phi = Q/\varepsilon_0$        & Physics      & 1n  & O(1) \\
+$S = k_B \ln\Omega$                         & Chem-2       & 3n  & O(1) \\
+Arrhenius $k = Ae^{-E_a/RT}$               & Chem-1       & 5n  & O(1) \\
+Michaelis--Menten                           & Bio-3        & 9n  & O(1) \\
+Hill equation (general, fixed $n$)          & Bio-4        & 15n & O(1) \\
+Maxwell--Boltzmann distribution             & Chem-2       & 31n & O(1) \\
+MWC allosteric model ($n=2$)               & Bio-4        & 34n & O(1) \\
+MWC allosteric model (general, fixed $n$)   & Bio-4        & 40n & O(1) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Special Case: MWC and the Hill Coefficient}
+
+The MWC (Monod--Wyman--Changeux) allosteric model with cooperativity
+$n$ (the Hill coefficient) has a cost that grows with $n$:
+
+\begin{example}[MWC allosteric model, general Hill coefficient $n$]
+\label{ex:mwc}
+The fractional saturation for the MWC model with Hill coefficient $n$:
+\[
+  Y = \frac{L \alpha^n (1 + \alpha)^{n-1} + \alpha^n (1 + \alpha)^{n-1}}
+           {L(1 + \alpha)^n + (1 + \alpha)^n},
+\]
+where $\alpha = [L]/K_d$ and $L$ is the allosteric constant.
+The dominant cost driver is the $n$-th power $\alpha^n$, computed via
+\texttt{pow} (3n), plus the binomial expansion implicit in $(1+\alpha)^n$.
+
+At $n=2$ (fixed): $\Cost = 34n$ (O(1) --- $n=2$ is a constant).
+
+For \emph{variable} $n$ used as a structural parameter, each unit
+increase in $n$ adds approximately one additional \texttt{pow} node
+(3n) and associated multiplications ($\sim$2--4n).  Thus:
+\[
+  \Cost(\mathrm{MWC}(n)) = O(n) \quad \text{(linear in the Hill coefficient)}.
+\]
+This is the one instance in the catalog where the Hill coefficient $n$
+plays the role of structural parameter $N$, and the cost is O(N).
+The conjecture is satisfied: cost is at most linear in $n$.
+\end{example}
+
+\subsection{Classification of Structural Parameters}
+
+\begin{table}[h]
+\centering
+\caption{Structural parameters and their complexity class.}
+\label{tab:structural_params}
+\smallskip
+\begin{tabular}{@{}lllll@{}}
+\toprule
+\textbf{Parameter $N$} & \textbf{Equation family} & \textbf{Per-term cost} & \textbf{Formula} & \textbf{Class} \\
+\midrule
+Fourier terms          & Fourier series        & $\sim 7n$ & $\sim 10N-3$ & O(N) \\
+Taylor order           & Taylor expansion      & 6n        & $9N-3$       & O(N) \\
+Entropy components     & Shannon entropy       & 3n        & $6N-5$       & O(N) \\
+PK compartments        & Multi-compartment PK  & 5n--7n    & $10N-3$      & O(N) \\
+Softmax classes        & Softmax / log-sum-exp & 1n        & $4N-3$       & O(N) \\
+Hill coefficient $n$   & MWC / Hill models     & $\sim 5n$ & $\sim 5n$    & O(N) \\
+\midrule
+(fixed formula)        & All 80+ catalog eqs.  & ---       & constant     & O(1) \\
+(double sum)           & Hopfield energy       & 4n/pair   & $7N^2+O(N)$  & O(N$^2$) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Maxwell--Boltzmann: O(1) at Fixed Structure}
+
+The Maxwell--Boltzmann speed distribution is a fixed formula:
+\[
+  f(v) = 4\pi \Bigl(\tfrac{m}{2\pi k_B T}\Bigr)^{3/2}
+         v^2 \exp\!\Bigl(-\tfrac{mv^2}{2k_BT}\Bigr).
+\]
+Cost: 31n (fixed, regardless of parameter values).  This is O(1) in
+the sense that the formula has a fixed structure.  The structural
+parameter $N$ does not appear here---the ``$N$'' is absent.  If one
+were to \emph{discretize} the speed domain into $N$ bins and evaluate
+the distribution at each bin, the total evaluation cost would be O(N),
+but that is an algorithmic cost, not the cost of the formula itself.
+
+\subsection{Does Any Equation Violate the Conjecture?}
+
+Based on the full catalog of 80+ equations, we find:
+\begin{itemize}
+  \item \textbf{Zero equations} have O(N$^2$) or higher cost due to
+        their formula structure alone (the Hopfield energy is a
+        self-described double-sum, outside the scope of ``single
+        closed-form scientific formulas'').
+  \item \textbf{All O(N) examples} arise from explicit single
+        summations: Fourier, Taylor, entropy, pharmacokinetics, softmax.
+  \item \textbf{All other equations} are O(1): they have fixed structure
+        and specific integer costs.
+  \item The \textbf{Hill coefficient} in MWC gives O(N) in $n$, but
+        this is a degenerate case where a parameter controlling
+        polynomial degree is the structural parameter.
+\end{itemize}
+
+\noindent
+No counterexample to the Linear Ceiling Conjecture is found in the catalog.
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Summary and Implications}
+\label{sec:summary}
+% ════════════════════════════════════════════════════════════════════════════
+
+\begin{theorem}[Complexity classification theorem (conditional on T39)]
+\label{thm:classification}
+Assuming Conjecture~\ref{conj:T39} (T39), every standard scientific
+equation has SuperBEST v3 cost in one of two classes:
+\[
+  \Cost(\mathcal{E}(N)) \;=\;
+  \begin{cases}
+    O(1) & \text{if the formula contains no free summation index } N, \\
+    O(N) & \text{if the formula contains one summation over } N \text{ terms.}
+  \end{cases}
+\]
+No standard scientific equation has cost $\omega(N)$ (super-linear in
+its structural parameter).
+\end{theorem}
+
+\begin{proof}[Argument (conditional)]
+O(1) follows from Definition~\ref{def:O1}: a fixed formula has fixed
+cost.  O(N) follows from Proposition~\ref{prop:linear_formula}: a single
+summation over $N$ fixed-cost terms produces linear cost.
+Super-linear cost would require variable nesting depth, which does not
+occur in standard textbook formulas (Remark in Section~\ref{sec:conjecture}).
+The theorem is conditional on the conjecture that no standard equation
+has a variable nesting depth.
+\end{proof}
+
+\subsection{Practical Implications}
+
+\begin{enumerate}
+  \item \textbf{Cost estimation is simple.}  To estimate the
+        SuperBEST cost of any standard scientific equation, it suffices
+        to count: (a) the number of fixed-structure operations (O(1)
+        contribution), and (b) the number of summands in any single
+        sum (O(N) contribution with leading coefficient $\alpha_0 + 3$).
+  \item \textbf{The addition bottleneck caps the growth rate.}
+        The maximum leading coefficient for a positive-domain O(N)
+        equation is determined by the most expensive per-term structure.
+        For all observed scientific equations, the leading coefficient
+        is in the range $[4, 12]$; there is no case with a leading
+        coefficient exceeding $\sim 12$.
+  \item \textbf{Complexity class is domain-independent.}  As
+        demonstrated in the ChemBio catalog (Section~\ref{sec:catalog_test}),
+        the structural class (O(1) vs.\ O(N)) is determined entirely by
+        whether the formula contains a summation, not by the scientific
+        domain (chemistry, biology, physics).
+  \item \textbf{The positive-domain assumption is almost always valid.}
+        Since nearly all scientific equations sum non-negative quantities,
+        the $c_{\mathrm{add}} = 3$ cost applies in the overwhelming
+        majority of cases.  The $c_{\mathrm{add}} = 11$ general case
+        arises only for explicitly signed intermediates, and these are
+        typically handled as subtractions (cost 2n) rather than signed
+        additions.
+\end{enumerate}
+
+\subsection{Open Questions}
+
+\begin{enumerate}
+  \item \textbf{Prove T39 formally.}  The current evidence is
+        empirical (the 80+ equation catalog).  A formal proof would
+        require a precise characterization of ``standard scientific
+        equation'' and a combinatorial argument that such equations
+        cannot have variable loop nesting.
+  \item \textbf{Tighten the leading coefficient bounds.}  Is there
+        a universal upper bound on the per-term cost $\alpha_0$ for
+        standard scientific terms?  The current maximum observed is
+        $\alpha_0 \approx 10$ (for complex Fourier terms).
+  \item \textbf{Characterize the O(N$^2$) boundary.}  Which formulas
+        from the scientific literature actually contain explicit double
+        sums and thus have O(N$^2$) cost?  A systematic census would
+        strengthen the scope of T39.
+\end{enumerate}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Complexity Class Reference Table}
+\label{sec:reference}
+% ════════════════════════════════════════════════════════════════════════════
+
+\begin{table}[h]
+\centering
+\caption{Complexity class summary for SuperBEST v3 cost of scientific equations.}
+\label{tab:classes}
+\smallskip
+\begin{tabular}{@{}lllll@{}}
+\toprule
+\textbf{Class} & \textbf{Formula structure} & \textbf{Cost}
+               & \textbf{Example} & \textbf{Leading coeff.} \\
+\midrule
+O(1) & Fixed operator tree, no sum over $N$
+     & constant
+     & Arrhenius (5n), MWC $n=2$ (34n)
+     & --- \\
+O(N) & Single sum over $N$ terms
+     & $(\alpha_0 + 3)N - 3$
+     & Softmax ($4N-3$), PK ($10N-3$)
+     & $4$--$12$ \\
+O(N$^2$) & Double sum over $N\times N$ pairs
+     & $\Theta(N^2)$
+     & Hopfield energy ($\sim 7N^2$)
+     & $\sim 7$ \\
+O(N$^k$) & $k$-nested sum
+     & $\Theta(N^k)$
+     & (not observed in textbooks)
+     & --- \\
+O($e^N$) & Exponential nesting
+     & $\Theta(e^N)$
+     & \textbf{Does not exist} in standard equations
+     & --- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section*{Theorem Catalog Labels}
+% ════════════════════════════════════════════════════════════════════════════
+
+\begin{description}
+  \item[T39 (Candidate)] \emph{Linear Ceiling Conjecture.}
+        Every standard scientific equation has SuperBEST v3 cost that
+        is at most O(N) in the number of summands $N$ of any single
+        summation in its formula.  O(1) for fixed-structure formulas;
+        O(N) for formulas with a single sum; no standard equation
+        achieves $\omega(N)$ cost.
+        (Conjecture~\ref{conj:T39}, this paper.)
+
+  \item[COST-9-Obs-1] \emph{Addition Bottleneck.}
+        For an O(N) equation with $N-1$ additions, the cost gap
+        between general-domain and positive-domain evaluation is
+        $8(N-1)$, growing linearly in $N$
+        (Proposition~\ref{prop:add_bottleneck}).
+
+  \item[COST-9-Obs-2] \emph{No O($e^N$) Equations.}
+        No standard scientific textbook equation has exponential cost
+        in its structural parameter.  Such cost would require
+        exponentially many operations, inconsistent with any finite
+        closed-form formula.
+\end{description}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section*{Acknowledgments}
+% ════════════════════════════════════════════════════════════════════════════
+
+This work is part of the monogate SuperBEST cost theory sprint.
+COST-9 integrates results from the ChemBio catalog (sessions Chem-1
+through Bio-5, T25 Taylor cost, T26 Fourier cost) and the
+SuperBEST v3 table established by T33.  The Linear Ceiling Conjecture
+(T39 candidate) is the central new contribution of this session.
+
+\bigskip
+\noindent\textit{Almaguer, A.R.\ (2026).
+Complexity Classes of SuperBEST Cost: O(1), O(N), and the Linear Ceiling Conjecture.
+monogate research. \url{https://monogate.org}}
+
+\end{document}

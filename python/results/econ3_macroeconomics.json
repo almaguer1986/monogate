@@ -1,0 +1,237 @@
+{
+  "session": "ECON-3",
+  "title": "Macroeconomics and Game Theory — SuperBEST v3 Cost Analysis",
+  "superBEST_v3": {
+    "exp": 1,
+    "ln": 1,
+    "neg": 2,
+    "recip": 2,
+    "mul": 2,
+    "sub": 2,
+    "div": 1,
+    "pow": 3,
+    "add_pos": 3,
+    "parameters_constants": 0
+  },
+  "equations": [
+    {
+      "id": 1,
+      "name": "Cobb-Douglas Production Function",
+      "formula": "Y = A · K^α · L^(1−α)",
+      "variants": [
+        {
+          "label": "α is a live (variable) parameter",
+          "breakdown": {
+            "pow(K, α)": 3,
+            "sub(1, α)": 2,
+            "pow(L, sub)": 3,
+            "mul(K^α, L^(1-α))": 2,
+            "mul(A, product)": 2
+          },
+          "total_nodes": 12,
+          "note": "sub(1,α)=2 because α is live; two pow calls at 3 each; two mul calls at 2 each."
+        },
+        {
+          "label": "α is a fixed constant (1−α also constant)",
+          "breakdown": {
+            "pow(K, const_α)": 3,
+            "pow(L, const_1mα)": 3,
+            "mul(K^α, L^(1-α))": 2,
+            "mul(A, product)": 2
+          },
+          "total_nodes": 10,
+          "note": "Both exponents are free constants; no sub node needed."
+        }
+      ],
+      "canonical_nodes": 12,
+      "canonical_label": "α live"
+    },
+    {
+      "id": 2,
+      "name": "Solow Growth Model Steady State",
+      "formula": "k* = (sA/δ)^(1/(1−α))",
+      "variants": [
+        {
+          "label": "s, A, δ, α all live",
+          "breakdown": {
+            "mul(s, A)": 2,
+            "div(sA, δ)": 1,
+            "sub(1, α)": 2,
+            "recip(1-α)": 2,
+            "pow(ratio, recip)": 3
+          },
+          "total_nodes": 10,
+          "note": "recip gives 1/(1-α); full live-parameter chain."
+        },
+        {
+          "label": "s, A, δ fixed; α live",
+          "breakdown": {
+            "sub(1, α)": 2,
+            "recip(1-α)": 2,
+            "pow(const_sAδ, recip)": 3
+          },
+          "total_nodes": 7,
+          "note": "sA/δ collapses to a free constant."
+        },
+        {
+          "label": "s, A, δ, α all fixed constants",
+          "breakdown": {
+            "pow(const, const)": 3
+          },
+          "total_nodes": 3,
+          "note": "Entire exponent and base are free constants."
+        }
+      ],
+      "canonical_nodes": 10,
+      "canonical_label": "all live"
+    },
+    {
+      "id": 3,
+      "name": "Phillips Curve",
+      "formula": "π = πe − β(u − u*)",
+      "breakdown": {
+        "sub(u, u_star)": 2,
+        "mul(β, sub)": 2,
+        "sub(πe, product)": 2
+      },
+      "total_nodes": 6,
+      "note": "Two sub nodes and one mul; purely linear so no exp/pow needed."
+    },
+    {
+      "id": 4,
+      "name": "Fisher Equation",
+      "formula": "(1+i) = (1+r)(1+π)  [exact]; i ≈ r + π  [approximate]",
+      "variants": [
+        {
+          "label": "Exact form — solve for i",
+          "breakdown": {
+            "add(1, r)": 3,
+            "add(1, π)": 3,
+            "mul(sums)": 2,
+            "sub(result, 1)": 2
+          },
+          "total_nodes": 10,
+          "note": "Two add nodes, one mul, one sub to strip the +1."
+        },
+        {
+          "label": "Linear approximation i ≈ r + π",
+          "breakdown": {
+            "add(r, π)": 3
+          },
+          "total_nodes": 3,
+          "note": "Single add; cheapest finance identity."
+        }
+      ],
+      "canonical_nodes": 10,
+      "canonical_label": "exact"
+    },
+    {
+      "id": 5,
+      "name": "Nash Equilibrium Expected Utility (2-outcome)",
+      "formula": "EU = p·u(A) + (1−p)·u(B)",
+      "breakdown": {
+        "mul(p, uA)": 2,
+        "sub(1, p)": 2,
+        "mul(sub, uB)": 2,
+        "add(terms)": 3
+      },
+      "total_nodes": 9,
+      "note": "Mixture model with complementary probability; one add for final sum."
+    },
+    {
+      "id": 6,
+      "name": "Logit Choice Probability (N options — softmax)",
+      "formula": "P(i) = exp(Vᵢ/μ) / Σⱼ exp(Vⱼ/μ)",
+      "breakdown_per_N": {
+        "numerator_per_option": {
+          "div(Vi, μ)": 1,
+          "exp(div)": 1,
+          "subtotal": 2
+        },
+        "denominator": {
+          "N × [div + exp]": "2N",
+          "(N-1) × add": "3(N-1)",
+          "subtotal_formula": "2N + 3(N-1) = 5N - 3"
+        },
+        "final_div": 1,
+        "note_denominator_reuse": "Denominator is shared; numerator term already counted in denominator sum."
+      },
+      "total_nodes_formula": "5N",
+      "total_nodes_example_N3": 15,
+      "total_nodes_example_N5": 25,
+      "note": "O(N) cost. Denominator dominates. Identical structure to softmax in neural networks."
+    },
+    {
+      "id": 7,
+      "name": "Gini Coefficient from Lorenz Curve L(p) = p^(1+α)",
+      "formula": "G = 1 − 2∫₀¹ p^(1+α) dp = α/(2+α)",
+      "variants": [
+        {
+          "label": "Closed-form analytic evaluation",
+          "breakdown": {
+            "add(2, α)": 3,
+            "div(2, sum)": 1,
+            "sub(1, result)": 2
+          },
+          "total_nodes": 6,
+          "note": "Integral ∫₀¹ p^(1+α)dp = 1/(2+α) solved analytically; result is G = α/(2+α)."
+        },
+        {
+          "label": "Numerical integration — per quadrature step",
+          "breakdown": {
+            "add(1, α)": 3,
+            "pow(p, add)": 3,
+            "subtotal_per_step": 6
+          },
+          "total_nodes_formula": "6 × num_steps + O(N) adds for summation",
+          "note": "Each step evaluates p^(1+α); expensive if α is live at each step."
+        }
+      ],
+      "canonical_nodes": 6,
+      "canonical_label": "closed form"
+    },
+    {
+      "id": 8,
+      "name": "Compounding Inflation Adjustment",
+      "formula": "Real = Nominal / (1+π)^n",
+      "breakdown": {
+        "add(1, π)": 3,
+        "pow(sum, n)": 3,
+        "div(Nominal, pow)": 1
+      },
+      "total_nodes": 7,
+      "note": "n may be a free constant (years). One add, one pow, one div."
+    },
+    {
+      "id": 9,
+      "name": "Present Value of Perpetuity",
+      "formula": "PV = C / r",
+      "breakdown": {
+        "div(C, r)": 1
+      },
+      "total_nodes": 1,
+      "note": "Single div node — cheapest formula in the session. Gordon growth model PV = D/(r−g) costs sub(r,g)=2 + div=1 = 3n."
+    }
+  ],
+  "summary_table": [
+    { "id": 1, "name": "Cobb-Douglas Production",             "nodes_canonical": 12, "variant_note": "α live; 10n if α fixed" },
+    { "id": 2, "name": "Solow Steady State k*",               "nodes_canonical": 10, "variant_note": "all live; 7n if only α live; 3n if all fixed" },
+    { "id": 3, "name": "Phillips Curve",                      "nodes_canonical": 6,  "variant_note": "purely linear" },
+    { "id": 4, "name": "Fisher Equation (exact)",             "nodes_canonical": 10, "variant_note": "approx i≈r+π costs 3n" },
+    { "id": 4, "name": "Fisher Equation (approx)",            "nodes_canonical": 3,  "variant_note": "single add" },
+    { "id": 5, "name": "Nash EU (2-outcome)",                 "nodes_canonical": 9,  "variant_note": "mixture model" },
+    { "id": 6, "name": "Logit / Softmax (N options)",         "nodes_canonical": "5N", "variant_note": "O(N); N=3→15n, N=5→25n" },
+    { "id": 7, "name": "Gini Coefficient (analytic)",         "nodes_canonical": 6,  "variant_note": "6×steps if numerical" },
+    { "id": 8, "name": "Compounding Inflation Adjustment",    "nodes_canonical": 7,  "variant_note": "add+pow+div" },
+    { "id": 9, "name": "Perpetuity PV = C/r",                "nodes_canonical": 1,  "variant_note": "cheapest in session" }
+  ],
+  "key_findings": [
+    "PV=C/r is the absolute cheapest at 1 node (single div).",
+    "Phillips curve and Gini (analytic) tie at 6 nodes — both linear-ish after closed-form resolution.",
+    "Fisher (approx) and Solow (all-fixed) collapse to 3 nodes each.",
+    "Logit/softmax scales as 5N — same cost structure as neural network softmax.",
+    "Cobb-Douglas is the most expensive at 12n (α live); constants reduce it to 10n.",
+    "Solow steady-state spans 3–10n depending on how many parameters are fixed vs live.",
+    "sub(1,α) costs 2n only when α is a live variable; if α is a fixed constant, 1−α is also a free constant."
+  ]
+}

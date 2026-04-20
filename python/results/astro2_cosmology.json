@@ -1,0 +1,149 @@
+{
+  "session": "ASTRO-2",
+  "title": "SuperBEST Cost Analysis — Cosmology",
+  "operator_costs": {
+    "exp": 1,
+    "ln": 1,
+    "neg": 2,
+    "recip": 2,
+    "mul": 2,
+    "sub": 2,
+    "div": 1,
+    "pow": 3,
+    "add_pos": 3,
+    "note": "parameters/constants are free terminals (0n)"
+  },
+  "equations": [
+    {
+      "id": 1,
+      "name": "Scale factor (matter-dominated)",
+      "formula": "a(t) = a0 * (t/t0)^(2/3)",
+      "variables": ["t"],
+      "constants_free": ["a0", "t0", "2/3"],
+      "breakdown": [
+        {"step": "div(t, t0)", "ops": ["div"], "cost": 1, "note": "ratio t/t0"},
+        {"step": "pow(ratio, 2/3)", "ops": ["pow"], "cost": 3, "note": "exponent 2/3 is a free constant"},
+        {"step": "mul(a0, result)", "ops": ["mul"], "cost": 2, "note": "scale by a0"}
+      ],
+      "total_cost": 6,
+      "total_label": "6n"
+    },
+    {
+      "id": 2,
+      "name": "Cosmological redshift",
+      "formula": "z = a0/a(t_emit) - 1",
+      "variables": ["a"],
+      "constants_free": ["a0", "1"],
+      "breakdown": [
+        {"step": "div(a0, a)", "ops": ["div"], "cost": 1, "note": "1+z = a0/a"},
+        {"step": "sub(result, 1)", "ops": ["sub"], "cost": 2, "note": "z = (a0/a) - 1"}
+      ],
+      "total_cost": 3,
+      "total_label": "3n"
+    },
+    {
+      "id": 3,
+      "name": "Friedmann equation RHS",
+      "formula": "H^2 = (8*pi*G/3)*rho - k*c^2/a^2 + Lambda*c^2/3",
+      "variables": ["rho", "a"],
+      "constants_free": ["8*pi*G/3", "k*c^2", "Lambda*c^2/3"],
+      "breakdown": [
+        {"step": "Term 1: mul(8piG/3, rho)", "ops": ["mul"], "cost": 2, "note": "8piG/3 is a folded constant"},
+        {"step": "Term 2a: pow(a, 2)", "ops": ["pow"], "cost": 3, "note": "a^2"},
+        {"step": "Term 2b: div(k*c^2, a^2)", "ops": ["div"], "cost": 1, "note": "k*c^2 is a free constant"},
+        {"step": "Term 2c: neg(result)", "ops": ["neg"], "cost": 2, "note": "subtract term 2"},
+        {"step": "Term 3: Lambda*c^2/3", "ops": [], "cost": 0, "note": "entirely a free constant (Lambda treated as constant)"},
+        {"step": "add(term1, neg_term2)", "ops": ["add"], "cost": 3, "note": "first addition"},
+        {"step": "add(result, term3)", "ops": ["add"], "cost": 3, "note": "second addition; term3=0n so just the add op cost"}
+      ],
+      "total_cost": 14,
+      "total_label": "14n",
+      "notes": "Term 3 (LambdaCDM constant) costs 0n as a free constant; two add ops at 3n each bring total to 14n"
+    },
+    {
+      "id": 4,
+      "name": "Hubble parameter vs redshift",
+      "formula": "H(z) = H0 * sqrt(Omega_m*(1+z)^3 + Omega_Lambda)",
+      "variables": ["z"],
+      "constants_free": ["H0", "Omega_m", "Omega_Lambda", "1", "3", "0.5"],
+      "breakdown": [
+        {"step": "add(1, z)", "ops": ["add"], "cost": 3, "note": "1+z"},
+        {"step": "pow(1+z, 3)", "ops": ["pow"], "cost": 3, "note": "(1+z)^3"},
+        {"step": "mul(Omega_m, (1+z)^3)", "ops": ["mul"], "cost": 2, "note": "Omega_m*(1+z)^3"},
+        {"step": "Subtotal for inner cubic term", "ops": [], "cost": 8, "note": "3+3+2 = 8n"},
+        {"step": "add(Omega_m*(1+z)^3, Omega_Lambda)", "ops": ["add"], "cost": 3, "note": "sum under root"},
+        {"step": "pow(sum, 0.5)", "ops": ["pow"], "cost": 3, "note": "sqrt = pow(., 1/2); exponent 0.5 is free"},
+        {"step": "mul(H0, sqrt_result)", "ops": ["mul"], "cost": 2, "note": "scale by H0"},
+        {"step": "Subtotal for outer term", "ops": [], "cost": 8, "note": "3+3+2 = 8n"}
+      ],
+      "total_cost": 16,
+      "total_label": "16n"
+    },
+    {
+      "id": 5,
+      "name": "Luminosity distance (per integration step)",
+      "formula": "dL = c*(1+z)/H0 * sum_i(Delta_z / H(z_i))",
+      "variables": ["z_i"],
+      "constants_free": ["c", "H0", "Delta_z", "1"],
+      "breakdown": [
+        {"step": "H(z_i) via equation 4", "ops": ["[eq4]"], "cost": 16, "note": "full H(z) evaluation = 16n"},
+        {"step": "div(c, H(z_i))", "ops": ["div"], "cost": 1, "note": "c/H — c is free constant"},
+        {"step": "mul(Delta_z, c/H)", "ops": ["mul"], "cost": 2, "note": "Delta_z is free constant; contribution per step"}
+      ],
+      "total_cost_per_step": 19,
+      "total_label": "19n per integration step",
+      "notes": "Outer prefactor c*(1+z)/H0 and the sum accumulation require additional add ops per step not counted here; 19n is the per-step integrand evaluation cost as specified"
+    },
+    {
+      "id": 6,
+      "name": "Saha equation",
+      "formula": "n_e*n_i/n0 = (2*pi*m_e*k*T/h^2)^(3/2) * exp(-chi/(k*T))",
+      "variables": ["T"],
+      "constants_free": ["2*pi*m_e*k/h^2", "chi", "k", "3/2"],
+      "variants": [
+        {
+          "variant": "T live (k not folded into chi)",
+          "breakdown": [
+            {"step": "mul(2*pi*m_e*k/h^2, T)", "ops": ["mul"], "cost": 2, "note": "partition function prefactor * T; constant folded"},
+            {"step": "pow(result, 3/2)", "ops": ["pow"], "cost": 3, "note": "(...)^(3/2); exponent is free"},
+            {"step": "Partition function subtotal", "ops": [], "cost": 5, "note": "2+3 = 5n"},
+            {"step": "mul(k, T)", "ops": ["mul"], "cost": 2, "note": "kT in denominator"},
+            {"step": "div(chi, kT)", "ops": ["div"], "cost": 1, "note": "chi/kT"},
+            {"step": "neg(chi/kT)", "ops": ["neg"], "cost": 2, "note": "-chi/kT"},
+            {"step": "exp(-chi/kT)", "ops": ["exp"], "cost": 1, "note": "Boltzmann factor"},
+            {"step": "Exponential subtotal", "ops": [], "cost": 6, "note": "2+1+2+1 = 6n"},
+            {"step": "mul(partition_fn, exp_factor)", "ops": ["mul"], "cost": 2, "note": "final product"}
+          ],
+          "total_cost": 13,
+          "total_label": "13n"
+        },
+        {
+          "variant": "kT as folded constant (T enters only as product kT)",
+          "breakdown": [
+            {"step": "mul(2*pi*m_e*k/h^2, T)", "ops": ["mul"], "cost": 2, "note": "still need T for partition fn"},
+            {"step": "pow(result, 3/2)", "ops": ["pow"], "cost": 3, "note": "(...)^(3/2)"},
+            {"step": "Partition function subtotal", "ops": [], "cost": 5, "note": "2+3 = 5n"},
+            {"step": "div(chi, kT)", "ops": ["div"], "cost": 1, "note": "chi/(kT): kT is a free folded constant"},
+            {"step": "neg(chi/kT)", "ops": ["neg"], "cost": 2, "note": "-chi/kT"},
+            {"step": "exp(-chi/kT)", "ops": ["exp"], "cost": 1, "note": "Boltzmann factor"},
+            {"step": "Exponential subtotal", "ops": [], "cost": 4, "note": "1+2+1 = 4n (kT free, no mul needed)"},
+            {"step": "mul(partition_fn, exp_factor)", "ops": ["mul"], "cost": 2, "note": "final product"}
+          ],
+          "total_cost": 11,
+          "total_label": "11n"
+        }
+      ],
+      "total_cost_primary": 13,
+      "total_label": "13n (T live) / 11n (kT folded)"
+    }
+  ],
+  "summary_table": [
+    {"eq": 1, "name": "Scale factor a(t)", "formula": "a0*(t/t0)^(2/3)",             "cost": 6,  "label": "6n"},
+    {"eq": 2, "name": "Cosmological redshift z", "formula": "a0/a - 1",              "cost": 3,  "label": "3n"},
+    {"eq": 3, "name": "Friedmann RHS H^2", "formula": "(8piG/3)rho - kc^2/a^2 + Lc^2/3", "cost": 14, "label": "14n"},
+    {"eq": 4, "name": "Hubble H(z)", "formula": "H0*sqrt(Om*(1+z)^3 + OL)",         "cost": 16, "label": "16n"},
+    {"eq": 5, "name": "Luminosity distance dL (per step)", "formula": "c*Dz/H(z_i) per step", "cost": 19, "label": "19n/step"},
+    {"eq": 6, "name": "Saha equation (T live)", "formula": "(2pi*m_e*kT/h^2)^(3/2)*exp(-chi/kT)", "cost": 13, "label": "13n"},
+    {"eq": "6b", "name": "Saha equation (kT folded)", "formula": "same, kT as constant", "cost": 11, "label": "11n"}
+  ]
+}

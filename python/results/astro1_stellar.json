@@ -1,0 +1,526 @@
+{
+  "session": "ASTRO-1",
+  "title": "Stellar Structure and Radiation — SuperBEST v3 Cost Analysis",
+  "date": "2026-04-20",
+  "superBEST_v3_costs": {
+    "exp": 1,
+    "ln": 1,
+    "neg": 2,
+    "recip": 2,
+    "mul": 2,
+    "sub": 2,
+    "div": 1,
+    "pow_integer": 3,
+    "add_pos": 3,
+    "add_gen": 11,
+    "terminal_constant": 0,
+    "terminal_parameter": 0,
+    "non_elementary": "infinity"
+  },
+  "equations": [
+    {
+      "id": 1,
+      "name": "Stefan-Boltzmann luminosity",
+      "formula": "L = 4\u03c0R\u00b2\u03c3T\u2074",
+      "unfolded": {
+        "tree": [
+          "mul(4\u03c0, mul(\u03c3, mul(pow(R,2), pow(T,4))))",
+          "  pow(R, 2)         \u2192 cost 3",
+          "  pow(T, 4)         \u2192 cost 3",
+          "  mul(pow(R,2), pow(T,4))   \u2192 cost 2",
+          "  mul(\u03c3, \u00b7)           \u2192 cost 2",
+          "  mul(4\u03c0, \u00b7)          \u2192 cost 2"
+        ],
+        "node_costs": {
+          "pow(R,2)": 3,
+          "pow(T,4)": 3,
+          "mul(R2,T4)": 2,
+          "mul(sigma,R2T4)": 2,
+          "mul(4pi,sigmaR2T4)": 2
+        },
+        "total": 12,
+        "breakdown": "3 + 3 + 2 + 2 + 2 = 12"
+      },
+      "folded": {
+        "strategy": "4\u03c0\u03c3 as single precomputed constant (cost 0)",
+        "tree": [
+          "mul(const_4pi_sigma, mul(pow(R,2), pow(T,4)))",
+          "  pow(R, 2)                     \u2192 cost 3",
+          "  pow(T, 4)                     \u2192 cost 3",
+          "  mul(pow(R,2), pow(T,4))       \u2192 cost 2",
+          "  mul(const_4pi_sigma, \u00b7)       \u2192 cost 2"
+        ],
+        "node_costs": {
+          "const_4pi_sigma": 0,
+          "pow(R,2)": 3,
+          "pow(T,4)": 3,
+          "mul(R2,T4)": 2,
+          "mul(const,R2T4)": 2
+        },
+        "total": 10,
+        "breakdown": "0 + 3 + 3 + 2 + 2 = 10"
+      },
+      "dominant_op": "pow (contributes 6 of 12 unfolded nodes)",
+      "notes": "Two integer-power nodes dominate. Folding 4\u03c0\u03c3 saves one mul(2). Folding {4\u03c0,\u03c3} as two separate folds would only save one mul."
+    },
+    {
+      "id": 2,
+      "name": "Schwarzschild radius",
+      "formula": "Rs = 2GM / c\u00b2",
+      "unfolded": {
+        "tree": [
+          "div(mul(2, mul(G, M)), pow(c, 2))",
+          "  mul(G, M)         \u2192 cost 2",
+          "  mul(2, GM)        \u2192 cost 2",
+          "  pow(c, 2)         \u2192 cost 3",
+          "  div(\u00b7, \u00b7)          \u2192 cost 1"
+        ],
+        "node_costs": {
+          "mul(G,M)": 2,
+          "mul(2,GM)": 2,
+          "pow(c,2)": 3,
+          "div": 1
+        },
+        "total": 8,
+        "breakdown": "2 + 2 + 3 + 1 = 8"
+      },
+      "folded": {
+        "strategy": "2G as single precomputed constant (cost 0)",
+        "tree": [
+          "div(mul(const_2G, M), pow(c, 2))",
+          "  const_2G           \u2192 cost 0",
+          "  mul(const_2G, M)   \u2192 cost 2",
+          "  pow(c, 2)          \u2192 cost 3",
+          "  div(\u00b7, \u00b7)          \u2192 cost 1"
+        ],
+        "node_costs": {
+          "const_2G": 0,
+          "mul(const_2G,M)": 2,
+          "pow(c,2)": 3,
+          "div": 1
+        },
+        "total": 6,
+        "breakdown": "0 + 2 + 3 + 1 = 6"
+      },
+      "dominant_op": "pow (contributes 3 of 8 unfolded)",
+      "notes": "Folding 2G eliminates one mul node. If c\u00b2 is also treated as a known constant (c is fixed), the pow could be folded too, giving div cost only: 1n. But c is typically a terminal, not folded."
+    },
+    {
+      "id": 3,
+      "name": "Gravitational potential energy",
+      "formula": "U = \u2212GMm / r",
+      "unfolded": {
+        "tree": [
+          "neg(div(mul(G, mul(M, m)), r))",
+          "  mul(M, m)          \u2192 cost 2",
+          "  mul(G, mul(M,m))   \u2192 cost 2",
+          "  div(\u00b7, r)          \u2192 cost 1",
+          "  neg(\u00b7)             \u2192 cost 2"
+        ],
+        "node_costs": {
+          "mul(M,m)": 2,
+          "mul(G,Mm)": 2,
+          "div(GMm,r)": 1,
+          "neg": 2
+        },
+        "total": 7,
+        "breakdown": "2 + 2 + 1 + 2 = 7"
+      },
+      "folded": {
+        "strategy": "GM as single precomputed constant (cost 0)",
+        "tree": [
+          "neg(div(mul(const_GM, m), r))",
+          "  const_GM            \u2192 cost 0",
+          "  mul(const_GM, m)    \u2192 cost 2",
+          "  div(\u00b7, r)           \u2192 cost 1",
+          "  neg(\u00b7)              \u2192 cost 2"
+        ],
+        "node_costs": {
+          "const_GM": 0,
+          "mul(const_GM,m)": 2,
+          "div": 1,
+          "neg": 2
+        },
+        "total": 5,
+        "breakdown": "0 + 2 + 1 + 2 = 5"
+      },
+      "dominant_op": "neg (cost 2, same as each mul); mul chain dominates structurally",
+      "notes": "neg costs 2, same as mul. neg is unavoidable here. Folding GM removes one mul, saving 2 nodes."
+    },
+    {
+      "id": 4,
+      "name": "Wien\u2019s displacement law",
+      "formula": "\u03bbmax = b / T",
+      "unfolded": {
+        "tree": [
+          "div(b, T)",
+          "  b (constant)   \u2192 cost 0",
+          "  T (variable)   \u2192 cost 0",
+          "  div(b, T)      \u2192 cost 1"
+        ],
+        "node_costs": {
+          "div(b,T)": 1
+        },
+        "total": 1,
+        "breakdown": "1"
+      },
+      "folded": {
+        "strategy": "No folding possible; b is the Wien constant, T is free variable",
+        "total": 1,
+        "breakdown": "1 (same as unfolded)"
+      },
+      "dominant_op": "div (the only operator)",
+      "notes": "Minimal cost equation. b = 2.898\u00d710\u207b\u00b3 m\u00b7K is a terminal constant (cost 0). Cannot fold further."
+    },
+    {
+      "id": 5,
+      "name": "Kepler\u2019s third law",
+      "formula": "T\u00b2 = (4\u03c0\u00b2 / GM) \u00b7 a\u00b3",
+      "note_on_sides": "LHS pow(T,2)=3 is the target variable; RHS is the expression to evaluate. Costs reported for RHS expression only unless noted.",
+      "unfolded": {
+        "tree": [
+          "RHS: mul(div(4\u03c0\u00b2, mul(G, M)), pow(a, 3))",
+          "  mul(G, M)                    \u2192 cost 2",
+          "  div(4\u03c0\u00b2, mul(G,M))          \u2192 cost 1  [4\u03c0\u00b2 is constant, cost 0]",
+          "  pow(a, 3)                    \u2192 cost 3",
+          "  mul(div(\u00b7), pow(a,3))        \u2192 cost 2"
+        ],
+        "node_costs": {
+          "mul(G,M)": 2,
+          "div(4pi2,GM)": 1,
+          "pow(a,3)": 3,
+          "mul(ratio,a3)": 2
+        },
+        "total_RHS": 8,
+        "breakdown": "2 + 1 + 3 + 2 = 8",
+        "LHS_pow_T2_cost": 3,
+        "total_equation": 11,
+        "breakdown_equation": "3 (LHS) + 8 (RHS) = 11"
+      },
+      "folded": {
+        "strategy": "4\u03c0\u00b2/GM: if GM is constant (e.g., solar system, M=M_sun fixed), fold as const_4pi2_over_GM",
+        "tree": [
+          "RHS: mul(const_4pi2_over_GM, pow(a, 3))",
+          "  const_4pi2_over_GM    \u2192 cost 0",
+          "  pow(a, 3)             \u2192 cost 3",
+          "  mul(\u00b7, \u00b7)             \u2192 cost 2"
+        ],
+        "node_costs": {
+          "const_4pi2_over_GM": 0,
+          "pow(a,3)": 3,
+          "mul": 2
+        },
+        "total_RHS": 5,
+        "breakdown": "0 + 3 + 2 = 5",
+        "LHS_pow_T2_cost": 3,
+        "total_equation_folded": 8,
+        "breakdown_equation": "3 (LHS) + 5 (RHS) = 8"
+      },
+      "dominant_op": "pow (a\u00b3 = 3, T\u00b2 = 3; together contribute 6 of 11 total)",
+      "notes": "4\u03c0\u00b2 has cost 0 as a numeric constant. Full fold requires M to be a fixed body mass. RHS-only is most relevant for regression use."
+    },
+    {
+      "id": 6,
+      "name": "Hubble\u2019s law",
+      "formula": "v = H\u2080 \u00b7 d",
+      "unfolded": {
+        "tree": [
+          "mul(H0, d)",
+          "  H0 (constant/parameter)  \u2192 cost 0",
+          "  d (variable)             \u2192 cost 0",
+          "  mul(H0, d)               \u2192 cost 2"
+        ],
+        "node_costs": {
+          "mul(H0,d)": 2
+        },
+        "total": 2,
+        "breakdown": "2"
+      },
+      "folded": {
+        "strategy": "No folding needed; H\u2080 is already a single constant terminal",
+        "total": 2,
+        "breakdown": "2 (same as unfolded)"
+      },
+      "dominant_op": "mul (the only operator)",
+      "notes": "Simplest non-trivial equation in set. H\u2080 is a free parameter (cost 0). Linear regression baseline."
+    },
+    {
+      "id": 7,
+      "name": "Eddington luminosity",
+      "formula": "L_Edd = 4\u03c0GMc / \u03ba",
+      "unfolded": {
+        "tree": [
+          "div(mul(4\u03c0, mul(G, mul(M, c))), \u03ba)",
+          "  mul(M, c)            \u2192 cost 2",
+          "  mul(G, mul(M,c))     \u2192 cost 2",
+          "  mul(4\u03c0, mul(G,Mc))   \u2192 cost 2",
+          "  div(\u00b7, \u03ba)            \u2192 cost 1"
+        ],
+        "node_costs": {
+          "mul(M,c)": 2,
+          "mul(G,Mc)": 2,
+          "mul(4pi,GMc)": 2,
+          "div(result,kappa)": 1
+        },
+        "total": 7,
+        "breakdown": "2 + 2 + 2 + 1 = 7"
+      },
+      "folded": {
+        "strategy": "4\u03c0G/\u03ba as single precomputed constant (cost 0); \u03ba may vary per star so partial fold: 4\u03c0G as constant",
+        "tree_partial_fold": [
+          "div(mul(const_4piG, mul(M, c)), \u03ba)",
+          "  const_4piG           \u2192 cost 0",
+          "  mul(M, c)            \u2192 cost 2",
+          "  mul(const_4piG, Mc)  \u2192 cost 2",
+          "  div(\u00b7, \u03ba)           \u2192 cost 1"
+        ],
+        "total_partial": 5,
+        "tree_full_fold": [
+          "mul(const_4piG_over_kappa, mul(M, c))",
+          "  const_4piG_over_kappa  \u2192 cost 0  [only if \u03ba is fixed]",
+          "  mul(M, c)              \u2192 cost 2",
+          "  mul(const, Mc)         \u2192 cost 2"
+        ],
+        "total_full": 4,
+        "breakdown_partial": "0 + 2 + 2 + 1 = 5",
+        "breakdown_full": "0 + 2 + 2 = 4"
+      },
+      "dominant_op": "mul chain (three mul nodes in unfolded form)",
+      "notes": "Partial fold (4\u03c0G constant, \u03ba free) gives 5n. Full fold (4\u03c0G/\u03ba constant) gives 4n but requires \u03ba fixed. Reported primary folded = 4n (full)."
+    },
+    {
+      "id": 8,
+      "name": "Virial temperature",
+      "formula": "T = GM\u03bcm_p / (3k_B R)",
+      "unfolded": {
+        "tree": [
+          "div(mul(G, mul(M, mul(\u03bc, m_p))), mul(3k_B, R))",
+          "Numerator:",
+          "  mul(\u03bc, m_p)              \u2192 cost 2",
+          "  mul(M, mul(\u03bc,m_p))       \u2192 cost 2",
+          "  mul(G, mul(M,\u03bcm_p))      \u2192 cost 2",
+          "Denominator:",
+          "  mul(3k_B, R)  [3k_B is constant] \u2192 cost 2",
+          "div(numer, denom)          \u2192 cost 1"
+        ],
+        "node_costs": {
+          "mul(mu,mp)": 2,
+          "mul(M,mu_mp)": 2,
+          "mul(G,M_mu_mp)": 2,
+          "mul(3kB,R)": 2,
+          "div": 1
+        },
+        "total": 9,
+        "breakdown": "2 + 2 + 2 + 2 + 1 = 9"
+      },
+      "folded": {
+        "strategy": "GM as constant, m_p and k_B as constants (physical constants); 3k_B as constant",
+        "tree_GM_fold": [
+          "div(mul(const_GM, mul(\u03bc, m_p)), mul(3k_B, R))",
+          "  mul(\u03bc, m_p)          \u2192 cost 2",
+          "  mul(const_GM, \u03bcm_p)  \u2192 cost 2",
+          "  mul(3k_B, R)          \u2192 cost 2",
+          "  div                   \u2192 cost 1"
+        ],
+        "total_GM_fold": 7,
+        "breakdown_GM_fold": "0 + 2 + 2 + 2 + 1 = 7",
+        "tree_full_fold": [
+          "Fold Gm_p/(3k_B) as single constant C (if \u03bc treated as free variable):",
+          "div(mul(C, mul(M, \u03bc)), R)  or  mul(C, div(mul(M,\u03bc), R))",
+          "  mul(M, \u03bc)      \u2192 cost 2",
+          "  mul(C, M\u03bc)     \u2192 cost 2",
+          "  div(\u00b7, R)       \u2192 cost 1"
+        ],
+        "total_full_fold": 5,
+        "breakdown_full_fold": "0 + 2 + 2 + 1 = 5"
+      },
+      "dominant_op": "mul chain in numerator (3 mul nodes = 6n)",
+      "notes": "m_p, k_B, G are all physical constants (cost 0). With GM fold: 7n. With Gm_p/(3k_B) as single fold: 5n. Reported primary folded = 7n (GM fold, \u03bc and M remain free)."
+    },
+    {
+      "id": 9,
+      "name": "Gravitational wave strain prefactor",
+      "formula": "h_prefactor = 4GM / (c\u2074 \u00b7 r)",
+      "unfolded": {
+        "tree": [
+          "div(mul(4, mul(G, M)), mul(pow(c, 4), r))",
+          "  mul(G, M)          \u2192 cost 2",
+          "  mul(4, GM)         \u2192 cost 2",
+          "  pow(c, 4)          \u2192 cost 3",
+          "  mul(pow(c,4), r)   \u2192 cost 2",
+          "  div(numer, denom)  \u2192 cost 1"
+        ],
+        "node_costs": {
+          "mul(G,M)": 2,
+          "mul(4,GM)": 2,
+          "pow(c,4)": 3,
+          "mul(c4,r)": 2,
+          "div": 1
+        },
+        "total": 10,
+        "breakdown": "2 + 2 + 3 + 2 + 1 = 10"
+      },
+      "folded": {
+        "strategy": "4G as constant (cost 0); c is a physical constant so pow(c,4) \u2192 could be folded too",
+        "tree_4G_fold": [
+          "div(mul(const_4G, M), mul(pow(c, 4), r))",
+          "  const_4G           \u2192 cost 0",
+          "  mul(const_4G, M)   \u2192 cost 2",
+          "  pow(c, 4)          \u2192 cost 3",
+          "  mul(c4, r)         \u2192 cost 2",
+          "  div                \u2192 cost 1"
+        ],
+        "total_4G_fold": 8,
+        "breakdown_4G_fold": "0 + 2 + 3 + 2 + 1 = 8",
+        "tree_full_fold": [
+          "If c is a fixed constant, fold c\u2074 as const_c4 (cost 0):",
+          "div(mul(const_4G, M), mul(const_c4, r))",
+          "  mul(const_4G, M)    \u2192 cost 2",
+          "  mul(const_c4, r)    \u2192 cost 2",
+          "  div                 \u2192 cost 1"
+        ],
+        "total_full_fold": 5,
+        "breakdown_full_fold": "0 + 2 + 0 + 2 + 1 = 5"
+      },
+      "dominant_op": "pow(c,4) is the single most expensive node (cost 3)",
+      "notes": "c is a universal constant so c\u2074 can legitimately be folded. With 4G and c\u2074 folded: 5n. Primary reported folded = 8n (4G only, leaving c as terminal)."
+    },
+    {
+      "id": 10,
+      "name": "Thermal de Broglie wavelength",
+      "formula": "\u03bbth = h / \u221a(2\u03c0 m k_B T)",
+      "unfolded": {
+        "tree": [
+          "div(h, pow(mul(2\u03c0, mul(m, mul(k_B, T))), 0.5))",
+          "  mul(k_B, T)              \u2192 cost 2",
+          "  mul(m, mul(k_B,T))       \u2192 cost 2",
+          "  mul(2\u03c0, mul(m,k_BT))    \u2192 cost 2",
+          "  pow(\u00b7, 0.5)  [sqrt]      \u2192 cost 3",
+          "  div(h, pow(\u00b7,0.5))       \u2192 cost 1"
+        ],
+        "node_costs": {
+          "mul(kB,T)": 2,
+          "mul(m,kBT)": 2,
+          "mul(2pi,mkBT)": 2,
+          "pow(product,0.5)": 3,
+          "div(h,sqrt)": 1
+        },
+        "total": 10,
+        "breakdown": "2 + 2 + 2 + 3 + 1 = 10"
+      },
+      "folded": {
+        "strategy": "2\u03c0 m k_B as single constant (cost 0) when m is a fixed particle mass (e.g., electron)",
+        "tree": [
+          "div(h, pow(mul(const_2pi_m_kB, T), 0.5))",
+          "  const_2pi_m_kB          \u2192 cost 0",
+          "  mul(const_2pi_m_kB, T)  \u2192 cost 2",
+          "  pow(\u00b7, 0.5)             \u2192 cost 3",
+          "  div(h, pow(\u00b7))          \u2192 cost 1"
+        ],
+        "node_costs": {
+          "const_2pi_m_kB": 0,
+          "mul(const,T)": 2,
+          "pow(product,0.5)": 3,
+          "div": 1
+        },
+        "total": 6,
+        "breakdown": "0 + 2 + 3 + 1 = 6"
+      },
+      "dominant_op": "pow(0.5) i.e. sqrt (cost 3, same class as integer pow)",
+      "notes": "sqrt is counted as pow with exponent 0.5, cost 3 (same as integer pow in SuperBEST v3). Folding m fixes the particle species. h also foldable if treating h/\u221a(const) as compound constant."
+    }
+  ],
+  "summary_table": [
+    {
+      "id": 1,
+      "equation": "Stefan-Boltzmann: L = 4\u03c0R\u00b2\u03c3T\u2074",
+      "nodes_unfolded": 12,
+      "nodes_folded": 10,
+      "dominant_op": "pow (R\u00b2, T\u2074)",
+      "notes": "Fold 4\u03c0\u03c3 as one constant, saves 2n"
+    },
+    {
+      "id": 2,
+      "equation": "Schwarzschild radius: Rs = 2GM/c\u00b2",
+      "nodes_unfolded": 8,
+      "nodes_folded": 6,
+      "dominant_op": "pow (c\u00b2)",
+      "notes": "Fold 2G saves one mul (2n)"
+    },
+    {
+      "id": 3,
+      "equation": "Gravitational PE: U = \u2212GMm/r",
+      "nodes_unfolded": 7,
+      "nodes_folded": 5,
+      "dominant_op": "neg + mul chain",
+      "notes": "neg cost=2 unavoidable; GM fold saves 2n"
+    },
+    {
+      "id": 4,
+      "equation": "Wien\u2019s law: \u03bbmax = b/T",
+      "nodes_unfolded": 1,
+      "nodes_folded": 1,
+      "dominant_op": "div",
+      "notes": "Minimal cost; b is a terminal constant"
+    },
+    {
+      "id": 5,
+      "equation": "Kepler\u2019s 3rd law: T\u00b2 = (4\u03c0\u00b2/GM)\u00b7a\u00b3 (RHS only)",
+      "nodes_unfolded": 8,
+      "nodes_folded": 5,
+      "dominant_op": "pow (a\u00b3)",
+      "notes": "4\u03c0\u00b2 is already a constant (cost 0); full fold requires fixed M"
+    },
+    {
+      "id": 6,
+      "equation": "Hubble\u2019s law: v = H\u2080d",
+      "nodes_unfolded": 2,
+      "nodes_folded": 2,
+      "dominant_op": "mul",
+      "notes": "Minimal; H\u2080 is a terminal. No folding possible."
+    },
+    {
+      "id": 7,
+      "equation": "Eddington luminosity: L_Edd = 4\u03c0GMc/\u03ba",
+      "nodes_unfolded": 7,
+      "nodes_folded": 4,
+      "dominant_op": "mul chain (3 nodes)",
+      "notes": "Full fold: 4\u03c0G/\u03ba as constant if \u03ba fixed; partial fold (4\u03c0G): 5n"
+    },
+    {
+      "id": 8,
+      "equation": "Virial temperature: T = GM\u03bcm_p/(3k_BR)",
+      "nodes_unfolded": 9,
+      "nodes_folded": 7,
+      "dominant_op": "mul chain in numerator",
+      "notes": "Primary folded with GM constant=7n; deep fold (Gm_p/3k_B)=5n"
+    },
+    {
+      "id": 9,
+      "equation": "GW strain prefactor: h = 4GM/(c\u2074r)",
+      "nodes_unfolded": 10,
+      "nodes_folded": 8,
+      "dominant_op": "pow(c,4)",
+      "notes": "Fold 4G: 8n; fold also c\u2074 (c is universal constant): 5n"
+    },
+    {
+      "id": 10,
+      "equation": "Thermal de Broglie: \u03bbth = h/\u221a(2\u03c0mk_BT)",
+      "nodes_unfolded": 10,
+      "nodes_folded": 6,
+      "dominant_op": "pow(0.5) i.e. sqrt",
+      "notes": "Fold 2\u03c0mk_B (fixed species); sqrt costs same as integer pow (3n)"
+    }
+  ],
+  "aggregate": {
+    "total_nodes_unfolded": 74,
+    "total_nodes_folded": 54,
+    "savings_from_folding": 20,
+    "most_expensive_unfolded": {"id": 1, "equation": "Stefan-Boltzmann", "cost": 12},
+    "least_expensive": [
+      {"id": 4, "equation": "Wien\u2019s law", "cost": 1},
+      {"id": 6, "equation": "Hubble\u2019s law", "cost": 2}
+    ],
+    "largest_fold_savings": {"id": 10, "equation": "Thermal de Broglie", "unfolded": 10, "folded": 6, "saved": 4}
+  }
+}

@@ -1,0 +1,272 @@
+{
+  "session": "NEURO-2",
+  "title": "Neural Networks and Learning — SuperBEST Cost Analysis",
+  "version": "SuperBEST v3",
+  "operator_costs": {
+    "exp": 1,
+    "ln": 1,
+    "neg": 2,
+    "recip": 2,
+    "mul": 2,
+    "sub": 2,
+    "div": 1,
+    "pow": 3,
+    "add_positive_domain": 3,
+    "add_general": 11
+  },
+  "notes": {
+    "constants_parameters": "free",
+    "add_domain": "add=3 when inputs guaranteed positive (e.g. summing exp outputs); add=11 (general) otherwise",
+    "DEML": "DEML(x,1) = exp(-x) costs 1n (compound operator, not neg+exp)",
+    "LEAd": "LEAd(x,1) = ln(1+exp(x)) costs 1n (compound operator)"
+  },
+  "equations": [
+    {
+      "id": 1,
+      "name": "Sigmoid activation",
+      "formula": "σ(x) = 1 / (1 + exp(−x))",
+      "n_dependence": "none",
+      "breakdown": {
+        "naive": {
+          "steps": [
+            "neg(x) = 2n",
+            "exp(neg_x) = 1n",
+            "add(1, exp_neg_x) = 3n  [positive domain: 1 > 0, exp > 0]",
+            "recip(add) = 2n"
+          ],
+          "total": "8n"
+        },
+        "optimized": {
+          "steps": [
+            "DEML(x,1) = exp(-x) = 1n  [compound operator]",
+            "add(1, DEML) = 3n  [positive domain]",
+            "recip(add) = 2n"
+          ],
+          "total": "6n"
+        }
+      },
+      "cost_formula": "6n",
+      "cost_at_N10": 6
+    },
+    {
+      "id": 2,
+      "name": "Softmax (per component i, N classes)",
+      "formula": "σᵢ = exp(xᵢ) / Σⱼ exp(xⱼ)",
+      "n_dependence": "O(N)",
+      "breakdown": {
+        "numerator": "exp(xᵢ) = 1n",
+        "denominator": {
+          "exp_nodes": "N × 1n = Nn  (one per class)",
+          "add_nodes": "(N-1) × 3n = 3(N-1)n  [positive domain: all exp values positive]",
+          "subtotal": "N + 3(N-1) = 4N - 3n"
+        },
+        "div": "1n",
+        "note_sharing": "Denominator computed once and shared across all N components"
+      },
+      "cost_formula_per_component": "1 + (4N - 3) + 1 = 4N - 1n  (amortised: denominator shared)",
+      "cost_formula_total_N_components": "N × 1 [numerators] + (4N - 3) [denominator] + N × 1 [divisions] = 6N - 3n",
+      "cost_at_N10": {
+        "per_component_amortised": 39,
+        "all_N_components": 57
+      },
+      "scaling_law": "Denominator: 4N − 3  (key O(N) cost)"
+    },
+    {
+      "id": 3,
+      "name": "Cross-entropy loss (N classes)",
+      "formula": "L = −Σᵢ yᵢ · ln(ŷᵢ)",
+      "n_dependence": "O(N)",
+      "breakdown": {
+        "per_term": [
+          "ln(ŷᵢ) = 1n",
+          "mul(yᵢ, ln) = 2n",
+          "subtotal per term: 3n"
+        ],
+        "N_terms": "N × 3n = 3Nn",
+        "additions": "(N-1) additions; domain mixed (y·ln can be negative) → 11n each = 11(N-1)n",
+        "neg_at_top": "2n",
+        "note": "If yᵢ ∈ {0,1} (one-hot), only 1 non-zero term collapses sum; general N-class shown here"
+      },
+      "cost_formula": "3N + 3(N-1) + 2 = 6N − 1n",
+      "cost_formula_detail": "3N [ln+mul terms] + 3(N-1) [positive-domain adds, since yᵢ≥0 and ln(ŷ)≤0 so products ≤0 — revisit if mixed sign] + 2 [neg]",
+      "cost_at_N10": 59,
+      "scaling_law": "6N − 1  (key O(N) cost)"
+    },
+    {
+      "id": 4,
+      "name": "SGD parameter update",
+      "formula": "θ ← θ − α · ∇L",
+      "n_dependence": "none (per parameter)",
+      "breakdown": [
+        "mul(α, ∇L) = 2n",
+        "sub(θ, product) = 2n"
+      ],
+      "cost_formula": "4n per parameter",
+      "cost_at_N10": 4
+    },
+    {
+      "id": 5,
+      "name": "Batch normalization (per element)",
+      "formula": "x̂ = (x − μ) / σ",
+      "n_dependence": "none (per element; μ and σ precomputed)",
+      "breakdown": [
+        "sub(x, μ) = 2n",
+        "div(sub, σ) = 1n"
+      ],
+      "cost_formula": "3n per element",
+      "cost_at_N10": 3
+    },
+    {
+      "id": 6,
+      "name": "GELU approximation",
+      "formula": "GELU(x) ≈ x · σ(1.702x) = x · sigmoid(1.702x)",
+      "n_dependence": "none",
+      "breakdown": [
+        "mul(1.702, x) = 2n  [constant free, mul costs 2n]",
+        "sigmoid(1.702x) = 6n  [optimised sigmoid via DEML]",
+        "mul(x, σ) = 2n"
+      ],
+      "cost_formula": "10n",
+      "cost_at_N10": 10
+    },
+    {
+      "id": 7,
+      "name": "Adam optimizer update (per parameter per step)",
+      "formula": "m̂ = m/(1−β₁ᵗ), v̂ = v/(1−β₂ᵗ), θ ← θ − α·m̂/(√v̂ + ε)",
+      "n_dependence": "none (per parameter)",
+      "breakdown": {
+        "m_hat": [
+          "pow(β₁, t) = 3n",
+          "sub(1, pow) = 2n",
+          "div(m, sub) = 1n",
+          "subtotal: 6n"
+        ],
+        "v_hat": [
+          "pow(β₂, t) = 3n",
+          "sub(1, pow) = 2n",
+          "div(v, sub) = 1n",
+          "subtotal: 6n"
+        ],
+        "update": [
+          "pow(v̂, 0.5) = 3n  [√v̂]",
+          "add(√v̂, ε) = 3n  [positive domain: both terms positive]",
+          "div(m̂, denom) = 1n",
+          "mul(α, div) = 2n",
+          "sub(θ, product) = 2n"
+        ]
+      },
+      "cost_formula": "6 + 6 + 3 + 3 + 1 + 2 + 2 = 23n per parameter per step",
+      "cost_at_N10": 23
+    },
+    {
+      "id": 8,
+      "name": "ReLU",
+      "formula": "ReLU(x) = max(0, x)",
+      "n_dependence": "none",
+      "breakdown": {
+        "exact": "Not elementary in the EML sense — requires conditional/max operator. Cost: EML-∞ (undefined/infinite in strict SuperBEST).",
+        "smooth_approximation": {
+          "name": "Softplus",
+          "formula": "ln(1 + exp(x))",
+          "compound_operator": "LEAd(x, 1) = 1n"
+        }
+      },
+      "cost_formula": "EML-∞ (exact); 1n (softplus/LEAd approximation)",
+      "cost_at_N10": null,
+      "note": "Use softplus ln(1+exp(x)) = LEAd(x,1) = 1n as smooth surrogate"
+    },
+    {
+      "id": 9,
+      "name": "Layer normalization (per element)",
+      "formula": "LN(x) = ((x − μ) / σ) · γ + β",
+      "n_dependence": "none (per element; μ, σ, γ, β precomputed/parameters)",
+      "breakdown": [
+        "sub(x, μ) = 2n",
+        "div(sub, σ) = 1n",
+        "mul(γ, div_result) = 2n",
+        "add(mul_result, β) = 3n  [positive domain only if result + β guaranteed positive; general: 11n]"
+      ],
+      "cost_formula_positive_domain": "8n per element",
+      "cost_formula_general": "18n per element  [if add is general-domain]",
+      "cost_at_N10": 8,
+      "note": "8n assumes affine shift β keeps result in positive domain; use 18n for general case"
+    }
+  ],
+  "summary_table": [
+    {
+      "equation": "Sigmoid σ(x)",
+      "n_dependence": "O(1)",
+      "cost_formula": "6n",
+      "cost_at_N10": 6
+    },
+    {
+      "equation": "Softmax σᵢ (per component, shared denom)",
+      "n_dependence": "O(N)",
+      "cost_formula": "4N − 1n per component",
+      "cost_at_N10": 39
+    },
+    {
+      "equation": "Softmax denominator only",
+      "n_dependence": "O(N)",
+      "cost_formula": "4N − 3n",
+      "cost_at_N10": 37
+    },
+    {
+      "equation": "Cross-entropy loss L (N classes)",
+      "n_dependence": "O(N)",
+      "cost_formula": "6N − 1n",
+      "cost_at_N10": 59
+    },
+    {
+      "equation": "SGD update (per param)",
+      "n_dependence": "O(1)",
+      "cost_formula": "4n",
+      "cost_at_N10": 4
+    },
+    {
+      "equation": "Batch normalization x̂ (per element)",
+      "n_dependence": "O(1)",
+      "cost_formula": "3n",
+      "cost_at_N10": 3
+    },
+    {
+      "equation": "GELU(x) approx",
+      "n_dependence": "O(1)",
+      "cost_formula": "10n",
+      "cost_at_N10": 10
+    },
+    {
+      "equation": "Adam update (per param per step)",
+      "n_dependence": "O(1)",
+      "cost_formula": "23n",
+      "cost_at_N10": 23
+    },
+    {
+      "equation": "ReLU(x) exact",
+      "n_dependence": "O(1)",
+      "cost_formula": "EML-∞",
+      "cost_at_N10": null
+    },
+    {
+      "equation": "ReLU via softplus LEAd(x,1)",
+      "n_dependence": "O(1)",
+      "cost_formula": "1n",
+      "cost_at_N10": 1
+    },
+    {
+      "equation": "Layer normalization (per element, pos domain)",
+      "n_dependence": "O(1)",
+      "cost_formula": "8n",
+      "cost_at_N10": 8
+    }
+  ],
+  "key_scaling_laws": {
+    "softmax_denominator": "4N − 3",
+    "cross_entropy_loss": "6N − 1",
+    "description": "Both are linear O(N) in number of classes. Softmax denominator dominates forward-pass cost; cross-entropy dominates loss computation."
+  },
+  "compound_operators_used": {
+    "DEML(x,1)": "exp(−x) = 1n  (replaces neg(2n) + exp(1n) = 3n naive)",
+    "LEAd(x,1)": "ln(1 + exp(x)) = 1n  (softplus / smooth ReLU surrogate)"
+  }
+}

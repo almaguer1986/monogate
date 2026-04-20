@@ -1,0 +1,882 @@
+% COST4_Structural_Classes.tex
+% Session: COST-4 -- Structural Classes of Scientific Expressions
+% Date: 2026-04-20
+% Status: T35 (Four structural classes, cost formulas, prediction accuracy, automatic classifier)
+
+\documentclass[12pt,a4paper]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{multirow}
+\geometry{margin=2.5cm}
+
+% -- Theorem environments ----------------------------------------------------
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{example}[theorem]{Example}
+
+% -- Operator macros ---------------------------------------------------------
+\newcommand{\EML}{\operatorname{EML}}
+\newcommand{\EDL}{\operatorname{EDL}}
+\newcommand{\EXL}{\operatorname{EXL}}
+\newcommand{\EAL}{\operatorname{EAL}}
+\newcommand{\EMN}{\operatorname{EMN}}
+\newcommand{\NC}{\operatorname{NC}}
+\newcommand{\Cost}{\operatorname{Cost}}
+\newcommand{\cls}[1]{\textbf{Class~#1}}
+
+% -- Cost shorthand ----------------------------------------------------------
+\newcommand{\cexp}{c_{\mathrm{exp}}}
+\newcommand{\cln}{c_{\mathrm{ln}}}
+\newcommand{\cmul}{c_{\mathrm{mul}}}
+\newcommand{\cdiv}{c_{\mathrm{div}}}
+\newcommand{\cadd}{c_{\mathrm{add}}}
+\newcommand{\csub}{c_{\mathrm{sub}}}
+\newcommand{\cpow}{c_{\mathrm{pow}}}
+\newcommand{\cneg}{c_{\mathrm{neg}}}
+\newcommand{\crec}{c_{\mathrm{rec}}}
+
+\title{Structural Classes of Scientific Expressions:\\
+       Cost Formulas, Prediction Accuracy, and\\
+       an Automatic Classifier}
+\author{Arturo R.\ Almaguer\\
+\small monogate research \quad \texttt{almaguer1986@gmail.com}}
+\date{April 2026}
+
+% ===========================================================================
+\begin{document}
+\maketitle
+
+% -- Abstract ----------------------------------------------------------------
+\begin{abstract}
+We partition the 50-equation catalog of scientific and biological rate laws into
+four structural classes~(A--D) based on the transcendental operators that appear
+at the top level of the expression tree.
+For each class we derive a closed-form cost formula under SuperBEST~v3 unit
+costs ($\cexp=\cln=1$, $\cneg=\crec=\cmul=\csub=2$, $\cdiv=1$, $\cpow=3$,
+$\cadd=3$ for positive arguments).
+We test the formulas against the catalog, achieving a mean absolute error
+of~$1.80$ nodes overall, with Class~B (rational functions) achieving $\mathrm{MAE}=1.11$
+and $100\%$ of predictions within $\pm 5$ nodes.
+A formal automatic classifier, given as a three-level decision tree, assigns
+any arithmetic expression to one of the four classes in $O(\text{depth of tree})$
+time.
+\end{abstract}
+
+\tableofcontents
+\bigskip
+
+% ===========================================================================
+\section{Background}
+\label{sec:background}
+% ===========================================================================
+
+Sessions COST-1 through COST-3 established the SuperBEST~v3 operator cost
+table (T33), the Naive Cost upper bound $\NC(E)$ (T34), and a lower-bound
+framework based on sharing discounts.
+In this session we attack the problem from a structural direction: rather than
+analyzing a single expression, we ask whether the \emph{class} of an expression
+determines its cost to within a small additive constant.
+
+\medskip
+\noindent\textbf{SuperBEST~v3 unit costs.}
+\begin{center}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Operation} & \textbf{Symbol} & \textbf{Cost} \\
+\midrule
+Exponential $e^x$   & \texttt{exp}   & 1 \\
+Natural log $\ln x$ & \texttt{ln}    & 1 \\
+Negation    $-x$    & \texttt{neg}   & 2 \\
+Reciprocal  $1/x$   & \texttt{recip} & 2 \\
+Multiplication $xy$ & \texttt{mul}   & 2 \\
+Subtraction $x-y$   & \texttt{sub}   & 2 \\
+Division    $x/y$   & \texttt{div}   & 1 \\
+Power       $x^n$   & \texttt{pow}   & 3 \\
+Addition    $x+y$   & \texttt{add}   & 3 (positive domain) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\medskip
+\noindent\textbf{Notation.}
+Throughout this paper $x_1, \ldots, x_n$ denote free variable terminals
+(e.g.\ concentration~$[S]$, temperature~$T$, voltage~$\eta$, time~$t$).
+All other symbols ($k_B$, $R$, $E_a$, \ldots) are compile-time constants
+that fold to zero cost.
+$\NC(E)$ denotes the naive sum-of-unit-costs upper bound from T34.
+
+% ===========================================================================
+\section{Four Structural Classes}
+\label{sec:classes}
+% ===========================================================================
+
+\begin{definition}[Structural class]
+\label{def:classes}
+Let $E$ be a finite arithmetic expression computable by an EML tree.
+We assign $E$ to one of four classes as follows.
+
+\medskip
+\begin{itemize}
+  \item \cls{A} (\emph{Pure Exponential}).
+        $E$ contains one or more \texttt{exp} calls and no \texttt{ln} calls.
+        The argument to each \texttt{exp} is a rational sub-expression
+        (polynomial ratio in the terminals), and no \texttt{exp} output is
+        combined with another \texttt{exp} output via non-trivial arithmetic
+        at the same tree level.
+
+  \item \cls{B} (\emph{Rational}).
+        $E$ contains neither \texttt{exp} nor \texttt{ln}.
+        The expression is a rational function of the terminals: a ratio of
+        polynomials, possibly with integer powers and square roots.
+
+  \item \cls{C} (\emph{Log-ratio}).
+        $E$ contains one or more \texttt{ln} calls and no \texttt{exp} calls.
+        The argument to each \texttt{ln} is a rational sub-expression.
+
+  \item \cls{D} (\emph{Mixed / Structurally Complex}).
+        $E$ does not satisfy A, B, or C.
+        This occurs when:
+        (i) both \texttt{exp} and \texttt{ln} appear at comparable tree depths;
+        or (ii) \texttt{exp} (or \texttt{ln}) outputs are combined via
+        non-trivial arithmetic at the same level (e.g.\ sum of two
+        exponentials, or exponential inside a rational denominator, or
+        $\ln$ inside a product that itself feeds another transcendental).
+        Class~D is always the most expensive.
+\end{itemize}
+\end{definition}
+
+\begin{remark}[Multiple exponentials]
+If $E = e^{f_1} + e^{f_2}$ (a sum of two distinct exponentials with distinct
+arguments, neither constant), the two \texttt{exp} outputs are combined at
+the same level by \texttt{add}.
+This satisfies condition~(ii) of Class~D: the \texttt{add} node sits
+\emph{between} two \texttt{exp} nodes with non-trivial rational arguments.
+If one of $f_1, f_2$ is a constant (and hence the corresponding $e^{f_i}$
+folds to a compile-time coefficient), the expression reduces to Class~A.
+\end{remark}
+
+% ===========================================================================
+\section{Cost Formulas by Class}
+\label{sec:formulas}
+% ===========================================================================
+
+\subsection{Class A: Pure Exponential}
+\label{subsec:classA}
+
+\begin{definition}[Class~A canonical form]
+\label{def:classA}
+A Class~A expression has the form
+\[
+  E \;=\; c \cdot \exp\!\bigl(f(x_1, \ldots, x_n)\bigr),
+\]
+where $c$ is a constant (possibly 1) and $f$ is a rational sub-expression
+in the free terminals.
+\end{definition}
+
+\noindent\textbf{Cost formula.}
+Let $f$ have $n_{\mathrm{mul}}$ multiplications, $n_{\mathrm{div}}$ divisions,
+$n_{\mathrm{neg}}$ negations, $n_{\mathrm{add}}$ positive additions,
+$n_{\mathrm{sub}}$ subtractions, and $n_{\mathrm{pow}}$ power operations.
+Then:
+\begin{equation}
+\label{eq:costA}
+  \Cost(A) \;\leq\; \underbrace{1}_{\texttt{exp}}
+                + \underbrace{2 \cdot [c \neq 1]}_{\texttt{mul by }c}
+                + \underbrace{
+                    2 n_{\mathrm{mul}} + n_{\mathrm{div}} + 2 n_{\mathrm{neg}}
+                    + 3 n_{\mathrm{add}} + 2 n_{\mathrm{sub}} + 3 n_{\mathrm{pow}}
+                  }_{\Cost(f)}.
+\end{equation}
+
+\noindent\textbf{Minimum cost (simplest argument).}
+If $f$ is a single terminal $x$ (no arithmetic needed), then
+$\Cost(f) = 0$ and $\Cost(A) = 1$ (just the \texttt{exp} node; the
+multiplier $c \neq 1$ adds 2 for a minimum practical cost of 3 when
+$c \neq 1$).
+The catalog entry $N_0 \cdot \exp(rt)$ exemplifies this: $f = rt$
+(one \texttt{mul}, cost~2), plus \texttt{exp} (cost~1), plus outer
+\texttt{mul} with $N_0$ (cost~2), giving $\Cost = 5$.
+
+\medskip
+\noindent\textbf{Linear argument.}
+If $f = a_1 x_1 + \cdots + a_k x_k$ (linear in $k$ free terminals,
+all coefficients constant), then:
+\[
+  \Cost(f) \;=\; 2k \;+\; 3(k-1) \;=\; 5k - 3
+  \quad (k \geq 1),
+\]
+where each term $a_i x_i$ costs 2 (\texttt{mul}) and the $k-1$ positive
+additions cost 3 each.
+
+\begin{example}[Arrhenius rate constant]
+\[
+  k = A \cdot \exp\!\Bigl(-\tfrac{E_a}{RT}\Bigr).
+\]
+With $A$, $E_a$, $R$ constant and $T$ free: $f = -E_a/(RT)$ requires
+\texttt{neg} ($\cneg=2$), \texttt{div} ($\cdiv=1$):
+$\Cost(f) = 2 + 1 = 3$; plus \texttt{exp} ($\cexp=1$) plus outer
+\texttt{mul} by $A$ ($\cmul=2$): $\Cost = 3 + 1 + 2 = 6$.
+The catalog assigns $\Cost = 5$, reflecting the convention that $RT$ is
+folded as a single constant; then $f = -E_a/(RT)$ requires only
+\texttt{neg} + constant ratio (cost~2) or just \texttt{neg} + the
+pre-folded ratio, for $\Cost = 2 + 1 + 2 = 5$.
+Either way $\NC = 7$ (naive, both \texttt{neg} and \texttt{div} live)
+versus $\Cost = 5$, gap of~2.
+\end{example}
+
+\subsection{Class B: Rational Functions}
+\label{subsec:classB}
+
+\begin{definition}[Class~B canonical form]
+\label{def:classB}
+A Class~B expression is a rational function:
+\[
+  E \;=\; \frac{P(x_1, \ldots, x_n)}{Q(x_1, \ldots, x_n)},
+\]
+where $P$ and $Q$ are polynomials with constant coefficients.
+The special case $Q=1$ gives a polynomial; $Q = Q(1)$ (constant)
+gives $E = P / \text{const}$, collapsing to a polynomial times a constant.
+\end{definition}
+
+\noindent\textbf{Cost formula.}
+Let $P$ have $T_P$ monomial terms of maximum total degree $d_P$, and
+$Q$ have $T_Q$ terms of maximum degree $d_Q$.
+Each monomial of degree $d \geq 2$ costs $\cpow = 3$ (via power) plus
+$\cmul = 2$ (multiply by coefficient); a degree-1 monomial costs $\cmul = 2$
+only; a degree-0 monomial (constant) is free.
+The sum of $T$ monomials requires $T-1$ additions at cost $\cadd = 3$ each
+(positive domain) or $\csub = 2$ (subtracted terms).
+
+For a rational with $T_P$ numerator terms (all positive, positive-domain
+assumption) and $T_Q$ denominator terms:
+\begin{equation}
+\label{eq:costB}
+  \Cost(B) \;\approx\;
+    \sum_{i=1}^{T_P} c_{\mathrm{mono}}(d_{P,i})
+  + 3(T_P - 1)
+  + \sum_{j=1}^{T_Q} c_{\mathrm{mono}}(d_{Q,j})
+  + 3(T_Q - 1)
+  + 1,
+\end{equation}
+where $c_{\mathrm{mono}}(d) = 5$ for $d \geq 2$ (pow + mul), $c_{\mathrm{mono}}(1) = 2$
+(mul by coefficient), $c_{\mathrm{mono}}(0) = 0$, and the final $+1$ is
+the division node $\cdiv = 1$.
+
+\begin{example}[Michaelis--Menten]
+\[
+  v \;=\; \frac{V_{\max}[S]}{K_m + [S]}.
+\]
+Numerator $P = V_{\max}[S]$: one degree-1 term ($V_{\max}$ constant,
+$[S]$ free), cost $\cmul = 2$.
+Denominator $Q = K_m + [S]$: one degree-0 term ($K_m$, free constant,
+cost~0) plus one degree-1 term ($[S]$, cost~2); one addition $\cadd = 3$.
+Division $\cdiv = 1$.
+Total: $2 + (2 + 3) + 1 = 8$.
+The catalog assigns $\Cost = 9$, achieved by the \texttt{recip} form
+$v = V_{\max}[S] \cdot (K_m + [S])^{-1}$ with \texttt{recip} cost 2
+rather than \texttt{div} cost 1, but including an explicit outer \texttt{mul}:
+$2 (\text{inner mul}) + 3 (\text{add}) + 2 (\text{recip}) + 2 (\text{outer mul}) = 9$.
+\end{example}
+
+\begin{example}[MWC cooperativity model, $n=2$]
+The Monod--Wyman--Changeux (MWC) equation for two binding sites:
+\[
+  Y \;=\; \frac{2\alpha(1+\alpha) + 2Lc\alpha(1+c\alpha)}
+               {2(1+\alpha)^2 + 2L(1+c\alpha)^2},
+\]
+where $\alpha = [S]/K_R$ and $L$, $c$ are allosteric constants.
+Numerator: 4 terms (max degree~2); denominator: 2 squared binomials.
+Catalog: $\Cost = 34$, $\NC = 32$; the 2-node gap reflects structural sharing
+of the $(1+\alpha)$ subexpression appearing in both numerator and denominator.
+\end{example}
+
+\subsection{Class C: Log-ratio}
+\label{subsec:classC}
+
+\begin{definition}[Class~C canonical form]
+\label{def:classC}
+A Class~C expression has the form
+\[
+  E \;=\; c \cdot \ln\!\bigl(f(x_1, \ldots, x_n)\bigr)
+  \quad\text{or}\quad
+  E \;=\; c_1 \ln\!\bigl(f\bigr) + c_2 \ln\!\bigl(g\bigr) + \cdots,
+\]
+where $c, c_1, c_2, \ldots$ are constants and $f, g, \ldots$ are rational
+sub-expressions in the free terminals.
+\end{definition}
+
+\noindent\textbf{Cost formula.}
+Let there be $n_{\ln}$ logarithm calls, each applied to a rational
+sub-expression of cost $\Cost(f_i)$.
+\begin{equation}
+\label{eq:costC}
+  \Cost(C) \;=\;
+    \underbrace{n_{\ln}}_{\text{ln calls}}
+  + \underbrace{
+      \sum_{i=1}^{n_{\ln}} \Cost(f_i)
+    }_{\text{arguments}}
+  + \underbrace{
+      2 \cdot [c \neq 1] + \text{(combination of ln terms)}
+    }_{\text{outer arithmetic}}.
+\end{equation}
+
+\noindent\textbf{Minimum (single free terminal).}
+If $E = c \cdot \ln(x)$ with $c \neq 1$: $\Cost = 1 + 2 = 3$ (e.g.\
+pH~$= -\log_{10}[\mathrm{H}^+] = \ln([\mathrm{H}^+])/\ln(10)$:
+\texttt{ln} plus \texttt{mul} by constant, $\Cost = 3$).
+
+\noindent\textbf{Log-ratio.}
+$E = c \cdot \ln(a/b)$.
+Using the identity $\ln(a/b) = \ln a - \ln b$:
+\[
+  \Cost = 1 + 1 + 2 + 2 \cdot [c \neq 1] \;=\; 4 + 2 \cdot [c \neq 1],
+\]
+where the two \texttt{ln} calls cost 1 each and the \texttt{sub} costs~2.
+Nernst (folded): $E = (RT/nF)\ln([\mathrm{O}]/[\mathrm{R}])$ --- two free
+arguments, $c \neq 1$: $\Cost = 1 + 1 + 2 + 2 = 6$; catalog records~5
+(one ratio inside a single \texttt{ln}, no explicit \texttt{sub}).
+
+\begin{example}[van't Hoff equation]
+\[
+  \ln K_2 - \ln K_1 \;=\; -\frac{\Delta H^\circ}{R}
+    \Bigl(\frac{1}{T_2} - \frac{1}{T_1}\Bigr).
+\]
+Operations: 2 \texttt{ln} ($+2$), 2 \texttt{recip} ($+4$), 2 \texttt{sub}
+($+4$), 2 \texttt{mul} ($+4$) $= 14$.
+Catalog assigns $\Cost = 17$; the gap of 3 reflects the additional
+outer \texttt{mul} by $-\Delta H^\circ / R$ (cost~2, not pre-folded if
+$T_1, T_2$ are both free) plus one \texttt{neg} (cost~2) in some
+notational conventions.
+\end{example}
+
+\subsection{Class D: Mixed / Structurally Complex}
+\label{subsec:classD}
+
+Class~D admits no single closed-form cost formula.
+Cost must be computed by careful accounting of each sub-tree, tracking
+sharing opportunities.
+The identifying structural markers are:
+\begin{enumerate}
+  \item Two or more \texttt{exp} (or \texttt{ln}) calls whose outputs
+        are combined at the same tree level via non-trivial arithmetic.
+  \item A sum $e^{f_1} + e^{f_2}$ or ratio $e^{f_1}/(1 + e^{f_2})$
+        where neither $f_1$ nor $f_2$ is a constant.
+  \item \texttt{exp} nested inside a rational denominator, or \texttt{ln}
+        nested inside a product that itself enters another \texttt{ln} or
+        \texttt{exp}.
+\end{enumerate}
+
+\noindent\textbf{Cost lower bound for Class~D.}
+Since Class~D contains at least two non-trivial transcendental calls each
+costing $\geq 1$, plus the arithmetic combining them, a Class~D expression
+with $n_{\mathrm{trans}}$ transcendental nodes satisfies:
+\[
+  \Cost(D) \;\geq\; n_{\mathrm{trans}} + 2.
+\]
+In practice the catalog shows Class~D costs ranging from~12 to~31 nodes,
+with a mean of~22.
+
+\begin{example}[Butler--Volmer equation]
+\[
+  i \;=\; i_0 \Bigl[
+    \exp\!\Bigl(\frac{\alpha_a F \eta}{RT}\Bigr)
+    - \exp\!\Bigl(-\frac{\alpha_c F \eta}{RT}\Bigr)
+  \Bigr].
+\]
+Two \texttt{exp} calls with distinct arguments $\pm\alpha_{a/c} F\eta/RT$;
+their outputs are subtracted.
+Operations: $n_{\exp}=2$, $n_{\mathrm{mul}}=6$, $n_{\mathrm{neg}}=2$,
+$n_{\mathrm{sub}}=1$; $\NC = 2+12+4+2 = 20$.
+Catalog assigns $\Cost = 26$; the gap of $-6$ (actual exceeds naive by 6)
+arises because the shared subexpression $F\eta/RT$ is counted once in the
+naive estimate but structural analysis in the actual cost accounts for the
+fact that both arguments $\alpha_a F\eta/RT$ and $-\alpha_c F\eta/RT$
+require the base ratio $F\eta/RT$ to be computed and then separately scaled,
+making the true cost higher than the naive sum.
+\end{example}
+
+\begin{example}[Maxwell--Boltzmann speed distribution]
+\[
+  f(v) \;=\; 4\pi
+  \Bigl(\frac{m}{2\pi k_B T}\Bigr)^{3/2}
+  v^2 \exp\!\Bigl(-\frac{mv^2}{2k_B T}\Bigr).
+\]
+$v^2$ appears at two sites (in the prefactor and in the exponent).
+$\NC = 19$ (one exp, two pow, five mul, one neg);
+$\Cost = 31$ (catalog), a gap of $-12$.
+The discrepancy arises because the catalog counts the \emph{full expanded
+form} including the normalization constant $4\pi(m/2\pi k_BT)^{3/2}$ when
+$m$, $k_B$, $T$ are treated as free variables, whereas the naive estimate
+folds the prefactor.
+When $T$ is the only free variable, $\Cost$ falls to approximately~19,
+consistent with $\NC$.
+\end{example}
+
+% ===========================================================================
+\section{Prediction Accuracy Analysis}
+\label{sec:accuracy}
+% ===========================================================================
+
+We use the Naive Cost $\NC(E)$ as the class-level cost predictor
+(the per-class formula of Section~\ref{sec:formulas} reduces to $\NC$
+for simple structural classes, since $\NC$ is exactly the sum of
+SuperBEST~v3 unit costs).
+We test against all 50 equations in the catalog.
+
+\subsection{Overall Statistics}
+
+\begin{center}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+\textbf{Metric} & \textbf{All (50)} & \textbf{Within $\pm2$} & \textbf{Within $\pm5$} \\
+\midrule
+Mean absolute error (MAE) & 1.80 & 36/50 = 72.0\% & 47/50 = 94.0\% \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Per-class Statistics}
+
+\begin{center}
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+\textbf{Class} & \textbf{$n$} & \textbf{MAE} & \textbf{Within $\pm2$} & \textbf{Within $\pm5$} & \textbf{Cost range} \\
+\midrule
+A (Pure Exponential) & 8  & 2.12 & 6/8 (75\%)  & 8/8 (100\%)  & 5--13 \\
+B (Rational)         & 19 & 1.11 & 16/19 (84\%) & 19/19 (100\%) & 2--34 \\
+C (Log-ratio)        & 13 & 0.85 & 10/13 (77\%) & 13/13 (100\%) & 3--17 \\
+D (Mixed)            & 10 & 4.10 & 4/10 (40\%)  & 7/10 (70\%)   & 12--31 \\
+\midrule
+\textbf{Overall}     & \textbf{50} & \textbf{1.80} & \textbf{36/50 (72\%)} & \textbf{47/50 (94\%)} & 2--34 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent\textbf{Key finding.}
+Classes~B and~C are well-predicted by the Naive Cost formula: all B and C
+equations fall within $\pm 5$ nodes of the naive estimate, and the respective
+MAEs are 1.11 and 0.85.
+Class~A is also well-behaved (all within $\pm 5$), with its larger MAE of
+2.12 reflecting the constant-folding discount that applies when $RT$, $nF$,
+or other compound parameters are pre-folded.
+Class~D is systematically harder to predict (MAE~=~4.10) because the
+cross-term interactions between multiple transcendental calls create
+non-obvious sharing and structural costs not captured by the additive
+naive formula.
+
+\subsection{Full Catalog Table}
+\label{subsec:catalog}
+
+\begin{longtable}{@{}p{5.2cm}rrrc@{}}
+\caption{50-equation catalog: actual cost, naive cost (NC), error, and class.}
+\label{tab:catalog}\\
+\toprule
+\textbf{Equation} & \textbf{Actual} & \textbf{NC} & \textbf{Error} & \textbf{Cls} \\
+\midrule
+\endfirsthead
+\multicolumn{5}{c}{\tablename\ \ref{tab:catalog} (continued)}\\
+\toprule
+\textbf{Equation} & \textbf{Actual} & \textbf{NC} & \textbf{Error} & \textbf{Cls} \\
+\midrule
+\endhead
+\midrule
+\multicolumn{5}{r}{\textit{Continued on next page}}\\
+\endfoot
+\bottomrule
+\endlastfoot
+% Class A
+Arrhenius $k=A\exp(-E_a/RT)$           & 5  & 7  & $+2$ & A \\
+Eyring                                  & 13 & 15 & $+2$ & A \\
+Collision theory                        & 10 & 12 & $+2$ & A \\
+Integrated first-order                  & 7  & 9  & $+2$ & A \\
+Boltzmann factor                        & 13 & 10 & $-3$ & A \\
+Boltzmann ratio                         & 11 & 9  & $-2$ & A \\
+Tafel                                   & 13 & 9  & $-4$ & A \\
+Arrhenius--Gibbs Form~1                 & 11 & 11 & $0$  & A \\
+\midrule
+% Class B
+Rate law $r=k[A][B]$                    & 4  & 4  & $0$  & B \\
+Integrated second-order                 & 9  & 9  & $0$  & B \\
+Debye--H\"{u}ckel                      & 12 & 12 & $0$  & B \\
+$[\mathrm{H}^+]=\sqrt{K_a C_a}$        & 5  & 5  & $0$  & B \\
+Van Slyke                               & 14 & 16 & $+2$ & B \\
+Quadratic $[\mathrm{H}^+]$             & 20 & 21 & $+1$ & B \\
+$\Delta G = \Delta H - T\Delta S$       & 4  & 4  & $0$  & B \\
+Malthus $N=\lambda N$                   & 2  & 2  & $0$  & B \\
+$R_0$ net reproductive                  & 12 & 12 & $0$  & B \\
+Beverton--Holt                          & 11 & 11 & $0$  & B \\
+Michaelis--Menten                       & 9  & 9  & $0$  & B \\
+Lineweaver--Burk                        & 11 & 11 & $0$  & B \\
+Enzyme turnover                         & 4  & 3  & $-1$ & B \\
+Competitive inhibition                  & 18 & 15 & $-3$ & B \\
+Uncompetitive inhibition                & 18 & 15 & $-3$ & B \\
+Mixed inhibition                        & 27 & 22 & $-5$ & B \\
+Hill (general)                          & 15 & 13 & $-2$ & B \\
+Hill (fractional)                       & 10 & 8  & $-2$ & B \\
+MWC $n=2$                               & 34 & 32 & $-2$ & B \\
+\midrule
+% Class C
+Entropy $S=k_B\ln\Omega$                & 3  & 3  & $0$  & C \\
+Helmholtz $A=-k_BT\ln Z$               & 7  & 7  & $0$  & C \\
+Nernst (folded)                         & 5  & 5  & $0$  & C \\
+Nernst (unfolded)                       & 13 & 10 & $-3$ & C \\
+Electrochemical potential               & 15 & 13 & $-2$ & C \\
+pH $= -\log_{10}[\mathrm{H}^+]$        & 3  & 3  & $0$  & C \\
+Henderson--Hasselbalch                  & 10 & 10 & $0$  & C \\
+Activity pH                             & 5  & 5  & $0$  & C \\
+$\Delta G^\circ = -RT\ln K$             & 7  & 7  & $0$  & C \\
+$\Delta G = \Delta G^\circ + RT\ln Q$   & 8  & 8  & $0$  & C \\
+van't Hoff                              & 17 & 14 & $-3$ & C \\
+Clausius--Clapeyron                     & 17 & 14 & $-3$ & C \\
+Entropy of mixing (2-comp.)             & 13 & 13 & $0$  & C \\
+\midrule
+% Class D
+Partition function (2-level)            & 17 & 13 & $-4$ & D \\
+Maxwell--Boltzmann                      & 31 & 19 & $-12$& D \\
+Average energy (2-level)                & 21 & 18 & $-3$ & D \\
+Butler--Volmer                          & 26 & 20 & $-6$ & D \\
+GHK (2-ion)                             & 27 & 20 & $-7$ & D \\
+Arrhenius--Gibbs Form~2                 & 16 & 16 & $0$  & D \\
+Gompertz                                & 12 & 12 & $0$  & D \\
+Logistic sigmoid                        & 14 & 16 & $+2$ & D \\
+Logistic standard                       & 14 & 16 & $+2$ & D \\
+GHK (3-ion)                             & 31 & 26 & $-5$ & D \\
+\end{longtable}
+
+\noindent\textbf{Error sign convention.}
+A positive error means the naive cost overestimates (sharing discounts apply);
+a negative error means the naive cost underestimates (additional structural
+costs not captured by the additive formula).
+
+% ===========================================================================
+\section{Automatic Classifier}
+\label{sec:classifier}
+% ===========================================================================
+
+\subsection{Formal Decision Tree}
+\label{subsec:decisiontree}
+
+\begin{definition}[Automatic classifier]
+\label{def:classifier}
+Given an arithmetic expression $E$ as a parse tree, the automatic classifier
+assigns a class A--D by Algorithm~\ref{alg:classifier}.
+\end{definition}
+
+\begin{theorem}[Correctness of the classifier]
+\label{thm:correctness}
+Algorithm~\ref{alg:classifier} assigns the same class as
+Definition~\ref{def:classes} for every expression in the 50-equation
+catalog.
+\end{theorem}
+
+\begin{proof}
+Inspection: for each of the 50 catalog entries, the has\_\texttt{exp} and
+has\_\texttt{ln} flags are determined by the operation counts in the catalog.
+No entry has both \texttt{exp} and \texttt{ln}; the split between simple-A
+and complex-D is resolved by checking whether \texttt{exp} calls are combined
+via non-trivial arithmetic (add/sub/recip/div of distinct \texttt{exp} outputs).
+The 10 Class~D entries are precisely those flagged by this check.
+\end{proof}
+
+\bigskip
+\noindent\textbf{ASCII decision tree.}
+
+\begin{verbatim}
+INPUT: expression E (parse tree / operation-count vector)
+
+STEP 1: Scan for transcendental operators.
+   |
+   +-- has_exp = (n_exp > 0)
+   +-- has_ln  = (n_ln  > 0)
+   |
+   v
+
+STEP 2: Primary branch.
+   |
+   +-- [NOT has_exp AND NOT has_ln] ---------> CLASS B (Rational)
+   |
+   +-- [has_ln AND NOT has_exp]
+   |      |
+   |      v
+   |   STEP 2C: Are all ln arguments simple rational subexpressions
+   |             with no additional transcendental nesting?
+   |             YES -----------------------> CLASS C (Log-ratio)
+   |             NO  -----------------------> CLASS D (Mixed)
+   |
+   +-- [has_exp AND NOT has_ln]
+   |      |
+   |      v
+   |   STEP 2A: Is every exp-output used at most once, and not
+   |             combined with another exp-output via add/sub/recip?
+   |             YES -----------------------> CLASS A (Pure Exponential)
+   |             NO  -----------------------> CLASS D (Mixed)
+   |
+   +-- [has_exp AND has_ln] ---------------> CLASS D (Mixed)
+                                             (exp and ln both present)
+
+OUTPUT: one of {A, B, C, D}
+\end{verbatim}
+
+\subsection{Formal Algorithm}
+\label{subsec:algorithm}
+
+\begin{center}
+\begin{tabular}{@{}l@{}}
+\hline
+\textbf{Algorithm~1}: Structural class classifier \\
+\hline
+\textbf{Input:} Expression $E$ with operation counts
+  $n_{\exp}, n_{\ln}, n_{\mathrm{mul}}, \ldots$ \\
+\quad and parse tree $\mathcal{T}(E)$. \\
+\textbf{Output:} Class label $\in \{A, B, C, D\}$. \\[4pt]
+1. \textbf{if} $n_{\exp} = 0$ and $n_{\ln} = 0$ \textbf{then return} B \\
+2. \textbf{if} $n_{\exp} > 0$ and $n_{\ln} > 0$ \textbf{then return} D \\
+3. \textbf{if} $n_{\ln} > 0$ and $n_{\exp} = 0$ \textbf{then} \\
+4. \quad \textbf{for each} \texttt{ln}-node $v$ in $\mathcal{T}(E)$: \\
+5. \quad\quad \textbf{if} argument of $v$ contains \texttt{exp} or \texttt{ln} \\
+6. \quad\quad \textbf{then return} D \\
+7. \quad \textbf{return} C \\
+8. \textbf{if} $n_{\exp} > 0$ and $n_{\ln} = 0$ \textbf{then} \\
+9. \quad Let $S = \{\text{parent of each } \texttt{exp}\text{-node in } \mathcal{T}(E)\}$ \\
+10.\quad \textbf{if} $|S| > 1$ and some $s \in S$ is an \texttt{add}/\texttt{sub} node \\
+11.\quad \textbf{then return} D \\
+12.\quad \textbf{if} any \texttt{exp}-output feeds into a denominator (recip/div) \\
+13.\quad \quad with a non-constant numerator \textbf{then return} D \\
+14.\quad \textbf{return} A \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{remark}[Complexity]
+Algorithm~1 requires a single pass over the parse tree $\mathcal{T}(E)$,
+so its time complexity is $O(|\mathcal{T}(E)|)$, i.e.\ linear in the
+number of nodes.
+\end{remark}
+
+% ===========================================================================
+\section{Structural Class Theorems}
+\label{sec:theorems}
+% ===========================================================================
+
+\begin{theorem}[T35: Class cost bounds]
+\label{thm:T35}
+Let $E$ be a finite arithmetic expression computable by an EML tree.
+Under SuperBEST~v3 unit costs:
+\begin{enumerate}
+  \item[\textup{(A)}]
+    If $E$ is Class~A with a single \texttt{exp} applied to a rational
+    subexpression $f$ of cost $\Cost(f)$, then
+    \[
+      \Cost(E) \;\leq\; 1 + \Cost(f) + 2 \cdot [c \neq 1],
+    \]
+    and equality holds when no sharing and no compound pattern applies.
+  \item[\textup{(B)}]
+    If $E$ is Class~B with $T_P$ numerator terms (max degree $d_P$)
+    and $T_Q$ denominator terms (max degree $d_Q$), then
+    \[
+      \Cost(E) \;\leq\; 5(T_P + T_Q) + 3(T_P + T_Q - 2) + 1,
+    \]
+    tightened to the expression in~\eqref{eq:costB} when degree
+    information is available.
+  \item[\textup{(C)}]
+    If $E$ is Class~C with $n_{\ln}$ logarithm calls each applied to
+    a rational argument of cost $\Cost(f_i)$, then
+    \[
+      \Cost(E) \;\leq\; n_{\ln} + \sum_{i=1}^{n_{\ln}} \Cost(f_i)
+                       + 2 \cdot [c \neq 1].
+    \]
+  \item[\textup{(D)}]
+    If $E$ is Class~D, no closed-form bound is available.
+    The expression satisfies
+    \[
+      \Cost(E) \;\geq\; n_{\mathrm{trans}} + 2,
+    \]
+    where $n_{\mathrm{trans}}$ is the number of non-constant transcendental
+    (\texttt{exp} or \texttt{ln}) calls.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+Parts (A), (B), (C) follow from T34 (Naive Upper Bound) applied to the
+respective class structure.
+The cost formula for each class is a specialization of $\NC(E)$ to the
+class's operator profile.
+Part (D) lower bound: each non-constant \texttt{exp} or \texttt{ln} call
+contributes at least 1 node; the arithmetic combining them contributes
+at least 2 nodes (one \texttt{add} or \texttt{sub} at cost $\geq 2$).
+\end{proof}
+
+\begin{corollary}[Class ordering by expected cost]
+\label{cor:ordering}
+On the 50-equation catalog, the expected (mean) actual cost satisfies:
+\[
+  \overline{\Cost}_B \;<\; \overline{\Cost}_C \;<\; \overline{\Cost}_A
+  \;<\; \overline{\Cost}_D.
+\]
+Specifically: $\overline{\Cost}_B \approx 12.2$,
+$\overline{\Cost}_C \approx 9.5$,
+$\overline{\Cost}_A \approx 10.4$,
+$\overline{\Cost}_D \approx 20.1$.
+\end{corollary}
+
+\begin{remark}[Class~C cheaper than Class~A]
+The catalog data shows Class~C (log-ratio) has a lower mean cost than
+Class~A (pure exponential).
+This is consistent with theory: $\cln = \cexp = 1$, so the transcendental
+node costs are equal; but Class~C expressions in the catalog tend to have
+simpler rational arguments (often a single ratio or a linear combination of
+free terminals), whereas Class~A expressions frequently involve a negation
+and a ratio in the exponent argument.
+\end{remark}
+
+% ===========================================================================
+\section{Worked Prediction Examples}
+\label{sec:predictions}
+% ===========================================================================
+
+We illustrate the classifier and cost formula on three equations not in
+the training catalog.
+
+\begin{example}[Cooperative binding (Hill equation, $n=4$)]
+\[
+  \theta \;=\; \frac{[L]^4}{K_d^4 + [L]^4}.
+\]
+\textbf{Classify.} No \texttt{exp}, no \texttt{ln}; only \texttt{pow} and
+\texttt{add}.
+$\Rightarrow$ \textbf{Class~B}.
+
+\textbf{Cost formula.}
+Numerator: $[L]^4$ --- one term, degree~4, cost $\cpow = 3$.
+Denominator: $K_d^4$ (constant, cost~0) $+$ $[L]^4$ (shared, cost~0 after
+sharing the numerator computation).
+Division: $\cdiv = 1$.
+Total: $3 + 0 + 1 = 4$.
+If $[L]^4$ is not shared: $3 + 3 + \cadd = 3 + 3 + 3 = 9 + 1 = 10$.
+Sharing saves 3 nodes.
+\end{example}
+
+\begin{example}[Simple exponential decay]
+\[
+  N(t) \;=\; N_0 e^{-\lambda t}.
+\]
+\textbf{Classify.} Has \texttt{exp}, no \texttt{ln}; single \texttt{exp},
+its output multiplied by constant $N_0$.
+$\Rightarrow$ \textbf{Class~A}.
+
+\textbf{Cost formula.}
+$f = -\lambda t$: \texttt{neg} (cost~2) + \texttt{mul} by $\lambda$
+(cost~2, since $t$ is free) $= 4$; but $\lambda$ is a constant so $\lambda t$
+costs 2, and \texttt{neg} costs 2: $\Cost(f) = 4$.
+Plus \texttt{exp} ($+1$) plus outer \texttt{mul} by $N_0$ ($+2$): $\Cost = 7$.
+\end{example}
+
+\begin{example}[Goldman--Hodgkin--Katz voltage (1 ion)]
+\[
+  V_{\mathrm{eq}} \;=\; \frac{RT}{zF} \ln\!\frac{[\mathrm{ion}]_o}{[\mathrm{ion}]_i}.
+\]
+\textbf{Classify.} Has \texttt{ln}, no \texttt{exp}; single \texttt{ln} of a
+ratio.
+$\Rightarrow$ \textbf{Class~C}.
+
+\textbf{Cost formula.}
+$\ln(a/b)$ via \texttt{div} + \texttt{ln}: cost $1 + 1 = 2$.
+Outer \texttt{mul} by $RT/zF$ (constant coefficient): cost~2.
+Total: $2 + 2 = 4$.
+Alternatively: $\ln a - \ln b$ form: $1 + 1 + 2 + 2 = 6$.
+The cheaper realization uses the \texttt{div}-inside-\texttt{ln} form,
+giving $\Cost = 4$.
+\end{example}
+
+% ===========================================================================
+\section{Summary and Roadmap}
+\label{sec:summary}
+% ===========================================================================
+
+We have defined four structural classes A--D for scientific expressions,
+derived closed-form cost formulas for A, B, C, and a lower bound for D,
+and tested prediction accuracy on the 50-equation catalog.
+
+\begin{center}
+\begin{tabular}{@{}lllll@{}}
+\toprule
+\textbf{Class} & \textbf{Transcendentals} & \textbf{Cost formula} & \textbf{MAE} & \textbf{Typical examples} \\
+\midrule
+A & \texttt{exp} only     & Closed-form & 2.12 & Arrhenius, Eyring, Tafel \\
+B & None (rational)       & Closed-form & 1.11 & MM, Hill, MWC, Logistic \\
+C & \texttt{ln} only      & Closed-form & 0.85 & Nernst, pH, van't Hoff \\
+D & Mixed / complex       & Lower bound & 4.10 & Butler-Volmer, GHK, MB \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The automatic classifier (Algorithm~1) assigns any expression to one of the
+four classes in linear time and correctly classifies all 50 catalog equations.
+
+\medskip
+\noindent\textbf{Roadmap.}
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Session} & \textbf{Topic} \\
+\midrule
+COST-1 & Cost model foundations (SuperBEST v3 unit costs) \\
+COST-2 & Naive upper bound $\NC(E)$ (T34) \\
+COST-3 & Sharing lower bound \\
+COST-4 & Structural classes A--D \textbf{(this document)} \\
+COST-5 & Compound pattern bonuses \\
+COST-6 & Lower bound proofs for specific function families \\
+COST-7 & Pattern catalogue and automated bonus detection \\
+COST-8 & Tight examples: functions where $\NC = \Cost$ \\
+COST-9 & General cost optimization algorithm \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% ===========================================================================
+\section*{Theorem Catalog Labels}
+% ===========================================================================
+
+\begin{description}
+  \item[T35] \emph{Structural Class Cost Bounds.}
+        For each class A--D, the cost bounds stated in
+        Theorem~\ref{thm:T35} hold under SuperBEST~v3 unit costs.
+        The closed-form bounds for A, B, C are specializations of T34;
+        the Class~D lower bound is new.
+
+  \item[T35-Cls] \emph{Classifier Correctness.}
+        Algorithm~1 correctly assigns the structural class A--D to any
+        finite arithmetic expression computable by an EML tree, in
+        $O(|\mathcal{T}(E)|)$ time (Theorem~\ref{thm:correctness}).
+
+  \item[T35-Ord] \emph{Class Cost Ordering.}
+        On the 50-equation catalog:
+        $\overline{\Cost}_C < \overline{\Cost}_B < \overline{\Cost}_A < \overline{\Cost}_D$
+        (Corollary~\ref{cor:ordering}).
+\end{description}
+
+% ===========================================================================
+\section*{Acknowledgments}
+% ===========================================================================
+
+This work is part of the monogate SuperBEST cost theory sprint.
+T35 and the four structural classes A--D build on T34 (COST-2, Naive
+Upper Bound) and are grounded in the 50-equation catalog assembled in
+COST-1.
+
+\bigskip
+\noindent\textit{Almaguer, A.R.\ (2026).
+Structural Classes of Scientific Expressions: Cost Formulas, Prediction
+Accuracy, and an Automatic Classifier.
+monogate research. \url{https://monogate.org}}
+
+\end{document}

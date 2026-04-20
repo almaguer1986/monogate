@@ -1,0 +1,230 @@
+{
+  "session": "MAG-2",
+  "title": "Electrodynamics and Waves — SuperBEST Cost Analysis",
+  "superBEST_version": "v3",
+  "cost_model": {
+    "exp": 1,
+    "ln": 1,
+    "neg": 2,
+    "recip": 2,
+    "mul": 2,
+    "sub": 2,
+    "div": 1,
+    "pow": 3,
+    "add_positive_domain": 3,
+    "add_general_domain": 11,
+    "sin_cos": 1,
+    "constants_parameters": 0
+  },
+  "equations": [
+    {
+      "id": 1,
+      "name": "Lorentz Force (3D vector)",
+      "formula": "F = q(E + v×B)",
+      "breakdown": {
+        "cross_product_vxB": {
+          "x_component": "mul(vy,Bz)=2, mul(vz,By)=2, sub=2 → 6n",
+          "y_component": "mul(vz,Bx)=2, mul(vx,Bz)=2, sub=2 → 6n",
+          "z_component": "mul(vx,By)=2, mul(vy,Bx)=2, sub=2 → 6n",
+          "subtotal": "18n"
+        },
+        "add_E_per_component_gen_domain": "add(Ei, cross_i) = 11n × 3 = 33n",
+        "add_E_per_component_pos_domain": "add(Ei, cross_i) = 3n × 3 = 9n",
+        "scale_by_q": "mul(q, each_component) = 2n × 3 = 6n"
+      },
+      "nodes_general_domain": 57,
+      "nodes_positive_domain": 33,
+      "notes": "General domain applies when E fields can be negative. Positive domain applies when all field components are strictly non-negative."
+    },
+    {
+      "id": 2,
+      "name": "EM Wave (Electric field)",
+      "formula": "E(x,t) = E₀·sin(kx − ωt)",
+      "breakdown": {
+        "steps": [
+          "mul(k, x) = 2n",
+          "mul(ω, t) = 2n",
+          "sub(kx, ωt) = 2n",
+          "sin(phase) = 1n (complex EML node)",
+          "mul(E0, sin_result) = 2n"
+        ]
+      },
+      "nodes": 9,
+      "notes": "sin counted as 1 complex EML node per SuperBEST v3 convention."
+    },
+    {
+      "id": 3,
+      "name": "Poynting Vector Magnitude",
+      "formula": "S = E²/(μ₀c)",
+      "breakdown": {
+        "full": {
+          "steps": [
+            "pow(E, 2) = 3n",
+            "mul(μ₀, c) = 2n",
+            "div(E², μ₀c) = 1n"
+          ],
+          "subtotal": "6n"
+        },
+        "with_μ₀c_constant": {
+          "steps": [
+            "pow(E, 2) = 3n",
+            "div(E², const) = 1n"
+          ],
+          "subtotal": "4n"
+        }
+      },
+      "nodes": 6,
+      "nodes_with_compound_constant": 4,
+      "notes": "If μ₀c is precomputed as a single constant, cost reduces to 4n."
+    },
+    {
+      "id": 4,
+      "name": "Skin Depth",
+      "formula": "δ = √(2ρ/(ωμ))",
+      "breakdown": {
+        "full": {
+          "steps": [
+            "mul(ω, μ) = 2n",
+            "mul(2, ρ) = 2n",
+            "div(2ρ, ωμ) = 1n",
+            "pow(ratio, 0.5) = 3n"
+          ],
+          "subtotal": "8n"
+        },
+        "with_ω_μ_fixed": {
+          "steps": [
+            "div(const, ρ) or mul(1/ωμ, ρ): compound = 1n",
+            "pow(result, 0.5) = 3n"
+          ],
+          "subtotal": "4n"
+        }
+      },
+      "nodes": 8,
+      "nodes_with_fixed_params": 4,
+      "notes": "With ω, μ fixed (constant medium and frequency), ωμ collapses to a single constant, reducing to 4n."
+    },
+    {
+      "id": 5,
+      "name": "Impedance of Free Space",
+      "formula": "Z₀ = √(μ₀/ε₀)",
+      "breakdown": {
+        "steps": [
+          "div(μ₀, ε₀) = 1n",
+          "pow(ratio, 0.5) = 3n"
+        ]
+      },
+      "nodes": 4,
+      "nodes_precomputed": 0,
+      "notes": "Z₀ ≈ 376.73 Ω is a universal physical constant. In practice this can be precomputed to 0n. Listed at 4n for completeness when derived symbolically."
+    },
+    {
+      "id": 6,
+      "name": "Larmor Radiation Power",
+      "formula": "P = q²a²/(6πε₀c³)",
+      "breakdown": {
+        "numerator": {
+          "steps": [
+            "pow(q, 2) = 3n",
+            "pow(a, 2) = 3n",
+            "mul(q², a²) = 2n"
+          ],
+          "subtotal": "8n"
+        },
+        "denominator": {
+          "steps": [
+            "pow(c, 3) = 3n",
+            "mul(6πε₀, c³) = 2n  [with 6πε₀ as constant]"
+          ],
+          "subtotal": "5n"
+        },
+        "final_div": "div = 1n"
+      },
+      "nodes": 14,
+      "notes": "6πε₀ treated as a single precomputed constant. Cost is the same (14n) whether 1/(6πε₀) is folded as a constant multiplier or computed inline, since c³ must still be evaluated."
+    },
+    {
+      "id": 7,
+      "name": "Cyclotron Frequency",
+      "formula": "ω = qB/m",
+      "breakdown": {
+        "steps": [
+          "mul(q, B) = 2n",
+          "div(qB, m) = 1n"
+        ]
+      },
+      "nodes": 3,
+      "notes": "Simplest equation in this session. Linear in both q and B."
+    },
+    {
+      "id": 8,
+      "name": "Phase Velocity of EM Wave",
+      "formula": "vp = 1/√(με)",
+      "breakdown": {
+        "full": {
+          "steps": [
+            "mul(μ, ε) = 2n",
+            "pow(με, 0.5) = 3n",
+            "recip(√με) = 2n"
+          ],
+          "subtotal": "7n"
+        },
+        "with_με_constant": {
+          "steps": [
+            "pow(const, 0.5) = 3n",
+            "recip = 2n"
+          ],
+          "subtotal": "5n"
+        }
+      },
+      "nodes": 7,
+      "nodes_with_compound_constant": 5,
+      "notes": "When μ and ε are fixed medium properties (constants), με collapses to 0n and cost reduces to 5n."
+    },
+    {
+      "id": 9,
+      "name": "Group Velocity",
+      "formula": "vg = dω/dk",
+      "breakdown": {
+        "free_space_case": {
+          "formula": "ω = ck → vg = c",
+          "nodes": 0,
+          "notes": "Linear dispersion; group velocity equals phase velocity, a constant."
+        },
+        "dispersive_media_case": {
+          "formula": "ω = c√(k² − k₀²)",
+          "steps": [
+            "pow(k, 2) = 3n",
+            "pow(k₀, 2) = 3n",
+            "sub(k², k₀²) = 2n",
+            "pow(result, 0.5) = 3n",
+            "mul(c, √...) = 2n"
+          ],
+          "subtotal_ω": "13n",
+          "notes": "vg = dω/dk = ck/√(k²−k₀²). Derivative adds further ops; treat as symbolic for general analysis."
+        }
+      },
+      "nodes": 0,
+      "nodes_dispersive": 13,
+      "notes": "Reported as 0n for free-space (linear) case; 13n for dispersive ω(k) evaluation (not including differentiation overhead)."
+    }
+  ],
+  "summary_table": [
+    { "id": 1, "name": "Lorentz Force (3D vector)",   "nodes_primary": 57, "nodes_alt": 33,  "alt_label": "positive domain" },
+    { "id": 2, "name": "EM Wave E(x,t)",               "nodes_primary": 9,  "nodes_alt": null, "alt_label": null },
+    { "id": 3, "name": "Poynting Vector Magnitude",    "nodes_primary": 6,  "nodes_alt": 4,   "alt_label": "μ₀c constant" },
+    { "id": 4, "name": "Skin Depth",                   "nodes_primary": 8,  "nodes_alt": 4,   "alt_label": "ω,μ fixed" },
+    { "id": 5, "name": "Impedance of Free Space Z₀",  "nodes_primary": 4,  "nodes_alt": 0,   "alt_label": "precomputed constant" },
+    { "id": 6, "name": "Larmor Radiation Power",       "nodes_primary": 14, "nodes_alt": null, "alt_label": null },
+    { "id": 7, "name": "Cyclotron Frequency",          "nodes_primary": 3,  "nodes_alt": null, "alt_label": null },
+    { "id": 8, "name": "Phase Velocity vp",            "nodes_primary": 7,  "nodes_alt": 5,   "alt_label": "με constant" },
+    { "id": 9, "name": "Group Velocity vg",            "nodes_primary": 0,  "nodes_alt": 13,  "alt_label": "dispersive ω(k)" }
+  ],
+  "key_observations": [
+    "Lorentz force dominates at 57n (general domain) due to three add(gen) calls at 11n each for adding E to cross-product components.",
+    "Cyclotron frequency is the cheapest non-trivial formula at 3n.",
+    "EM wave via complex EML sin node costs only 9n — the sin node absorbs phase computation cost efficiently.",
+    "Larmor radiation (14n) is expensive primarily due to two pow() calls on q and a plus pow(c,3).",
+    "Z₀ is a universal constant and collapses to 0n when precomputed, unlike skin depth or phase velocity which depend on variable medium properties.",
+    "Group velocity in free space is 0n (terminal constant); dispersive case requires full ω(k) evaluation."
+  ]
+}

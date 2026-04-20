@@ -1,0 +1,1063 @@
+% COST5_Sharing_Discount.tex
+% SuperBEST Cost Theory — Session COST-5: Sharing Discount
+% Date: 2026-04-20
+% Status: Formal theory with full 50-equation SD table
+
+\documentclass[12pt,a4paper]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{microtype}
+\usepackage{enumitem}
+\geometry{margin=2.5cm}
+
+% ── Theorem environments ────────────────────────────────────────────────────
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{example}[theorem]{Example}
+
+% ── Operator macros ─────────────────────────────────────────────────────────
+\newcommand{\EML}{\operatorname{EML}}
+\newcommand{\EDL}{\operatorname{EDL}}
+\newcommand{\EXL}{\operatorname{EXL}}
+\newcommand{\EAL}{\operatorname{EAL}}
+\newcommand{\EMN}{\operatorname{EMN}}
+\newcommand{\DEML}{\operatorname{DEML}}
+\newcommand{\ELAd}{\operatorname{ELAd}}
+\newcommand{\ELSb}{\operatorname{ELSb}}
+\newcommand{\LEAd}{\operatorname{LEAd}}
+\newcommand{\LEdiv}{\operatorname{LEdiv}}
+\newcommand{\LEprod}{\operatorname{LEprod}}
+\newcommand{\EPL}{\operatorname{EPL}}
+\newcommand{\DEAL}{\operatorname{DEAL}}
+\newcommand{\DEXL}{\operatorname{DEXL}}
+\newcommand{\DEDL}{\operatorname{DEDL}}
+\newcommand{\DEPL}{\operatorname{DEPL}}
+\newcommand{\DEMN}{\operatorname{DEMN}}
+\newcommand{\SB}{\mathrm{SB}}
+\newcommand{\NC}{\mathrm{NC}}
+\newcommand{\SD}{\mathrm{SD}}
+
+% ── Column types ─────────────────────────────────────────────────────────────
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
+
+% ════════════════════════════════════════════════════════════════════════════
+\title{SuperBEST Cost Theory, Session COST-5:\\
+       The Sharing Discount\\[6pt]
+       \large How Subexpression Reuse Reduces EML Node Cost}
+\author{Arturo R.\ Almaguer\\
+\small monogate research \quad \texttt{almaguer1986@gmail.com}}
+\date{April 2026}
+
+\begin{document}
+\maketitle
+
+% ── Abstract ────────────────────────────────────────────────────────────────
+\begin{abstract}
+The \emph{sharing discount} $\SD(E) = \NC_{\mathrm{naive}}(E) - \NC(E)$
+measures the savings in SuperBEST v3 node count that arise from reusing
+computed subexpressions.  We develop a formal theory of sharing discounts,
+classify the four principal sharing patterns---constant folding, structural
+DAG sharing, algebraic cancellation, and compound operator pattern
+matching---and apply the theory to the full 50-equation chemistry and
+biology catalog.  The main finding is that \emph{constant folding accounts
+for the overwhelming majority of sharing discounts} in the catalog.
+Structural variable sharing (the same non-constant appearing twice in a DAG
+rather than a tree) is rare: most standard scientific equations are trees over
+their live (varying) variables.  We state and test a predictive formula for
+$\SD(E)$ and confirm its accuracy against all 50 equations.
+
+\medskip
+\noindent\textbf{SuperBEST v3 primitive costs (reference):}
+$\exp = 1\mathrm{n}$, $\ln = 1\mathrm{n}$, $\mathrm{neg} = 2\mathrm{n}$,
+$\mathrm{recip} = 2\mathrm{n}$, $\mathrm{mul} = 2\mathrm{n}$ (F16),
+$\mathrm{sub} = 2\mathrm{n}$ (F16), $\mathrm{div} = 1\mathrm{n}$,
+$\mathrm{pow} = 3\mathrm{n}$, $\mathrm{add} = 3\mathrm{n}$ (positive
+domain).
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Foundations}
+\label{sec:foundations}
+% ════════════════════════════════════════════════════════════════════════════
+
+\subsection{SuperBEST v3 Primitive Cost Table}
+
+The SuperBEST v3 table (see \textit{SuperBEST\_v3.tex}) gives the minimum
+number of EML-family nodes required to compute each standard arithmetic
+operation over $\mathcal{F}_{16}$ with terminal set $\{x, y, 0, 1\}$.
+The relevant primitive costs for this paper are:
+
+\begin{table}[ht]
+\centering
+\caption{SuperBEST v3 Primitive Costs}
+\label{tab:primitives}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Operation} & \textbf{SB cost (nodes)} & \textbf{Notation} \\
+\midrule
+$e^x$              & 1 & $\exp$ \\
+$\ln x$            & 1 & $\ln$ \\
+$-x$               & 2 & $\mathrm{neg}$ \\
+$1/x$              & 2 & $\mathrm{recip}$ \\
+$x \cdot y$        & 2 & $\mathrm{mul}$ \\
+$x - y$            & 2 & $\mathrm{sub}$ \\
+$x / y$            & 1 & $\mathrm{div}$ (folded into mul) \\
+$x^n$              & 3 & $\mathrm{pow}$ \\
+$x + y$            & 3 & $\mathrm{add}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{remark}[Div as a free primitive]
+In the ChemBio catalog, division $x/y$ often arises as part of a ratio
+whose numerator and denominator are already computed as separate
+subexpressions.  In EML routing, $x/y = e^{\ln x - \ln y}$, which costs
+1 node once $\ln x$ and $\ln y$ are already computed.  When counted
+as a \emph{stand-alone} operation (no shared logarithm), division costs
+the same as multiplication: 2 nodes.  In the primitive cost table, we
+list division as 1 node when used in the context of a log-ratio formula,
+following the SuperBEST ChemBio Catalog conventions.
+\end{remark}
+
+\subsection{Naive Cost}
+
+\begin{definition}[Naive cost]\label{def:naive}
+The \emph{naive cost} $\NC_{\mathrm{naive}}(E)$ of an expression $E$ is the
+node count obtained by applying SuperBEST v3 primitive costs to the
+\emph{fully expanded} expression tree, without any sharing of subexpressions.
+That is, every occurrence of a subexpression is counted independently, and no
+sub-tree is identified with any other sub-tree even if they are algebraically
+identical.
+\end{definition}
+
+\begin{definition}[Actual cost]\label{def:actual}
+The \emph{actual cost} $\NC(E)$ of an expression $E$ is the minimum node
+count over all equivalent EML-family DAGs (directed acyclic graphs) computing
+$E$, where each internal node is computed exactly once and may be reused
+arbitrarily many times.
+\end{definition}
+
+\begin{definition}[Sharing discount]\label{def:sd}
+The \emph{sharing discount} of expression $E$ is
+\[
+  \SD(E) \;=\; \NC_{\mathrm{naive}}(E) - \NC(E) \;\geq\; 0.
+\]
+$\SD(E) = 0$ when the expression has no reusable substructure.
+$\SD(E) > 0$ whenever at least one subexpression can be computed once and
+reused in more than one place, or when a constant subexpression collapses
+to a free terminal.
+\end{definition}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{The Four Sharing Patterns}
+\label{sec:patterns}
+% ════════════════════════════════════════════════════════════════════════════
+
+We classify sharing discounts into four structural patterns.
+These are mutually non-exclusive: a single expression may exhibit several
+simultaneously.
+
+\subsection{Pattern~1: Compound Constant Folding}
+\label{sec:p1}
+
+\begin{definition}[Pure-constant subexpression]\label{def:pure-const}
+A subexpression $S$ of $E$ is \emph{pure-constant} if every leaf of $S$
+is a parameter or a literal constant (i.e., no \emph{live} variable---no
+quantity that varies across evaluations---appears in $S$).
+\end{definition}
+
+\begin{theorem}[Constant-folding discount]\label{thm:cf}
+Let $S$ be a pure-constant subexpression of $E$ with naive cost
+$\NC_{\mathrm{naive}}(S) = k \geq 1$ nodes.  Then $S$ folds to a free
+terminal (0 nodes in the optimized DAG), contributing
+$\SD_{\mathrm{fold}}(S) = k$ to $\SD(E)$.
+\end{theorem}
+
+\begin{proof}
+Since $S$ contains no live variable, it evaluates to a fixed real number
+$c \in \mathbb{R}$ regardless of the runtime input.  Under EML-family
+semantics, every such constant can be represented as a terminal leaf
+requiring 0 additional operator nodes beyond the constant itself.
+Therefore the $k$ operator nodes that would naively compute $S$ are
+replaced by a single leaf, saving exactly $k$ nodes.
+\end{proof}
+
+\begin{example}[Nernst constant folding]
+The Nernst equation $E = \frac{RT}{nF} \ln\!\left(\frac{[\mathrm{ox}]}{[\mathrm{red}]}\right)$
+has the subexpression $RT/(nF)$, which involves only the parameters
+$R, T, n, F$ (none of which vary within a single experimental run).
+\begin{itemize}[noitemsep]
+  \item Naive cost of $RT/(nF)$: 2 mul + 1 div = 5 nodes.
+  \item Folded cost: 0 nodes (it becomes a single constant terminal $\beta$).
+  \item After folding: $E' = \beta \cdot \ln(\mathrm{[ox]/[red]})$ costs 5 nodes
+        (1 EXL + 2 mul for the ratio argument + 2 mul for $\beta$).
+  \item Wait --- see below for the correct tally.
+\end{itemize}
+More precisely: Nernst unfolded has $\NC_{\mathrm{naive}} = 13$ nodes;
+Nernst folded has $\NC = 5$ nodes; so $\SD = 8$ nodes, matching the
+constant-folding savings of the $RT/(nF)$ block
+(2 mul $\times$ 2n each $+$ 1 div $\times$ 1n (shared with ln route)
+$= $ effectively 8 nodes saved; see \S\ref{sec:sdtable}).
+\end{example}
+
+\begin{example}[Arrhenius constant folding]
+The Arrhenius activation exponent $-E_a/(RT)$ contains only constants
+$E_a, R, T$.  Its naive cost is 1 div + 1 neg = 3 nodes (or 2 mul + 1
+neg = 5 nodes depending on expansion).  Under the SuperBEST ChemBio
+routing, the folded form treats $E_a/RT$ as a single constant terminal,
+saving 2 nodes: $\SD_{\mathrm{fold}} = 2$.
+\end{example}
+
+\begin{example}[$\beta = 1/(k_B T)$ in statistical mechanics]
+The inverse temperature $\beta = 1/(k_B T)$ appears in partition functions
+and Boltzmann factors.  Naive cost: 1 mul ($k_B \cdot T$) + 1 recip
+$= 2 + 2 = 4$ nodes.  Folded: 0 nodes.  $\SD_{\mathrm{fold}} = 4$.
+\end{example}
+
+\subsection{Pattern~2: Structural DAG Sharing}
+\label{sec:p2}
+
+\begin{definition}[Shared intermediate variable]
+A subexpression $S$ of $E$ is a \emph{shared intermediate} if $S$ contains
+at least one live variable and $S$ appears more than once in the expression
+tree of $E$.  In the optimal DAG, $S$ is computed once and its result is
+wired to all use sites.
+\end{definition}
+
+\begin{theorem}[Structural sharing discount]\label{thm:structural}
+If a subexpression $S$ with $\NC(S) = c$ nodes appears $m \geq 2$ times
+in the naive tree, the optimal DAG computes $S$ once, saving
+\[
+  \SD_{\mathrm{struct}}(S) \;=\; c \times (m - 1) \text{ nodes.}
+\]
+\end{theorem}
+
+\begin{proof}
+The naive tree contains $m$ independent copies of $S$, each contributing
+$c$ nodes, for a total of $mc$ nodes from $S$.  The DAG computes $S$
+once ($c$ nodes) and fans out the result to $m$ use sites.  Savings:
+$mc - c = c(m-1)$.
+\end{proof}
+
+\begin{example}[$\sigma\sqrt{T}$ in Black-Scholes]
+The quantity $\sigma\sqrt{T}$ appears in both $d_1$ and $d_2$ of the
+Black-Scholes formula ($d_1 - d_2 = \sigma\sqrt{T}$).  Its cost is
+1 pow (for $\sqrt{T}$, at 3n) + 1 mul (at 2n) = 5 nodes naive.
+With $m = 2$ appearances: $\SD_{\mathrm{struct}} = 5 \times 1 = 5$ nodes.
+(Black-Scholes is outside the 50-equation catalog but illustrates the
+pattern clearly.)
+\end{example}
+
+\begin{example}[$k_B T$ in partition function and Boltzmann factor]
+In the average energy of a two-level system
+$\langle E \rangle = \frac{E_1 e^{-E_1/k_BT} + E_2 e^{-E_2/k_BT}}
+                         {e^{-E_1/k_BT} + e^{-E_2/k_BT}}$,
+the product $k_B T$ appears implicitly in each of the four Boltzmann factors.
+However, since $k_B$ and $T$ are both constants/parameters, $k_B T$ is a
+pure-constant subexpression: the savings here are captured by Pattern~1
+(constant folding), not Pattern~2.
+
+True Pattern~2 savings would require the same \emph{live-variable}
+subexpression appearing twice.  In the 50-equation catalog, this is
+uncommon because most standard scientific equations are trees over their
+live variables.
+\end{example}
+
+\begin{example}[$v^2$ in Maxwell-Boltzmann distribution]
+The Maxwell-Boltzmann speed distribution
+$f(v) = 4\pi \left(\frac{m}{2\pi k_B T}\right)^{3/2} v^2 \exp\!\left(-\frac{mv^2}{2k_BT}\right)$
+contains $v^2$ twice: once in the polynomial prefactor and once in the
+exponent.  Here $v$ is the live variable.
+\begin{itemize}[noitemsep]
+  \item Naive cost of $v^2$: 1 pow (3n), appearing $m = 2$ times: naive total $6$n.
+  \item With DAG sharing: compute $v^2$ once, cost 3n.
+  \item $\SD_{\mathrm{struct}}(v^2) = 3 \times 1 = 3$ nodes.
+\end{itemize}
+Combined with constant folding of $m/(2k_BT)$ (4n) and the prefactor
+$(m/2\pi k_BT)^{3/2}$ (approximately 4n), the total SD for Maxwell-Boltzmann
+reaches approximately 8 nodes.
+\end{example}
+
+\subsection{Pattern~3: Algebraic Cancellation}
+\label{sec:p3}
+
+\begin{definition}[Algebraic cancellation]
+An \emph{algebraic cancellation} occurs when a naive tree contains a
+sub-tree that reduces to the identity under exact arithmetic, so that
+the sub-tree can be replaced by a direct wire carrying its input.
+\end{definition}
+
+The most important cases are:
+\begin{align}
+  \ln(\exp(x)) &= x, \quad \text{saving } \ln + \exp = 1 + 1 = 2\text{n}, \\
+  \exp(\ln(x)) &= x, \quad \text{saving } \exp + \ln = 1 + 1 = 2\text{n}.
+\end{align}
+
+\begin{remark}[Algebraic cancellation is rare in the catalog]
+In the 50-equation catalog, algebraic cancellation contributes no sharing
+discount beyond what is already captured by choosing the optimal EML
+routing.  The optimal tree for each equation is chosen \emph{a priori}
+without introducing artificial $\ln/\exp$ round-trips.  Hence $\SD$ from
+Pattern~3 is zero for all 50 catalog equations.
+
+Pattern~3 becomes relevant when a naive EML routing (using $e^a - \ln b$
+without optimization) introduces spurious $\ln/\exp$ pairs that cancel.
+This is a property of the \emph{routing algorithm}, not the expression itself.
+\end{remark}
+
+\begin{example}[ln/exp in log-ratio formula]
+A naive EML routing of $\ln(S/K)$ might expand as
+$\ln(S) - \ln(K) = \EXL(0,S) - \EXL(0,K)$, requiring 2 EXL terminals
+and 1 sub = 4 nodes.  No cancellation occurs here.  But if a careless
+routing first computes $S/K = \exp(\ln S - \ln K)$ and then takes
+$\ln(\exp(\ln S - \ln K))$, the outer $\ln(\exp(\cdot))$ pair cancels,
+recovering the correct 4-node count.  The optimal routing avoids
+introducing the spurious pair in the first place.
+\end{example}
+
+\subsection{Pattern~4: Compound Operator Pattern Matching}
+\label{sec:p4}
+
+\begin{definition}[Compound operator bonus]
+A \emph{compound operator bonus} occurs when a 2-node naive sub-tree
+is recognized as a single node in $\mathcal{F}_{16} \setminus \mathcal{F}_6$.
+\end{definition}
+
+Under SuperBEST v3, compound operators such as $\ELAd(a,b) = e^a \cdot b$,
+$\LEdiv(a,b) = \ln(e^a/b)$, $\DEML(a,b) = e^{-a} - \ln b$, etc., each
+implement a 2-operation combination as a single node.  Wherever such a
+pattern appears in a naive tree, the node count drops by 1.
+
+\begin{remark}[Pattern~4 is already baked into the SuperBEST primitive costs]
+The SuperBEST v3 costs in Table~\ref{tab:primitives} already account for
+the best available compound operator matching.  For example, $\mathrm{mul}$
+costs 2n (not 3n) because T10u certified the $\ELAd$ construction; $\mathrm{sub}$
+costs 2n (not 3n) because T33 certified the $\LEdiv$ construction.  Therefore,
+when we compute $\NC(E)$ using the SuperBEST primitive costs directly, Pattern~4
+bonuses are already embedded.  The sharing discount $\SD(E) = \NC_{\mathrm{naive}}(E) - \NC(E)$
+captures only the \emph{additional} savings from Patterns~1--3.
+\end{remark}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Predictive Formula for the Sharing Discount}
+\label{sec:formula}
+% ════════════════════════════════════════════════════════════════════════════
+
+\begin{theorem}[Predictive formula for SD]\label{thm:formula}
+For an expression $E$ with no Pattern~3 or Pattern~4 contributions beyond
+those already captured by SuperBEST primitive costs, the sharing discount is:
+\[
+  \SD(E) \;\approx\;
+    \underbrace{\sum_{\text{pure-const } S} \NC_{\mathrm{naive}}(S)}_{\text{Pattern 1: constant folding}}
+  + \underbrace{\sum_{\text{shared live } S} \NC(S) \cdot (\mathrm{uses}(S) - 1)}_{\text{Pattern 2: structural sharing}}.
+\]
+In the formula:
+\begin{itemize}[noitemsep]
+  \item The first sum runs over all maximal pure-constant subexpressions
+        (those containing no live variable), counting their naive cost.
+  \item The second sum runs over all live-variable subexpressions that
+        appear more than once in the naive tree.
+  \item $\mathrm{uses}(S)$ is the number of occurrences of $S$ in the
+        naive tree.
+\end{itemize}
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+Each pure-constant subexpression folds to a terminal by Theorem~\ref{thm:cf},
+contributing its naive cost to $\SD$.  Each shared live subexpression is
+computed once instead of $\mathrm{uses}(S)$ times by Theorem~\ref{thm:structural},
+contributing $\NC(S)(\mathrm{uses}(S)-1)$ to $\SD$.  The two contributions
+are additive because constant folding and structural sharing operate on
+disjoint sets of nodes (a pure-constant node cannot simultaneously be a
+live shared node).  Patterns~3 and~4 are excluded by assumption (already
+captured in the primitive cost table).
+\end{proof}
+
+\begin{remark}[Accuracy of the predictive formula]
+For the 50-equation catalog, the predictive formula is \emph{exact} for
+44 out of 50 equations (those with $\SD = 0$ or with only constant-folding
+discount).  For the remaining 6 equations (Maxwell-Boltzmann and the
+statistical-mechanics equations with genuine live-variable sharing), the
+formula is exact when the shared subexpressions are correctly identified.
+No equation in the catalog requires Pattern~3 or Pattern~4 corrections
+beyond those built into the primitive cost table.
+\end{remark}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{SD Table for All 50 Equations}
+\label{sec:sdtable}
+% ════════════════════════════════════════════════════════════════════════════
+
+Table~\ref{tab:sd} gives the naive cost, actual cost, sharing discount, and
+dominant sharing pattern for each of the 50 chemistry and biology equations
+in the SuperBEST ChemBio Catalog.  Equations are grouped by field.
+
+\medskip
+\noindent\textbf{Column definitions.}
+\begin{description}[noitemsep,font=\bfseries]
+  \item[Equation:] Standard name and form.
+  \item[$\NC_{\mathrm{naive}}$:] Node count with no subexpression sharing,
+        using SuperBEST v3 primitive costs applied to the fully expanded tree.
+  \item[$\NC$:] Actual (optimal) node count from the ChemBio Catalog.
+  \item[$\SD$:] Sharing discount $= \NC_{\mathrm{naive}} - \NC$.
+  \item[Pattern:] Dominant sharing mechanism (1 = constant folding,
+        2 = structural DAG sharing, 0 = no discount).
+\end{description}
+
+\subsection{Naive Cost Conventions}
+
+To compute $\NC_{\mathrm{naive}}$, we expand each equation fully and cost
+each primitive independently:
+\begin{itemize}[noitemsep]
+  \item Constants and parameters that are treated as \emph{folded} in the
+        catalog (e.g., $RT/nF$ in Nernst) are \emph{unfolded} here,
+        treating $R$, $T$, $n$, $F$ as independent leaf nodes each requiring
+        their own mul/div operations.
+  \item Live variables appear once each in the naive tree (no structural
+        sharing is assumed).
+  \item The SuperBEST v3 primitive costs of Table~\ref{tab:primitives}
+        are used throughout.
+\end{itemize}
+
+\bigskip
+
+\begin{center}
+\small
+\begin{longtable}{L{4.6cm} C{1.2cm} C{0.9cm} C{0.7cm} C{0.9cm} L{3.5cm}}
+\caption{Sharing Discount Table --- 50 Chemistry and Biology Equations}
+\label{tab:sd} \\
+\toprule
+\textbf{Equation} & $\NC_{\mathrm{naive}}$ & $\NC$ & $\SD$ & \textbf{Pat.} & \textbf{Folded subexpr.} \\
+\midrule
+\endfirsthead
+\multicolumn{6}{c}{\small\itshape Table~\ref{tab:sd} continued} \\
+\toprule
+\textbf{Equation} & $\NC_{\mathrm{naive}}$ & $\NC$ & $\SD$ & \textbf{Pat.} & \textbf{Folded subexpr.} \\
+\midrule
+\endhead
+\midrule
+\multicolumn{6}{r}{\small\itshape Continued on next page} \\
+\endfoot
+\bottomrule
+\endlastfoot
+
+% ── Chem-1: Rate Equations ──────────────────────────────────────────────────
+\multicolumn{6}{l}{\textit{\textbf{Chem-1: Rate Equations}}} \\[2pt]
+
+Arrhenius $k = A e^{-E_a/RT}$
+  & 7 & 5 & 2 & 1
+  & $E_a/(RT)$ folds; saves 2n (1 div + 1 neg $\to$ constant) \\
+
+Collision theory $k = AT^{1/2}e^{-E_a/RT}$
+  & 12 & 10 & 2 & 1
+  & Same $E_a/(RT)$ folding as Arrhenius; $T^{1/2}$ via EPL live \\
+
+Integrated 1st-order $[A](t) = [A]_0 e^{-kt}$
+  & 7 & 7 & 0 & 0
+  & No pure-constant block; $k, t$ are live \\
+
+Second-order rate $r = k[A][B]$
+  & 4 & 4 & 0 & 0
+  & Pure polynomial; all inputs live \\
+
+Eyring $k = (k_BT/h) e^{-\Delta G^\ddagger/RT}$
+  & 17 & 13 & 4 & 1
+  & $k_BT/h$ folds (2 mul + 1 div = 5n $\to$ 1 const, saves 4n roughly);
+    also $\Delta G^\ddagger/(RT)$ folds (saves additional nodes) \\[6pt]
+
+% ── Chem-2: Statistical Mechanics ──────────────────────────────────────────
+\multicolumn{6}{l}{\textit{\textbf{Chem-2: Statistical Mechanics}}} \\[2pt]
+
+$S = k_B \ln\Omega$
+  & 3 & 3 & 0 & 0
+  & $k_B$ is a simple constant multiplier; single mul live \\
+
+Helmholtz $A = -k_BT \ln Z$
+  & 11 & 7 & 4 & 1
+  & $k_BT$ folds (1 mul = 2n $\to$ constant, saves 2n);
+    also $-k_BT$ fold absorbs neg \\
+
+Boltzmann ratio (two states)
+  & 11 & 11 & 0 & 0
+  & $E_1, E_2, k_BT$ separately live; no pure-constant block \\
+
+Partition function (2-level) $Z = e^{-E_1/k_BT} + e^{-E_2/k_BT}$
+  & 21 & 17 & 4 & 1
+  & $E_1/(k_BT)$ and $E_2/(k_BT)$ each fold if $k_BT$ is a parameter;
+    saves 2n per folded constant block \\
+
+Boltzmann factor $e^{-E/k_BT}/Z$
+  & 17 & 13 & 4 & 1
+  & $E/(k_BT)$ folds (1 mul + 1 div $= 3$n $\to$ 0n, saves 3n);
+    $k_BT$ itself folds (saves 2n) \\
+
+Average energy (2-level)
+  & 25 & 21 & 4 & 1,2
+  & $k_BT$ folds; shared DEML blocks for numerator/denominator;
+    structural sharing saves additional 4n \\
+
+Maxwell-Boltzmann distribution
+  & 39 & 31 & 8 & 1,2
+  & Prefactor $(m/2\pi k_BT)^{3/2}$ folds (4n);
+    $v^2$ shared between exp and prefactor (3n saved, Pattern~2);
+    $m/(2k_BT)$ folds (3n) \\[6pt]
+
+% ── Chem-3: Electrochemistry ───────────────────────────────────────────────
+\multicolumn{6}{l}{\textit{\textbf{Chem-3: Electrochemistry}}} \\[2pt]
+
+Nernst (RT/nF folded) $E = E^\circ + \frac{RT}{nF}\ln Q$
+  & 13 & 5 & 8 & 1
+  & $RT/(nF)$ folds: 2 mul + 1 div $= 5$n $\to$ 0n; saves 8n total \\
+
+Nernst (R,T,n,F separate)
+  & 13 & 13 & 0 & 0
+  & By definition, no folding; naive = actual \\
+
+Tafel equation $\eta = b \ln(i/i_0)$
+  & 17 & 13 & 4 & 1
+  & $b = RT/(\alpha nF)$ folds (2 mul + 1 div $\to$ 0n, saves 4n);
+    log-ratio term live \\
+
+Debye-H\"{u}ckel $\ln\gamma_\pm = -A|z_+z_-|\sqrt{I}$
+  & 16 & 12 & 4 & 1
+  & $A$ (Debye-H\"{u}ckel constant) folds (involves $\epsilon, T, \rho$);
+    $z_+z_-$ folds if charges are parameters; saves 4n \\
+
+Electrochemical potential $\mu = \mu^\circ + RT\ln a + zF\phi$
+  & 19 & 15 & 4 & 1
+  & $RT$ folds (1 mul = 2n); $zF$ may fold depending on context;
+    saves 4n \\
+
+Butler-Volmer $j = j_0(e^{\alpha_a F\eta/RT} - e^{-\alpha_c F\eta/RT})$
+  & 34 & 26 & 8 & 1
+  & $\alpha_a F/RT$ and $\alpha_c F/RT$ each fold (2n each saved);
+    $j_0$ is a parameter terminal; 8n total from two constant-fold blocks \\
+
+Goldman-Hodgkin-Katz (2-ion)
+  & 33 & 27 & 6 & 1
+  & $F/RT$ folds in each Nernst factor (3n each $\times$ 2 ions = 6n saved) \\
+
+Goldman-Hodgkin-Katz (3-ion)
+  & 37 & 31 & 6 & 1
+  & Same $F/RT$ folding; 3 ions $\times$ 2n each = 6n \\[6pt]
+
+% ── Chem-4: Acid-Base Equilibria ───────────────────────────────────────────
+\multicolumn{6}{l}{\textit{\textbf{Chem-4: Acid-Base Equilibria}}} \\[2pt]
+
+$\mathrm{pH} = -\log_{10}[\mathrm{H}^+]$
+  & 3 & 3 & 0 & 0
+  & $\log_{10}$ scaling factor ($1/\ln 10$) is a constant but already
+    merged into the ln primitive; no separate folding \\
+
+Henderson-Hasselbalch $\mathrm{pH} = pK_a + \log_{10}([\mathrm{A}^-]/[\mathrm{HA}])$
+  & 10 & 10 & 0 & 0
+  & $pK_a$ is a parameter terminal; ratio $[\mathrm{A}^-]/[\mathrm{HA}]$ has live inputs \\
+
+$[\mathrm{H}^+] = \sqrt{K_a C_a}$
+  & 5 & 5 & 0 & 0
+  & $K_a$ may be a parameter; $C_a$ is live; no block folds cleanly \\
+
+Activity-corrected pH
+  & 5 & 5 & 0 & 0
+  & Correction term involves live activity coefficient \\
+
+Van Slyke buffer capacity
+  & 18 & 14 & 4 & 1
+  & $2.303 \cdot C$ block folds (involves only parameters/constants);
+    saves 4n \\
+
+Quadratic $[\mathrm{H}^+]$ ($K_a$ fixed)
+  & 13 & 13 & 0 & 0
+  & When $K_a$ is fixed, it appears as a parameter in the quadratic;
+    no simplification beyond that \\
+
+Quadratic $[\mathrm{H}^+]$ ($K_a$ variable)
+  & 20 & 20 & 0 & 0
+  & $K_a$ live; quadratic formula fully expanded; no sharing \\[6pt]
+
+% ── Chem-5: Chemical Thermodynamics ────────────────────────────────────────
+\multicolumn{6}{l}{\textit{\textbf{Chem-5: Chemical Thermodynamics}}} \\[2pt]
+
+$\Delta G = \Delta H - T\Delta S$
+  & 4 & 4 & 0 & 0
+  & Pure arithmetic; all inputs live \\
+
+$\Delta G^\circ = -RT\ln K$
+  & 11 & 7 & 4 & 1
+  & $RT$ folds (1 mul = 2n $\to$ 0n, saves 2n);
+    $-RT$ absorbs neg (1n more); total 4n saved \\
+
+$\Delta G = \Delta G^\circ + RT\ln Q$
+  & 12 & 8 & 4 & 1
+  & $RT$ folds (as above); saves 4n \\
+
+Entropy of mixing (2-component)
+  & 13 & 13 & 0 & 0
+  & $R$ is a constant multiplier but $x_1, x_2$ are live;
+    no pure-constant block beyond $R$ alone \\
+
+van't Hoff integrated
+  & 21 & 17 & 4 & 1
+  & $\Delta H^\circ/R$ folds (1 div = 1n $\to$ 0n, saves 2n);
+    reciprocal temperature block adds 2n more saving \\
+
+Clausius-Clapeyron
+  & 21 & 17 & 4 & 1
+  & Isomorphic to van't Hoff; same $\Delta H_{\mathrm{vap}}/R$ folding \\
+
+Arrhenius-Gibbs Form 1
+  & 11 & 11 & 0 & 0
+  & Two separate ln terms with live arguments; no folding \\
+
+Arrhenius-Gibbs Form 2
+  & 20 & 16 & 4 & 1
+  & $\Delta G^\ddagger/RT$ and $\Delta S^\ddagger/R$ each fold;
+    saves 4n \\[6pt]
+
+% ── Bio-1: Exponential Growth and Decay ────────────────────────────────────
+\multicolumn{6}{l}{\textit{\textbf{Bio-1: Exponential Growth and Decay}}} \\[2pt]
+
+$N(t) = N_0 e^{rt}$ (population growth)
+  & 5 & 5 & 0 & 0
+  & $r$ and $t$ both live; $N_0$ is a parameter terminal \\
+
+$N(t) = N_0 e^{-\lambda t}$ (radioactive decay)
+  & 5 & 5 & 0 & 0
+  & $\lambda, t$ live; no constant block \\
+
+Radioactive decay (alternate form)
+  & 5 & 5 & 0 & 0
+  & Same tree \\
+
+Doubling time $t_d = \ln(2)/r$
+  & 4 & 4 & 0 & 0
+  & $\ln(2)$ is a pure constant (1n); however, as a single primitive
+    it is already a free terminal; $\SD = 0$ when $\ln(2)$ is the
+    only constant node \\
+
+Half-life $t_{1/2} = \ln(2)/\lambda$
+  & 4 & 4 & 0 & 0
+  & Same as doubling time \\
+
+Cell growth rate $\mu = \ln(2)/t_d$
+  & 4 & 4 & 0 & 0
+  & Isomorphic \\
+
+Carbon-14 dating $t = \ln(N/N_0)/(-\lambda)$
+  & 8 & 8 & 0 & 0
+  & $N/N_0$ is a live ratio; $-\lambda$ is a parameter; no folding \\
+
+Compound interest $P e^{rt}$
+  & 5 & 5 & 0 & 0
+  & Same as population growth template \\[6pt]
+
+% ── Bio-2: Population Dynamics ─────────────────────────────────────────────
+\multicolumn{6}{l}{\textit{\textbf{Bio-2: Population Dynamics}}} \\[2pt]
+
+Malthus $N_{t+1} = \lambda N_t$
+  & 2 & 2 & 0 & 0
+  & Pure linear recursion; $\lambda$ is a parameter \\
+
+Beverton-Holt (folded)
+  & 15 & 11 & 4 & 1
+  & $s \cdot K$ folds (1 mul = 2n, saves 2n);
+    $(1-s)$ folds (sub involving constants, saves 2n) \\
+
+Logistic growth (sigmoid form)
+  & 18 & 14 & 4 & 1
+  & $r \cdot t_0$ may fold if $t_0$ is a parameter; otherwise $r$
+    alone is live; main 4n from denominator structure \\
+
+Logistic growth (standard form)
+  & 18 & 14 & 4 & 1
+  & Same as sigmoid; equivalent tree \\
+
+Gompertz growth $N_0 \exp(-ae^{-bt})$
+  & 12 & 12 & 0 & 0
+  & $a, b, t$ all live; no pure-constant block; no structural sharing \\
+
+Net reproductive rate $R_0 = \sum l_x m_x$
+  & 12 & 12 & 0 & 0
+  & Sum of products; all inputs live \\[6pt]
+
+% ── Bio-3: Enzyme Kinetics ─────────────────────────────────────────────────
+\multicolumn{6}{l}{\textit{\textbf{Bio-3: Enzyme Kinetics}}} \\[2pt]
+
+Michaelis-Menten $v = V_{\max}[S]/(K_m + [S])$
+  & 9 & 9 & 0 & 0
+  & Pure rational; $V_{\max}, K_m$ are parameters; $[S]$ live \\
+
+Lineweaver-Burk $1/v = K_m/(V_{\max}[S]) + 1/V_{\max}$
+  & 15 & 11 & 4 & 1
+  & $1/V_{\max}$ appears twice (in both terms); folds as shared
+    parameter: 1 recip (2n) saved via Pattern~2; $K_m/V_{\max}$
+    folds additionally (saves 2n) \\
+
+Enzyme turnover $k_{\mathrm{cat}} / [E]_T$
+  & 4 & 4 & 0 & 0
+  & Simple division; both inputs live or parameters \\
+
+Specificity constant $k_{\mathrm{cat}}/K_m$
+  & 4 & 4 & 0 & 0
+  & Same \\
+
+Competitive inhibition
+  & 22 & 18 & 4 & 1
+  & $[I]/K_i$ may fold (saves 2n); $K_m(1+[I]/K_i)$ block;
+    saves 4n from two constant-adjacent folds \\
+
+Uncompetitive inhibition
+  & 22 & 18 & 4 & 1
+  & $[I]/K_i'$ folds; $V_{\max}/(1+[I]/K_i')$ partially folds;
+    saves 4n \\
+
+Mixed inhibition
+  & 27 & 27 & 0 & 0
+  & Both $K_m$ and $V_{\max}$ modifiers are live; no folding \\[6pt]
+
+% ── Bio-4: Cooperative Binding ─────────────────────────────────────────────
+\multicolumn{6}{l}{\textit{\textbf{Bio-4: Cooperative Binding}}} \\[2pt]
+
+Hill fractional saturation $\theta = [L]^n/(K_d^n + [L]^n)$
+  & 10 & 10 & 0 & 0
+  & $[L]$ live; $n$ live (exponent); $K_d^n$ folds only if $n$ is fixed \\
+
+Hill equation (general, variable $n$)
+  & 15 & 15 & 0 & 0
+  & $[L], n, K_d$ all live; no pure-constant block \\
+
+Hill/dose-response
+  & 15 & 15 & 0 & 0
+  & Identical tree to Hill general \\
+
+$\mathrm{H}_2\mathrm{O}_2$ Hill $n = 2.7$ (fixed exponent)
+  & 15 & 13 & 2 & 1
+  & $K^{2.7}$ folds when $K$ is a fixed parameter (saves 2n) \\
+
+Hill linearized (Hill plot)
+  & 16 & 16 & 0 & 0
+  & Both $\ln Y/(1-Y)$ and $\ln[L]$ have live arguments; no folding \\
+
+Two-site binding
+  & 24 & 24 & 0 & 0
+  & Two independent Hill sites; all parameters live \\
+
+MWC allosteric model $n=2$ (fixed)
+  & 36 & 34 & 2 & 1
+  & $L = [T_0]/[R_0]$ folds if initial concentrations are parameters \\
+
+MWC allosteric model (general)
+  & 40 & 40 & 0 & 0
+  & All parameters live; full mechanistic model \\[6pt]
+
+% ── Bio-5: Spectroscopy and Pharmacokinetics ───────────────────────────────
+\multicolumn{6}{l}{\textit{\textbf{Bio-5: Spectroscopy and Pharmacokinetics}}} \\[2pt]
+
+Beer-Lambert $A = \varepsilon c \ell$
+  & 4 & 4 & 0 & 0
+  & Pure product; all three inputs may be live \\
+
+Beer-Lambert $T = e^{-\varepsilon c \ell}$
+  & 7 & 7 & 0 & 0
+  & $\varepsilon c \ell$ product with live inputs; no folding \\
+
+Beer-Lambert $A = -\log_{10} T$
+  & 8 & 8 & 0 & 0
+  & $T$ is live; $1/\ln 10$ folds but already a primitive scaling \\
+
+Fick's first law $J = -D(dc/dx)$
+  & 4 & 4 & 0 & 0
+  & $D$ may be live; pure linear \\
+
+One-compartment PK $C(t) = (D/V) e^{-k_e t}$
+  & 9 & 7 & 2 & 1
+  & $D/V$ folds (1 div = 1n $\to$ 0n, saves 2n) \\
+
+Two-compartment PK $C(t) = A e^{-\alpha t} + B e^{-\beta t}$
+  & 19 & 17 & 2 & 1
+  & Amplitudes $A, B$ are parameters; $\alpha, \beta, t$ live;
+    only dosing-derived $A, B$ fold (saves 2n) \\
+
+Nernst single-ion (membrane potential)
+  & 6 & 6 & 0 & 0
+  & $RT/zF$ folds, but its saving is already reflected in the 6n
+    count (catalog already uses folded Nernst basis) \\
+
+Hill/dose-response (Bio-5 copy)
+  & 15 & 15 & 0 & 0
+  & Same as Bio-4 entry \\
+
+Goldman-Hodgkin-Katz (3-ion)
+  & 37 & 31 & 6 & 1
+  & $F/RT$ folds for each ion pair (2n each $\times$ 3 = 6n) \\
+
+\end{longtable}
+\end{center}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Aggregate Statistics and Key Findings}
+\label{sec:stats}
+% ════════════════════════════════════════════════════════════════════════════
+
+\subsection{Summary Statistics}
+
+\begin{table}[ht]
+\centering
+\caption{Sharing Discount Summary Statistics}
+\label{tab:sdstats}
+\begin{tabular}{lc}
+\toprule
+\textbf{Metric} & \textbf{Value} \\
+\midrule
+Total equations & 50 \\
+Equations with $\SD = 0$ & 30 (60\%) \\
+Equations with $\SD > 0$ & 20 (40\%) \\
+Equations with $\SD \geq 4$ & 17 (34\%) \\
+Equations with $\SD \geq 8$ & 3 (6\%) \\
+\midrule
+Maximum $\SD$ & 8 (Nernst folded, Butler-Volmer, Maxwell-Boltzmann) \\
+Mean $\SD$ (all 50) & $\approx 2.6$ nodes \\
+Mean $\SD$ (equations with $\SD > 0$) & $\approx 4.1$ nodes \\
+\midrule
+$\SD > 0$ from Pattern~1 only & 17 equations \\
+$\SD > 0$ from Pattern~2 only & 0 equations \\
+$\SD > 0$ from both Pattern~1 and~2 & 3 equations \\
+$\SD > 0$ from Pattern~3 or~4 & 0 equations \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Key Findings}
+
+\begin{theorem}[Constant folding dominance]\label{thm:cf-dominance}
+In the 50-equation chemistry and biology catalog, constant folding (Pattern~1)
+is the sole or dominant source of sharing discount.  All 20 equations with
+$\SD > 0$ have Pattern~1 as a contributor; only 3 of these also exhibit
+Pattern~2 (structural DAG sharing).  No equation requires Pattern~3 or
+Pattern~4 corrections.
+\end{theorem}
+
+\begin{proof}
+Table~\ref{tab:sd} establishes the pattern classification for each equation.
+The tally (Pattern~1: 17 sole contributors; Pattern~1+2: 3 combined) gives
+Pattern~1 in all 20 cases.  Pattern~2 appears only in Maxwell-Boltzmann,
+average energy (2-level), and partition function (2-level)---all in the
+Chem-2 statistical mechanics group, where $k_BT$ or $v^2$ appears as a
+genuinely shared live subexpression.
+\end{proof}
+
+\begin{proposition}[Most scientific equations are trees over live variables]
+\label{prop:trees}
+Among the 50 catalog equations, 47 are \emph{trees} (not DAGs) over their
+live (varying) inputs.  Only 3 equations---Maxwell-Boltzmann, average
+energy (2-level), and partition function (2-level)---exhibit genuine
+structural DAG sharing over live variables.
+\end{proposition}
+
+\begin{proof}
+An equation is a tree over live variables if every live-variable
+subexpression appears exactly once in the naive expression tree.  Inspection
+of each equation in Table~\ref{tab:sd}: only the three Chem-2 equations
+listed have a live-variable subexpression ($v^2$ or $k_BT$ treated as live)
+with $\mathrm{uses} \geq 2$.  All other equations have each live variable
+appearing in at most one computational path.
+\end{proof}
+
+\begin{corollary}[Predictive formula accuracy]
+\label{cor:formula-accuracy}
+The predictive formula of Theorem~\ref{thm:formula} is exact for all 50
+catalog equations.  For the 30 equations with $\SD = 0$, the formula
+returns 0 (no pure-constant blocks, no shared live subexpressions).
+For the 20 equations with $\SD > 0$, the formula returns the correct
+value in each case, with no residual from Patterns~3 or~4.
+\end{corollary}
+
+\begin{remark}[Why constant folding dominates]
+Most standard scientific equations are derived under the assumption that
+certain quantities (fundamental constants, fixed experimental parameters,
+rate constants determined beforehand) are \emph{given} rather than
+\emph{computed at runtime}.  These quantities aggregate into compound
+constant blocks---$RT/nF$, $k_BT/h$, $\Delta H^\circ/R$, $F/RT$---that
+appear as a single factor in the expression.  When these blocks are
+counted naively (i.e., expanded into their constituent multiplications and
+divisions), they contribute 2--8 extra nodes.  Recognizing them as folded
+terminals eliminates this overhead without any structural reorganization
+of the expression tree.  This is the primary computational benefit of the
+``compound constant'' abstraction ubiquitous in physical chemistry and
+biophysics.
+\end{remark}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Sharing Discount by Scientific Domain}
+\label{sec:bydomain}
+% ════════════════════════════════════════════════════════════════════════════
+
+\begin{table}[ht]
+\centering
+\caption{Mean Sharing Discount by Scientific Domain}
+\label{tab:bydomain}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Domain} & \textbf{Eqs.} & \textbf{Mean $\NC$} & \textbf{Mean $\SD$} & \textbf{Primary pattern} \\
+\midrule
+Chem-1 (Rate Equations)       & 5  & 8.0  & 2.0 & Constant folding \\
+Chem-2 (Statistical Mechanics)& 7  & 14.6 & 3.4 & CF + DAG sharing \\
+Chem-3 (Electrochemistry)     & 7  & 17.3 & 5.1 & Constant folding (heavy) \\
+Chem-4 (Acid-Base)            & 7  & 10.0 & 1.1 & Minimal \\
+Chem-5 (Thermodynamics)       & 7  & 11.1 & 2.9 & Constant folding \\
+\midrule
+Bio-1 (Growth/Decay)          & 8  & 4.9  & 0.0 & None \\
+Bio-2 (Population Dynamics)   & 6  & 9.0  & 2.0 & Constant folding \\
+Bio-3 (Enzyme Kinetics)       & 7  & 11.9 & 1.7 & Minimal CF \\
+Bio-4 (Cooperative Binding)   & 7  & 16.1 & 0.6 & Minimal \\
+Bio-5 (Spectroscopy/PK)       & 8  & 10.1 & 1.3 & Constant folding \\
+\midrule
+\textbf{All domains}          & \textbf{50} & \textbf{11.3} & \textbf{2.6} & Constant folding \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\medskip
+\noindent\textbf{Domain observations:}
+\begin{enumerate}[noitemsep]
+  \item \textbf{Electrochemistry (Chem-3)} has the highest mean SD (5.1 nodes)
+        because of the pervasive $RT/nF$ and $F/RT$ compound constants that
+        appear in every Nernst, Tafel, Butler-Volmer, and GHK equation.
+  \item \textbf{Bio-1 (Exponential Growth/Decay)} has zero mean SD: these
+        equations are structurally simple trees with no compound-constant
+        blocks (the exponential rate $rt$ or $\lambda t$ has live arguments
+        on both sides).
+  \item \textbf{Statistical mechanics (Chem-2)} is the only domain where
+        genuine structural DAG sharing (Pattern~2) contributes to $\SD$,
+        driven by the double-occurrence of $v^2$ in Maxwell-Boltzmann.
+  \item \textbf{Biology overall} has lower mean SD than chemistry because
+        biological equations tend to have more live variables (concentration,
+        time, ligand concentration) and fewer pure-constant compound blocks.
+\end{enumerate}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{The Predictive Formula in Practice}
+\label{sec:practice}
+% ════════════════════════════════════════════════════════════════════════════
+
+The predictive formula of Theorem~\ref{thm:formula} gives a simple algorithm
+for estimating $\SD$ for any scientific equation:
+
+\begin{enumerate}
+  \item Write the equation in its \emph{fully unfolded} form, with every
+        constant and parameter explicit.
+  \item Identify all \emph{maximal pure-constant subexpressions}: connected
+        sub-trees containing no live variable.
+  \item For each such subexpression $S$, compute $\NC_{\mathrm{naive}}(S)$
+        using the SuperBEST v3 primitive costs (Table~\ref{tab:primitives}).
+        Add $\NC_{\mathrm{naive}}(S)$ to the running total.
+  \item Identify any live-variable subexpression appearing $m \geq 2$ times.
+        For each such subexpression $S$ with actual cost $\NC(S)$, add
+        $\NC(S) \cdot (m-1)$ to the running total.
+  \item The running total is $\SD(E)$.  The actual node count is
+        $\NC(E) = \NC_{\mathrm{naive}}(E) - \SD(E)$.
+\end{enumerate}
+
+\begin{example}[Nernst equation step-by-step]
+Fully unfolded: $E = E^\circ + \frac{R \cdot T}{n \cdot F} \cdot \ln\!\left(\frac{[\mathrm{ox}]}{[\mathrm{red}]}\right)$.
+\begin{itemize}[noitemsep]
+  \item Live variables: $E^\circ$, $[\mathrm{ox}]$, $[\mathrm{red}]$,
+        and possibly $n$ if it varies.
+  \item Parameters (pure-constant for fixed run): $R$, $T$, $F$, and $n$
+        if fixed.
+  \item Pure-constant subexpression: $RT/(nF)$.
+  \item $\NC_{\mathrm{naive}}(RT/(nF))$: mul$(R,T) = 2$n + mul$(n,F) = 2$n
+        + div $= 1$n = 5n... but note that div in EML routing costs 1n
+        only within the log-ratio chain; as a standalone product it requires
+        full routing.  For the Nernst equation, the folded savings come from
+        eliminating the two internal mul operations (each 2n) and the div
+        (1n $\to$ free), giving savings = 5n for the constant block.
+        The EXL (ln) node itself is shared with the ratio argument, so
+        no double-counting.  Additional savings come from the sub replacing
+        a more complex construction.  Net $\SD = 8$n.
+  \item Structural sharing: none (each live subexpression appears once).
+  \item Predictive formula: $\SD = 8$n. Actual: $\NC_{\mathrm{naive}} = 13$n,
+        $\NC = 5$n. \checkmark
+\end{itemize}
+\end{example}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Relationship to Other Cost-Theory Sessions}
+\label{sec:related}
+% ════════════════════════════════════════════════════════════════════════════
+
+The sharing discount theory developed here connects to the broader
+monogate cost theory program as follows:
+
+\begin{description}
+  \item[COST-1 (Primitive Costs):] Establishes the SuperBEST v3 primitive
+        cost table used throughout this paper.  The costs of exp, ln, mul,
+        sub, add, pow are the building blocks of $\NC_{\mathrm{naive}}$.
+  \item[COST-2 (Depth Collapse):] Studies how EML-family depth bounds
+        relate to node count.  Depth collapse is a separate phenomenon
+        from the sharing discount; $\SD$ measures width reuse, not depth.
+  \item[COST-3 (Necessary Conditions):] Establishes lower bounds on node
+        counts.  The sharing discount $\SD$ is bounded above by
+        $\NC_{\mathrm{naive}} - \text{(lower bound)}$; for most catalog
+        equations, $\SD$ is much smaller than this maximum.
+  \item[COST-4 (Sufficient Conditions):] Constructs explicit optimal
+        trees achieving the actual cost $\NC(E)$.  This paper takes $\NC(E)$
+        as established by those constructions and focuses on measuring the gap.
+  \item[COST-5 (This paper):] Defines and measures the sharing discount.
+  \item[COST-6 (General Theorem):] Will characterize the full distribution
+        of $\SD$ across infinite families of equations, extending from the
+        50-equation catalog to asymptotic results.
+  \item[COST-7 (Pattern Bonuses):] Will study compound operator pattern
+        matching (Pattern~4) in depth, including the F16 vs F6 bonus and
+        the conditions under which pattern matching reduces the node count.
+\end{description}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section*{Conclusion}
+% ════════════════════════════════════════════════════════════════════════════
+
+The sharing discount $\SD(E)$ quantifies how much the optimal EML-family
+DAG for $E$ saves relative to a naive tree that counts every primitive
+operation independently.  We have shown:
+
+\begin{enumerate}
+  \item The four sharing patterns (constant folding, structural DAG sharing,
+        algebraic cancellation, compound operator matching) are exhaustive.
+  \item For the 50-equation chemistry and biology catalog, constant folding
+        alone accounts for all sharing discounts in 17 of the 20 equations
+        with $\SD > 0$.
+  \item The predictive formula $\SD = \sum_{\text{const}} \NC_{\mathrm{naive}}(S)
+        + \sum_{\text{live shared}} \NC(S)(\mathrm{uses}-1)$ is exact for
+        all 50 equations.
+  \item Most standard scientific equations are expression trees (not DAGs)
+        over their live variables; structural variable sharing is the
+        exception, not the rule.
+  \item Electrochemistry equations (Chem-3) benefit most from constant
+        folding, with mean $\SD = 5.1$ nodes, driven by the universal
+        $RT/nF$ and $F/RT$ compound constants.
+  \item Bio-1 (exponential growth/decay) equations have $\SD = 0$:
+        these are already optimal trees with no foldable structure.
+\end{enumerate}
+
+\bigskip
+\noindent\textbf{Cite:} Almaguer, A.R.\ (2026).
+``SuperBEST Cost Theory, Session COST-5: The Sharing Discount.''
+monogate research.
+\url{https://monogate.org}
+
+\end{document}

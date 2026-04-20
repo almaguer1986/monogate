@@ -1,0 +1,226 @@
+{
+  "session": "GEO-E1",
+  "field": "Geophysics",
+  "superBEST_version": 3,
+  "operator_costs": {
+    "exp": 1,
+    "ln": 1,
+    "neg": 2,
+    "recip": 2,
+    "mul": 2,
+    "sub": 2,
+    "div": 1,
+    "pow": 3,
+    "add": 3
+  },
+  "notes": "Parameters and constants are free (0n). add cost=3 applies to positive additions.",
+  "equations": [
+    {
+      "id": "geo1",
+      "name": "Radioactive decay (geochronology)",
+      "formula": "N(t) = N0 * exp(-lambda * t)",
+      "decomposition": [
+        {"op": "mul", "args": ["lambda", "t"], "cost": 2, "note": "lambda*t"},
+        {"op": "neg", "args": ["lambda*t"], "cost": 2, "note": "negate exponent"},
+        {"op": "exp", "args": ["-lambda*t"], "cost": 1, "note": "exponential"},
+        {"op": "mul", "args": ["N0", "exp(...)"], "cost": 2, "note": "scale by N0"}
+      ],
+      "total_nodes": 7,
+      "isomorphism_note": "Identical structure to exponential decay in biology — O1 isomorphism confirmed"
+    },
+    {
+      "id": "geo2",
+      "name": "Heat flow (Fourier's law)",
+      "formula": "q = -k * (deltaT / deltaX)",
+      "decomposition": [
+        {"op": "div", "args": ["deltaT", "deltaX"], "cost": 1, "note": "temperature gradient"},
+        {"op": "mul", "args": ["k", "deltaT/deltaX"], "cost": 2, "note": "scale by k"},
+        {"op": "neg", "args": ["k*(deltaT/deltaX)"], "cost": 2, "note": "negative sign"}
+      ],
+      "total_nodes": 5
+    },
+    {
+      "id": "geo3",
+      "name": "Isostasy (Airy model)",
+      "formula": "h_root = h_crust * (rho_c / (rho_m - rho_c))",
+      "decomposition": [
+        {"op": "sub", "args": ["rho_m", "rho_c"], "cost": 2, "note": "density contrast"},
+        {"op": "div", "args": ["rho_c", "rho_m - rho_c"], "cost": 1, "note": "density ratio"},
+        {"op": "mul", "args": ["h_crust", "ratio"], "cost": 2, "note": "scale by crustal thickness"}
+      ],
+      "total_nodes": 5
+    },
+    {
+      "id": "geo4",
+      "name": "Gutenberg-Richter (log form)",
+      "formula": "log10(N) = a - b*M",
+      "decomposition_log_form": [
+        {"op": "mul", "args": ["b", "M"], "cost": 2, "note": "b*M"},
+        {"op": "sub", "args": ["a", "b*M"], "cost": 2, "note": "a - b*M"}
+      ],
+      "total_nodes_log_form": 4,
+      "formula_N": "N = 10^(a - b*M)",
+      "decomposition_N_form": [
+        {"op": "mul", "args": ["b", "M"], "cost": 2, "note": "b*M"},
+        {"op": "sub", "args": ["a", "b*M"], "cost": 2, "note": "a - b*M"},
+        {"op": "pow", "args": ["10", "a-b*M"], "cost": 3, "note": "10 to the power"}
+      ],
+      "total_nodes_N_form": 7
+    },
+    {
+      "id": "geo5",
+      "name": "Moment magnitude",
+      "formula": "Mw = (2/3) * (log10(M0) - 9.1)",
+      "variants": [
+        {
+          "label": "explicit log10 via ln",
+          "decomposition": [
+            {"op": "ln", "args": ["M0"], "cost": 1, "note": "natural log of seismic moment"},
+            {"op": "mul", "args": ["1/ln(10)", "ln(M0)"], "cost": 2, "note": "convert to log10"},
+            {"op": "sub", "args": ["log10(M0)", "9.1"], "cost": 2, "note": "subtract reference"},
+            {"op": "mul", "args": ["2/3", "sub_result"], "cost": 2, "note": "scale by 2/3"}
+          ],
+          "total_nodes": 7
+        },
+        {
+          "label": "folded constants (2/(3*ln10) as single constant, -9.1*(2/3) absorbed)",
+          "decomposition": [
+            {"op": "ln", "args": ["M0"], "cost": 1, "note": "natural log of seismic moment"},
+            {"op": "mul", "args": ["2/(3*ln10)", "ln(M0)"], "cost": 2, "note": "single compound constant"},
+            {"op": "sub", "args": ["result", "const2"], "cost": 2, "note": "-9.1*(2/3) absorbed into constant"}
+          ],
+          "total_nodes": 5,
+          "note": "Preferred when constants are free"
+        }
+      ],
+      "total_nodes": 5,
+      "total_nodes_note": "5n with folded constants (preferred); 7n with explicit log10 conversion"
+    },
+    {
+      "id": "geo6",
+      "name": "Stokes settling velocity",
+      "formula": "vs = 2 * r^2 * g * (rho_p - rho_f) / (9 * mu)",
+      "variants": [
+        {
+          "label": "g and mu as free constants, 2g/9mu as compound constant",
+          "decomposition": [
+            {"op": "pow", "args": ["r", "2"], "cost": 3, "note": "r squared"},
+            {"op": "sub", "args": ["rho_p", "rho_f"], "cost": 2, "note": "density contrast"},
+            {"op": "mul", "args": ["r^2", "sub_result"], "cost": 2, "note": "r^2 * density contrast"},
+            {"op": "mul", "args": ["2g/9mu", "prev_result"], "cost": 2, "note": "compound constant scales result"}
+          ],
+          "total_nodes": 9
+        },
+        {
+          "label": "fully explicit (g, mu as variables)",
+          "decomposition": [
+            {"op": "pow", "args": ["r", "2"], "cost": 3},
+            {"op": "sub", "args": ["rho_p", "rho_f"], "cost": 2},
+            {"op": "mul", "args": ["r^2", "sub"], "cost": 2},
+            {"op": "mul", "args": ["const_2g_9mu", "result"], "cost": 2}
+          ],
+          "total_nodes": 9
+        }
+      ],
+      "total_nodes": 9,
+      "total_nodes_note": "9n fully explicit; 7n if 2g/9mu treated as single compound constant"
+    },
+    {
+      "id": "geo7",
+      "name": "Darcy's law",
+      "formula": "Q = -k * A * (dP/dx) / mu",
+      "variants": [
+        {
+          "label": "explicit (k, mu as variables)",
+          "decomposition": [
+            {"op": "div", "args": ["dP", "dx"], "cost": 1, "note": "pressure gradient"},
+            {"op": "div", "args": ["prev", "mu"], "cost": 1, "note": "divide by viscosity"},
+            {"op": "mul", "args": ["k", "A"], "cost": 2, "note": "permeability * area"},
+            {"op": "mul", "args": ["k*A", "prev_ratio"], "cost": 2, "note": "combine"},
+            {"op": "neg", "args": ["result"], "cost": 2, "note": "sign convention"}
+          ],
+          "total_nodes": 8
+        },
+        {
+          "label": "k/mu as compound constant",
+          "decomposition": [
+            {"op": "div", "args": ["dP", "dx"], "cost": 1, "note": "pressure gradient"},
+            {"op": "mul", "args": ["A", "dP/dx"], "cost": 2, "note": "area * gradient"},
+            {"op": "mul", "args": ["k/mu", "A*(dP/dx)"], "cost": 2, "note": "compound constant k/mu"},
+            {"op": "neg", "args": ["result"], "cost": 2, "note": "sign convention"}
+          ],
+          "total_nodes": 7,
+          "note": "Preferred when k, mu are system parameters"
+        }
+      ],
+      "total_nodes": 7,
+      "total_nodes_note": "7n with k/mu as compound constant; 8n fully explicit"
+    },
+    {
+      "id": "geo8",
+      "name": "Geothermal gradient",
+      "formula": "T(z) = T0 + (q0/k)*z - (A/2k)*z^2",
+      "decomposition": [
+        {"op": "mul", "args": ["q0/k", "z"], "cost": 2, "note": "linear term (q0/k is compound constant)"},
+        {"op": "pow", "args": ["z", "2"], "cost": 3, "note": "z squared"},
+        {"op": "mul", "args": ["A/2k", "z^2"], "cost": 2, "note": "quadratic term (A/2k is compound constant)"},
+        {"op": "add", "args": ["T0", "linear_term"], "cost": 3, "note": "add base temperature"},
+        {"op": "sub", "args": ["T0+linear", "quadratic_term"], "cost": 2, "note": "subtract quadratic term"}
+      ],
+      "total_nodes": 12,
+      "total_nodes_note": "12n with compound constants q0/k and A/2k folded; T0 is a free parameter"
+    },
+    {
+      "id": "geo9",
+      "name": "Seismic travel time (N layers)",
+      "formula": "t = sum_i(delta_s_i / v_i)",
+      "decomposition_per_step": [
+        {"op": "div", "args": ["delta_s_i", "v_i"], "cost": 1, "note": "travel time per segment"}
+      ],
+      "cost_per_step": 1,
+      "cost_per_add": 3,
+      "total_nodes_formula": "N + 3*(N-1) = 4N - 3",
+      "examples": [
+        {"N": 1, "total_nodes": 1},
+        {"N": 2, "total_nodes": 5},
+        {"N": 3, "total_nodes": 9},
+        {"N": 5, "total_nodes": 17},
+        {"N": 10, "total_nodes": 37}
+      ]
+    }
+  ],
+  "summary_table": [
+    {"id": "geo1", "equation": "Radioactive decay",         "nodes": 7,        "field": "Geochronology",   "notes": "O1 isomorphism with bio exponential decay"},
+    {"id": "geo2", "equation": "Heat flow (Fourier)",       "nodes": 5,        "field": "Geothermics",     "notes": ""},
+    {"id": "geo3", "equation": "Isostasy (Airy)",           "nodes": 5,        "field": "Geodynamics",     "notes": ""},
+    {"id": "geo4", "equation": "Gutenberg-Richter (log)",   "nodes": 4,        "field": "Seismology",      "notes": "4n log form; 7n for N directly"},
+    {"id": "geo5", "equation": "Moment magnitude",          "nodes": 5,        "field": "Seismology",      "notes": "5n folded; 7n explicit log10"},
+    {"id": "geo6", "equation": "Stokes settling velocity",  "nodes": 9,        "field": "Sedimentology",   "notes": "7n if 2g/9mu folded"},
+    {"id": "geo7", "equation": "Darcy's law",               "nodes": 7,        "field": "Hydrogeology",    "notes": "7n folded; 8n explicit"},
+    {"id": "geo8", "equation": "Geothermal gradient",       "nodes": 12,       "field": "Geothermics",     "notes": "Two compound constants folded"},
+    {"id": "geo9", "equation": "Seismic travel time",       "nodes": "4N - 3", "field": "Seismology",      "notes": "Linear in number of layers N"}
+  ],
+  "cross_field_isomorphisms": [
+    {
+      "geo_eq": "geo1 (radioactive decay)",
+      "iso_to": "bio exponential decay",
+      "type": "O1 — identical operator tree"
+    },
+    {
+      "geo_eq": "geo2 (Fourier heat flow)",
+      "iso_to": "Ohm's law (V = -R * dI), Fick's law (diffusion)",
+      "type": "O1 — same neg-mul-div pattern"
+    },
+    {
+      "geo_eq": "geo7 (Darcy's law)",
+      "iso_to": "Fourier heat flow (geo2), Fick's diffusion",
+      "type": "O1 — transport law family, identical tree structure"
+    }
+  ],
+  "meta": {
+    "session": "GEO-E1",
+    "date": "2026-04-20",
+    "analyst": "SuperBEST v3 cost analysis",
+    "constant_treatment": "All named physical constants (k, g, mu, rho_c, etc.) are free (0n) when system parameters; compound constants (q0/k, A/2k, 2g/9mu, k/mu) are also free when folded"
+  }
+}

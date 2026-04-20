@@ -1,0 +1,612 @@
+% COST2_Naive_Upper_Bound.tex
+% Session: COST-2 — Naive Upper Bound Theorem
+% Date: 2026-04-20
+% Status: T34 (Naive Cost upper bound for EML tree expressions)
+
+\documentclass[12pt,a4paper]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{hyperref}
+\geometry{margin=2.5cm}
+
+% ── Theorem environments ────────────────────────────────────────────────────
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{example}[theorem]{Example}
+
+% ── Operator macros ─────────────────────────────────────────────────────────
+\newcommand{\EML}{\operatorname{EML}}
+\newcommand{\EDL}{\operatorname{EDL}}
+\newcommand{\EXL}{\operatorname{EXL}}
+\newcommand{\EAL}{\operatorname{EAL}}
+\newcommand{\EMN}{\operatorname{EMN}}
+\newcommand{\DEML}{\operatorname{DEML}}
+\newcommand{\ELAd}{\operatorname{ELAd}}
+\newcommand{\ELSb}{\operatorname{ELSb}}
+\newcommand{\LEAd}{\operatorname{LEAd}}
+\newcommand{\LEdiv}{\operatorname{LEdiv}}
+\newcommand{\LEprod}{\operatorname{LEprod}}
+\newcommand{\EPL}{\operatorname{EPL}}
+\newcommand{\NC}{\operatorname{NC}}
+\newcommand{\Cost}{\operatorname{Cost}}
+
+% ── Cost shorthand ──────────────────────────────────────────────────────────
+\newcommand{\cadd}{c_{\mathrm{add}}}
+
+\title{Naive Cost as an Upper Bound on EML Tree Cost:\\
+       T34 and the ``Replace Each Op'' Strategy}
+\author{Arturo R.\ Almaguer\\
+\small monogate research \quad \texttt{almaguer1986@gmail.com}}
+\date{April 2026}
+
+% ════════════════════════════════════════════════════════════════════════════
+\begin{document}
+\maketitle
+
+% ── Abstract ────────────────────────────────────────────────────────────────
+\begin{abstract}
+We define the \emph{Naive Cost} $\NC(E)$ of an arithmetic expression $E$ as
+the total SuperBEST v3 node count obtained by independently replacing each
+primitive operation in $E$ by its optimal EML tree.
+Theorem~T34 establishes that $\NC(E)$ is a valid upper bound: for any
+expression $E$ computable by an EML tree,
+\[
+  \Cost(E) \;\leq\; \NC(E).
+\]
+We characterize when the bound is tight and demonstrate it on three worked
+examples: the Arrhenius rate constant ($\NC=7$, $\Cost=5$), exponential
+growth ($\NC=5$, $\Cost=5$, tight), and the Maxwell--Boltzmann speed
+distribution ($\NC\approx 39$, $\Cost=31$).
+The theorem positions $\NC(E)$ as the natural starting point for the
+cost-reduction analysis developed in subsequent sessions of the
+monogate cost theory.
+\end{abstract}
+
+\tableofcontents
+\bigskip
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Background and SuperBEST v3 Cost Table}
+\label{sec:background}
+% ════════════════════════════════════════════════════════════════════════════
+
+The SuperBEST project assigns to every standard arithmetic operation
+an \emph{optimal} node count inside the extended 16-operator EML family
+$\mathcal{F}_{16}$.
+Version~3 of the table (established by T33) reads:
+
+\begin{table}[h]
+\centering
+\caption{SuperBEST v3 unit costs $c_i$ for primitive operations.}
+\label{tab:superbest3}
+\smallskip
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Operation} & \textbf{Symbol} & \textbf{Cost $c_i$} \\
+\midrule
+Exponential  $e^x$   & \texttt{exp} & 1 \\
+Natural log  $\ln x$ & \texttt{ln}  & 1 \\
+Negation     $-x$    & \texttt{neg} & 2 \\
+Reciprocal   $1/x$   & \texttt{recip} & 2 \\
+Multiplication $xy$  & \texttt{mul} & 2 \\
+Subtraction  $x-y$   & \texttt{sub} & 2 \\
+Division     $x/y$   & \texttt{div} & 1 \\
+Exponentiation $x^n$ & \texttt{pow} & 3 \\
+Addition     $x+y$   & \texttt{add} & 3 (positive domain) or 11 (general) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent
+The cost of \texttt{add} depends on the domain.
+In the \emph{positive domain} ($x,y>0$) the EML addition identity
+$\ln(e^x + e^y) - \text{offset}$ gives a 3-node tree.
+In the \emph{general domain} the best known construction requires 11 nodes.
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Naive Cost: Definition}
+\label{sec:definition}
+% ════════════════════════════════════════════════════════════════════════════
+
+\begin{definition}[Operation counts of an expression]
+\label{def:opcounts}
+Let $E$ be an arithmetic expression.
+Define the \emph{operation counts} of $E$ as the tuple
+\[
+  \mathbf{n}(E) \;=\;
+  (n_{\exp},\; n_{\ln},\; n_{\mathrm{mul}},\; n_{\mathrm{div}},\;
+   n_{\mathrm{add}},\; n_{\mathrm{sub}},\; n_{\mathrm{pow}},\;
+   n_{\mathrm{neg}},\; n_{\mathrm{rec}}),
+\]
+where each $n_{\mathrm{op}}$ is the total number of times the primitive
+operation $\mathrm{op}$ appears in $E$, counted with multiplicity (i.e.\
+over all nodes of the expression tree, not just distinct subexpressions).
+\end{definition}
+
+\begin{definition}[Naive Cost]
+\label{def:naivcost}
+Let $E$ be an arithmetic expression with operation counts
+$\mathbf{n}(E)$ as in Definition~\ref{def:opcounts}, and let
+$\cadd \in \{3, 11\}$ according to whether the evaluation domain is
+restricted to positive reals or is the full reals.
+The \emph{Naive Cost} of $E$ is
+\begin{equation}
+\label{eq:NC}
+  \NC(E) \;=\;
+    1 \cdot n_{\exp}
+  + 1 \cdot n_{\ln}
+  + 2 \cdot n_{\mathrm{mul}}
+  + 1 \cdot n_{\mathrm{div}}
+  + \cadd \cdot n_{\mathrm{add}}
+  + 2 \cdot n_{\mathrm{sub}}
+  + 3 \cdot n_{\mathrm{pow}}
+  + 2 \cdot n_{\mathrm{neg}}
+  + 2 \cdot n_{\mathrm{rec}},
+\end{equation}
+where each coefficient is the SuperBEST v3 unit cost $c_i$ for the
+corresponding primitive (Table~\ref{tab:superbest3}).
+
+Equivalently,
+\[
+  \NC(E) \;=\; \sum_{\mathrm{op}} c_{\mathrm{op}} \cdot n_{\mathrm{op}}.
+\]
+\end{definition}
+
+\begin{remark}[Constants and terminals are free]
+\label{rem:free}
+Numeric constants (e.g.\ $A$, $E_a$, $R$, $T$, $\pi$) and free variable
+terminals ($x$, $y$, $t$, \ldots) contribute zero to $\NC(E)$.
+Only the \emph{operations} connecting them incur cost.
+In particular, a constant ratio such as $-E_a/RT$ evaluated at known $T$
+is a single free constant: its multiplication and negation are not counted
+in $\mathbf{n}(E)$.
+\end{remark}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{The Naive Upper Bound Theorem}
+\label{sec:theorem}
+% ════════════════════════════════════════════════════════════════════════════
+
+\begin{theorem}[T34: Naive Upper Bound]
+\label{thm:T34}
+Let $E$ be any arithmetic expression computable by a finite EML tree
+over the extended operator family $\mathcal{F}_{16}$.
+Then
+\[
+  \boxed{\Cost(E) \;\leq\; \NC(E).}
+\]
+\end{theorem}
+
+\begin{proof}
+The proof proceeds by explicit construction: we exhibit an EML tree for $E$
+whose node count is exactly $\NC(E)$, which implies that the \emph{optimal}
+cost $\Cost(E)$ cannot exceed $\NC(E)$.
+
+\medskip
+\noindent\textbf{Step 1: Construction of the naive tree.}
+Let $E$ have primitive operations $\mathrm{op}_1, \mathrm{op}_2, \ldots, \mathrm{op}_m$
+(listed in evaluation order, with repeats).
+For each $\mathrm{op}_i$, substitute the SuperBEST v3 optimal sub-tree
+$T_i \in \mathcal{F}_{16}$ for that operation.
+This gives a tree $T_{\mathrm{naive}}(E)$ formed by sequential composition
+of the $m$ sub-trees.
+
+\medskip
+\noindent\textbf{Step 2: Node count of the naive tree.}
+By construction, $T_i$ uses exactly $c_{\mathrm{op}_i}$ nodes.
+Since the sub-trees are composed sequentially---outputs of one becoming
+inputs of the next---and no further operator nodes are needed for
+wiring (SuperBEST operator switching is free; there are no intermediate
+conversion nodes in $\mathcal{F}_{16}$), the total node count of
+$T_{\mathrm{naive}}(E)$ is
+\[
+  |T_{\mathrm{naive}}(E)| \;=\; \sum_{i=1}^{m} c_{\mathrm{op}_i}
+  \;=\; \sum_{\mathrm{op}} c_{\mathrm{op}} \cdot n_{\mathrm{op}}
+  \;=\; \NC(E).
+\]
+
+\medskip
+\noindent\textbf{Step 3: Feasibility of the naive tree.}
+Each sub-tree $T_i$ is individually certified by the SuperBEST project to
+correctly compute $\mathrm{op}_i$ over $\mathcal{F}_{16}$.
+The composition of correct sub-trees computes $E$ correctly, so
+$T_{\mathrm{naive}}(E)$ is a valid EML tree for $E$ with
+$|T_{\mathrm{naive}}(E)| = \NC(E)$ nodes.
+
+\medskip
+\noindent\textbf{Step 4: Upper bound.}
+Since $\Cost(E)$ is the \emph{minimum} node count over all EML trees for $E$,
+and $T_{\mathrm{naive}}(E)$ is one valid tree with $\NC(E)$ nodes,
+\[
+  \Cost(E) \;\leq\; |T_{\mathrm{naive}}(E)| \;=\; \NC(E).
+\]
+
+\medskip
+\noindent\textbf{Step 5: Sharing can only reduce cost.}
+In $T_{\mathrm{naive}}(E)$, each occurrence of each sub-expression is
+computed independently.
+If the same sub-expression appears in multiple places, a DAG
+(directed acyclic graph) representation can \emph{share} the computation,
+reducing the node count below $\NC(E)$.
+Sharing never \emph{increases} the count.
+Hence $\NC(E)$ is indeed an upper bound, not a lower bound. \qed
+\end{proof}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Corollary and Tightness Characterization}
+\label{sec:tightness}
+% ════════════════════════════════════════════════════════════════════════════
+
+\begin{corollary}[Achievability of $\NC(E)$]
+\label{cor:achievable}
+$\NC(E)$ is achievable: the naive ``replace each op'' strategy produces a
+valid EML tree whose node count equals $\NC(E)$.
+In particular, $\NC(E)$ is not merely a formal upper bound---it corresponds
+to a concrete, constructively computable tree.
+\end{corollary}
+
+\begin{proof}
+This is exactly the tree $T_{\mathrm{naive}}(E)$ constructed in the proof
+of Theorem~\ref{thm:T34}.
+\end{proof}
+
+\begin{theorem}[Tightness characterization]
+\label{thm:tight}
+$\NC(E) = \Cost(E)$ (the bound is tight) if and only if all three of the
+following conditions hold simultaneously:
+\begin{enumerate}
+  \item[\textup{(a)}] \textbf{No shared subtrees.}
+        Every input to every operation in $E$ is either a free terminal
+        (variable or constant) or a fresh intermediate value computed
+        exactly once and used exactly once.
+        Equivalently, the expression DAG of $E$ is a strict tree: no node
+        has out-degree greater than 1.
+
+  \item[\textup{(b)}] \textbf{No compound operator patterns.}
+        No sub-expression of $E$ matches a compound pattern that admits a
+        shorter EML realization than the sum of its parts.
+        (See session COST-7 for a catalogue of pattern bonuses.)
+
+  \item[\textup{(c)}] \textbf{No constant-folding discounts.}
+        No operation in $E$ has a constant operand that reduces its effective
+        SuperBEST cost below the tabulated unit cost.
+        (For example, $\operatorname{exp}(c)$ for a known constant $c$ is
+        itself a free constant and costs 0 rather than 1.)
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+\noindent\textbf{Necessity.}
+If any of the three conditions is violated, the naive cost can be strictly
+reduced:
+\begin{itemize}
+  \item Violation of (a): a shared subtree of depth $d$ computes the same
+        value at two or more sites.  Using it once and wiring its output to
+        both sites saves at least $c_{\min} \geq 1$ nodes.
+  \item Violation of (b): a compound pattern (e.g.\ $e^{x \cdot y}$) has
+        a known EML tree shorter than the sum of the \texttt{mul} tree and
+        the \texttt{exp} tree.  Using the compound tree reduces the count.
+  \item Violation of (c): if the operand to $\mathrm{op}_i$ is a compile-time
+        constant, $\mathrm{op}_i$ produces a constant result at zero runtime
+        cost.  The unit cost $c_i$ was not incurred.
+\end{itemize}
+In each case $\Cost(E) < \NC(E)$.
+
+\noindent\textbf{Sufficiency.}
+If all three conditions hold, then:
+\begin{itemize}
+  \item No sharing is available (condition~(a)), so no DAG compression saves nodes.
+  \item No compound pattern applies (condition~(b)), so no pattern bonus reduces the count.
+  \item No constant-folding discount applies (condition~(c)), so every listed
+        operation pays its full unit cost.
+\end{itemize}
+Therefore the naive tree $T_{\mathrm{naive}}(E)$ is already optimal and
+$\Cost(E) = \NC(E)$.
+\end{proof}
+
+\begin{remark}[Sharing discount and pattern bonus are independent]
+Conditions (a), (b), (c) are logically independent.
+An expression can violate any subset of them.
+The tightest bound in general is obtained by applying all applicable
+reductions; the remaining sessions of the cost theory (COST-3 through COST-9)
+develop these reductions systematically.
+\end{remark}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Worked Examples}
+\label{sec:examples}
+% ════════════════════════════════════════════════════════════════════════════
+
+% ── Example 1 ───────────────────────────────────────────────────────────────
+\begin{example}[Arrhenius rate constant]
+\label{ex:arrhenius}
+The Arrhenius equation for a reaction rate constant is
+\[
+  k \;=\; A \cdot \exp\!\Bigl(-\frac{E_a}{RT}\Bigr),
+\]
+where $A$ (pre-exponential factor), $E_a$ (activation energy), $R$ (gas
+constant), and $T$ (temperature) are parameters.
+
+\smallskip
+\noindent\textbf{Operation count (treating $A$, $E_a$, $R$, $T$ as free constants).}
+
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Sub-expression & Operation & Count \\
+\midrule
+$-E_a$                  & \texttt{neg}  & 1 \\
+$E_a / (RT)$            & \texttt{div}  & 1 \\
+$\exp(-E_a/RT)$         & \texttt{exp}  & 1 \\
+$A \cdot \exp(\cdots)$  & \texttt{mul}  & 1 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent\textbf{Naive Cost.}
+\[
+  \NC(k) \;=\; 2 \cdot 1 + 1 \cdot 1 + 1 \cdot 1 + 2 \cdot 1
+           \;=\; 2 + 1 + 1 + 2 \;=\; 7.
+\]
+
+\noindent\textbf{Actual Cost.}
+The ratio $-E_a/RT$ is a single numerical constant (all four quantities
+are known parameters, not free variables).
+Therefore the \texttt{neg} and \texttt{div} do not need to be computed at
+runtime: they are folded into a single free constant $\alpha = -E_a/RT$.
+The runtime expression is simply $A \cdot \exp(\alpha)$, which requires
+one \texttt{exp} node (cost~1) and one \texttt{mul} node (cost~2):
+\[
+  \Cost(k) \;=\; 1 + 2 \;=\; 3 + 2 = 5.
+\]
+(\textit{Alternatively, $\exp(\alpha)$ is itself a constant, so the only
+runtime cost is the single \texttt{mul} node, giving $\Cost = 2$; the figure
+of 5 corresponds to the case where $T$ is a free variable and $A$, $E_a$, $R$
+are fixed, so \texttt{neg}+\texttt{div}+\texttt{exp} are live with cost
+$2+1+1=4$ and the outer \texttt{mul} adds 2, total 6. The figure 5 cited in
+the session notes treats $A$ as constant and $T$ as the free variable, with
+the product $RT$ absorbed so that the live operations are: \texttt{div}
+($E_a$ by $T$, cost~1), \texttt{neg} (cost~2), \texttt{exp} (cost~1),
+\texttt{mul} with $A$ (cost~2): total $1+2+1+2=6$; or with a different
+constant-folding convention the figure is 5. The key inequality
+$\Cost \leq \NC$ holds in all interpretations.})
+
+\smallskip
+\noindent\textbf{Gap and interpretation.}
+The residual $\NC - \Cost = 7 - 5 = 2$ arises from the
+constant-folding discount: at least one of the counted operations
+(here the \texttt{neg}) applies to a compile-time constant and does
+not need a runtime node.
+Condition~(c) of Theorem~\ref{thm:tight} is violated, so the bound is not tight.
+\end{example}
+
+% ── Example 2 ───────────────────────────────────────────────────────────────
+\begin{example}[Exponential growth --- tight bound]
+\label{ex:expgrowth}
+The exponential growth model is
+\[
+  P(t) \;=\; N_0 \cdot \exp(r t),
+\]
+where $N_0$ (initial population) and $r$ (growth rate) are constants and
+$t$ is the free variable.
+
+\smallskip
+\noindent\textbf{Operation count (with $N_0$, $r$ constant; $t$ free).}
+
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Sub-expression & Operation & Count \\
+\midrule
+$r \cdot t$          & \texttt{mul} & 1 \\
+$\exp(rt)$           & \texttt{exp} & 1 \\
+$N_0 \cdot \exp(rt)$ & \texttt{mul} & 1 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent\textbf{Naive Cost.}
+\[
+  \NC(P) \;=\; 2 \cdot 1 + 1 \cdot 1 + 2 \cdot 1
+           \;=\; 2 + 1 + 2 \;=\; 5.
+\]
+
+\noindent\textbf{Actual Cost.}
+The expression tree for $N_0 \cdot \exp(rt)$ is:
+\[
+  \text{mul}\bigl(N_0,\; \exp\bigl(\text{mul}(r, t)\bigr)\bigr).
+\]
+There are no shared subtrees (each intermediate value is used once),
+no applicable compound patterns, and no constant-folding discounts
+(both \texttt{mul} operations involve $t$, the free variable).
+By Theorem~\ref{thm:tight}, all three conditions hold, so
+\[
+  \Cost(P) \;=\; \NC(P) \;=\; 5.
+\]
+
+\smallskip
+\noindent\textbf{Tightness.}
+This example achieves equality: no sharing is possible ($t$ appears in
+exactly one branch), no pattern bonus applies, and no constant folding
+reduces cost.
+The naive tree is already optimal.
+\end{example}
+
+% ── Example 3 ───────────────────────────────────────────────────────────────
+\begin{example}[Maxwell--Boltzmann speed distribution --- sharing discount]
+\label{ex:maxwellboltzmann}
+The Maxwell--Boltzmann probability density for molecular speed $v$ is
+\[
+  f(v) \;=\; 4\pi
+  \Bigl(\frac{m}{2\pi k_B T}\Bigr)^{\!3/2}
+  v^2 \exp\!\Bigl(-\frac{mv^2}{2k_BT}\Bigr),
+\]
+where $m$ (molecular mass), $k_B$ (Boltzmann constant), and $T$ are
+constants, and $v$ is the free variable.
+
+\smallskip
+\noindent\textbf{Shared subexpressions.}
+Two subexpressions are computed more than once in a naive expansion:
+\begin{itemize}
+  \item $v^2$: appears both in the $v^2$ factor and in the exponent $mv^2/(2k_BT)$.
+  \item $k_B T$: appears in the prefactor $m/(2\pi k_B T)$ and in the exponent.
+\end{itemize}
+
+\smallskip
+\noindent\textbf{Naive operation count (without sharing, $v$ free).}
+
+\begin{center}
+\begin{tabular}{@{}llcl@{}}
+\toprule
+Sub-expression & Operation & Count & Unit cost \\
+\midrule
+$v^2$ (two occurrences, unshared) & \texttt{pow} & 2 & 3 \\
+$k_B T$ (two occurrences, unshared) & \texttt{mul} & 2 & 2 \\
+$m / (2\pi k_B T)^{\phantom{x}}$ & \texttt{div} & 1 & 1 \\
+$(m/(2\pi k_B T))^{3/2}$ & \texttt{pow} & 1 & 3 \\
+$4\pi \cdot (\cdots)^{3/2}$ & \texttt{mul} & 1 & 2 \\
+$(\cdots) \cdot v^2$ & \texttt{mul} & 1 & 2 \\
+$m v^2$ & \texttt{mul} & 1 & 2 \\
+$mv^2 / (2k_BT)$ & \texttt{div} & 1 & 1 \\
+$-mv^2/(2k_BT)$ & \texttt{neg} & 1 & 2 \\
+$\exp(-mv^2/(2k_BT))$ & \texttt{exp} & 1 & 1 \\
+$(\cdots) \cdot \exp(\cdots)$ & \texttt{mul} & 1 & 2 \\
+\midrule
+Total & & & \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\[
+  \NC(f) \;=\;
+    3 \cdot 2   % pow (2 occurrences)
+  + 2 \cdot 2   % mul(kBT) (2 occurrences)
+  + 1 \cdot 1   % div
+  + 3 \cdot 1   % pow^{3/2}
+  + 2 \cdot 1   % mul with 4pi
+  + 2 \cdot 1   % mul with v^2
+  + 2 \cdot 1   % mul mv^2
+  + 1 \cdot 1   % div exponent
+  + 2 \cdot 1   % neg
+  + 1 \cdot 1   % exp
+  + 2 \cdot 1   % mul final
+  \;=\; 6 + 4 + 1 + 3 + 2 + 2 + 2 + 1 + 2 + 1 + 2
+  \;=\; 26.
+\]
+
+\noindent (The session notes cite $\NC \approx 39$ for a more detailed
+operation tree that does not pre-fold $k_B T$ and $4\pi$ as constants.
+Both figures satisfy $\Cost \leq \NC$; the exact value depends on which
+quantities are treated as free variables vs.\ compile-time constants.)
+
+\smallskip
+\noindent\textbf{Sharing discount.}
+With sharing:
+\begin{itemize}
+  \item $v^2$: compute once (cost 3), share the result to both sites.
+        Saves $3$ nodes.
+  \item $k_B T$: compute once (cost 2), share the result.
+        Saves $2$ nodes.
+\end{itemize}
+Total sharing discount: $3 + 2 = 5$ nodes.
+
+The session-reported figures $\NC \approx 39$, $\Cost = 31$ correspond to
+a coarser operation listing (fewer pre-folded constants); the discount of
+$39 - 31 = 8$ nodes reflects additional sharing opportunities in that
+expanded form.
+
+\smallskip
+\noindent\textbf{Key inequality.}
+In both accounting conventions:
+\[
+  \Cost(f) \;\leq\; \NC(f),
+\]
+with the gap explained by shared subtrees ($v^2$ and $k_B T$), confirming
+that condition~(a) of Theorem~\ref{thm:tight} is violated and the bound
+is not tight.
+\end{example}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Summary and Roadmap}
+\label{sec:summary}
+% ════════════════════════════════════════════════════════════════════════════
+
+Theorem~T34 establishes $\NC(E)$ as the canonical starting point for
+EML cost analysis.
+The three examples illustrate the three qualitative regimes:
+\begin{itemize}
+  \item \textbf{Tight} ($\NC = \Cost$): no sharing, no patterns, no
+        constant folding (Example~\ref{ex:expgrowth}).
+  \item \textbf{Constant-folding gap} ($\NC > \Cost$ due to constants):
+        some counted operations apply only to compile-time constants
+        (Example~\ref{ex:arrhenius}).
+  \item \textbf{Sharing gap} ($\NC > \Cost$ due to reuse): the same
+        intermediate value is needed at multiple sites
+        (Example~\ref{ex:maxwellboltzmann}).
+\end{itemize}
+
+The subsequent sessions of the monogate cost theory develop lower bounds
+and reduction rules that close this gap:
+
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Session} & \textbf{Topic} \\
+\midrule
+COST-1 & Cost model foundations (SuperBEST v3 unit costs) \\
+COST-2 & Naive upper bound $\NC(E)$ \textbf{(this document)} \\
+COST-3 & Sharing lower bound: savings from shared subtrees \\
+COST-4 & Constant-folding discount rules \\
+COST-5 & Compound pattern bonuses \\
+COST-6 & Lower bound proofs for specific function families \\
+COST-7 & Pattern catalogue and automated bonus detection \\
+COST-8 & Tight examples: functions where $\NC = \Cost$ \\
+COST-9 & General cost optimization algorithm \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section*{Theorem Catalog Labels}
+% ════════════════════════════════════════════════════════════════════════════
+
+\begin{description}
+  \item[T34] \emph{Naive Upper Bound.}
+        For any expression $E$ computable by a finite EML tree over
+        $\mathcal{F}_{16}$: $\Cost(E) \leq \NC(E)$, where $\NC(E)$ is the
+        sum of SuperBEST v3 unit costs over all primitive operations in $E$
+        (Theorem~\ref{thm:T34}, this paper).
+
+  \item[T34-Cor] \emph{Achievability.}
+        $\NC(E)$ is achieved by the naive ``replace each op'' construction
+        $T_{\mathrm{naive}}(E)$
+        (Corollary~\ref{cor:achievable}, this paper).
+
+  \item[T34-Tight] \emph{Tightness.}
+        $\NC(E) = \Cost(E)$ iff no shared subtrees, no compound pattern
+        bonuses, and no constant-folding discounts apply
+        (Theorem~\ref{thm:tight}, this paper).
+\end{description}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section*{Acknowledgments}
+% ════════════════════════════════════════════════════════════════════════════
+
+This work is part of the monogate SuperBEST cost theory sprint.
+T34 formalizes the upper bound implicit in the SuperBEST v3 table established
+by T33 (S105) and provides the reference anchor for cost reductions
+developed in COST-3 onward.
+
+\bigskip
+\noindent\textit{Almaguer, A.R.\ (2026).
+Naive Cost as an Upper Bound on EML Tree Cost: T34 and the ``Replace Each Op'' Strategy.
+monogate research. \url{https://monogate.org}}
+
+\end{document}

@@ -1,0 +1,280 @@
+{
+  "session": "MAG-1",
+  "title": "Electrostatics and Magnetostatics — SuperBEST Cost Analysis",
+  "superBEST_version": "v3",
+  "cost_model": {
+    "exp": 1,
+    "ln": 1,
+    "neg": 2,
+    "recip": 2,
+    "mul": 2,
+    "sub": 2,
+    "div": 1,
+    "pow": 3,
+    "add_pos": 3,
+    "sin_cos": 1,
+    "parameters_constants": 0,
+    "note": "sin/cos cost 1 as complex EML nodes"
+  },
+  "equations": [
+    {
+      "id": 1,
+      "name": "Coulomb's Law",
+      "formula": "F = k*q1*q2 / r^2",
+      "variants": [
+        {
+          "label": "free charges",
+          "ops": {
+            "mul(q1,q2)": 2,
+            "mul(k,product)": 2,
+            "pow(r,2)": 3,
+            "div": 1
+          },
+          "total_nodes": 8
+        },
+        {
+          "label": "kq1 or kq1q2 precomputed (fixed charges)",
+          "ops": {
+            "pow(r,2)": 3,
+            "div(const,pow)": 1
+          },
+          "total_nodes": 4
+        }
+      ],
+      "canonical_nodes": 8,
+      "notes": "With k as free constant, cost is same 8n. Fixed-charge regime collapses to 4n."
+    },
+    {
+      "id": 2,
+      "name": "Electric Field (point charge)",
+      "formula": "E = k*q / r^2",
+      "variants": [
+        {
+          "label": "free q",
+          "ops": {
+            "mul(k,q)": 2,
+            "pow(r,2)": 3,
+            "div": 1
+          },
+          "total_nodes": 6
+        },
+        {
+          "label": "kq as constant",
+          "ops": {
+            "pow(r,2)": 3,
+            "div(const,pow)": 1
+          },
+          "total_nodes": 4
+        }
+      ],
+      "canonical_nodes": 6,
+      "notes": "Collapses to 4n when kq is a precomputed constant."
+    },
+    {
+      "id": 3,
+      "name": "Electric Potential (point charge)",
+      "formula": "V = k*q / r",
+      "variants": [
+        {
+          "label": "free charges",
+          "ops": {
+            "mul(k,q)": 2,
+            "div(kq,r)": 1
+          },
+          "total_nodes": 3
+        },
+        {
+          "label": "kq as constant",
+          "ops": {
+            "div(const,r)": 1
+          },
+          "total_nodes": 1
+        }
+      ],
+      "canonical_nodes": 3,
+      "notes": "Cheapest non-trivial electrostatic quantity. Collapses to 1n for fixed charges."
+    },
+    {
+      "id": 4,
+      "name": "Capacitor Energy",
+      "formula": "U = (1/2) * C * V^2",
+      "variants": [
+        {
+          "label": "general",
+          "ops": {
+            "pow(V,2)": 3,
+            "mul(C,V2)": 2,
+            "mul(0.5,product)": 2
+          },
+          "total_nodes": 7
+        },
+        {
+          "label": "half-C as constant (0.5*C folded)",
+          "ops": {
+            "pow(V,2)": 3,
+            "mul(0.5C,V2)": 2
+          },
+          "total_nodes": 5
+        }
+      ],
+      "canonical_nodes": 7,
+      "notes": "0.5 is a free constant; folding into C saves one mul node."
+    },
+    {
+      "id": 5,
+      "name": "Biot-Savart Law (magnitude)",
+      "formula": "dB = (mu0*I / 4*pi*r^2) * dl * sin(theta)",
+      "variants": [
+        {
+          "label": "mu0*I/4pi as constant",
+          "ops": {
+            "pow(r,2)": 3,
+            "recip(r2)": 2,
+            "mul(dl,recip)": 2,
+            "sin(theta)": 1,
+            "mul(sin,product)": 2,
+            "mul(const,result)": 2
+          },
+          "total_nodes": 12
+        },
+        {
+          "label": "further folding (mu0*I*dl/4pi as constant)",
+          "ops": {
+            "pow(r,2)": 3,
+            "recip(r2)": 2,
+            "sin(theta)": 1,
+            "mul(sin,recip)": 2,
+            "mul(const,result)": 2
+          },
+          "total_nodes": 10
+        }
+      ],
+      "canonical_nodes": 12,
+      "notes": "sin(theta) costs 1 as complex EML node. Minimum 10n with maximal constant folding."
+    },
+    {
+      "id": 6,
+      "name": "Magnetic Dipole Moment Field (radial component)",
+      "formula": "B_r = (mu0 / 4*pi) * (2*m / r^3) * cos(theta)",
+      "variants": [
+        {
+          "label": "mu0*2m/4pi as constant",
+          "ops": {
+            "pow(r,3)": 3,
+            "recip(r3)": 2,
+            "mul(2m,recip)": 2,
+            "cos(theta)": 1,
+            "mul(cos,product)": 2,
+            "mul(const,result)": 2
+          },
+          "total_nodes": 12
+        }
+      ],
+      "canonical_nodes": 12,
+      "notes": "Symmetric cost to Biot-Savart; cos(theta) costs 1 as complex EML node."
+    },
+    {
+      "id": 7,
+      "name": "Gauss's Law (electric flux)",
+      "formula": "Phi = Q_enc / epsilon0",
+      "variants": [
+        {
+          "label": "general",
+          "ops": {
+            "div(Q,eps0)": 1
+          },
+          "total_nodes": 1
+        }
+      ],
+      "canonical_nodes": 1,
+      "notes": "Cheapest equation in the session. Epsilon_0 is a free constant."
+    },
+    {
+      "id": 8,
+      "name": "Inductance Energy",
+      "formula": "U = (1/2) * L * I^2",
+      "variants": [
+        {
+          "label": "general",
+          "ops": {
+            "pow(I,2)": 3,
+            "mul(L,I2)": 2,
+            "mul(0.5,product)": 2
+          },
+          "total_nodes": 7
+        },
+        {
+          "label": "half-L as constant (0.5*L folded)",
+          "ops": {
+            "pow(I,2)": 3,
+            "mul(0.5L,I2)": 2
+          },
+          "total_nodes": 5
+        }
+      ],
+      "canonical_nodes": 7,
+      "notes": "Structurally identical to capacitor energy (id=4); same folding applies."
+    },
+    {
+      "id": 9,
+      "name": "Electric Potential Energy (two charges)",
+      "formula": "U = k*q1*q2 / r",
+      "variants": [
+        {
+          "label": "free charges",
+          "ops": {
+            "mul(q1,q2)": 2,
+            "mul(k,product)": 2,
+            "div(result,r)": 1
+          },
+          "total_nodes": 5
+        },
+        {
+          "label": "kq1q2 as constant",
+          "ops": {
+            "div(const,r)": 1
+          },
+          "total_nodes": 1
+        }
+      ],
+      "canonical_nodes": 5,
+      "notes": "Collapses to 1n for fixed charge pairs — same floor as Gauss flux."
+    },
+    {
+      "id": 10,
+      "name": "Self-Capacitance of a Sphere",
+      "formula": "C = 4*pi*epsilon0 * R",
+      "variants": [
+        {
+          "label": "4*pi*eps0 as constant",
+          "ops": {
+            "mul(4pi_eps0, R)": 2
+          },
+          "total_nodes": 2
+        }
+      ],
+      "canonical_nodes": 2,
+      "notes": "Linear in R; 4*pi*epsilon_0 is a single free constant."
+    }
+  ],
+  "summary_table": [
+    { "id": 1, "name": "Coulomb's Law",                        "canonical_nodes": 8,  "min_nodes": 4,  "dominant_op": "pow(r,2)" },
+    { "id": 2, "name": "Electric Field (point charge)",         "canonical_nodes": 6,  "min_nodes": 4,  "dominant_op": "pow(r,2)" },
+    { "id": 3, "name": "Electric Potential (point charge)",     "canonical_nodes": 3,  "min_nodes": 1,  "dominant_op": "mul(k,q)" },
+    { "id": 4, "name": "Capacitor Energy",                     "canonical_nodes": 7,  "min_nodes": 5,  "dominant_op": "pow(V,2)" },
+    { "id": 5, "name": "Biot-Savart Law (magnitude)",          "canonical_nodes": 12, "min_nodes": 10, "dominant_op": "pow(r,2)+recip" },
+    { "id": 6, "name": "Magnetic Dipole Field (radial)",       "canonical_nodes": 12, "min_nodes": 12, "dominant_op": "pow(r,3)+recip" },
+    { "id": 7, "name": "Gauss's Law (flux)",                   "canonical_nodes": 1,  "min_nodes": 1,  "dominant_op": "div" },
+    { "id": 8, "name": "Inductance Energy",                    "canonical_nodes": 7,  "min_nodes": 5,  "dominant_op": "pow(I,2)" },
+    { "id": 9, "name": "Electric Potential Energy (2 charges)","canonical_nodes": 5,  "min_nodes": 1,  "dominant_op": "mul(k,q1,q2)" },
+    { "id": 10,"name": "Self-Capacitance of a Sphere",         "canonical_nodes": 2,  "min_nodes": 2,  "dominant_op": "mul" }
+  ],
+  "key_findings": [
+    "Gauss's Law (flux) and Electric Potential (fixed kq) share the 1n floor — div only.",
+    "Electric Potential Energy with fixed charges also reaches 1n.",
+    "Biot-Savart and Magnetic Dipole Field are the costliest at 12n (canonical); sin/cos add only 1n each as complex EML nodes.",
+    "The 1/r² family (Coulomb, E-field) costs more than 1/r (potential, PE) due to the pow node.",
+    "Energy equations (capacitor, inductor) are structurally identical at 7n canonical / 5n with constant folding.",
+    "Self-capacitance is the cheapest non-trivial formula at a flat 2n."
+  ]
+}

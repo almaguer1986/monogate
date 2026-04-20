@@ -1,0 +1,293 @@
+{
+  "session": "NEURO-1",
+  "title": "Membrane Electrophysiology — SuperBEST v3 Cost Analysis",
+  "superBEST_version": "v3",
+  "cost_model": {
+    "exp": 1,
+    "ln": 1,
+    "neg": 2,
+    "recip": 2,
+    "mul": 2,
+    "sub": 2,
+    "div": 1,
+    "pow": 3,
+    "add_positive_domain": 3,
+    "add_general_domain": 11,
+    "sin_cos": "1 complex EML node",
+    "sgn": "EML-infinity (not elementary)",
+    "constants_parameters": "free"
+  },
+  "equations": [
+    {
+      "id": "HH-1",
+      "name": "Hodgkin-Huxley total current",
+      "equation": "I = gNa·m³·h·(V−ENa) + gK·n⁴·(V−EK) + gL·(V−EL)",
+      "domain": "general",
+      "total_nodes": 30,
+      "breakdown": {
+        "Na_channel_term": {
+          "expression": "gNa·m³·h·(V−ENa)",
+          "nodes": 11,
+          "steps": [
+            {"op": "pow(m, 3)", "cost": 3},
+            {"op": "mul(gNa, m³)", "cost": 2},
+            {"op": "mul(result, h)", "cost": 2},
+            {"op": "sub(V, ENa)", "cost": 2},
+            {"op": "mul(result, sub)", "cost": 2}
+          ]
+        },
+        "K_channel_term": {
+          "expression": "gK·n⁴·(V−EK)",
+          "nodes": 9,
+          "steps": [
+            {"op": "pow(n, 4)", "cost": 3},
+            {"op": "mul(gK, n⁴)", "cost": 2},
+            {"op": "sub(V, EK)", "cost": 2},
+            {"op": "mul(result, sub)", "cost": 2}
+          ]
+        },
+        "leak_term": {
+          "expression": "gL·(V−EL)",
+          "nodes": 4,
+          "steps": [
+            {"op": "sub(V, EL)", "cost": 2},
+            {"op": "mul(gL, sub)", "cost": 2}
+          ]
+        },
+        "summation": {
+          "expression": "Na_term + K_term + leak_term",
+          "nodes": 6,
+          "steps": [
+            {"op": "add(Na_term, K_term)", "cost": 3},
+            {"op": "add(result, leak_term)", "cost": 3}
+          ],
+          "note": "add uses positive-domain cost=3 here since conductance terms are non-negative"
+        }
+      },
+      "notes": "Most important computation in neuroscience. Na: 11n, K: 9n, Leak: 4n, Summation: 6n."
+    },
+    {
+      "id": "HH-2",
+      "name": "HH gating variable αm(V)",
+      "equation": "αm(V) = 0.1·(V+40) / (1 − exp(−(V+40)/10))",
+      "domain": "general",
+      "total_nodes": 20,
+      "breakdown": {
+        "numerator_and_exp_arg": {
+          "nodes": 7,
+          "steps": [
+            {"op": "add(V, 40)", "cost": 11, "note": "general domain: V can be negative"},
+            {"op": "div(add_result, 10)", "cost": 1},
+            {"op": "neg(div_result)", "cost": 2},
+            {"op": "exp(neg_result)", "cost": 1}
+          ],
+          "note": "add(V,40) costs 11n in general domain"
+        },
+        "denominator_and_assembly": {
+          "nodes": 5,
+          "steps": [
+            {"op": "sub(1, exp_result)", "cost": 2},
+            {"op": "div(add_result, sub_result)", "cost": 1},
+            {"op": "mul(0.1, ratio)", "cost": 2}
+          ]
+        }
+      },
+      "notes": "add(V,40) uses 11n in general domain since V can be negative. Total: 11+1+2+1+2+1+2 = 20n."
+    },
+    {
+      "id": "HH-3",
+      "name": "HH gating variable βm(V)",
+      "equation": "βm(V) = 4·exp(−(V+65)/18)",
+      "domain_variants": {
+        "general_domain": {
+          "total_nodes": 17,
+          "steps": [
+            {"op": "add(V, 65)", "cost": 11, "note": "general domain"},
+            {"op": "div(add_result, 18)", "cost": 1},
+            {"op": "neg(div_result)", "cost": 2},
+            {"op": "exp(neg_result)", "cost": 1},
+            {"op": "mul(4, exp_result)", "cost": 2}
+          ]
+        },
+        "positive_domain": {
+          "total_nodes": 9,
+          "steps": [
+            {"op": "add(V, 65)", "cost": 3, "note": "positive domain (V+65 > 0 for physiological V)"},
+            {"op": "div(add_result, 18)", "cost": 1},
+            {"op": "neg(div_result)", "cost": 2},
+            {"op": "exp(neg_result)", "cost": 1},
+            {"op": "mul(4, exp_result)", "cost": 2}
+          ]
+        }
+      }
+    },
+    {
+      "id": "HH-4",
+      "name": "Full dm/dt",
+      "equation": "dm/dt = αm(V)·(1−m) − βm(V)·m",
+      "domain": "general",
+      "total_nodes": 29,
+      "breakdown": {
+        "gate_dynamics": {
+          "nodes": 8,
+          "steps": [
+            {"op": "sub(1, m)", "cost": 2},
+            {"op": "mul(αm, sub_result)", "cost": 2},
+            {"op": "mul(βm, m)", "cost": 2},
+            {"op": "sub(first_product, second_product)", "cost": 2}
+          ]
+        },
+        "cost_alpham": 12,
+        "cost_betam": 9,
+        "note": "βm uses positive-domain add (V+65 > 0 physiologically). Total: 8 + 12 + 9 = 29n."
+      }
+    },
+    {
+      "id": "GHK-1",
+      "name": "Goldman-Hodgkin-Katz equation (2-ion)",
+      "equation": "Vm = (RT/F)·ln((PK·[K]o + PNa·[Na]o) / (PK·[K]i + PNa·[Na]i))",
+      "domain": "positive (concentrations > 0)",
+      "total_nodes": 18,
+      "breakdown": {
+        "numerator": {
+          "nodes": 7,
+          "steps": [
+            {"op": "mul(PK, [K]o)", "cost": 2},
+            {"op": "mul(PNa, [Na]o)", "cost": 2},
+            {"op": "add(results)", "cost": 3, "note": "positive domain: concentrations > 0"}
+          ]
+        },
+        "denominator": {
+          "nodes": 7,
+          "steps": [
+            {"op": "mul(PK, [K]i)", "cost": 2},
+            {"op": "mul(PNa, [Na]i)", "cost": 2},
+            {"op": "add(results)", "cost": 3, "note": "positive domain"}
+          ]
+        },
+        "final_assembly": {
+          "nodes": 4,
+          "steps": [
+            {"op": "div(numerator, denominator)", "cost": 1},
+            {"op": "ln(div_result)", "cost": 1},
+            {"op": "mul(RT/F, ln_result)", "cost": 2}
+          ]
+        }
+      },
+      "notes": "Positive-domain add (cost=3) valid since ionic concentrations are strictly positive."
+    },
+    {
+      "id": "CABLE-1",
+      "name": "Cable equation (steady-state spatial + temporal decay)",
+      "equation": "V(x,t) = V₀·exp(−x/λ)·exp(−t/τ)",
+      "domain": "positive (x, t, λ, τ > 0)",
+      "total_nodes": 12,
+      "breakdown": {
+        "spatial_decay": {
+          "nodes": 4,
+          "steps": [
+            {"op": "div(x, λ)", "cost": 1},
+            {"op": "neg(result)", "cost": 2},
+            {"op": "exp(neg_result)", "cost": 1}
+          ]
+        },
+        "temporal_decay": {
+          "nodes": 4,
+          "steps": [
+            {"op": "div(t, τ)", "cost": 1},
+            {"op": "neg(result)", "cost": 2},
+            {"op": "exp(neg_result)", "cost": 1}
+          ]
+        },
+        "assembly": {
+          "nodes": 4,
+          "steps": [
+            {"op": "mul(V0, exp_spatial)", "cost": 2},
+            {"op": "mul(result, exp_temporal)", "cost": 2}
+          ]
+        }
+      },
+      "notes": "If λ and τ are parameters (free), div costs 1n each. Alternative via recip: neg(recip(λ))·x costs 2+2=4n per term — same total."
+    },
+    {
+      "id": "SYN-1",
+      "name": "Synaptic alpha function",
+      "equation": "I(t) = gmax·(t/τ)·exp(1 − t/τ)",
+      "domain": "positive (t, τ > 0)",
+      "total_nodes": 8,
+      "breakdown": {
+        "steps": [
+          {"op": "div(t, τ)", "cost": 1},
+          {"op": "sub(1, div_result)", "cost": 2},
+          {"op": "exp(sub_result)", "cost": 1},
+          {"op": "mul(div_result, exp_result)", "cost": 2},
+          {"op": "mul(gmax, product)", "cost": 2}
+        ]
+      },
+      "notes": "div(t,τ) reused in both sub and final mul — no extra cost for reuse."
+    }
+  ],
+  "summary_table": [
+    {
+      "id": "HH-1",
+      "equation": "HH total current I",
+      "domain": "general",
+      "nodes": 30,
+      "notes": "Na(11) + K(9) + Leak(4) + Sum(6)"
+    },
+    {
+      "id": "HH-2",
+      "equation": "αm(V) rate constant",
+      "domain": "general",
+      "nodes": 20,
+      "notes": "add(V,40) = 11n in general domain"
+    },
+    {
+      "id": "HH-3a",
+      "equation": "βm(V) rate constant",
+      "domain": "general",
+      "nodes": 17,
+      "notes": "add(V,65) = 11n in general domain"
+    },
+    {
+      "id": "HH-3b",
+      "equation": "βm(V) rate constant",
+      "domain": "positive (V+65>0)",
+      "nodes": 9,
+      "notes": "add(V,65) = 3n when V+65 strictly positive"
+    },
+    {
+      "id": "HH-4",
+      "equation": "dm/dt full gate dynamics",
+      "domain": "general",
+      "nodes": 29,
+      "notes": "αm(12) + βm_pos(9) + dynamics(8)"
+    },
+    {
+      "id": "GHK-1",
+      "equation": "Goldman-Hodgkin-Katz Vm (2-ion)",
+      "domain": "positive",
+      "nodes": 18,
+      "notes": "Num(7) + Den(7) + Assembly(4)"
+    },
+    {
+      "id": "CABLE-1",
+      "equation": "Cable equation V(x,t)",
+      "domain": "positive",
+      "nodes": 12,
+      "notes": "Spatial(4) + Temporal(4) + Mul(4)"
+    },
+    {
+      "id": "SYN-1",
+      "equation": "Synaptic alpha function I(t)",
+      "domain": "positive",
+      "nodes": 8,
+      "notes": "div reuse saves one node"
+    }
+  ],
+  "metadata": {
+    "date": "2026-04-20",
+    "analyst": "monogate SuperBEST cost analysis pipeline",
+    "encoding": "utf-8"
+  }
+}

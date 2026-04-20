@@ -36,6 +36,8 @@ const posts = [
   { href: '/blog/tan1-obstruction', title: 'Why tan(1) Controls Everything', tag: 'theorem', date: '2026-04-20', desc: 'A single transcendence fact about tan(1) is the root cause behind three separate EML results: the multiplication lower bound, the depth-3 ceiling, and the complex density behavior.' },
   { href: '/blog/conditional-tan1', title: 'What If tan(1) Were Constructible?', tag: 'conjecture', date: '2026-04-20', desc: 'A thought experiment: if tan(1) could be built from EML trees, the conditional chain reaches i, π, and collapses the depth hierarchy. Connected to Schanuel\'s conjecture.' },
   { href: '/blog/chembio-costs', title: 'SuperBEST Node Costs: Chemistry and Biology', tag: 'observation', date: '2026-04-20', desc: 'How many operator nodes does it take to compute 50 standard equations from chemistry and biology? A systematic analysis using the SuperBEST v3 routing table.' },
+  { href: '/blog/cost-theory', title: 'Predicting SuperBEST Cost from Equation Structure', tag: 'theorem', date: '2026-04-20', desc: 'Cost(E) = NaiveCost(E) − SharingDiscount(E) − PatternBonus(E). T38 decomposition theorem, four structural classes (A/B/C/D), and the Linear Ceiling Conjecture: no standard equation exceeds O(N).' },
+  { href: '/blog/157-equations', title: '157 Equations: The SuperBEST Cost of Science', tag: 'observation', date: '2026-04-20', desc: '157 standard equations from 7 domains — astrophysics, neuroscience, geology, economics, electromagnetism, chemistry, biology — measured in SuperBEST v3 nodes. Floor: 1n. Ceiling: 47n (Black-Scholes).' },
 ];
 
 const tagMeta: Record<string, { color: string; label: string }> = {

@@ -1,0 +1,510 @@
+{
+  "session": "GEO-E3",
+  "title": "Plate Tectonics and Geodynamics \u2014 SuperBEST v3 Cost Analysis",
+  "date": "2026-04-20",
+  "superBEST_v3_costs": {
+    "exp": 1,
+    "ln": 1,
+    "neg": 2,
+    "recip": 2,
+    "mul": 2,
+    "sub": 2,
+    "div": 1,
+    "pow_integer": 3,
+    "add_pos": 3,
+    "add_gen": 11,
+    "terminal_constant": 0,
+    "terminal_parameter": 0,
+    "non_elementary": "infinity"
+  },
+  "equations": [
+    {
+      "id": 1,
+      "name": "Rayleigh number",
+      "formula": "Ra = \u03c1g\u03b1\u0394Td\u00b3 / (\u03bah)",
+      "unfolded": {
+        "tree": [
+          "div(mul(\u03c1, mul(g, mul(\u03b1, mul(\u0394T, pow(d,3))))), mul(\u03ba, \u03b7))",
+          "  pow(d, 3)                              \u2192 cost 3",
+          "  mul(\u0394T, pow(d,3))                     \u2192 cost 2",
+          "  mul(\u03b1, mul(\u0394T,d3))                   \u2192 cost 2",
+          "  mul(g, mul(\u03b1,\u0394T,d3))                \u2192 cost 2",
+          "  mul(\u03c1, mul(g,\u03b1,\u0394T,d3))             \u2192 cost 2",
+          "  mul(\u03ba, \u03b7)                             \u2192 cost 2",
+          "  div(numerator, denominator)           \u2192 cost 1"
+        ],
+        "node_costs": {
+          "pow(d,3)": 3,
+          "mul(\u0394T,d3)": 2,
+          "mul(\u03b1,\u0394Td3)": 2,
+          "mul(g,\u03b1\u0394Td3)": 2,
+          "mul(\u03c1,g\u03b1\u0394Td3)": 2,
+          "mul(\u03ba,\u03b7)": 2,
+          "div": 1
+        },
+        "total": 14,
+        "breakdown": "3 + 2 + 2 + 2 + 2 + 2 + 1 = 14"
+      },
+      "folded": {
+        "strategy": "\u03c1g\u03b1 as single precomputed constant (cost 0); \u03ba\u03b7 denominator retains one mul",
+        "tree": [
+          "div(mul(const_\u03c1g\u03b1, mul(\u0394T, pow(d,3))), mul(\u03ba, \u03b7))",
+          "  const_\u03c1g\u03b1                          \u2192 cost 0",
+          "  pow(d, 3)                            \u2192 cost 3",
+          "  mul(\u0394T, pow(d,3))                   \u2192 cost 2",
+          "  mul(const_\u03c1g\u03b1, \u0394T\u00b7d3)              \u2192 cost 2",
+          "  mul(\u03ba, \u03b7)                           \u2192 cost 2",
+          "  div                                  \u2192 cost 1"
+        ],
+        "node_costs": {
+          "const_\u03c1g\u03b1": 0,
+          "pow(d,3)": 3,
+          "mul(\u0394T,d3)": 2,
+          "mul(const,\u0394Td3)": 2,
+          "mul(\u03ba,\u03b7)": 2,
+          "div": 1
+        },
+        "total": 10,
+        "breakdown": "0 + 3 + 2 + 2 + 2 + 1 = 10"
+      },
+      "dominant_op": "mul (6 of 14 unfolded nodes)",
+      "notes": "Convection onset criterion. pow(d,3) is single costliest node. Folding \u03c1g\u03b1 saves 4 nodes (two mul + two terminals). If \u03ba and \u03b7 are both known constants, denominator folds to 0 and total drops to 8."
+    },
+    {
+      "id": 2,
+      "name": "Flexural rigidity",
+      "formula": "D = ET\u00b3 / (12(1\u2212\u03bd\u00b2))",
+      "unfolded": {
+        "tree": [
+          "div(mul(E, pow(T,3)), mul(12, sub(1, pow(\u03bd,2))))",
+          "  pow(T, 3)                    \u2192 cost 3",
+          "  mul(E, pow(T,3))             \u2192 cost 2",
+          "  pow(\u03bd, 2)                   \u2192 cost 3",
+          "  sub(1, pow(\u03bd,2))            \u2192 cost 2",
+          "  mul(12, sub(1,\u03bd2))          \u2192 cost 2",
+          "  div(ET3, denom)              \u2192 cost 1"
+        ],
+        "node_costs": {
+          "pow(T,3)": 3,
+          "mul(E,T3)": 2,
+          "pow(\u03bd,2)": 3,
+          "sub(1,\u03bd2)": 2,
+          "mul(12,sub)": 2,
+          "div": 1
+        },
+        "total": 13,
+        "breakdown": "3 + 2 + 3 + 2 + 2 + 1 = 13"
+      },
+      "folded": {
+        "strategy": "E/12 as single constant reduces one mul, but pow(\u03bd,2) and sub(1,\u03bd2) are live if \u03bd varies; if \u03bd fixed, denominator folds entirely",
+        "tree": [
+          "div(mul(const_E_over_12, pow(T,3)), sub(1, pow(\u03bd,2)))",
+          "  const_E_over_12              \u2192 cost 0",
+          "  pow(T, 3)                    \u2192 cost 3",
+          "  mul(const, T3)               \u2192 cost 2",
+          "  pow(\u03bd, 2)                   \u2192 cost 3",
+          "  sub(1, \u03bd2)                  \u2192 cost 2",
+          "  div                          \u2192 cost 1"
+        ],
+        "node_costs": {
+          "const_E_over_12": 0,
+          "pow(T,3)": 3,
+          "mul(const,T3)": 2,
+          "pow(\u03bd,2)": 3,
+          "sub(1,\u03bd2)": 2,
+          "div": 1
+        },
+        "total": 11,
+        "breakdown": "0 + 3 + 2 + 3 + 2 + 1 = 11"
+      },
+      "dominant_op": "pow (6 of 13 unfolded nodes, two separate pow nodes)",
+      "notes": "The (1\u2212\u03bd\u00b2) denominator adds two expensive nodes (pow + sub). If \u03bd is a fixed material constant, entire denominator folds to 0, reducing total to 5n. Numerator structure identical to Stefan-Boltzmann cube case."
+    },
+    {
+      "id": 3,
+      "name": "Geothermal gradient",
+      "formula": "T(z) = T\u2080 + (q\u2080/k)\u00b7z \u2212 (A/2k)\u00b7z\u00b2",
+      "unfolded": {
+        "tree": [
+          "sub(add(T\u2080, mul(q\u2080/k, z)), mul(A/2k, pow(z,2)))",
+          "  mul(q\u2080/k, z)           \u2192 cost 2  [q\u2080/k treated as constant]",
+          "  add(T\u2080, term1)          \u2192 cost 3",
+          "  pow(z, 2)               \u2192 cost 3",
+          "  mul(A/2k, pow(z,2))     \u2192 cost 2",
+          "  sub(add_result, term2)  \u2192 cost 2"
+        ],
+        "node_costs": {
+          "mul(q0_over_k, z)": 2,
+          "add(T0, term1)": 3,
+          "pow(z,2)": 3,
+          "mul(A_over_2k, z2)": 2,
+          "sub(add, mul)": 2
+        },
+        "total": 12,
+        "breakdown": "2 + 3 + 3 + 2 + 2 = 12"
+      },
+      "folded": {
+        "strategy": "q\u2080/k and A/2k both treated as single constants (cost 0 each); T\u2080 is a constant offset",
+        "tree": [
+          "sub(add(const_T0, mul(const_q0k, z)), mul(const_A2k, pow(z,2)))",
+          "All constants fold to 0. Live nodes: mul(\u00b7,z), add(\u00b7,\u00b7), pow(z,2), mul(\u00b7,z2), sub(\u00b7,\u00b7)"
+        ],
+        "node_costs": {
+          "const_T0": 0,
+          "const_q0_over_k": 0,
+          "const_A_over_2k": 0,
+          "mul(const_q0k, z)": 2,
+          "add(T0, linear_term)": 3,
+          "pow(z,2)": 3,
+          "mul(const_A2k, z2)": 2,
+          "sub(add, quadratic_term)": 2
+        },
+        "total": 12,
+        "breakdown": "0 + 0 + 0 + 2 + 3 + 3 + 2 + 2 = 12"
+      },
+      "dominant_op": "add_pos and pow (each cost 3)",
+      "notes": "Folding constants yields no savings here because all constants already appear as coefficients of live variable z; structural cost is driven by the quadratic term. Equivalent to evaluating a degree-2 polynomial in z."
+    },
+    {
+      "id": 4,
+      "name": "Flexural wavelength",
+      "formula": "\u03bb = 2\u03c0\u00b7(D/\u03c1g)^(1/4)",
+      "unfolded": {
+        "tree": [
+          "mul(2\u03c0, pow(div(D, mul(\u03c1, g)), 0.25))",
+          "  mul(\u03c1, g)                    \u2192 cost 2",
+          "  div(D, mul(\u03c1,g))             \u2192 cost 1",
+          "  pow(ratio, 0.25)              \u2192 cost 3",
+          "  mul(2\u03c0, pow(\u00b7,0.25))         \u2192 cost 2"
+        ],
+        "node_costs": {
+          "mul(\u03c1,g)": 2,
+          "div(D,\u03c1g)": 1,
+          "pow(ratio,0.25)": 3,
+          "mul(2\u03c0,result)": 2
+        },
+        "total": 8,
+        "breakdown": "2 + 1 + 3 + 2 = 8"
+      },
+      "folded": {
+        "strategy": "\u03c1g as constant and 2\u03c0 absorbed into a single leading constant",
+        "tree": [
+          "mul(const_2\u03c0, pow(div(D, const_\u03c1g), 0.25))",
+          "  const_\u03c1g                     \u2192 cost 0",
+          "  div(D, const_\u03c1g)             \u2192 cost 1",
+          "  pow(ratio, 0.25)              \u2192 cost 3",
+          "  mul(const_2\u03c0, pow)           \u2192 cost 2"
+        ],
+        "node_costs": {
+          "const_\u03c1g": 0,
+          "div(D, const_\u03c1g)": 1,
+          "pow(ratio,0.25)": 3,
+          "mul(const_2\u03c0, result)": 2
+        },
+        "total": 6,
+        "breakdown": "0 + 1 + 3 + 2 = 6"
+      },
+      "dominant_op": "pow (3 of 8 unfolded nodes)",
+      "notes": "The quarter-power (fractional exponent) drives cost. This is the characteristic wavelength of lithospheric flexure. If D itself is pre-computed (from eq. 2), the chain cost is additive."
+    },
+    {
+      "id": 5,
+      "name": "Bouguer gravity anomaly",
+      "formula": "\u0394g = 2\u03c0G\u03c1h",
+      "unfolded": {
+        "tree": [
+          "mul(2\u03c0G, mul(\u03c1, h))",
+          "  mul(\u03c1, h)              \u2192 cost 2",
+          "  mul(2\u03c0G, \u03c1h)          \u2192 cost 2"
+        ],
+        "node_costs": {
+          "mul(\u03c1,h)": 2,
+          "mul(2\u03c0G,\u03c1h)": 2
+        },
+        "total": 4,
+        "breakdown": "2 + 2 = 4"
+      },
+      "folded": {
+        "strategy": "2\u03c0G folded to single constant (cost 0); structure unchanged",
+        "tree": [
+          "mul(const_2\u03c0G, mul(\u03c1, h))",
+          "  const_2\u03c0G               \u2192 cost 0",
+          "  mul(\u03c1, h)               \u2192 cost 2",
+          "  mul(const_2\u03c0G, \u03c1h)      \u2192 cost 2"
+        ],
+        "node_costs": {
+          "const_2\u03c0G": 0,
+          "mul(\u03c1,h)": 2,
+          "mul(const,\u03c1h)": 2
+        },
+        "total": 4,
+        "breakdown": "0 + 2 + 2 = 4"
+      },
+      "dominant_op": "mul (all nodes are mul)",
+      "notes": "Slab approximation for Bouguer correction. Cheapest equation in this session. Folding 2\u03c0G saves no structural nodes since it was already a single factor."
+    },
+    {
+      "id": 6,
+      "name": "Subduction velocity from seafloor age",
+      "formula": "v = d / t",
+      "unfolded": {
+        "tree": [
+          "div(d, t)",
+          "  div(d, t)   \u2192 cost 1"
+        ],
+        "node_costs": {
+          "div(d,t)": 1
+        },
+        "total": 1,
+        "breakdown": "1 = 1"
+      },
+      "folded": {
+        "strategy": "No constants to fold; both d and t are live variables",
+        "tree": [
+          "div(d, t)"
+        ],
+        "node_costs": {
+          "div(d,t)": 1
+        },
+        "total": 1,
+        "breakdown": "1 = 1"
+      },
+      "dominant_op": "div (only node)",
+      "notes": "Kinematic relation: plate velocity from GPS-measured distance and magnetic-anomaly-derived age. Absolute minimum structural complexity (1 node). Isomorphic to Ohm\u2019s-law form V=IR rearranged."
+    },
+    {
+      "id": 7,
+      "name": "Mantle viscosity (dislocation creep)",
+      "formula": "\u03b7 = A\u00b7exp(Q/RT)\u00b7\u03c3^(1\u2212n)",
+      "unfolded": {
+        "tree": [
+          "mul(A, mul(exp(div(Q, mul(R,T))), pow(\u03c3, sub(1, n))))",
+          "  [Arrhenius factor]",
+          "  mul(R, T)              \u2192 cost 2",
+          "  div(Q, mul(R,T))       \u2192 cost 1",
+          "  exp(Q/RT)              \u2192 cost 1",
+          "  mul(A, exp(\u00b7))         \u2192 cost 2",
+          "  [Power-law creep factor]",
+          "  sub(1, n)              \u2192 cost 2",
+          "  pow(\u03c3, sub(1,n))       \u2192 cost 3",
+          "  [Combined]",
+          "  mul(arrhenius, pow)    \u2192 cost 2"
+        ],
+        "node_costs": {
+          "mul(R,T)": 2,
+          "div(Q,RT)": 1,
+          "exp(Q_RT)": 1,
+          "mul(A,exp)": 2,
+          "sub(1,n)": 2,
+          "pow(\u03c3,1_minus_n)": 3,
+          "mul(arrhenius,powerlaw)": 2
+        },
+        "total": 13,
+        "breakdown": "2 + 1 + 1 + 2 + 2 + 3 + 2 = 13"
+      },
+      "folded": {
+        "strategy": "Q/R as constant; A absorbed; if n is fixed exponent, sub(1,n) folds to constant exponent",
+        "tree": [
+          "mul(const_A, mul(exp(div(const_Q_over_R, T)), pow(\u03c3, const_1_minus_n)))",
+          "  const_Q_over_R        \u2192 cost 0",
+          "  div(const_Q_R, T)     \u2192 cost 1",
+          "  exp(\u00b7)                \u2192 cost 1",
+          "  mul(const_A, exp)     \u2192 cost 2",
+          "  const_1_minus_n       \u2192 cost 0  [if n is material constant]",
+          "  pow(\u03c3, const_exp)     \u2192 cost 3",
+          "  mul(arrhenius, pow)   \u2192 cost 2"
+        ],
+        "node_costs": {
+          "const_Q_over_R": 0,
+          "div(const_QR, T)": 1,
+          "exp(QR_over_T)": 1,
+          "mul(const_A, exp)": 2,
+          "const_1_minus_n": 0,
+          "pow(\u03c3, const_exp)": 3,
+          "mul(arrhenius, powerlaw)": 2
+        },
+        "total": 9,
+        "breakdown": "0 + 1 + 1 + 2 + 0 + 3 + 2 = 9"
+      },
+      "dominant_op": "pow and mul (largest individual costs)",
+      "notes": "Composite of Arrhenius exponential (Q/RT) and power-law creep (\u03c3^(1-n)). These two motifs multiply together, so cost is additive. The sub(1,n) exponent node is the algebraic price of the non-Newtonian rheology."
+    },
+    {
+      "id": 8,
+      "name": "Thermal subsidence",
+      "formula": "y(t) = E\u2080\u00b7(1 \u2212 exp(\u2212t/\u03c4))",
+      "unfolded": {
+        "tree": [
+          "mul(E\u2080, sub(1, exp(neg(div(t, \u03c4)))))",
+          "  div(t, \u03c4)               \u2192 cost 1",
+          "  neg(t/\u03c4)                \u2192 cost 2",
+          "  exp(neg(t/\u03c4))           \u2192 cost 1",
+          "  sub(1, exp(\u00b7))           \u2192 cost 2",
+          "  mul(E\u2080, sub(\u00b7,\u00b7))        \u2192 cost 2"
+        ],
+        "node_costs": {
+          "div(t,\u03c4)": 1,
+          "neg(t_over_\u03c4)": 2,
+          "exp(neg_t_\u03c4)": 1,
+          "sub(1,exp)": 2,
+          "mul(E0,sub)": 2
+        },
+        "total": 8,
+        "breakdown": "1 + 2 + 1 + 2 + 2 = 8"
+      },
+      "folded": {
+        "strategy": "1/\u03c4 as constant; E\u2080 as constant; neg absorbed into constant sign",
+        "tree": [
+          "mul(const_E0, sub(1, exp(mul(const_neg_recip_\u03c4, t))))",
+          "  const_neg_recip_\u03c4         \u2192 cost 0",
+          "  mul(const, t)              \u2192 cost 2",
+          "  exp(mul(\u00b7,t))              \u2192 cost 1",
+          "  sub(1, exp)                \u2192 cost 2",
+          "  mul(const_E0, sub)         \u2192 cost 2"
+        ],
+        "node_costs": {
+          "const_neg_recip_\u03c4": 0,
+          "mul(const,t)": 2,
+          "exp(linear_t)": 1,
+          "sub(1,exp)": 2,
+          "mul(const_E0,sub)": 2
+        },
+        "total": 7,
+        "breakdown": "0 + 2 + 1 + 2 + 2 = 7"
+      },
+      "dominant_op": "neg + mul + sub form the 1\u2212exp(\u2212\u00b7) motif skeleton",
+      "notes": "Structurally 8n unfolded, 7n folded. The 1\u2212exp(\u2212t/\u03c4) form is the saturating-exponential motif, isomorphic to the logistic sigmoid complement and RC-circuit charging. It also appears in radioactive ingrowth, drug pharmacokinetics (1-compartment oral), and capacitor charging \u2014 same 5-node skeleton regardless of domain."
+    }
+  ],
+  "summary_table": [
+    {
+      "id": 1,
+      "name": "Rayleigh number",
+      "formula": "Ra = \u03c1g\u03b1\u0394Td\u00b3/(\u03bah)",
+      "unfolded_nodes": 14,
+      "folded_nodes": 10,
+      "savings": 4,
+      "dominant_op": "mul"
+    },
+    {
+      "id": 2,
+      "name": "Flexural rigidity",
+      "formula": "D = ET\u00b3/(12(1\u2212\u03bd\u00b2))",
+      "unfolded_nodes": 13,
+      "folded_nodes": 11,
+      "savings": 2,
+      "dominant_op": "pow"
+    },
+    {
+      "id": 3,
+      "name": "Geothermal gradient",
+      "formula": "T(z) = T\u2080 + (q\u2080/k)z \u2212 (A/2k)z\u00b2",
+      "unfolded_nodes": 12,
+      "folded_nodes": 12,
+      "savings": 0,
+      "dominant_op": "add_pos + pow"
+    },
+    {
+      "id": 4,
+      "name": "Flexural wavelength",
+      "formula": "\u03bb = 2\u03c0(D/\u03c1g)^(1/4)",
+      "unfolded_nodes": 8,
+      "folded_nodes": 6,
+      "savings": 2,
+      "dominant_op": "pow"
+    },
+    {
+      "id": 5,
+      "name": "Bouguer gravity anomaly",
+      "formula": "\u0394g = 2\u03c0G\u03c1h",
+      "unfolded_nodes": 4,
+      "folded_nodes": 4,
+      "savings": 0,
+      "dominant_op": "mul"
+    },
+    {
+      "id": 6,
+      "name": "Subduction velocity",
+      "formula": "v = d/t",
+      "unfolded_nodes": 1,
+      "folded_nodes": 1,
+      "savings": 0,
+      "dominant_op": "div"
+    },
+    {
+      "id": 7,
+      "name": "Mantle viscosity (dislocation creep)",
+      "formula": "\u03b7 = A\u00b7exp(Q/RT)\u00b7\u03c3^(1\u2212n)",
+      "unfolded_nodes": 13,
+      "folded_nodes": 9,
+      "savings": 4,
+      "dominant_op": "pow + mul"
+    },
+    {
+      "id": 8,
+      "name": "Thermal subsidence",
+      "formula": "y(t) = E\u2080(1\u2212exp(\u2212t/\u03c4))",
+      "unfolded_nodes": 8,
+      "folded_nodes": 7,
+      "savings": 1,
+      "dominant_op": "neg+exp+sub motif"
+    }
+  ],
+  "session_totals": {
+    "total_unfolded": 73,
+    "total_folded": 60,
+    "total_savings": 13,
+    "cheapest_equation": "Subduction velocity (1n) \u2014 pure kinematic ratio",
+    "most_expensive_equation": "Rayleigh number (14n unfolded)",
+    "most_savings_from_folding": "Rayleigh number and Mantle viscosity (4n each)"
+  },
+  "cross_domain_isomorphisms": [
+    {
+      "motif": "1 \u2212 exp(\u2212t/\u03c4)",
+      "skeleton_nodes": 5,
+      "appearances": [
+        "Thermal subsidence y(t) = E\u2080(1\u2212exp(\u2212t/\u03c4)) [this session]",
+        "Logistic sigmoid complement: 1/(1+exp(\u2212x)) \u2192 same saturating shape, different skeleton",
+        "RC-circuit capacitor charging: V(t) = V\u2090(1\u2212exp(\u2212t/RC))",
+        "Radioactive ingrowth: N_d(t) = N\u2080(1\u2212exp(\u2212\u03bbt))",
+        "1-compartment pharmacokinetics (oral dose): C(t) = C_max(1\u2212exp(\u2212k_a\u00b7t))",
+        "Newton cooling/heating approach to equilibrium"
+      ],
+      "note": "The saturating-exponential motif sub(1, exp(mul(const, t))) is a 5-node universal across physics, biology, and engineering. Cost is 8n unfolded, 7n folded regardless of domain."
+    },
+    {
+      "motif": "exp(Q/RT) Arrhenius factor",
+      "skeleton_nodes": 4,
+      "appearances": [
+        "Mantle viscosity \u03b7 [this session]",
+        "Chemical reaction rate constant k = A\u00b7exp(\u2212Ea/RT) [chem1_rate_equations]",
+        "Semiconductor carrier concentration n_i = C\u00b7exp(\u2212E_g/2kT)"
+      ],
+      "note": "div + exp is a 2-node Arrhenius core; with the prefactor mul it is 4n. Appears identically in geodynamics, chemistry, and solid-state physics."
+    },
+    {
+      "motif": "pow(d, 3) geometry scaling",
+      "skeleton_nodes": 3,
+      "appearances": [
+        "Rayleigh number Ra \u221d d\u00b3 [this session]",
+        "Flexural rigidity D \u221d T\u00b3 [this session]",
+        "Poiseuille flow Q \u221d r\u2074 (4th power variant)",
+        "Stefan-Boltzmann L = 4\u03c0R\u00b2\u03c3T\u2074 [astro1_stellar]"
+      ],
+      "note": "Integer pow nodes (cost 3) are geometry signatures. The cubic and quartic recur wherever a length scale enters via volume or area-thickness product."
+    }
+  ],
+  "flags": [
+    "Geothermal gradient (eq. 3): folding yields zero savings \u2014 all constants appear as live coefficients of z. This is a structural property of polynomial evaluation.",
+    "Bouguer anomaly (eq. 5): folding also yields zero savings in node count \u2014 the constant 2\u03c0G simply replaces one mul terminal with a folded leaf at same cost.",
+    "Thermal subsidence (eq. 8): saturating-exponential motif recurs across at least 6 physical domains with identical 5-node core structure \u2014 flagged as high-priority isomorphism.",
+    "Subduction velocity (eq. 6): 1-node formula, minimum possible complexity. Isomorphic to Ohm V=IR rearranged as R=V/I or density \u03c1=m/V."
+  ],
+  "methodology_notes": {
+    "operator_set": "SuperBEST v3: {exp, ln, neg, recip, mul, sub, div, pow, add}",
+    "cost_convention": "Each operator node counted at its listed integer cost; constants and parameters are free (0); folding = precomputing any sub-expression involving only constants into a single free terminal",
+    "pow_cost": "3 for all integer and fractional exponents (0.25 treated same as integer 3 for cost)",
+    "add_cost": "3 for add with positive operands (add_pos); general add not used in this session",
+    "encoding": "UTF-8"
+  }
+}

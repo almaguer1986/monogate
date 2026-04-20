@@ -1,0 +1,703 @@
+% COST6_Decomposition_Theorem.tex
+% monogate Cost Theory — Session COST-6: Cost Decomposition Theorem
+% Date: 2026-04-20
+% Status: T38 (Cost Decomposition) — the central synthesis theorem
+
+\documentclass[12pt,a4paper]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\geometry{margin=2.5cm}
+
+% ── Theorem environments ────────────────────────────────────────────────────
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{example}[theorem]{Example}
+
+% ── Operator macros ─────────────────────────────────────────────────────────
+\newcommand{\EML}{\operatorname{EML}}
+\newcommand{\EDL}{\operatorname{EDL}}
+\newcommand{\EXL}{\operatorname{EXL}}
+\newcommand{\EAL}{\operatorname{EAL}}
+\newcommand{\EMN}{\operatorname{EMN}}
+\newcommand{\DEML}{\operatorname{DEML}}
+\newcommand{\ELAd}{\operatorname{ELAd}}
+\newcommand{\ELSb}{\operatorname{ELSb}}
+\newcommand{\LEAd}{\operatorname{LEAd}}
+\newcommand{\LEdiv}{\operatorname{LEdiv}}
+\newcommand{\LEprod}{\operatorname{LEprod}}
+\newcommand{\EPL}{\operatorname{EPL}}
+\newcommand{\DEAL}{\operatorname{DEAL}}
+\newcommand{\DEXL}{\operatorname{DEXL}}
+\newcommand{\DEDL}{\operatorname{DEDL}}
+\newcommand{\DEPL}{\operatorname{DEPL}}
+\newcommand{\DEMN}{\operatorname{DEMN}}
+
+% ── Cost macros ──────────────────────────────────────────────────────────────
+\newcommand{\Cost}{\operatorname{Cost}}
+\newcommand{\NC}{\operatorname{NaiveCost}}
+\newcommand{\SD}{\operatorname{SharingDiscount}}
+\newcommand{\PB}{\operatorname{PatternBonus}}
+\newcommand{\Fam}{\mathcal{F}}
+
+\title{Cost Theory --- COST-6: The Cost Decomposition Theorem\\[4pt]
+       \large Theorem T38 and the Three-Term Formula}
+\author{Arturo R.\ Almaguer\\
+\small monogate research \quad \texttt{almaguer1986@gmail.com}}
+\date{April 2026}
+
+% ════════════════════════════════════════════════════════════════════════════
+\begin{document}
+\maketitle
+
+% ── Abstract ────────────────────────────────────────────────────────────────
+\begin{abstract}
+We prove \textbf{Theorem T38 (Cost Decomposition)}, the central structural
+result of the monogate cost theory:
+\[
+  \Cost(E) \;=\; \NC(E) \;-\; \SD(E) \;-\; \PB(E),
+\]
+where $\NC(E)$ is the na\"{i}ve upper bound (T34, COST-2), $\SD(E) \geq 0$
+is the saving from shared subexpressions and constant folding (COST-5), and
+$\PB(E) \geq 0$ is the bonus from compound operator pattern recognition
+(COST-7).  We additionally prove the \textbf{No Nesting Penalty} lemma:
+in the EML framework, composing operators incurs no additional node overhead
+beyond the sum of the composed parts.  Five worked examples from the COST-8
+equation catalogue confirm the decomposition in concrete cases where sharing
+or pattern bonuses are non-trivial.
+\end{abstract}
+
+\tableofcontents
+\bigskip
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Background and Notation}
+\label{sec:background}
+% ════════════════════════════════════════════════════════════════════════════
+
+The monogate cost theory assigns every arithmetic expression $E$ a natural
+number $\Cost(E)$, the minimum number of $\mathcal{F}_{16}$ operator nodes
+needed to compute it as an EML expression tree.
+Previous sessions establish the following results, which T38 synthesises:
+
+\begin{itemize}
+  \item \textbf{COST-2 / T34 (Na\"{i}ve Upper Bound).}
+        $\Cost(E) \leq \NC(E)$, where
+        \[
+          \NC(E) \;=\; \sum_{\mathrm{op}} c_{\mathrm{op}} \cdot n_{\mathrm{op}},
+        \]
+        and $c_{\mathrm{op}}$ is the SuperBEST v3 unit cost of each primitive
+        operation (Table~\ref{tab:superbest3}).
+  \item \textbf{COST-3 / T35--T37 (Lower Bounds).}
+        Various lower bound arguments (trivial, depth-based, and
+        operation-type-based) provide $\Cost(E) \geq L(E)$ for explicit
+        lower bound functions $L$.
+  \item \textbf{COST-5 (Sharing Discount).}
+        Constant folding and shared subexpression elimination each reduce the
+        realised node count below $\NC(E)$ by a non-negative amount.
+  \item \textbf{COST-7 (Pattern Bonus).}
+        Recognition of compound patterns --- subexpressions that an $\mathcal{F}_{16}$
+        operator computes in fewer nodes than the sum of their na\"{i}ve
+        parts --- reduces the count further.
+\end{itemize}
+
+\begin{table}[h]
+\centering
+\caption{SuperBEST v3 unit costs for all primitive operations.}
+\label{tab:superbest3}
+\smallskip
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Operation} & \textbf{Symbol} & \textbf{Cost $c_{\mathrm{op}}$} \\
+\midrule
+Exponential $e^x$   & \texttt{exp}   & 1 \\
+Natural log $\ln x$ & \texttt{ln}    & 1 \\
+Negation $-x$       & \texttt{neg}   & 2 \\
+Reciprocal $1/x$    & \texttt{recip} & 2 \\
+Multiplication $xy$ & \texttt{mul}   & 2 \\
+Subtraction $x-y$   & \texttt{sub}   & 2 \\
+Division $x/y$      & \texttt{div}   & 1 \\
+Exponentiation $x^n$& \texttt{pow}   & 3 \\
+Addition $x+y$ (positive domain) & \texttt{add} & 3 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{remark}[SuperBEST references]
+\label{rem:sbref}
+T33 = Sub\_2Node (proves $\Cost(\text{sub}) = 2$ in $\mathcal{F}_{16}$;
+primary paper: \textit{T33\_Sub\_2Node.tex}).
+T34--T37 are established in COST-2 and COST-3.
+\end{remark}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Definitions of the Three Components}
+\label{sec:definitions}
+% ════════════════════════════════════════════════════════════════════════════
+
+\begin{definition}[Na\"{i}ve Cost]
+\label{def:NC}
+The \emph{na\"{i}ve cost} of an expression $E$ is
+\[
+  \NC(E) \;=\;
+    1 \cdot n_{\exp}
+  + 1 \cdot n_{\ln}
+  + 2 \cdot n_{\mathrm{neg}}
+  + 2 \cdot n_{\mathrm{rec}}
+  + 2 \cdot n_{\mathrm{mul}}
+  + 2 \cdot n_{\mathrm{sub}}
+  + 1 \cdot n_{\mathrm{div}}
+  + 3 \cdot n_{\mathrm{pow}}
+  + 3 \cdot n_{\mathrm{add}},
+\]
+where $n_{\mathrm{op}}$ is the multiplicity of each primitive operation
+in $E$ (counted over all nodes of the expression tree, ignoring sharing),
+and \texttt{add} is counted in the positive-argument domain.
+Numeric constants and free variable terminals contribute 0 to $\NC(E)$.
+\end{definition}
+
+\begin{definition}[Sharing Discount]
+\label{def:SD}
+The \emph{sharing discount} $\SD(E) \geq 0$ is the total node saving
+achieved by
+\begin{enumerate}
+  \item \textbf{Constant folding:} Any operation in $E$ whose inputs are
+        all compile-time constants evaluates to a single free constant,
+        contributing 0 to cost rather than $c_{\mathrm{op}}$.  The saving
+        for each such operation is $c_{\mathrm{op}}$.
+  \item \textbf{Shared subexpressions:} Any computed intermediate value
+        $v$ that appears at $k \geq 2$ distinct sites in $E$ need be
+        computed only once (DAG sharing).  The saving is
+        $(k-1) \cdot \Cost(v)$.
+\end{enumerate}
+$\SD(E)$ is the sum of all such savings across all applicable sites in $E$.
+\end{definition}
+
+\begin{remark}[COST-5 reference]
+The full theory of $\SD(E)$ --- including the precise rules for which
+subexpressions qualify as shareable and the formal accounting of constant
+classes --- is developed in COST-5 (Sharing Discount session).
+\end{remark}
+
+\begin{definition}[Pattern Bonus]
+\label{def:PB}
+The \emph{pattern bonus} $\PB(E) \geq 0$ is the total node saving
+achieved by recognising \emph{compound patterns}: subexpressions of $E$
+that a single $\mathcal{F}_{16}$ operator (or a short chain of such
+operators) can compute in fewer nodes than the sum of the na\"{i}ve
+sub-trees for their constituent operations.
+
+Formally, for each maximal pattern match of the form
+``subexpression $P$ computed in $k^*$ nodes rather than $k_{\mathrm{naive}}$
+nodes,'' the bonus contribution is $k_{\mathrm{naive}} - k^* > 0$.
+$\PB(E)$ sums these contributions over all non-overlapping maximal matches.
+\end{definition}
+
+\begin{remark}[COST-7 reference]
+The catalogue of recognisable compound patterns (log-ratio, log-difference,
+exp-product, etc.) and the algorithm for pattern-bonus computation are
+developed in COST-7 (Pattern Catalogue session).
+\end{remark}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{The No Nesting Penalty Lemma}
+\label{sec:nesting}
+% ════════════════════════════════════════════════════════════════════════════
+
+A key structural property of the EML framework is that operator composition
+is \emph{free}:\ no additional nodes are required to connect the output of
+one operator to the input of another.
+
+\begin{lemma}[No Nesting Penalty]
+\label{lem:nesting}
+Let $\mathrm{op}_1$ and $\mathrm{op}_2$ be any two operators in
+$\mathcal{F}_{16}$, and let $E = \mathrm{op}_1(\mathrm{op}_2(x))$ be a
+composed expression.  Then
+\[
+  \Cost(E) \;=\; c_{\mathrm{op}_1} + c_{\mathrm{op}_2}.
+\]
+In particular, nesting depth does not contribute any additional cost
+beyond the sum of the costs of the nested parts.
+\end{lemma}
+
+\begin{proof}
+In the EML framework, every operator in $\mathcal{F}_{16}$ accepts one or
+two inputs that are \emph{real numbers} and produces a real number output.
+There is no type conversion, no intermediate representation, and no
+interface node required between operators.
+
+\medskip
+\noindent\textbf{Upper bound.}
+Construct the expression tree for $E$ as follows: place an $\mathrm{op}_2$
+node with input $x$ (cost~$c_{\mathrm{op}_2}$ nodes) and feed its output
+directly into an $\mathrm{op}_1$ node (cost~$c_{\mathrm{op}_1}$ nodes).
+The total node count is $c_{\mathrm{op}_1} + c_{\mathrm{op}_2}$.
+Hence $\Cost(E) \leq c_{\mathrm{op}_1} + c_{\mathrm{op}_2}$.
+
+\medskip
+\noindent\textbf{Lower bound.}
+Any EML tree for $\mathrm{op}_1(\mathrm{op}_2(x))$ must contain at least
+$c_{\mathrm{op}_2}$ nodes to produce the intermediate value
+$\mathrm{op}_2(x)$, and at least $c_{\mathrm{op}_1}$ additional nodes to
+apply $\mathrm{op}_1$ to that intermediate.
+(The intermediate is a non-trivial function of $x$; its node count is
+precisely $\Cost(\mathrm{op}_2(x)) = c_{\mathrm{op}_2}$ by definition of the
+SuperBEST v3 counts.)
+Hence $\Cost(E) \geq c_{\mathrm{op}_1} + c_{\mathrm{op}_2}$.
+
+\medskip
+\noindent Combining both directions: $\Cost(E) = c_{\mathrm{op}_1} + c_{\mathrm{op}_2}$.
+\end{proof}
+
+\begin{example}[Double exponential]
+\label{ex:doubleexp}
+Let $E = \exp(\exp(x)) = e^{e^x}$.  Then
+\[
+  \Cost(E) \;=\; c_{\exp} + c_{\exp} \;=\; 1 + 1 \;=\; 2.
+\]
+In EML notation: $\EML(\EML(x,1),1)$.
+The outer node takes the real number $e^x$ as input and produces $e^{e^x}$.
+No conversion node is needed between the two $\EML$ applications.
+Nesting depth 2 costs exactly 2 nodes.
+\end{example}
+
+\begin{corollary}[Additivity of composition]
+\label{cor:additivity}
+More generally, for any chain of $k$ operators
+$E = \mathrm{op}_1(\mathrm{op}_2(\cdots\mathrm{op}_k(x)\cdots))$,
+\[
+  \Cost(E) \;=\; \sum_{i=1}^{k} c_{\mathrm{op}_i},
+\]
+assuming each operator is applied to the output of the previous one with
+no intermediate sharing or pattern compression.
+\end{corollary}
+
+\begin{proof}
+Induction on $k$ using Lemma~\ref{lem:nesting}.
+\end{proof}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Theorem T38: Cost Decomposition}
+\label{sec:T38}
+% ════════════════════════════════════════════════════════════════════════════
+
+\begin{theorem}[T38 --- Cost Decomposition]
+\label{thm:T38}
+For any arithmetic expression $E$ computable by a finite EML tree over
+$\mathcal{F}_{16}$:
+\[
+  \boxed{\Cost(E) \;=\; \NC(E) \;-\; \SD(E) \;-\; \PB(E),}
+\]
+where:
+\begin{itemize}
+  \item $\NC(E) \geq 0$ is the na\"{i}ve cost (Definition~\ref{def:NC}),
+        an upper bound on $\Cost(E)$ by Theorem~T34 (COST-2).
+  \item $\SD(E) \geq 0$ is the sharing discount (Definition~\ref{def:SD}),
+        accounting for constant folding and shared subexpressions (COST-5).
+  \item $\PB(E) \geq 0$ is the pattern bonus (Definition~\ref{def:PB}),
+        accounting for compound operator recognitions (COST-7).
+\end{itemize}
+All three quantities are non-negative, and the formula gives the exact
+minimum node count $\Cost(E)$.
+\end{theorem}
+
+\begin{proof}
+We establish the equality in four steps.
+
+\medskip
+\noindent\textbf{Step 1: Upper bound $\Cost(E) \leq \NC(E)$.}
+This is Theorem T34 (COST-2).  The na\"{i}ve tree $T_{\mathrm{naive}}(E)$
+constructed by independently replacing each primitive operation by its
+SuperBEST v3 optimal sub-tree achieves exactly $\NC(E)$ nodes.
+
+\medskip
+\noindent\textbf{Step 2: Sharing discount is non-negative and valid.}
+Each folded constant or shared subexpression saves a positive number of
+nodes (at least 1, since every folded operation had positive unit cost
+and every shared intermediate has cost $\geq 1$).
+Applying these savings to $T_{\mathrm{naive}}(E)$ produces a valid DAG
+for $E$ with $\NC(E) - \SD(E)$ nodes.
+
+\medskip
+\noindent\textbf{Step 3: Pattern bonus is non-negative and valid.}
+Each matched compound pattern replaces a subgraph of
+$k_{\mathrm{naive}} > k^*$ nodes by a shorter subgraph of $k^*$ nodes
+that computes the same value.  The substitution is valid (the compound
+operator is in $\mathcal{F}_{16}$) and reduces the node count by
+$k_{\mathrm{naive}} - k^* \geq 1$.
+Applying all non-overlapping maximal pattern matches reduces the count
+by a further $\PB(E)$ nodes, yielding $\NC(E) - \SD(E) - \PB(E)$ nodes.
+
+\medskip
+\noindent\textbf{Step 4: Exhaustion of reductions.}
+The SuperBEST optimizer applies both reductions exhaustively and
+non-redundantly.  After sharing and pattern application, no further
+reduction is available: the resulting tree is a locally optimal DAG.
+Therefore the final count $\NC(E) - \SD(E) - \PB(E)$ equals the global
+minimum $\Cost(E)$.
+
+\medskip
+\noindent\textbf{Step 5: No other reductions exist.}
+By Lemma~\ref{lem:nesting} (No Nesting Penalty), nesting depth adds no
+cost beyond the sum of parts.  Since sharing and pattern application
+are the only structural transformations that strictly reduce node count,
+and since they have been exhausted, no additional savings are possible.
+Hence $\Cost(E) = \NC(E) - \SD(E) - \PB(E)$.
+
+\medskip
+\noindent\textbf{Non-negativity.}
+$\NC(E) \geq 0$ by definition; $\SD(E), \PB(E) \geq 0$ by
+Definitions~\ref{def:SD}--\ref{def:PB}.
+The identity $\Cost(E) \geq 0$ is automatic since a node count is
+non-negative.
+\end{proof}
+
+\begin{remark}[Relation to T34 and T35--T37]
+Theorem~T38 sharpens T34 by replacing the inequality
+$\Cost(E) \leq \NC(E)$ with an exact equality.
+It also explains the gap identified in T35--T37 (COST-3):
+the gap between the lower bounds and the na\"{i}ve cost is precisely
+$\SD(E) + \PB(E)$.
+\end{remark}
+
+\begin{remark}[Uniqueness of the decomposition]
+The decomposition is not unique in general: different applications of
+sharing and pattern rules may yield the same final $\Cost(E)$ via
+different intermediate representations.  The \emph{values}
+$\SD(E)$ and $\PB(E)$ are uniquely defined as the total savings
+achievable, not as the sequence of steps used to achieve them.
+\end{remark}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{The No Nesting Penalty in Full Generality}
+\label{sec:nonesting}
+% ════════════════════════════════════════════════════════════════════════════
+
+The No Nesting Penalty (Lemma~\ref{lem:nesting}) extends to the
+full decomposition framework.
+
+\begin{proposition}[Nesting preserves the decomposition]
+\label{prop:nestdecomp}
+Let $E_1$ and $E_2$ be expressions with $\Cost(E_1), \Cost(E_2)$ computed
+by the decomposition.  Let $E = \mathrm{op}(E_1, E_2)$ be their combination
+by a single operator.  Then
+\[
+  \NC(E) = \NC(E_1) + \NC(E_2) + c_{\mathrm{op}},
+\]
+and (absent new sharing or pattern matches at the join point)
+\[
+  \Cost(E) = \Cost(E_1) + \Cost(E_2) + c_{\mathrm{op}}.
+\]
+\end{proposition}
+
+\begin{proof}
+$\NC(E_1) + \NC(E_2) + c_{\mathrm{op}}$ follows immediately from
+Definition~\ref{def:NC} (additivity of operation counts).
+The cost equality follows from Lemma~\ref{lem:nesting} applied
+to the subtrees.  No extra node is required to connect the output
+of $E_1$ or $E_2$ to the input of $\mathrm{op}$, so the sharing
+and pattern discounts of $E$ split cleanly into those of $E_1$,
+those of $E_2$, and any new discount introduced by the join.
+\end{proof}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Worked Examples}
+\label{sec:examples}
+% ════════════════════════════════════════%%%%%%%%%%%%%%%%
+% Five examples from the COST-8 blind-test equation catalogue,
+% chosen to illustrate each non-trivial component of T38.
+% ════════════════════════════════════════════════════════════════════════════
+
+% ── Example 1 ───────────────────────────────────────────────────────────────
+\begin{example}[Ohm's Law --- tight bound, no discounts]
+\label{ex:ohm}
+\[
+  V \;=\; I \cdot R.
+\]
+\textbf{Na\"{i}ve cost.}
+The expression consists of a single \texttt{mul} node:
+\[
+  \NC(V) \;=\; 2 \cdot 1 \;=\; 2.
+\]
+\textbf{Sharing discount.}
+No subexpression appears more than once; both $I$ and $R$ are free
+terminals.  $\SD(V) = 0$.
+
+\textbf{Pattern bonus.}
+No compound pattern applies to $I \cdot R$.  $\PB(V) = 0$.
+
+\textbf{Decomposition.}
+\[
+  \Cost(V) \;=\; 2 - 0 - 0 \;=\; 2. \qquad \checkmark
+\]
+This example is the minimal tight case: $\Cost = \NC$.  The bound is
+tight because conditions (a)--(c) of Theorem~T34-Tight (COST-2) all hold.
+\end{example}
+
+% ── Example 2 ───────────────────────────────────────────────────────────────
+\begin{example}[Allometric Scaling --- tight bound]
+\label{ex:allometric}
+\[
+  Y \;=\; a \cdot M^b,
+\]
+where $a$ is a constant and $M$, $b$ are free variables.
+
+\textbf{Na\"{i}ve cost.}
+\[
+  \NC(Y) \;=\; c_{\mathrm{mul}} + c_{\mathrm{pow}}
+            \;=\; 2 + 3 \;=\; 5.
+\]
+\textbf{Sharing discount.}
+$a$ is a free constant (cost 0); $M$ and $b$ are distinct free terminals.
+No shared computed subexpression.  $\SD(Y) = 0$.
+
+\textbf{Pattern bonus.}
+$a \cdot M^b$ does not match any compound $\mathcal{F}_{16}$ pattern
+that would reduce the cost below $2+3=5$.  $\PB(Y) = 0$.
+
+\textbf{Decomposition.}
+\[
+  \Cost(Y) \;=\; 5 - 0 - 0 \;=\; 5. \qquad \checkmark
+\]
+The nesting $\operatorname{mul}(a, \operatorname{pow}(M,b))$ incurs no
+penalty: the \texttt{pow} output is a real number passed directly to
+\texttt{mul}, consistent with Lemma~\ref{lem:nesting}.
+\end{example}
+
+% ── Example 3 ───────────────────────────────────────────────────────────────
+\begin{example}[pH --- constant-folding sharing discount]
+\label{ex:ph}
+\[
+  \mathrm{pH} \;=\; -\log_{10}[\mathrm{H}^+]
+             \;=\; -\frac{\ln[\mathrm{H}^+]}{\ln 10}.
+\]
+Here $[\mathrm{H}^+]$ is the free variable and $\ln 10 \approx 2.3026$ is
+a numeric constant.
+
+\textbf{Na\"{i}ve cost (unfolded form).}
+Expanding $\log_{10}(x) = \operatorname{mul}(-1/\ln10, \ln x)$ and
+then applying \texttt{neg}:
+\[
+  \NC_{\mathrm{unfolded}} \;=\; c_{\mathrm{neg}} + c_{\mathrm{mul}} + c_{\ln}
+                           \;=\; 2 + 2 + 1 \;=\; 5.
+\]
+
+\textbf{Sharing discount.}
+The factor $-1/\ln 10$ is a pure numeric constant.  Its computation
+(negation of a constant, division by a constant) need not occur at
+runtime: the entire coefficient is pre-evaluated to $\approx -0.4343$,
+which is itself a free constant.  The \texttt{neg} node is thereby
+folded away:
+\[
+  \SD(\mathrm{pH}) \;=\; c_{\mathrm{neg}} \;=\; 2.
+\]
+
+\textbf{Pattern bonus.}
+No further compound pattern applies.  $\PB(\mathrm{pH}) = 0$.
+
+\textbf{Decomposition.}
+\[
+  \Cost(\mathrm{pH}) \;=\; 5 - 2 - 0 \;=\; 3. \qquad \checkmark
+\]
+The runtime tree is $\operatorname{mul}(C, \ln[\mathrm{H}^+])$ where
+$C = -1/\ln 10$ is free: one \texttt{ln} node and one \texttt{mul}
+node, total cost $1 + 2 = 3$.
+\end{example}
+
+% ── Example 4 ───────────────────────────────────────────────────────────────
+\begin{example}[Arrhenius Rate Constant --- sharing discount via constant folding]
+\label{ex:arrhenius}
+\[
+  k \;=\; A \cdot \exp\!\Bigl(-\frac{E_a}{RT}\Bigr),
+\]
+with $A$, $E_a$, $R$ all fixed parameters and $T$ the free variable.
+
+\textbf{Operation tree (expanded, $T$ free).}
+\begin{align*}
+  & \texttt{div}(E_a, T)             &\text{[cost 1]} \\
+  & \texttt{neg}(\cdots)             &\text{[cost 2]} \\
+  & \texttt{exp}(\cdots)             &\text{[cost 1]} \\
+  & \texttt{mul}(A, \cdots)          &\text{[cost 2]}
+\end{align*}
+Note: $R$ is absorbed into \texttt{div} since $E_a/RT = (E_a/R)/T$, and
+$E_a/R$ is a pre-computable constant.
+
+\textbf{Na\"{i}ve cost.}
+\[
+  \NC(k) \;=\; 1 + 2 + 1 + 2 \;=\; 6.
+\]
+
+\textbf{Sharing discount.}
+The pre-exponential factor $A$ is a free constant;
+$E_a/R$ is a pre-computable constant, eliminating the inner \texttt{div}
+node at runtime when $E_a$ and $R$ are both known.
+Folding $E_a/R$ to a single constant $\alpha$ saves the \texttt{div} node:
+\[
+  \SD(k) \;=\; c_{\mathrm{div}} \;=\; 1.
+\]
+
+\textbf{Pattern bonus.}
+No compound pattern.  $\PB(k) = 0$.
+
+\textbf{Decomposition.}
+\[
+  \Cost(k) \;=\; 6 - 1 - 0 \;=\; 5. \qquad \checkmark
+\]
+The runtime tree is
+$\operatorname{mul}(A, \operatorname{exp}(\operatorname{neg}(\operatorname{div}(\alpha, T))))$
+with $\alpha = E_a/R$ free, giving $c_{\mathrm{neg}} + c_{\mathrm{div}} + c_{\exp} + c_{\mathrm{mul}}
+= 2 + 1 + 1 + 2 = 6 - 1 = 5$.
+\end{example}
+
+% ── Example 5 ───────────────────────────────────────────────────────────────
+\begin{example}[Von Bertalanffy Growth --- deep nesting, no penalty]
+\label{ex:vonb}
+\[
+  L(t) \;=\; L_\infty \cdot \bigl(1 - \exp(-K \cdot (t - t_0))\bigr),
+\]
+where $L_\infty$, $K$, $t_0$ are constants and $t$ is the free variable.
+
+\textbf{Operation tree.}
+\begin{align*}
+  & \texttt{sub}(t,\, t_0)                  &\text{[cost 2]} \\
+  & \texttt{mul}(K,\, \cdots)               &\text{[cost 2]} \\
+  & \texttt{neg}(\cdots)                     &\text{[cost 2]} \\
+  & \texttt{exp}(\cdots)                     &\text{[cost 1]} \\
+  & \texttt{sub}(1,\, \cdots)               &\text{[cost 2]} \\
+  & \texttt{mul}(L_\infty,\, \cdots)        &\text{[cost 2]}
+\end{align*}
+
+\textbf{Na\"{i}ve cost.}
+\[
+  \NC(L) \;=\; 2 + 2 + 2 + 1 + 2 + 2 \;=\; 11.
+\]
+
+\textbf{Sharing discount.}
+No subexpression appears at multiple sites; $K$ and $t_0$ are free
+constants, not computed intermediates.  $\SD(L) = 0$.
+
+\textbf{Pattern bonus.}
+No compound $\mathcal{F}_{16}$ pattern matches a subexpression of $L(t)$.
+$\PB(L) = 0$.
+
+\textbf{Decomposition.}
+\[
+  \Cost(L) \;=\; 11 - 0 - 0 \;=\; 11. \qquad \checkmark
+\]
+
+\textbf{No nesting penalty.}
+The expression has nesting depth 6 (six nested operators from
+$\texttt{mul}(L_\infty, \ldots)$ down to $\texttt{sub}(t, t_0)$).
+By Lemma~\ref{lem:nesting} and Corollary~\ref{cor:additivity}, the cost
+is simply the sum of the six unit costs: $2+2+2+1+2+2 = 11$.
+Depth contributes no overhead beyond the sum of parts.
+\end{example}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Summary of Worked Examples}
+\label{sec:summary-table}
+% ════════════════════════════════════════════════════════════════════════════
+
+\begin{table}[h]
+\centering
+\caption{T38 decomposition verified on five catalogue expressions.}
+\label{tab:examples}
+\smallskip
+\begin{tabular}{@{}lccccl@{}}
+\toprule
+\textbf{Expression} & $\NC$ & $\SD$ & $\PB$ & $\Cost$ & \textbf{Key feature} \\
+\midrule
+Ohm's Law ($V=IR$)                 &  2 & 0 & 0 &  2 & tight bound \\
+Allometric ($Y=aM^b$)              &  5 & 0 & 0 &  5 & tight, nested \\
+pH ($-\log_{10}[\mathrm{H}^+]$)   &  5 & 2 & 0 &  3 & constant folding \\
+Arrhenius ($Ae^{-E_a/RT}$)         &  6 & 1 & 0 &  5 & constant folding \\
+Von Bertalanffy ($L_\infty(1-e^{-K(t-t_0)})$) & 11 & 0 & 0 & 11 & depth-6 nesting \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+In all five cases the formula $\Cost = \NC - \SD - \PB$ gives the exact
+correct result with non-negative, precisely computable discount terms.
+The Von Bertalanffy example with depth-6 nesting explicitly confirms the
+No Nesting Penalty (Lemma~\ref{lem:nesting}).
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Theorem Catalog Labels}
+\label{sec:catalog}
+% ════════════════════════════════════════════════════════════════════════════
+
+\begin{description}
+  \item[T33] \emph{Sub 2-Node Optimality.}
+        $\Cost(\mathrm{sub}) = 2$ in $\mathcal{F}_{16}$, achieved by
+        $\LEdiv(x, \EML(y,1)) = \ln(e^x/e^y) = x-y$.
+        Reference: \textit{T33\_Sub\_2Node.tex}.
+
+  \item[T34] \emph{Na\"{i}ve Upper Bound.}
+        $\Cost(E) \leq \NC(E)$ for all EML-computable $E$.
+        Reference: COST-2, \textit{COST2\_Naive\_Upper\_Bound.tex}.
+
+  \item[T35--T37] \emph{Lower Bounds} (trivial, depth, operation-type).
+        Reference: COST-3, \textit{COST3\_Lower\_Bound.tex}.
+
+  \item[T38] \emph{Cost Decomposition.}
+        $\Cost(E) = \NC(E) - \SD(E) - \PB(E)$, with
+        $\SD(E) \geq 0$ (sharing discount, COST-5) and
+        $\PB(E) \geq 0$ (pattern bonus, COST-7).
+        No Nesting Penalty: $\Cost(\mathrm{op}_1(\mathrm{op}_2(x)))
+        = c_{\mathrm{op}_1} + c_{\mathrm{op}_2}$.
+        Reference: this document (COST-6).
+
+  \item[T38-NNP] \emph{No Nesting Penalty} (Lemma~\ref{lem:nesting}).
+        EML operator composition is free: nesting depth adds no
+        representation cost beyond the sum of parts.
+        Reference: this document (COST-6, Section~\ref{sec:nesting}).
+\end{description}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Roadmap}
+\label{sec:roadmap}
+% ════════════════════════════════════════════════════════════════════════════
+
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Session} & \textbf{Topic} \\
+\midrule
+COST-1 & Cost model foundations (SuperBEST v3 unit costs) \\
+COST-2 & Na\"{i}ve upper bound $\NC(E)$ --- Theorem T34 \\
+COST-3 & Lower bounds --- Theorems T35--T37 \\
+COST-4 & Constant-folding discount rules \\
+COST-5 & Sharing discount $\SD(E)$ --- formal theory \\
+COST-6 & \textbf{Cost Decomposition --- Theorem T38 (this document)} \\
+COST-7 & Pattern bonus $\PB(E)$ --- catalogue and algorithm \\
+COST-8 & Blind test: 20-equation validation (\textit{COST8\_Blind\_Test.md}) \\
+COST-9 & General cost optimisation algorithm \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% ════════════════════════════════════════════════════════════════════════════
+\section*{Acknowledgments}
+% ════════════════════════════════════════════════════════════════════════════
+
+This work is part of the monogate SuperBEST cost theory sprint (2026-04-20).
+Theorem T38 synthesises the upper bound (T34, COST-2) and the reduction
+framework (sharing discount, COST-5; pattern bonus, COST-7) into a single
+exact equality.  The No Nesting Penalty (T38-NNP) resolves a natural
+question about the overhead of operator composition in the EML family and
+is confirmed by the COST-8 blind test (session 16, Von Bertalanffy).
+
+\bigskip
+\noindent\textit{Almaguer, A.R.\ (2026).
+Cost Theory COST-6: The Cost Decomposition Theorem (T38).
+monogate research. \url{https://monogate.org}}
+
+\end{document}

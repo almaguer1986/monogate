@@ -1,0 +1,1252 @@
+{
+  "session": "COST-1",
+  "title": "SuperBEST v3 Cost Regression — 50-equation data mine",
+  "ops_order": [
+    "exp",
+    "ln",
+    "mul",
+    "div",
+    "add",
+    "sub",
+    "pow",
+    "neg",
+    "recip"
+  ],
+  "superbest_v3": {
+    "exp": 1,
+    "ln": 1,
+    "mul": 2,
+    "div": 1,
+    "add": 3,
+    "sub": 2,
+    "pow": 3,
+    "neg": 2,
+    "recip": 2
+  },
+  "fitted_coefficients": {
+    "exp": 3.8367,
+    "ln": 1.9818,
+    "mul": 2.4562,
+    "div": 2.8704,
+    "add": 2.5905,
+    "sub": 1.4058,
+    "pow": 3.9744,
+    "neg": -0.7177,
+    "recip": 1.9397
+  },
+  "r_squared": 0.919866,
+  "rmse": 2.1602,
+  "mae": 1.6297,
+  "superbest_comparison": {
+    "exp": {
+      "superbest": 1,
+      "fitted": 3.8367,
+      "delta": 2.8367
+    },
+    "ln": {
+      "superbest": 1,
+      "fitted": 1.9818,
+      "delta": 0.9818
+    },
+    "mul": {
+      "superbest": 2,
+      "fitted": 2.4562,
+      "delta": 0.4562
+    },
+    "div": {
+      "superbest": 1,
+      "fitted": 2.8704,
+      "delta": 1.8704
+    },
+    "add": {
+      "superbest": 3,
+      "fitted": 2.5905,
+      "delta": -0.4095
+    },
+    "sub": {
+      "superbest": 2,
+      "fitted": 1.4058,
+      "delta": -0.5942
+    },
+    "pow": {
+      "superbest": 3,
+      "fitted": 3.9744,
+      "delta": 0.9744
+    },
+    "neg": {
+      "superbest": 2,
+      "fitted": -0.7177,
+      "delta": -2.7177
+    },
+    "recip": {
+      "superbest": 2,
+      "fitted": 1.9397,
+      "delta": -0.0603
+    }
+  },
+  "top5_positive_residuals": [
+    {
+      "name": "Maxwell-Boltzmann",
+      "residual": 7.651357222195038,
+      "actual": 31.0,
+      "fitted": 23.34864277780496
+    },
+    {
+      "name": "Butler-Volmer",
+      "residual": 3.6190699312684025,
+      "actual": 26.0,
+      "fitted": 22.380930068731598
+    },
+    {
+      "name": "Partition function 2-level",
+      "residual": 3.2591091182752265,
+      "actual": 17.0,
+      "fitted": 13.740890881724773
+    },
+    {
+      "name": "Mixed inhibition",
+      "residual": 2.6540805800185794,
+      "actual": 27.0,
+      "fitted": 24.34591941998142
+    },
+    {
+      "name": "Tafel",
+      "residual": 2.512452760021789,
+      "actual": 13.0,
+      "fitted": 10.48754723997821
+    }
+  ],
+  "top5_negative_residuals": [
+    {
+      "name": "Arrhenius k=A·exp(-Ea/RT)",
+      "residual": -3.0313778735830503,
+      "actual": 5.0,
+      "fitted": 8.03137787358305
+    },
+    {
+      "name": "Eyring",
+      "residual": -3.289247197450514,
+      "actual": 13.0,
+      "fitted": 16.289247197450514
+    },
+    {
+      "name": "Integrated first-order",
+      "residual": -3.487547239978211,
+      "actual": 7.0,
+      "fitted": 10.48754723997821
+    },
+    {
+      "name": "Collision theory",
+      "residual": -4.461925642496423,
+      "actual": 10.0,
+      "fitted": 14.461925642496423
+    },
+    {
+      "name": "Van Slyke",
+      "residual": -4.877790220058351,
+      "actual": 14.0,
+      "fitted": 18.87779022005835
+    }
+  ],
+  "data_table": [
+    {
+      "name": "Arrhenius k=A·exp(-Ea/RT)",
+      "actual": 5.0,
+      "naive": 7.0,
+      "fitted": 8.031,
+      "residual": -3.031,
+      "sharing_correction": -2.0,
+      "op_counts": {
+        "exp": 1,
+        "ln": 0,
+        "mul": 2,
+        "div": 0,
+        "add": 0,
+        "sub": 0,
+        "pow": 0,
+        "neg": 1,
+        "recip": 0
+      }
+    },
+    {
+      "name": "Eyring",
+      "actual": 13.0,
+      "naive": 15.0,
+      "fitted": 16.289,
+      "residual": -3.289,
+      "sharing_correction": -2.0,
+      "op_counts": {
+        "exp": 1,
+        "ln": 0,
+        "mul": 4,
+        "div": 0,
+        "add": 0,
+        "sub": 1,
+        "pow": 0,
+        "neg": 1,
+        "recip": 1
+      }
+    },
+    {
+      "name": "Collision theory",
+      "actual": 10.0,
+      "naive": 12.0,
+      "fitted": 14.462,
+      "residual": -4.462,
+      "sharing_correction": -2.0,
+      "op_counts": {
+        "exp": 1,
+        "ln": 0,
+        "mul": 3,
+        "div": 0,
+        "add": 0,
+        "sub": 0,
+        "pow": 1,
+        "neg": 1,
+        "recip": 0
+      }
+    },
+    {
+      "name": "Rate law r=k[A][B]",
+      "actual": 4.0,
+      "naive": 4.0,
+      "fitted": 4.912,
+      "residual": -0.912,
+      "sharing_correction": 0.0,
+      "op_counts": {
+        "exp": 0,
+        "ln": 0,
+        "mul": 2,
+        "div": 0,
+        "add": 0,
+        "sub": 0,
+        "pow": 0,
+        "neg": 0,
+        "recip": 0
+      }
+    },
+    {
+      "name": "Integrated first-order",
+      "actual": 7.0,
+      "naive": 9.0,
+      "fitted": 10.488,
+      "residual": -3.488,
+      "sharing_correction": -2.0,
+      "op_counts": {
+        "exp": 1,
+        "ln": 0,
+        "mul": 3,
+        "div": 0,
+        "add": 0,
+        "sub": 0,
+        "pow": 0,
+        "neg": 1,
+        "recip": 0
+      }
+    },
+    {
+      "name": "Integrated second-order",
+      "actual": 9.0,
+      "naive": 9.0,
+      "fitted": 8.926,
+      "residual": 0.074,
+      "sharing_correction": 0.0,
+      "op_counts": {
+        "exp": 0,
+        "ln": 0,
+        "mul": 1,
+        "div": 0,
+        "add": 1,
+        "sub": 0,
+        "pow": 0,
+        "neg": 0,
+        "recip": 2
+      }
+    },
+    {
+      "name": "Boltzmann factor",
+      "actual": 13.0,
+      "naive": 10.0,
+      "fitted": 12.842,
+      "residual": 0.158,
+      "sharing_correction": 3.0,
+      "op_counts": {
+        "exp": 1,
+        "ln": 0,
+        "mul": 2,
+        "div": 1,
+        "add": 0,
+        "sub": 0,
+        "pow": 0,
+        "neg": 1,
+        "recip": 1
+      }
+    },
+    {
+      "name": "Boltzmann ratio",
+      "actual": 11.0,
+      "naive": 9.0,
+      "fitted": 9.437,
+      "residual": 1.563,
+      "sharing_correction": 2.0,
+      "op_counts": {
+        "exp": 1,
+        "ln": 0,
+        "mul": 2,
+        "div": 0,
+        "add": 0,
+        "sub": 1,
+        "pow": 0,
+        "neg": 1,
+        "recip": 0
+      }
+    },
+    {
+      "name": "Partition function 2-level",
+      "actual": 17.0,
+      "naive": 13.0,
+      "fitted": 13.741,
+      "residual": 3.259,
+      "sharing_correction": 4.0,
+      "op_counts": {
+        "exp": 2,
+        "ln": 0,
+        "mul": 2,
+        "div": 0,
+        "add": 1,
+        "sub": 0,
+        "pow": 0,
+        "neg": 2,
+        "recip": 0
+      }
+    },
+    {
+      "name": "Maxwell-Boltzmann",
+      "actual": 31.0,
+      "naive": 19.0,
+      "fitted": 23.349,
+      "residual": 7.651,
+      "sharing_correction": 12.0,
+      "op_counts": {
+        "exp": 1,
+        "ln": 0,
+        "mul": 5,
+        "div": 0,
+        "add": 0,
+        "sub": 0,
+        "pow": 2,
+        "neg": 1,
+        "recip": 0
+      }
+    },
+    {
+      "name": "Entropy S=kB·ln(Ω)",
+      "actual": 3.0,
+      "naive": 3.0,
+      "fitted": 4.438,
+      "residual": -1.438,
+      "sharing_correction": 0.0,
+      "op_counts": {
+        "exp": 0,
+        "ln": 1,
+        "mul": 1,
+        "div": 0,
+        "add": 0,
+        "sub": 0,
+        "pow": 0,
+        "neg": 0,
+        "recip": 0
+      }
+    },
+    {
+      "name": "Helmholtz A=-kBT·ln(Z)",
+      "actual": 7.0,
+      "naive": 7.0,
+      "fitted": 6.176,
+      "residual": 0.824,
+      "sharing_correction": 0.0,
+      "op_counts": {
+        "exp": 0,
+        "ln": 1,
+        "mul": 2,
+        "div": 0,
+        "add": 0,
+        "sub": 0,
+        "pow": 0,
+        "neg": 1,
+        "recip": 0
+      }
+    },
+    {
+      "name": "Average energy 2-level",
+      "actual": 21.0,
+      "naive": 18.0,
+      "fitted": 21.524,
+      "residual": -0.524,
+      "sharing_correction": 3.0,
+      "op_counts": {
+        "exp": 2,
+        "ln": 0,
+        "mul": 4,
+        "div": 1,
+        "add": 1,
+        "sub": 0,
+        "pow": 0,
+        "neg": 2,
+        "recip": 0
+      }
+    },
+    {
+      "name": "Nernst (folded)",
+      "actual": 5.0,
+      "naive": 5.0,
+      "fitted": 6.894,
+      "residual": -1.894,
+      "sharing_correction": 0.0,
+      "op_counts": {
+        "exp": 0,
+        "ln": 1,
+        "mul": 2,
+        "div": 0,
+        "add": 0,
+        "sub": 0,
+        "pow": 0,
+        "neg": 0,
+        "recip": 0
+      }
+    },
+    {
+      "name": "Nernst (unfolded)",
+      "actual": 13.0,
+      "naive": 10.0,
+      "fitted": 14.677,
+      "residual": -1.677,
+      "sharing_correction": 3.0,
+      "op_counts": {
+        "exp": 0,
+        "ln": 1,
+        "mul": 4,
+        "div": 1,
+        "add": 0,
+        "sub": 0,
+        "pow": 0,
+        "neg": 0,
+        "recip": 0
+      }
+    },
+    {
+      "name": "Butler-Volmer",
+      "actual": 26.0,
+      "naive": 20.0,
+      "fitted": 22.381,
+      "residual": 3.619,
+      "sharing_correction": 6.0,
+      "op_counts": {
+        "exp": 2,
+        "ln": 0,
+        "mul": 6,
+        "div": 0,
+        "add": 0,
+        "sub": 1,
+        "pow": 0,
+        "neg": 2,
+        "recip": 0
+      }
+    },
+    {
+      "name": "Tafel",
+      "actual": 13.0,
+      "naive": 9.0,
+      "fitted": 10.488,
+      "residual": 2.512,
+      "sharing_correction": 4.0,
+      "op_counts": {
+        "exp": 1,
+        "ln": 0,
+        "mul": 3,
+        "div": 0,
+        "add": 0,
+        "sub": 0,
+        "pow": 0,
+        "neg": 1,
+        "recip": 0
+      }
+    },
+    {
+      "name": "GHK 2-ion",
+      "actual": 27.0,
+      "naive": 20.0,
+      "fitted": 24.77,
+      "residual": 2.23,
+      "sharing_correction": 7.0,
+      "op_counts": {
+        "exp": 0,
+        "ln": 1,
+        "mul": 6,
+        "div": 1,
+        "add": 2,
+        "sub": 0,
+        "pow": 0,
+        "neg": 0,
+        "recip": 0
+      }
+    },
+    {
+      "name": "Debye-Hückel",
+      "actual": 12.0,
+      "naive": 12.0,
+      "fitted": 12.143,
+      "residual": -0.143,
+      "sharing_correction": 0.0,
+      "op_counts": {
+        "exp": 0,
+        "ln": 0,
+        "mul": 2,
+        "div": 0,
+        "add": 0,
+        "sub": 0,
+        "pow": 2,
+        "neg": 1,
+        "recip": 0
+      }
+    },
+    {
+      "name": "Electrochemical potential",
+      "actual": 15.0,
+      "naive": 13.0,
+      "fitted": 14.531,
+      "residual": 0.469,
+      "sharing_correction": 2.0,
+      "op_counts": {
+        "exp": 0,
+        "ln": 1,
+        "mul": 3,
+        "div": 0,
+        "add": 2,
+        "sub": 0,
+        "pow": 0,
+        "neg": 0,
+        "recip": 0
+      }
+    },
+    {
+      "name": "pH=-log10[H+]",
+      "actual": 3.0,
+      "naive": 3.0,
+      "fitted": 4.438,
+      "residual": -1.438,
+      "sharing_correction": 0.0,
+      "op_counts": {
+        "exp": 0,
+        "ln": 1,
+        "mul": 1,
+        "div": 0,
+        "add": 0,
+        "sub": 0,
+        "pow": 0,
+        "neg": 0,
+        "recip": 0
+      }
+    },
+    {
+      "name": "Henderson-Hasselbalch",
+      "actual": 10.0,
+      "naive": 10.0,
+      "fitted": 10.89,
+      "residual": -0.89,
+      "sharing_correction": 0.0,
+      "op_counts": {
+        "exp": 0,
+        "ln": 1,
+        "mul": 2,
+        "div": 0,
+        "add": 1,
+        "sub": 1,
+        "pow": 0,
+        "neg": 0,
+        "recip": 0
+      }
+    },
+    {
+      "name": "[H+]=sqrt(Ka·Ca)",
+      "actual": 5.0,
+      "naive": 5.0,
+      "fitted": 6.431,
+      "residual": -1.431,
+      "sharing_correction": 0.0,
+      "op_counts": {
+        "exp": 0,
+        "ln": 0,
+        "mul": 1,
+        "div": 0,
+        "add": 0,
+        "sub": 0,
+        "pow": 1,
+        "neg": 0,
+        "recip": 0
+      }
+    },
+    {
+      "name": "Van Slyke",
+      "actual": 14.0,
+      "naive": 16.0,
+      "fitted": 18.878,
+      "residual": -4.878,
+      "sharing_correction": -2.0,
+      "op_counts": {
+        "exp": 0,
+        "ln": 0,
+        "mul": 2,
+        "div": 1,
+        "add": 2,
+        "sub": 0,
+        "pow": 1,
+        "neg": 0,
+        "recip": 1
+      }
+    },
+    {
+      "name": "Quadratic [H+] Ka variable",
+      "actual": 20.0,
+      "naive": 21.0,
+      "fitted": 21.299,
+      "residual": -1.299,
+      "sharing_correction": -1.0,
+      "op_counts": {
+        "exp": 0,
+        "ln": 0,
+        "mul": 2,
+        "div": 0,
+        "add": 2,
+        "sub": 0,
+        "pow": 3,
+        "neg": 1,
+        "recip": 0
+      }
+    },
+    {
+      "name": "Activity pH",
+      "actual": 5.0,
+      "naive": 5.0,
+      "fitted": 6.894,
+      "residual": -1.894,
+      "sharing_correction": 0.0,
+      "op_counts": {
+        "exp": 0,
+        "ln": 1,
+        "mul": 2,
+        "div": 0,
+        "add": 0,
+        "sub": 0,
+        "pow": 0,
+        "neg": 0,
+        "recip": 0
+      }
+    },
+    {
+      "name": "ΔG=ΔH-TΔS",
+      "actual": 4.0,
+      "naive": 4.0,
+      "fitted": 3.862,
+      "residual": 0.138,
+      "sharing_correction": 0.0,
+      "op_counts": {
+        "exp": 0,
+        "ln": 0,
+        "mul": 1,
+        "div": 0,
+        "add": 0,
+        "sub": 1,
+        "pow": 0,
+        "neg": 0,
+        "recip": 0
+      }
+    },
+    {
+      "name": "ΔG°=-RT·ln(K)",
+      "actual": 7.0,
+      "naive": 7.0,
+      "fitted": 6.176,
+      "residual": 0.824,
+      "sharing_correction": 0.0,
+      "op_counts": {
+        "exp": 0,
+        "ln": 1,
+        "mul": 2,
+        "div": 0,
+        "add": 0,
+        "sub": 0,
+        "pow": 0,
+        "neg": 1,
+        "recip": 0
+      }
+    },
+    {
+      "name": "ΔG=ΔG°+RT·ln(Q)",
+      "actual": 8.0,
+      "naive": 8.0,
+      "fitted": 9.485,
+      "residual": -1.485,
+      "sharing_correction": 0.0,
+      "op_counts": {
+        "exp": 0,
+        "ln": 1,
+        "mul": 2,
+        "div": 0,
+        "add": 1,
+        "sub": 0,
+        "pow": 0,
+        "neg": 0,
+        "recip": 0
+      }
+    },
+    {
+      "name": "van't Hoff",
+      "actual": 17.0,
+      "naive": 14.0,
+      "fitted": 15.567,
+      "residual": 1.433,
+      "sharing_correction": 3.0,
+      "op_counts": {
+        "exp": 0,
+        "ln": 2,
+        "mul": 2,
+        "div": 0,
+        "add": 0,
+        "sub": 2,
+        "pow": 0,
+        "neg": 0,
+        "recip": 2
+      }
+    },
+    {
+      "name": "Clausius-Clapeyron",
+      "actual": 17.0,
+      "naive": 14.0,
+      "fitted": 15.567,
+      "residual": 1.433,
+      "sharing_correction": 3.0,
+      "op_counts": {
+        "exp": 0,
+        "ln": 2,
+        "mul": 2,
+        "div": 0,
+        "add": 0,
+        "sub": 2,
+        "pow": 0,
+        "neg": 0,
+        "recip": 2
+      }
+    },
+    {
+      "name": "Entropy of mixing 2-comp",
+      "actual": 13.0,
+      "naive": 13.0,
+      "fitted": 13.205,
+      "residual": -0.205,
+      "sharing_correction": 0.0,
+      "op_counts": {
+        "exp": 0,
+        "ln": 2,
+        "mul": 3,
+        "div": 0,
+        "add": 1,
+        "sub": 0,
+        "pow": 0,
+        "neg": 1,
+        "recip": 0
+      }
+    },
+    {
+      "name": "Arrhenius-Gibbs Form1",
+      "actual": 11.0,
+      "naive": 11.0,
+      "fitted": 12.427,
+      "residual": -1.427,
+      "sharing_correction": 0.0,
+      "op_counts": {
+        "exp": 1,
+        "ln": 0,
+        "mul": 3,
+        "div": 0,
+        "add": 0,
+        "sub": 0,
+        "pow": 0,
+        "neg": 1,
+        "recip": 1
+      }
+    },
+    {
+      "name": "Arrhenius-Gibbs Form2",
+      "actual": 16.0,
+      "naive": 16.0,
+      "fitted": 17.469,
+      "residual": -1.469,
+      "sharing_correction": 0.0,
+      "op_counts": {
+        "exp": 2,
+        "ln": 0,
+        "mul": 4,
+        "div": 0,
+        "add": 0,
+        "sub": 1,
+        "pow": 0,
+        "neg": 2,
+        "recip": 0
+      }
+    },
+    {
+      "name": "Malthus N_{t+1}=λN_t",
+      "actual": 2.0,
+      "naive": 2.0,
+      "fitted": 2.456,
+      "residual": -0.456,
+      "sharing_correction": 0.0,
+      "op_counts": {
+        "exp": 0,
+        "ln": 0,
+        "mul": 1,
+        "div": 0,
+        "add": 0,
+        "sub": 0,
+        "pow": 0,
+        "neg": 0,
+        "recip": 0
+      }
+    },
+    {
+      "name": "Gompertz",
+      "actual": 12.0,
+      "naive": 12.0,
+      "fitted": 12.556,
+      "residual": -0.556,
+      "sharing_correction": 0.0,
+      "op_counts": {
+        "exp": 2,
+        "ln": 0,
+        "mul": 2,
+        "div": 0,
+        "add": 0,
+        "sub": 1,
+        "pow": 0,
+        "neg": 2,
+        "recip": 0
+      }
+    },
+    {
+      "name": "R₀ net reproductive (3-age)",
+      "actual": 12.0,
+      "naive": 12.0,
+      "fitted": 12.549,
+      "residual": -0.549,
+      "sharing_correction": 0.0,
+      "op_counts": {
+        "exp": 0,
+        "ln": 0,
+        "mul": 3,
+        "div": 0,
+        "add": 2,
+        "sub": 0,
+        "pow": 0,
+        "neg": 0,
+        "recip": 0
+      }
+    },
+    {
+      "name": "Beverton-Holt",
+      "actual": 11.0,
+      "naive": 11.0,
+      "fitted": 11.899,
+      "residual": -0.899,
+      "sharing_correction": 0.0,
+      "op_counts": {
+        "exp": 0,
+        "ln": 0,
+        "mul": 3,
+        "div": 0,
+        "add": 1,
+        "sub": 0,
+        "pow": 0,
+        "neg": 0,
+        "recip": 1
+      }
+    },
+    {
+      "name": "Logistic sigmoid",
+      "actual": 14.0,
+      "naive": 16.0,
+      "fitted": 16.424,
+      "residual": -2.424,
+      "sharing_correction": -2.0,
+      "op_counts": {
+        "exp": 1,
+        "ln": 0,
+        "mul": 3,
+        "div": 0,
+        "add": 1,
+        "sub": 1,
+        "pow": 0,
+        "neg": 1,
+        "recip": 1
+      }
+    },
+    {
+      "name": "Logistic standard",
+      "actual": 14.0,
+      "naive": 16.0,
+      "fitted": 16.424,
+      "residual": -2.424,
+      "sharing_correction": -2.0,
+      "op_counts": {
+        "exp": 1,
+        "ln": 0,
+        "mul": 3,
+        "div": 0,
+        "add": 1,
+        "sub": 1,
+        "pow": 0,
+        "neg": 1,
+        "recip": 1
+      }
+    },
+    {
+      "name": "Michaelis-Menten",
+      "actual": 9.0,
+      "naive": 9.0,
+      "fitted": 9.443,
+      "residual": -0.443,
+      "sharing_correction": 0.0,
+      "op_counts": {
+        "exp": 0,
+        "ln": 0,
+        "mul": 2,
+        "div": 0,
+        "add": 1,
+        "sub": 0,
+        "pow": 0,
+        "neg": 0,
+        "recip": 1
+      }
+    },
+    {
+      "name": "Lineweaver-Burk",
+      "actual": 11.0,
+      "naive": 11.0,
+      "fitted": 11.382,
+      "residual": -0.382,
+      "sharing_correction": 0.0,
+      "op_counts": {
+        "exp": 0,
+        "ln": 0,
+        "mul": 2,
+        "div": 0,
+        "add": 1,
+        "sub": 0,
+        "pow": 0,
+        "neg": 0,
+        "recip": 2
+      }
+    },
+    {
+      "name": "Enzyme turnover",
+      "actual": 4.0,
+      "naive": 3.0,
+      "fitted": 5.327,
+      "residual": -1.327,
+      "sharing_correction": 1.0,
+      "op_counts": {
+        "exp": 0,
+        "ln": 0,
+        "mul": 1,
+        "div": 1,
+        "add": 0,
+        "sub": 0,
+        "pow": 0,
+        "neg": 0,
+        "recip": 0
+      }
+    },
+    {
+      "name": "Competitive inhibition",
+      "actual": 18.0,
+      "naive": 15.0,
+      "fitted": 16.843,
+      "residual": 1.157,
+      "sharing_correction": 3.0,
+      "op_counts": {
+        "exp": 0,
+        "ln": 0,
+        "mul": 2,
+        "div": 1,
+        "add": 2,
+        "sub": 0,
+        "pow": 0,
+        "neg": 0,
+        "recip": 2
+      }
+    },
+    {
+      "name": "Uncompetitive inhibition",
+      "actual": 18.0,
+      "naive": 15.0,
+      "fitted": 16.843,
+      "residual": 1.157,
+      "sharing_correction": 3.0,
+      "op_counts": {
+        "exp": 0,
+        "ln": 0,
+        "mul": 2,
+        "div": 1,
+        "add": 2,
+        "sub": 0,
+        "pow": 0,
+        "neg": 0,
+        "recip": 2
+      }
+    },
+    {
+      "name": "Mixed inhibition",
+      "actual": 27.0,
+      "naive": 22.0,
+      "fitted": 24.346,
+      "residual": 2.654,
+      "sharing_correction": 5.0,
+      "op_counts": {
+        "exp": 0,
+        "ln": 0,
+        "mul": 4,
+        "div": 1,
+        "add": 3,
+        "sub": 0,
+        "pow": 0,
+        "neg": 0,
+        "recip": 2
+      }
+    },
+    {
+      "name": "Hill general",
+      "actual": 15.0,
+      "naive": 13.0,
+      "fitted": 14.935,
+      "residual": 0.065,
+      "sharing_correction": 2.0,
+      "op_counts": {
+        "exp": 0,
+        "ln": 0,
+        "mul": 1,
+        "div": 0,
+        "add": 1,
+        "sub": 0,
+        "pow": 2,
+        "neg": 0,
+        "recip": 1
+      }
+    },
+    {
+      "name": "Hill fractional",
+      "actual": 10.0,
+      "naive": 8.0,
+      "fitted": 8.505,
+      "residual": 1.495,
+      "sharing_correction": 2.0,
+      "op_counts": {
+        "exp": 0,
+        "ln": 0,
+        "mul": 0,
+        "div": 0,
+        "add": 1,
+        "sub": 0,
+        "pow": 1,
+        "neg": 0,
+        "recip": 1
+      }
+    },
+    {
+      "name": "MWC n=2",
+      "actual": 34.0,
+      "naive": 32.0,
+      "fitted": 34.987,
+      "residual": -0.987,
+      "sharing_correction": 2.0,
+      "op_counts": {
+        "exp": 0,
+        "ln": 0,
+        "mul": 6,
+        "div": 0,
+        "add": 4,
+        "sub": 0,
+        "pow": 2,
+        "neg": 0,
+        "recip": 1
+      }
+    },
+    {
+      "name": "GHK 3-ion",
+      "actual": 31.0,
+      "naive": 26.0,
+      "fitted": 29.951,
+      "residual": 1.049,
+      "sharing_correction": 5.0,
+      "op_counts": {
+        "exp": 0,
+        "ln": 1,
+        "mul": 6,
+        "div": 1,
+        "add": 4,
+        "sub": 0,
+        "pow": 0,
+        "neg": 0,
+        "recip": 0
+      }
+    }
+  ],
+  "blind_test": [
+    {
+      "name": "S=kB·ln(Ω) [entropy]",
+      "expected": 3,
+      "predicted_fitted": 4.438,
+      "predicted_naive": 3.0,
+      "error_fitted": 1.438,
+      "error_naive": 0.0
+    },
+    {
+      "name": "pH=-log10[H+]",
+      "expected": 3,
+      "predicted_fitted": 4.438,
+      "predicted_naive": 3.0,
+      "error_fitted": 1.438,
+      "error_naive": 0.0
+    },
+    {
+      "name": "N₀·exp(rt)",
+      "expected": 5,
+      "predicted_fitted": 8.749,
+      "predicted_naive": 5.0,
+      "error_fitted": 3.749,
+      "error_naive": 0.0
+    },
+    {
+      "name": "r=k[A][B]",
+      "expected": 4,
+      "predicted_fitted": 4.912,
+      "predicted_naive": 4.0,
+      "error_fitted": 0.912,
+      "error_naive": 0.0
+    },
+    {
+      "name": "Boltzmann factor",
+      "expected": 13,
+      "predicted_fitted": 12.842,
+      "predicted_naive": 10.0,
+      "error_fitted": -0.158,
+      "error_naive": -3.0
+    },
+    {
+      "name": "van't Hoff",
+      "expected": 17,
+      "predicted_fitted": 15.567,
+      "predicted_naive": 14.0,
+      "error_fitted": -1.433,
+      "error_naive": -3.0
+    },
+    {
+      "name": "MWC n=2",
+      "expected": 34,
+      "predicted_fitted": 34.987,
+      "predicted_naive": 32.0,
+      "error_fitted": 0.987,
+      "error_naive": -2.0
+    },
+    {
+      "name": "Gompertz",
+      "expected": 12,
+      "predicted_fitted": 12.556,
+      "predicted_naive": 12.0,
+      "error_fitted": 0.556,
+      "error_naive": 0.0
+    },
+    {
+      "name": "Maxwell-Boltzmann",
+      "expected": 31,
+      "predicted_fitted": 23.349,
+      "predicted_naive": 19.0,
+      "error_fitted": -7.651,
+      "error_naive": -12.0
+    },
+    {
+      "name": "Mixed inhibition",
+      "expected": 27,
+      "predicted_fitted": 24.346,
+      "predicted_naive": 22.0,
+      "error_fitted": -2.654,
+      "error_naive": -5.0
+    }
+  ],
+  "sharing_pattern_analysis": {
+    "description": "sharing_correction = actual - naive. Negative = cheaper than naive, positive = more expensive.",
+    "large_discounts": [
+      {
+        "name": "Arrhenius k=A·exp(-Ea/RT)",
+        "correction": -2.0,
+        "naive": 7.0,
+        "actual": 5.0
+      },
+      {
+        "name": "Eyring",
+        "correction": -2.0,
+        "naive": 15.0,
+        "actual": 13.0
+      },
+      {
+        "name": "Collision theory",
+        "correction": -2.0,
+        "naive": 12.0,
+        "actual": 10.0
+      },
+      {
+        "name": "Integrated first-order",
+        "correction": -2.0,
+        "naive": 9.0,
+        "actual": 7.0
+      },
+      {
+        "name": "Van Slyke",
+        "correction": -2.0,
+        "naive": 16.0,
+        "actual": 14.0
+      }
+    ],
+    "large_premiums": [
+      {
+        "name": "Mixed inhibition",
+        "correction": 5.0,
+        "naive": 22.0,
+        "actual": 27.0
+      },
+      {
+        "name": "GHK 3-ion",
+        "correction": 5.0,
+        "naive": 26.0,
+        "actual": 31.0
+      },
+      {
+        "name": "Butler-Volmer",
+        "correction": 6.0,
+        "naive": 20.0,
+        "actual": 26.0
+      },
+      {
+        "name": "GHK 2-ion",
+        "correction": 7.0,
+        "naive": 20.0,
+        "actual": 27.0
+      },
+      {
+        "name": "Maxwell-Boltzmann",
+        "correction": 12.0,
+        "naive": 19.0,
+        "actual": 31.0
+      }
+    ]
+  }
+}
