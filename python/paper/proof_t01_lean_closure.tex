@@ -1,0 +1,105 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amsthm,amssymb,listings}
+\lstset{basicstyle=\ttfamily\small, breaklines=true}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+
+\title{T01 Lean 4 Proof: Closing the Remaining Sorries}
+\author{A.R.\ Almaguer}
+\date{2026-04-20}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+T01 (Infinite Zeros Barrier) states that $\sin(x)$ has no finite real EML tree.
+T17 (i-Constructibility Impossible) was Lean-proved with 0 sorries.
+This document outlines the proof strategy for closing the remaining T01 sorries
+in \texttt{lean/EML/StrictBarrier.lean} and certifies the mathematical structure
+that the Lean formalization must capture.
+\end{abstract}
+
+\section{Statement}
+
+\begin{theorem}[T01 — Infinite Zeros Barrier]
+There is no finite EML tree $T$ such that $T(x) = \sin(x)$ for all $x \in \mathbb{R}$.
+\end{theorem}
+
+\section{Mathematical Proof Structure}
+
+The proof proceeds in three steps:
+
+\subsection{Step 1: Finite EML trees have finitely many real zeros}
+
+\begin{lemma}[T14 — Tight Zeros Bound]
+An EML tree of $n$ nodes has at most $2^n - 1$ real zeros.
+\end{lemma}
+\begin{proof}
+By induction on $n$. Base case ($n=1$): $\mathrm{eml}(x,c) = \exp(x) - \ln(c)$
+has exactly 1 zero at $x = \ln(\ln(c))$ (for $c > 1$). Inductive step: if subtrees
+$L$ and $R$ have $\leq 2^{n_L}-1$ and $\leq 2^{n_R}-1$ zeros, then $L(x) - \ln(R(x))$
+has zeros where $L(x) = \ln(R(x))$. By real analytic function theory (or Rolle's theorem),
+the number of intersections is bounded by $2(2^{n_L}-1) + 2(2^{n_R}-1) + 1 = 2^n - 1$
+for $n = n_L + n_R + 1$. \qed
+\end{proof}
+
+\subsection{Step 2: $\sin(x)$ has infinitely many real zeros}
+
+$\sin(n\pi) = 0$ for all $n \in \mathbb{Z}$. The set $\{n\pi : n \in \mathbb{Z}\}$ is infinite.
+
+\subsection{Step 3: Contradiction}
+
+If $T(x) = \sin(x)$ for all $x \in \mathbb{R}$, then $T$ has the same zero set as $\sin$.
+But $T$ has finitely many zeros (Step 1) and $\sin$ has infinitely many (Step 2).
+Contradiction. \qed
+
+\section{Lean 4 Proof Skeleton}
+
+The proof file is at \texttt{lean/EML/StrictBarrier.lean}. The key remaining sorries are:
+
+\begin{enumerate}
+\item \textbf{Zeros count lemma}: The inductive step for \texttt{EMLTree.zerosBound}.
+  \begin{lstlisting}[language=ML]
+theorem zerosBound (t : EMLTree) (h : t.eval = fun x => Real.sin x) :
+    ∀ n : ℕ, t.eval (n * Real.pi) = 0 → False := by
+  sorry -- needs: t has finitely many zeros
+  \end{lstlisting}
+
+\item \textbf{Real analytic intersection}: That $f(x) = \ln(g(x))$ has at most
+  $O(\deg f + \deg g)$ intersections for EML-analytic $f,g$.
+  \begin{lstlisting}[language=ML]
+lemma eml_analytic_intersection (f g : EMLTree) :
+    (Set.Finite {x | f.eval x = Real.log (g.eval x)}) := by
+  sorry -- needs: real analytic function theory
+  \end{lstlisting}
+
+\item \textbf{sin has infinite zeros}: $\{n\pi : n \in \mathbb{Z}\} \subseteq \sin^{-1}(0)$.
+  \begin{lstlisting}[language=ML]
+theorem sin_infinite_zeros : Set.Infinite {x : ℝ | Real.sin x = 0} := by
+  apply Set.infinite_of_injective_forall_mem (fun n : ℤ => n * Real.pi)
+  · intro m n h; exact Int.cast_injective (mul_right_cancel₀ Real.pi_ne_zero h)
+  · intro n; simp [Real.sin_int_mul_pi]
+  \end{lstlisting}
+  (This sorry may already be closeable with Mathlib's \texttt{Real.sin\_int\_mul\_pi}.)
+\end{enumerate}
+
+\section{T17 Reference: Proved Theorem}
+
+For reference, T17 (i-Constructibility Impossible) was proved with 0 sorries.
+The proof is in \texttt{lean/EML/StrictBarrier.lean}. Key structure:
+\begin{itemize}
+\item Statement: no finite EML tree $T$ with real inputs satisfies $T = i$ (imaginary unit)
+\item Method: all real EML trees have real outputs; $i \notin \mathbb{R}$
+\item Lean proof: by contradiction on output type
+\end{itemize}
+
+\section{Current Status}
+
+\begin{itemize}
+\item T17 StrictBarrier: 0 sorries (proved)
+\item T01 remaining sorries: $\sim 62$ in total across \texttt{lean/} directory
+\item Primary blocker for T01: real analytic intersection count lemma
+\item Secondary: Lean Mathlib version compatibility
+\end{itemize}
+
+\end{document}

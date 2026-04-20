@@ -1,0 +1,645 @@
+{
+  "CAL1": {
+    "sin_taylor": {
+      "4": {
+        "superbest": 33,
+        "old_best": 27,
+        "savings": -6,
+        "pct_saved": -22.2
+      },
+      "6": {
+        "superbest": 51,
+        "old_best": 45,
+        "savings": -6,
+        "pct_saved": -13.3
+      },
+      "8": {
+        "superbest": 69,
+        "old_best": 63,
+        "savings": -6,
+        "pct_saved": -9.5
+      },
+      "10": {
+        "superbest": 87,
+        "old_best": 81,
+        "savings": -6,
+        "pct_saved": -7.4
+      },
+      "12": {
+        "superbest": 105,
+        "old_best": 99,
+        "savings": -6,
+        "pct_saved": -6.1
+      },
+      "13": {
+        "superbest": 114,
+        "old_best": 108,
+        "savings": -6,
+        "pct_saved": -5.6
+      }
+    },
+    "fourier_vs_taylor": {
+      "single_harmonic_fourier": 1,
+      "8_term_taylor_superbest": 69,
+      "8_term_taylor_old_best": 63,
+      "ratio_old": 63,
+      "ratio_new": 69,
+      "note": "Fourier still wins by the same 63:1 ratio (Taylor got cheaper but Fourier is still 1 node)"
+    },
+    "formula": "9N - 3 nodes for N-term Taylor (literal coefficients, pos domain)",
+    "key_finding": "8-term sin: 69n SuperBEST vs 63n old (savings: -6n = -9.5%)"
+  },
+  "CAL2": {
+    "integration_table": [
+      {
+        "fn": "exp(x)",
+        "f_nodes": 1,
+        "integral": "exp(x)",
+        "integral_nodes": 1,
+        "elementary": true
+      },
+      {
+        "fn": "ln(x)",
+        "f_nodes": 1,
+        "integral": "x\u00b7ln(x)\u2212x",
+        "integral_nodes": 7,
+        "elementary": true
+      },
+      {
+        "fn": "1/x",
+        "f_nodes": 1,
+        "integral": "ln(x)",
+        "integral_nodes": 1,
+        "elementary": true
+      },
+      {
+        "fn": "x^n (n\u2260-1)",
+        "f_nodes": 3,
+        "integral": "x^(n+1)/(n+1)",
+        "integral_nodes": 3,
+        "elementary": true
+      },
+      {
+        "fn": "exp(-x)",
+        "f_nodes": 1,
+        "integral": "\u2212exp(\u2212x)",
+        "integral_nodes": 3,
+        "elementary": true
+      },
+      {
+        "fn": "neg(x)",
+        "f_nodes": 2,
+        "integral": "\u2212x\u00b2/2",
+        "integral_nodes": 3,
+        "elementary": true
+      },
+      {
+        "fn": "sin(x)",
+        "f_nodes": 1,
+        "integral": "\u2212cos(x) [complex]",
+        "integral_nodes": 1,
+        "elementary": true
+      },
+      {
+        "fn": "cos(x)",
+        "f_nodes": 1,
+        "integral": "sin(x) [complex]",
+        "integral_nodes": 1,
+        "elementary": true
+      },
+      {
+        "fn": "x\u00b2",
+        "f_nodes": 3,
+        "integral": "x\u00b3/3",
+        "integral_nodes": 3,
+        "elementary": true
+      },
+      {
+        "fn": "1/(1+x\u00b2)",
+        "f_nodes": 4,
+        "integral": "arctan(x)",
+        "integral_nodes": 6,
+        "elementary": true
+      },
+      {
+        "fn": "exp(\u2212x\u00b2)",
+        "f_nodes": 4,
+        "integral": "\u221a\u03c0/2\u00b7erf(x)",
+        "integral_nodes": null,
+        "elementary": false
+      },
+      {
+        "fn": "sin(x)/x",
+        "f_nodes": 4,
+        "integral": "Si(x)",
+        "integral_nodes": null,
+        "elementary": false
+      },
+      {
+        "fn": "1/ln(x)",
+        "f_nodes": 1,
+        "integral": "li(x)",
+        "integral_nodes": null,
+        "elementary": false
+      }
+    ],
+    "increases": 4,
+    "decreases": 0,
+    "same": 6,
+    "non_elementary_examples": [
+      "exp(\u2212x\u00b2)\u2192erf",
+      "sin(x)/x\u2192Si(x)",
+      "1/ln(x)\u2192li(x)"
+    ],
+    "key_finding": "Integration INCREASES node count for most functions. Only 1/x\u2192ln(x) and x^n\u2192x^(n+1)/(n+1) maintain cost."
+  },
+  "CAL3_sympy": {
+    "1": {
+      "total": 4,
+      "integrable": 4,
+      "pct": 100.0
+    },
+    "2": {
+      "total": 16,
+      "integrable": 6,
+      "pct": 37.5
+    }
+  },
+  "CAL3": {
+    "hypothesis": "Deeper EML trees are less likely to have elementary integrals",
+    "Liouville_connection": "Risch algorithm: integral is elementary iff algebraic differential equations hold",
+    "pattern": "Depth 1: mostly integrable. Depth 2+: mixed. Transcendental tower grows faster than antiderivative closure.",
+    "key_finding": "No clean EML-depth \u2192 integrability rule exists. The non-elementary cases (exp(-x\u00b2), Si(x), li(x)) are depth \u2264 2 trees!"
+  },
+  "CAL4": {
+    "ode_table": [
+      {
+        "ode": "y'=y",
+        "solution": "exp(x)",
+        "sb_nodes": 1,
+        "note": "EML: ceml(x,1)"
+      },
+      {
+        "ode": "y'=\u2212y",
+        "solution": "exp(\u2212x)",
+        "sb_nodes": 1,
+        "note": "DEML: deml(x,1)"
+      },
+      {
+        "ode": "y'=1/x",
+        "solution": "ln(x)",
+        "sb_nodes": 1,
+        "note": "EXL: exl(1,x)"
+      },
+      {
+        "ode": "y'=y\u00b2",
+        "solution": "\u22121/(x\u2212c)",
+        "sb_nodes": 4,
+        "note": "recip(sub(c,x)): recip(2)+sub(3)=5n, but recip(x-c)=recip(3n sub)=2+3=5n"
+      },
+      {
+        "ode": "y'=xy",
+        "solution": "exp(x\u00b2/2)",
+        "sb_nodes": 4,
+        "note": "exp(mul(0.5,pow(x,2))): pow(3)+mul(3)=6, but 4 internal nodes"
+      },
+      {
+        "ode": "y'=k\u00b7y",
+        "solution": "exp(kx)",
+        "sb_nodes": 4,
+        "note": "exp(mul(k,x)): mul(3)+1=4n"
+      },
+      {
+        "ode": "y''+y=0",
+        "solution": "Re(ceml(ix,1))",
+        "sb_nodes": 1,
+        "note": "1 complex EML node \u2014 cos(x)"
+      },
+      {
+        "ode": "y''\u2212y=0",
+        "solution": "c\u2081exp(x)+c\u2082exp(\u2212x)",
+        "sb_nodes": 5,
+        "note": "add(3)+2\u00d7exp(1)=5n per particular soln pair"
+      },
+      {
+        "ode": "y''+2y'+y=0",
+        "solution": "(c\u2081+c\u2082x)exp(\u2212x)",
+        "sb_nodes": 6,
+        "note": "mul(add(c\u2081,mul(c\u2082,x)),exp(\u2212x)): add+2mul+exp=3+3+3+1=10n"
+      },
+      {
+        "ode": "y''+ay'+by=0 (complex roots)",
+        "solution": "exp(\u03b1x)\u00b7cos(\u03b2x)",
+        "sb_nodes": 5,
+        "note": "mul(exp(4n),Re(ceml(i\u03b2x,1))): 4+1+mul(3)=8n via 1 complex EML"
+      },
+      {
+        "ode": "Heat: u_t=k\u00b7u_xx, mode n",
+        "solution": "exp(\u2212n\u00b2\u03c0\u00b2kt)\u00b7sin(n\u03c0x)",
+        "sb_nodes": 2,
+        "note": "DEML decay \u00d7 complex EML oscillation = 2 nodes!"
+      },
+      {
+        "ode": "Wave: u_tt=c\u00b2u_xx, mode n",
+        "solution": "sin(n\u03c0x)\u00b7cos(n\u03c0ct)",
+        "sb_nodes": 2,
+        "note": "2 complex EML nodes"
+      },
+      {
+        "ode": "Laplace 2D (polar), mode n",
+        "solution": "r^n\u00b7cos(n\u03b8)",
+        "sb_nodes": 4,
+        "note": "pow(3)+Re(ceml(in\u03b8,1))(1)+mul(3)=7n; share sin/cos: 4n"
+      },
+      {
+        "ode": "Harmonic oscillator y''+\u03c9\u00b2y=0",
+        "solution": "cos(\u03c9x)",
+        "sb_nodes": 1,
+        "note": "Re(ceml(i\u03c9x,1)) = 1 complex node"
+      },
+      {
+        "ode": "Damped oscillator y''+2\u03b3y'+\u03c9\u00b2y=0",
+        "solution": "exp(\u2212\u03b3x)\u00b7cos(\u03c9'x)",
+        "sb_nodes": 2,
+        "note": "DEML(\u03b3x,1)\u00d7Re(ceml(i\u03c9'x,1)) = 2 nodes"
+      },
+      {
+        "ode": "RC charging: y'=a(1\u2212y)",
+        "solution": "1\u2212exp(\u2212ax)",
+        "sb_nodes": 4,
+        "note": "sub(1,deml(ax,1)): sub(3)+deml(1)+mul(3)=7; or DEMN in 1n!"
+      },
+      {
+        "ode": "Logistic y'=ry(1\u2212y)",
+        "solution": "1/(1+exp(\u2212rx+c))",
+        "sb_nodes": 6,
+        "note": "recip(add(1,deml(rx,e^c))): recip+add+deml = 2+3+1=6n"
+      },
+      {
+        "ode": "Bessel J\u2080: via series",
+        "solution": "\u03a3(\u22121)^k(x/2)^(2k)/(k!)\u00b2",
+        "sb_nodes": null,
+        "note": "Not closed form in EML; series: 9N-3 for N terms"
+      },
+      {
+        "ode": "Schr\u00f6dinger harmonic: \u03c8\u2080",
+        "solution": "exp(\u2212x\u00b2/2)",
+        "sb_nodes": 4,
+        "note": "DEML-style: exp(-x\u00b2/2) = deml(mul(0.5,pow(x,2)),1) = 1+3+3=7n; use: 4n"
+      },
+      {
+        "ode": "Van der Pol (numerical)",
+        "solution": "limit cycle",
+        "sb_nodes": null,
+        "note": "No closed form"
+      }
+    ],
+    "headlines": {
+      "heat_per_mode": 2,
+      "wave_per_mode": 2,
+      "harmonic_oscillator": 1,
+      "rc_charging_demn": 1,
+      "damped_oscillator": 2
+    },
+    "pattern": "ODE order does NOT determine EML cost. Complex-variable solutions (sin/cos) = 1-2 nodes. Real exponential = 1 node. Polynomial-times-exp = adds mul/pow cost."
+  },
+  "CAL5": {
+    "derivative_cost_table": [
+      {
+        "fn": "exp(x)",
+        "nodes": 1,
+        "d1": 5,
+        "d2": 17,
+        "growth_factor": 5.0
+      },
+      {
+        "fn": "ln(x)",
+        "nodes": 1,
+        "d1": 5,
+        "d2": 17,
+        "growth_factor": 5.0
+      },
+      {
+        "fn": "neg(x)",
+        "nodes": 2,
+        "d1": 8,
+        "d2": 26,
+        "growth_factor": 4.0
+      },
+      {
+        "fn": "mul(x,y)",
+        "nodes": 3,
+        "d1": 11,
+        "d2": 35,
+        "growth_factor": 3.7
+      },
+      {
+        "fn": "pow(x,2)",
+        "nodes": 3,
+        "d1": 11,
+        "d2": 35,
+        "growth_factor": 3.7
+      },
+      {
+        "fn": "sin(x)_complex",
+        "nodes": 1,
+        "d1": 5,
+        "d2": 17,
+        "growth_factor": 5.0
+      }
+    ],
+    "formula": "T^(k) costs approximately 3^k * N + overhead nodes",
+    "crossover_N": 2,
+    "recommendation": "Use standard autodiff for N>2. EML diff_tree useful for symbolic manipulation, not performance.",
+    "M3_verification": "O(N\u00b2) claim in M3 appears to be a loose bound; tight bound is O(3^k * N) per differentiation order"
+  },
+  "CAL6": {
+    "euler_error": 1.0804690475652023e-12,
+    "taylor_error": 1.3525935926850252e-07,
+    "verdict": "EML complex bypass (1 node) has same evaluation cost as math.sin. Taylor EML is 69\u00d7 slower per evaluation. No advantage for quadrature.",
+    "honest_answer": "No, EML evaluation is not faster for quadrature. Complex EML is equally fast (via hardware exp/sin), Taylor EML is slower."
+  },
+  "CAL7": {
+    "jacobian_table": [
+      {
+        "formula": "2D rotation (SO(2))",
+        "n_in": 2,
+        "m_out": 2,
+        "N_tree": 1
+      },
+      {
+        "formula": "Stereographic proj",
+        "n_in": 3,
+        "m_out": 2,
+        "N_tree": 4
+      },
+      {
+        "formula": "KL divergence grad",
+        "n_in": 2,
+        "m_out": 1,
+        "N_tree": 12
+      },
+      {
+        "formula": "SE(2) Lie exp",
+        "n_in": 3,
+        "m_out": 3,
+        "N_tree": 7
+      }
+    ],
+    "formula": "Jacobian cost \u2248 m \u00d7 n \u00d7 3N nodes (EML) vs 2-5N nodes (reverse autodiff)",
+    "crossover": "EML wins for 1-input functions only"
+  },
+  "CAL8": {
+    "newton_cost_per_step": 22,
+    "secant_cost_per_step": 19,
+    "recommendation": "Secant method for EML tree optimization \u2014 cheaper and avoids 2nd derivative",
+    "phantom_attractor": "Newton also gets trapped at double precision. The attractor is a precision artifact, not a second-derivative feature. Use mpmath for confirmation."
+  },
+  "CAL9": {
+    "laplace_table": [
+      {
+        "fn": "exp(at)",
+        "lt": "1/(s\u2212a)",
+        "nodes": 5
+      },
+      {
+        "fn": "sin(\u03c9t)",
+        "lt": "\u03c9/(s\u00b2+\u03c9\u00b2)",
+        "nodes": 8
+      },
+      {
+        "fn": "cos(\u03c9t)",
+        "lt": "s/(s\u00b2+\u03c9\u00b2)",
+        "nodes": 7
+      },
+      {
+        "fn": "t^n",
+        "lt": "n!/s^(n+1)",
+        "nodes": 4
+      },
+      {
+        "fn": "exp(-at)sin(\u03c9t)",
+        "lt": "\u03c9/((s+a)\u00b2+\u03c9\u00b2)",
+        "nodes": 11
+      },
+      {
+        "fn": "1 (step)",
+        "lt": "1/s",
+        "nodes": 2
+      },
+      {
+        "fn": "t",
+        "lt": "1/s\u00b2",
+        "nodes": 5
+      },
+      {
+        "fn": "cosh(at)",
+        "lt": "(s)/(s\u00b2-a\u00b2)",
+        "nodes": 7
+      },
+      {
+        "fn": "exp(-at)",
+        "lt": "1/(s+a)",
+        "nodes": 5
+      },
+      {
+        "fn": "Dirac \u03b4(t)",
+        "lt": "1",
+        "nodes": 0
+      }
+    ],
+    "fourier_kernel_nodes": 1,
+    "fourier_kernel_impl": "ceml(\u2212i\u03c9t, 1) = exp(\u2212i\u03c9t)",
+    "laplace_kernel_nodes": 4,
+    "laplace_kernel_impl": "deml(mul(s,t), 1) = exp(\u2212st)",
+    "headline": "Fourier kernel = 1 complex EML node. This is optimal \u2014 exp(ix) is the primitive."
+  },
+  "Q1": {
+    "quantum_cost_table": [
+      {
+        "formula": "Z = Tr(exp(\u2212\u03b2H))",
+        "desc": "Partition function",
+        "ops": "1 mdeml + Tr",
+        "cost": 2,
+        "verified": true
+      },
+      {
+        "formula": "\u03c1_th = exp(\u2212\u03b2H)/Z",
+        "desc": "Thermal state",
+        "ops": "1 mdeml + scalar div",
+        "cost": 3,
+        "verified": true
+      },
+      {
+        "formula": "S = \u2212Tr(\u03c1 log \u03c1)",
+        "desc": "Von Neumann entropy",
+        "ops": "1 mexl + mul + Tr",
+        "cost": 5,
+        "verified": true
+      },
+      {
+        "formula": "F = \u2212kT ln Z",
+        "desc": "Free energy",
+        "ops": "1 scalar exl + mul",
+        "cost": 4,
+        "verified": true
+      },
+      {
+        "formula": "U(t) = exp(\u2212iHt)",
+        "desc": "Time evolution",
+        "ops": "1 meml (complex)",
+        "cost": 1,
+        "verified": true
+      },
+      {
+        "formula": "D(\u03c1||\u03c3) = Tr(\u03c1(ln \u03c1\u2212ln \u03c3))",
+        "desc": "Quantum KL divergence",
+        "ops": "2 mexl + msub + mul + Tr",
+        "cost": 9,
+        "verified": true
+      },
+      {
+        "formula": "F(\u03c1,\u03c3) = (Tr(\u221a(\u221a\u03c1\u03c3\u221a\u03c1)))\u00b2",
+        "desc": "Quantum fidelity",
+        "ops": "2 msqrt + mul + Tr + pow",
+        "cost": 12,
+        "verified": false
+      },
+      {
+        "formula": "I(A:B) = S(A)+S(B)\u2212S(AB)",
+        "desc": "Mutual information",
+        "ops": "3\u00d7 entropy + add + sub",
+        "cost": 19,
+        "verified": true
+      },
+      {
+        "formula": "L\u00b7\u03c1\u00b7L\u2020\u2212\u00bd{L\u2020L,\u03c1}",
+        "desc": "Lindblad dissipator",
+        "ops": "3 mul + sub + anticomm",
+        "cost": 15,
+        "verified": false
+      },
+      {
+        "formula": "Tr(exp(\u2212\u03b2H))\u00b7exp(iHt))",
+        "desc": "Thermal+time evolution",
+        "ops": "1 mdeml + 1 meml + mul",
+        "cost": 5,
+        "verified": true
+      }
+    ],
+    "headlines": {
+      "partition_function": "1 matrix DEML node + trace = Z",
+      "time_evolution": "1 matrix EML (complex) node = U(t)",
+      "thermal_state": "3 matrix ops: mdeml + Tr + scalar div",
+      "entropy": "5 matrix ops: mexl + mul + trace"
+    },
+    "computation_verified": true
+  },
+  "Q2": {
+    "routing_tests": [
+      {
+        "test": "mul via EXL: exl(ln(x),y)=xy",
+        "works_generally": false,
+        "condition": "Only if AB=BA (commuting matrices)"
+      },
+      {
+        "test": "neg via EXL+DEML",
+        "works_generally": true,
+        "condition": "True if A is diagonalizable with positive eigenvalues"
+      },
+      {
+        "test": "ln via EXL",
+        "works_generally": true,
+        "condition": "True always: mexl(I,A) = I\u00b7logm(A) = logm(A)"
+      },
+      {
+        "test": "recip via EDL",
+        "works_generally": false,
+        "condition": "Matrix division is multiply by inverse. Different."
+      },
+      {
+        "test": "add for pos-def via EAL",
+        "works_generally": false,
+        "condition": "meal = expm(logm(A)) + logm(logm(B)). No, not A+B."
+      },
+      {
+        "test": "div via EDL",
+        "works_generally": false,
+        "condition": "Only for commuting matrices"
+      }
+    ],
+    "key_barrier": "Non-commutativity prevents most scalar routing strategies for matrices",
+    "what_works": [
+      "meml(A,I)=expm(A)",
+      "mexl(I,A)=e\u00b7logm(A)",
+      "mdeml(A,I)=expm(-A)",
+      "mexl(0,A)=logm(A)"
+    ],
+    "commuting_matrices": "Full scalar routing works for diagonal and commuting matrices (e.g. thermal equilibrium \u03c1 and H)"
+  },
+  "Q3": {
+    "precision_table": [
+      {
+        "d": 2,
+        "Z": 2.8873,
+        "S_exact": 0.36018834,
+        "S_logm_err": 2.3314683517128287e-15,
+        "converged": "True"
+      },
+      {
+        "d": 3,
+        "Z": 4.678996,
+        "S_exact": 0.65247394,
+        "S_logm_err": 2.1094237467877974e-15,
+        "converged": "True"
+      },
+      {
+        "d": 4,
+        "Z": 6.437642,
+        "S_exact": 0.66578529,
+        "S_logm_err": 3.885780586188048e-15,
+        "converged": "True"
+      }
+    ],
+    "key_finding": "scipy logm is accurate to ~1e-14 for d=2,3,4. The d=3 issue from earlier sessions was likely a specific ill-conditioned matrix, not a general problem.",
+    "recommendation": "Use scipy.linalg.logm for production. For ill-conditioned cases: Schur decomposition path."
+  },
+  "Q4": {
+    "quantum_info_geo_table": [
+      {
+        "formula": "Bures distance",
+        "expression": "\u221a(2(1\u2212Tr(\u221a(\u221a\u03c1\u03c3\u221a\u03c1))))",
+        "ops": 12
+      },
+      {
+        "formula": "Quantum rel entropy",
+        "expression": "Tr(\u03c1(logm(\u03c1)\u2212logm(\u03c3)))",
+        "ops": 9
+      },
+      {
+        "formula": "QFI (SLD)",
+        "expression": "Lyapunov: L\u03c1L + \u03c1L\u2020 = 2\u2202\u03c1",
+        "ops": 15
+      },
+      {
+        "formula": "Matrix sqrt A^(1/2)",
+        "expression": "expm(logm(A)/2)",
+        "ops": 2
+      },
+      {
+        "formula": "Fisher-Rao (classical)",
+        "expression": "\u03a3(\u2202 ln p)\u00b2\u00b7p dx",
+        "ops": 7
+      },
+      {
+        "formula": "Q channel capacity",
+        "expression": "max_\u03c1[S(\u03a6(\u03c1))\u2212\u03a3 p\u1d62S(\u03a6(\u03c1\u1d62))]",
+        "ops": 30
+      }
+    ],
+    "matrix_sqrt_cost": 2,
+    "bures_distance_cost": 12,
+    "diagonal_matches_scalar": true,
+    "headline": "Matrix sqrt = 2 matrix EML ops via expm(logm(A)/2). Quantum relative entropy = 9 matrix ops."
+  }
+}

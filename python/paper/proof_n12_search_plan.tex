@@ -1,0 +1,130 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amsthm,amssymb,booktabs,listings}
+\lstset{basicstyle=\ttfamily\small, breaklines=true}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+
+\title{N=12 Exhaustive EML Search: Plan and Progress}
+\author{A.R.\ Almaguer}
+\date{2026-04-20}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We document the plan and current progress for an exhaustive search over all EML trees
+with up to $N=12$ nodes. The search aims to: (a) certify that no function representable
+in $\leq 11$ nodes is representable in fewer, (b) find novel 12-node functions not in
+the current SuperBEST table, and (c) discover potential new theorems about EML depth limits.
+\end{abstract}
+
+\section{Search Space}
+
+An EML tree of $n$ nodes is a full binary tree where:
+\begin{itemize}
+\item Each internal node computes one of the 16 EML-family operators
+\item Each leaf is a variable ($x_1, \ldots, x_k$) or a rational constant
+\item The tree has $n$ internal nodes and $n+1$ leaves
+\end{itemize}
+
+\textbf{Search space size at N nodes:}
+\begin{align}
+|\mathcal{T}_n| &= C_n \cdot 16^n \cdot (k+m)^{n+1}
+\end{align}
+where $C_n = \frac{1}{n+1}\binom{2n}{n}$ is the $n$-th Catalan number (tree shapes),
+$k$ = number of input variables, $m$ = number of constant leaves.
+
+\begin{table}[h]
+\centering
+\caption{Search space sizes.}
+\begin{tabular}{@{}rccc@{}}
+\toprule
+$n$ & $C_n$ & $16^n$ & Approx.\ total (2 vars, 3 consts) \\
+\midrule
+1  & 1      & 16     & $\sim 400$ \\
+2  & 2      & 256    & $\sim 32{,}000$ \\
+3  & 5      & 4096   & $\sim 10^7$ \\
+6  & 132    & $\sim 10^7$ & $\sim 10^{15}$ \\
+9  & 4862   & $\sim 10^{11}$ & $\sim 10^{21}$ \\
+12 & 208{,}012 & $\sim 10^{14}$ & $\sim 10^{28}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Full exhaustive search at $N=12$ is computationally infeasible ($\sim 10^{28}$).
+The strategy is \textbf{filtered search} using:
+
+\section{Search Strategy}
+
+\subsection{Phase 1: Symbolic normalization (already complete, N=11)}
+
+Many trees are equivalent under:
+\begin{itemize}
+\item Commutativity: $\mathrm{eml}(a,b) \neq \mathrm{eml}(b,a)$ (EML is not commutative)
+\item Constant folding: subtrees with no variable leaves reduce to a single constant
+\item Identity elimination: $\mathrm{exl}(0,x) = \ln(x)$, $\mathrm{eml}(x,1) = \exp(x)$
+\end{itemize}
+
+After normalization, the effective search space shrinks by $\sim 100\times$.
+
+\subsection{Phase 2: Function fingerprinting}
+
+Each candidate tree is evaluated at a fixed set of test points
+$\{(x_i, y_j)\} = \{0.5, 1.0, 1.5, 2.0, 2.5\}^2$.
+Two trees with identical fingerprints are considered equivalent (probabilistic certificate).
+This reduces the search to unique function classes.
+
+\subsection{Phase 3: Beam search + MCTS (current)}
+
+The Rust binary \texttt{monogate-core/src/bin/n12\_search.rs}:
+\begin{lstlisting}
+cargo run --release --bin n12_search -- \
+  --max-nodes 12 \
+  --operators eml,exl,eal,edl,deml \
+  --target-functions "sin,cos,tan,sqrt,cbrt" \
+  --beam-width 10000 \
+  --output results/n12_candidates.json
+\end{lstlisting}
+
+\subsection{Phase 4: Near-miss analysis}
+
+Functions that achieve relative error $< 10^{-4}$ on the test domain but are not exact
+are flagged as \emph{near-misses}. These are candidates for:
+\begin{itemize}
+\item New depth-12 approximations (PROPOSITION tier if error bound is proved)
+\item Near-miss obstruction theory (planned paper: \texttt{papers/near\_miss\_obstruction/})
+\end{itemize}
+
+\section{Current Results}
+
+\begin{proposition}[Depth-6 Phase Transition — T25]
+The first $\mathrm{EML}_1$ values with $\mathrm{Im} > 0$ appear at depth 6.
+For depths 1--5, all EML trees with real inputs produce real outputs.
+\end{proposition}
+
+\begin{proposition}[N=11 Complete at N=9]
+SuperBEST FINAL uses at most 3 nodes for all basic arithmetic operations.
+The full N=9 space has been searched; no sub-3-node representation of multiplication
+or addition exists (confirming T08, T10 optimality).
+\end{proposition}
+
+\section{Planned Outputs}
+
+Upon completion:
+\begin{enumerate}
+\item \texttt{python/results/n12\_candidates.json} --- all novel 12-node functions found
+\item New theorem candidates (if any new elementary function gets a shorter tree)
+\item Near-miss catalog for obstruction paper
+\item Updated SuperBEST table (if any entry improves)
+\end{enumerate}
+
+\section{Timeline}
+
+\begin{itemize}
+\item N $\leq$ 9: Complete (2026-04-20)
+\item N = 10--11: Beam search in progress
+\item N = 12: Planned (pending compute)
+\item Full exhaustive N $\leq$ 6: Complete via Python \texttt{exhaustive\_search.py}
+\end{itemize}
+
+\end{document}

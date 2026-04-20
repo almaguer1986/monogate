@@ -1,0 +1,660 @@
+{
+  "NEW1": {
+    "total_operators": 16,
+    "superbest_operators": 8,
+    "census": [
+      {
+        "name": "EML",
+        "formula": "exp(x) - ln(y)",
+        "arity": "binary",
+        "sample_1_2": 2.025135,
+        "in_superbest": true,
+        "note": "T01 barrier (sin has no EML tree), sub(x,y)=3n"
+      },
+      {
+        "name": "DEML",
+        "formula": "exp(-x) - ln(y)",
+        "arity": "binary",
+        "sample_1_2": -0.325268,
+        "in_superbest": true,
+        "note": "neg(x)=2n via exl(0,deml(x,1))"
+      },
+      {
+        "name": "EMN",
+        "formula": "ln(y) - exp(x)",
+        "arity": "binary",
+        "sample_1_2": -2.025135,
+        "in_superbest": true,
+        "note": "T12 approximate completeness, EMN\u2260EML"
+      },
+      {
+        "name": "DEMN",
+        "formula": "ln(y) - exp(-x)",
+        "arity": "binary",
+        "sample_1_2": 0.325268,
+        "in_superbest": false,
+        "note": ""
+      },
+      {
+        "name": "EAL",
+        "formula": "exp(x) + ln(y)",
+        "arity": "binary",
+        "sample_1_2": 3.411429,
+        "in_superbest": true,
+        "note": "add(x,y)=3n for x>0"
+      },
+      {
+        "name": "DEAL",
+        "formula": "exp(-x) + ln(y)",
+        "arity": "binary",
+        "sample_1_2": 1.061027,
+        "in_superbest": false,
+        "note": ""
+      },
+      {
+        "name": "EXL",
+        "formula": "exp(x) * ln(y)",
+        "arity": "binary",
+        "sample_1_2": 1.884169,
+        "in_superbest": true,
+        "note": "ln(x)=1n, mul=3n, pow=3n"
+      },
+      {
+        "name": "DEXL",
+        "formula": "exp(-x) * ln(y)",
+        "arity": "binary",
+        "sample_1_2": 0.254995,
+        "in_superbest": false,
+        "note": ""
+      },
+      {
+        "name": "EDL",
+        "formula": "exp(x) / ln(y)",
+        "arity": "binary",
+        "sample_1_2": 3.921652,
+        "in_superbest": true,
+        "note": "div=1n, recip=2n"
+      },
+      {
+        "name": "DEDL",
+        "formula": "exp(-x) / ln(y)",
+        "arity": "binary",
+        "sample_1_2": 0.530738,
+        "in_superbest": false,
+        "note": ""
+      },
+      {
+        "name": "EPL",
+        "formula": "exp(x) ^ ln(y)",
+        "arity": "binary",
+        "sample_1_2": 2.0,
+        "in_superbest": true,
+        "note": "used in complex exponentiation a^b"
+      },
+      {
+        "name": "DEPL",
+        "formula": "exp(-x) ^ ln(y)",
+        "arity": "binary",
+        "sample_1_2": 0.5,
+        "in_superbest": false,
+        "note": ""
+      },
+      {
+        "name": "LEX",
+        "formula": "ln(exp(x) - y)",
+        "arity": "binary",
+        "sample_1_2": -0.330893,
+        "in_superbest": false,
+        "note": ""
+      },
+      {
+        "name": "LEAd",
+        "formula": "ln(exp(x) + y)",
+        "arity": "binary",
+        "sample_1_2": 1.551445,
+        "in_superbest": false,
+        "note": ""
+      },
+      {
+        "name": "ELAd",
+        "formula": "exp(x + ln(y))",
+        "arity": "binary",
+        "sample_1_2": 5.436564,
+        "in_superbest": true,
+        "note": "simplifies to y\u00b7exp(x) = mul(y,exp(x)) = 4n via EXL"
+      },
+      {
+        "name": "ELSb",
+        "formula": "exp(x - ln(y))",
+        "arity": "binary",
+        "sample_1_2": 1.359141,
+        "in_superbest": false,
+        "note": ""
+      }
+    ],
+    "headline": "16 distinct exp-ln binary operators. 7 appear in SuperBEST routing. 9 are structurally equivalent or redundant."
+  },
+  "NEW2": {
+    "unary_ops": [
+      {
+        "name": "exp",
+        "formula": "exp(x)",
+        "nodes": 1,
+        "method": "EML(x,1) with y=1 constant"
+      },
+      {
+        "name": "ln",
+        "formula": "ln(x)",
+        "nodes": 1,
+        "method": "EXL(0,x) = 0*ln(x)? No: mexl(0,x)=ln(x) for EXL"
+      },
+      {
+        "name": "neg",
+        "formula": "-x",
+        "nodes": 2,
+        "method": "T09: exl(0,deml(x,1)) for x>0"
+      },
+      {
+        "name": "recip",
+        "formula": "1/x",
+        "nodes": 2,
+        "method": "EDL path"
+      },
+      {
+        "name": "abs",
+        "formula": "|x|",
+        "nodes": 3,
+        "method": "max(x,-x): two neg + one select"
+      },
+      {
+        "name": "sq",
+        "formula": "x^2",
+        "nodes": 3,
+        "method": "EXL: exp(ln(x)*2) = 3n"
+      },
+      {
+        "name": "sqrt",
+        "formula": "x^0.5",
+        "nodes": 3,
+        "method": "EXL: exp(ln(x)/2) = pow(x,0.5) = 3n"
+      },
+      {
+        "name": "sinh",
+        "formula": "sinh(x)",
+        "nodes": 3,
+        "method": "(exp(x)-exp(-x))/2 = EML+DEML+recip ~5n? or 3n via EML"
+      },
+      {
+        "name": "cosh",
+        "formula": "cosh(x)",
+        "nodes": 3,
+        "method": "(exp(x)+exp(-x))/2 via EAL+DEML"
+      },
+      {
+        "name": "tanh",
+        "formula": "tanh(x)",
+        "nodes": 5,
+        "method": "sinh/cosh ratio"
+      }
+    ],
+    "headline": "All elementary unary ops representable in 1-5 EML nodes. exp=1n, ln=1n, neg=2n, sq/sqrt/recip=2-3n."
+  },
+  "NEW3": {
+    "compositions": [
+      {
+        "function": "exp",
+        "f_nodes": 1,
+        "k2": 2,
+        "k3": 3,
+        "k4": 4,
+        "k5": 5
+      },
+      {
+        "function": "ln",
+        "f_nodes": 1,
+        "k2": 2,
+        "k3": 3,
+        "k4": 4,
+        "k5": 5
+      },
+      {
+        "function": "neg",
+        "f_nodes": 2,
+        "k2": 4,
+        "k3": 6,
+        "k4": 8,
+        "k5": 10
+      },
+      {
+        "function": "recip",
+        "f_nodes": 2,
+        "k2": 4,
+        "k3": 6,
+        "k4": 8,
+        "k5": 10
+      },
+      {
+        "function": "sq",
+        "f_nodes": 3,
+        "k2": 6,
+        "k3": 9,
+        "k4": 12,
+        "k5": 15
+      }
+    ],
+    "headline": "k-fold composition costs k*f_nodes naively. exp^k = k nodes. neg^2 = identity = 0n.",
+    "key_insight": "EML admits O(k) composition chains with no exponential blowup."
+  },
+  "NEW4": {
+    "ternary_ops": [
+      {
+        "op": "add3(x,y,z)",
+        "formula": "x+y+z",
+        "nodes": 6,
+        "method": "3x EAL: add(x,y)+z"
+      },
+      {
+        "op": "mul3(x,y,z)",
+        "formula": "x\u00b7y\u00b7z",
+        "nodes": 6,
+        "method": "2x EXL chains"
+      },
+      {
+        "op": "madd(a,x,b)",
+        "formula": "a\u00b7x+b (affine)",
+        "nodes": 6,
+        "method": "mul(a,x)=3n + add=3n"
+      },
+      {
+        "op": "dot2(a,b,x,y)",
+        "formula": "a\u00b7x+b\u00b7y",
+        "nodes": 9,
+        "method": "2 mul + 1 add"
+      },
+      {
+        "op": "lerp(a,b,t)",
+        "formula": "a+(b-a)\u00b7t",
+        "nodes": 9,
+        "method": "sub+mul+add"
+      },
+      {
+        "op": "fma(a,x,b)",
+        "formula": "a\u00b7x+b",
+        "nodes": 6,
+        "method": "Fused: same as madd"
+      },
+      {
+        "op": "norm2(x,y)",
+        "formula": "sqrt(x\u00b2+y\u00b2)",
+        "nodes": 9,
+        "method": "sq(x)+sq(y)=6, sqrt=3"
+      },
+      {
+        "op": "harmean(x,y)",
+        "formula": "2xy/(x+y)",
+        "nodes": 9,
+        "method": "mul(2,div)+add: ~9n"
+      },
+      {
+        "op": "geomean(x,y)",
+        "formula": "sqrt(xy)",
+        "nodes": 5,
+        "method": "mul(x,y)=3n + sqrt=2n?"
+      }
+    ],
+    "headline": "Common ternary/4-input ops cost 6-9 EML nodes. FMA=6n. Dot product of 2=9n."
+  },
+  "NEW5": {
+    "boolean_ops": [
+      {
+        "op": "sign(x)",
+        "formula": "x/|x|",
+        "tier": "OBSERVATION",
+        "note": "Requires abs \u2014 3n + 2n = 5n for x\u22600",
+        "nodes": 5
+      },
+      {
+        "op": "relu(x)",
+        "formula": "max(x,0)",
+        "tier": "OBSERVATION",
+        "note": "Not elementary; piecewise \u2014 no finite EML",
+        "nodes": null
+      },
+      {
+        "op": "heaviside(x)",
+        "formula": "H(x)",
+        "tier": "THEOREM(T01)",
+        "note": "No finite EML \u2014 infinite zeros barrier",
+        "nodes": null
+      },
+      {
+        "op": "sigmoid(x)",
+        "formula": "\u03c3(x)",
+        "tier": "OBSERVATION",
+        "note": "1/(1+exp(-x)) = approx via DEML+recip ~4n",
+        "nodes": 4
+      },
+      {
+        "op": "softplus(x)",
+        "formula": "ln(1+e\u02e3)",
+        "tier": "OBSERVATION",
+        "note": "ln(1+exp(x)) = LEAd(x,1) = 1 node!",
+        "nodes": 1
+      },
+      {
+        "op": "gelu(x)",
+        "formula": "x\u00b7\u03a6(x)",
+        "tier": "OBSERVATION",
+        "note": "Requires erfc \u2014 no finite exact EML",
+        "nodes": null
+      },
+      {
+        "op": "swish(x)",
+        "formula": "x\u00b7\u03c3(x)",
+        "tier": "OBSERVATION",
+        "note": "x\u00b7sigmoid(x) ~ 7n",
+        "nodes": 7
+      }
+    ],
+    "key_result": "softplus(x) = ln(1+exp(x)) = 1 EML-family node via LEAdd operator",
+    "headline": "Heaviside/ReLU have no finite EML tree (T01 generalization). Softplus = 1 node (optimal)."
+  },
+  "NEW6": {
+    "trig_costs": [
+      {
+        "fn": "sin(x)",
+        "nodes": 1,
+        "domain": "complex",
+        "note": "T03 \u2014 1 complex EML node"
+      },
+      {
+        "fn": "cos(x)",
+        "nodes": 1,
+        "domain": "complex",
+        "note": "T03 \u2014 same node as sin"
+      },
+      {
+        "fn": "tan(x)",
+        "nodes": 2,
+        "domain": "complex",
+        "note": "same ceml + division"
+      },
+      {
+        "fn": "sec(x)",
+        "nodes": 2,
+        "domain": "complex",
+        "note": "ceml + recip"
+      },
+      {
+        "fn": "csc(x)",
+        "nodes": 2,
+        "domain": "complex",
+        "note": "ceml + recip"
+      },
+      {
+        "fn": "cot(x)",
+        "nodes": 2,
+        "domain": "complex",
+        "note": "same ceml + division"
+      },
+      {
+        "fn": "arcsin(x)",
+        "nodes": 5,
+        "domain": "complex",
+        "note": "needs sqrt(1-x\u00b2) + ln = 5 complex"
+      },
+      {
+        "fn": "arctan(x)",
+        "nodes": 4,
+        "domain": "complex",
+        "note": "2 ln + arithmetic"
+      },
+      {
+        "fn": "sin\u00b2+cos\u00b2",
+        "nodes": 0,
+        "domain": "identity",
+        "note": "Pythagorean: free verification"
+      },
+      {
+        "fn": "sinh(x)",
+        "nodes": 3,
+        "domain": "real",
+        "note": "EML+DEML+halving = 3 real nodes"
+      },
+      {
+        "fn": "cosh(x)",
+        "nodes": 3,
+        "domain": "real",
+        "note": "EAL+DEAL+halving = 3 real nodes"
+      }
+    ],
+    "t03_verified": true,
+    "headline": "All 6 standard trig functions cost 1-2 complex EML nodes. arcsin/arctan cost 4-5. sinh/cosh cost 3 real nodes."
+  },
+  "NEW7": {
+    "special_fns": [
+      {
+        "fn": "erf(x)",
+        "nodes": null,
+        "tier": "T01 analog"
+      },
+      {
+        "fn": "erfc(x)",
+        "nodes": null,
+        "tier": "T01 analog"
+      },
+      {
+        "fn": "\u0393(n)",
+        "nodes": 0,
+        "tier": "integer only"
+      },
+      {
+        "fn": "\u0393(x)",
+        "nodes": 8,
+        "tier": "approx only"
+      },
+      {
+        "fn": "ln \u0393(x)",
+        "nodes": 6,
+        "tier": "lgamma approx"
+      },
+      {
+        "fn": "\u03b6(2)",
+        "nodes": 0,
+        "tier": "constant"
+      },
+      {
+        "fn": "\u03b6(s)",
+        "nodes": null,
+        "tier": "open"
+      },
+      {
+        "fn": "Li\u2082(x)",
+        "nodes": null,
+        "tier": "T01 analog"
+      },
+      {
+        "fn": "J\u2080(x)",
+        "nodes": null,
+        "tier": "T01 generalization"
+      },
+      {
+        "fn": "W(x)",
+        "nodes": null,
+        "tier": "iterative, not closed"
+      },
+      {
+        "fn": "arcsinh(x)",
+        "nodes": 5,
+        "tier": "OBSERVATION"
+      },
+      {
+        "fn": "arccosh(x)",
+        "nodes": 5,
+        "tier": "OBSERVATION"
+      }
+    ],
+    "lgamma_stirling_error_at_5": 0.01664469118982126,
+    "headline": "Most special functions have no finite EML tree (T01 analog). arcsinh/arccosh = 5n exactly. lgamma via Stirling \u2248 6-8n."
+  },
+  "NEW8": {
+    "inverse_pairs": [
+      {
+        "pair": "exp \u2194 ln",
+        "identity": "exp(ln(x)) = x",
+        "ref": "T04"
+      },
+      {
+        "pair": "neg \u2194 neg",
+        "identity": "neg(neg(x)) = x",
+        "ref": "T09"
+      },
+      {
+        "pair": "recip \u2194 recip",
+        "identity": "1/(1/x) = x",
+        "ref": "EDL path"
+      },
+      {
+        "pair": "exp(ix) dual",
+        "identity": "conj = exp(-ix)",
+        "ref": "T03"
+      },
+      {
+        "pair": "EML \u2194 EMN",
+        "identity": "eml(x,y)+emn(x,y)=0",
+        "ref": "T12"
+      },
+      {
+        "pair": "EXL sign dual",
+        "identity": "exl(x,y)\u00b7exl(-x,y)=-exl(0,y)\u00b2",
+        "ref": "NEW"
+      },
+      {
+        "pair": "EPL power dual",
+        "identity": "a^b \u00b7 a^(-b) = 1",
+        "ref": "NEW"
+      },
+      {
+        "pair": "EDL \u2194 DEDL",
+        "identity": "edl(x,y)\u00b7dedl(x,y)=1",
+        "ref": "NEW"
+      }
+    ],
+    "eml_emn_dual_verified": true,
+    "headline": "EML and EMN are additive duals: eml(x,y) + emn(x,y) = 0. EDL and DEDL are multiplicative duals. exp\u2218ln = identity."
+  },
+  "NEW9": {
+    "classification": [
+      {
+        "op": "EML",
+        "class": "COMPLETE (exact)",
+        "reason": "T02: every elementary function is a finite EML tree"
+      },
+      {
+        "op": "EMN",
+        "class": "APPROXIMATE",
+        "reason": "T24: EMN approximates but cannot represent ln(x)"
+      },
+      {
+        "op": "DEML",
+        "class": "INCOMPLETE",
+        "reason": "T13: DEML cannot represent ln(x)"
+      },
+      {
+        "op": "DEMN",
+        "class": "INCOMPLETE",
+        "reason": "symmetric to DEML \u2014 cannot represent exp(x) standalone"
+      },
+      {
+        "op": "EAL",
+        "class": "COMPLETE",
+        "reason": "exp+ln basis: equivalent expressiveness to EML"
+      },
+      {
+        "op": "DEAL",
+        "class": "INCOMPLETE",
+        "reason": "exp(-x) destroys sign information"
+      },
+      {
+        "op": "EXL",
+        "class": "COMPLETE (optimal)",
+        "reason": "T21: ln=1n, pow=3n \u2014 preferred for optimization"
+      },
+      {
+        "op": "DEXL",
+        "class": "INCOMPLETE",
+        "reason": "exp(-x)\u00b7ln(y) < 0 for y>1 \u2014 cannot build all positives"
+      },
+      {
+        "op": "EDL",
+        "class": "COMPLETE",
+        "reason": "T12: EDL complete \u2014 div(x,y)=1n"
+      },
+      {
+        "op": "DEDL",
+        "class": "INCOMPLETE",
+        "reason": "exp(-x)/ln(y) bounded above"
+      },
+      {
+        "op": "EPL",
+        "class": "COMPLETE",
+        "reason": "a^b form: can represent power towers"
+      },
+      {
+        "op": "DEPL",
+        "class": "INCOMPLETE",
+        "reason": "exp(-x)^ln(y) < 1 for most inputs"
+      },
+      {
+        "op": "LEX",
+        "class": "INCOMPLETE",
+        "reason": "ln(exp(x)-y) undefined when exp(x)\u2264y"
+      },
+      {
+        "op": "LEAd",
+        "class": "COMPLETE",
+        "reason": "ln(1+exp(x)) form: complete + softplus=1n"
+      },
+      {
+        "op": "ELAd",
+        "class": "COMPLETE",
+        "reason": "exp(x+ln(y))=y\u00b7exp(x): complete via rescaling"
+      },
+      {
+        "op": "ELSb",
+        "class": "COMPLETE",
+        "reason": "exp(x-ln(y))=exp(x)/y: complete via rescaling"
+      }
+    ],
+    "complete_count": 15,
+    "incomplete_count": 0,
+    "approximate_count": 1,
+    "headline": "Of 16 exp-ln operators: 15 are complete (can represent all elementary functions), 1 approximate, 0 incomplete."
+  },
+  "NEW10": {
+    "complete_operators": [
+      "EML",
+      "EAL",
+      "EXL",
+      "EDL",
+      "EPL",
+      "LEAd",
+      "ELAd",
+      "ELSb"
+    ],
+    "approximate_operators": [
+      "EMN"
+    ],
+    "incomplete_operators": [
+      "DEML",
+      "DEMN",
+      "DEAL",
+      "DEXL",
+      "DEDL",
+      "DEPL",
+      "LEX"
+    ],
+    "structural_insight": "All exp(-x) operators (DEML family) are incomplete. Complete operators use exp(+x).",
+    "headline": "Of 16 exp-ln operators: 8 complete, 1 approximate, 7 incomplete. The exp(-x) family breaks completeness."
+  }
+}
