@@ -1,9 +1,13 @@
 ---
 layout: ../../layouts/Base.astro
-title: "157 Equations: The SuperBEST Cost of Science"
-description: "A complete catalog of SuperBEST node counts for standard equations across 6 scientific domains — from 1-node trivialities to 47-node option-pricing models."
+title: "214 Equations: The SuperBEST Cost of Science"
+description: "A complete catalog of SuperBEST node counts for standard equations across 9 domains — from 1-node trivialities to 2037-node error correction. Updated from 157 to 214 equations after COMP-ALL sessions TECH-1 through NAT-2."
 date: "2026-04-20"
 tag: "observation"
+---
+
+> **Update — 2026-04-20 (COMP-ALL):** This catalog has been expanded from 157 to **214 equations** following nine new measurement sessions (TECH-1 through TECH-5, SPORT-1 through SPORT-2, NAT-1 through NAT-2). New domains added: information retrieval, recommendation systems, GPS navigation, 3D graphics, error correction, sports analytics, and applied physics. The new ceiling is **2037n** (Reed-Solomon syndrome for RS(255,223)), far exceeding the previous ceiling of 47n (Black-Scholes). The new floor remains **2n** (ETA, batting average, any ratio). All new results use SuperBEST v4 (div=2n, recip=1n). See also: [The SuperBEST Cost of Everything](/blog/cost-of-everything).
+
 ---
 
 ## How expensive is science?
@@ -23,7 +27,8 @@ This catalog documents every node count, every cross-domain isomorphism, and the
 | exp(x), ln(x), sin(x), cos(x) | 1n each |
 | div(x, y) | 1n |
 | mul(x, y), sub(x, y) | 2n each |
-| neg(x), recip(x) | 2n each |
+| neg(x) | 2n |
+| recip(x) | **1n** (ELSb, R16-C1) |
 | pow(x, p) for any real p | 3n |
 | add(x, y) — positive domain | 3n |
 | add(x, y) — general domain | 11n |

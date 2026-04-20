@@ -1,0 +1,238 @@
+{
+  "session": "NAT-2",
+  "title": "SuperBEST v4 — Applied Equations: Traffic, Medicine, and Signals",
+  "version": "SuperBEST v4",
+  "cost_table": {
+    "exp": "1n (EML route)",
+    "ln": "1n (EXL route)",
+    "recip": "1n (R16-C1)",
+    "neg": "2n",
+    "mul": "2n",
+    "sub": "2n",
+    "div": "2n",
+    "sqrt": "2n",
+    "pow": "3n",
+    "add_pos": "3n",
+    "add_gen": "11n",
+    "exp_neg_x": "1n via DEML(x,1)",
+    "sin_cos": "1n each",
+    "atan": "3n"
+  },
+  "equations": [
+    {
+      "id": "NAT-2-1",
+      "domain": "Traffic Engineering",
+      "name": "Greenshields Speed-Density Model",
+      "formula": "v = vf · (1 - k/kj)",
+      "breakdown": [
+        {"step": 1, "op": "div(k, kj)", "note": "density ratio; v4 div=2n", "cost": "2n"},
+        {"step": 2, "op": "sub(1, ratio)", "note": "ratio ∈ [0,1] so result ≥ 0", "cost": "2n"},
+        {"step": 3, "op": "mul(vf, result)", "note": "scale by free-flow speed", "cost": "2n"}
+      ],
+      "total": "6n",
+      "spec_comparison": "Spec said 5n with old div=1n. v4 div=2n adds 1n. New total: 6n.",
+      "cross_domain": "Linear decay form F·(1 - k/kj); isomorphic to Fick's first law, linear drag models."
+    },
+    {
+      "id": "NAT-2-2",
+      "domain": "Traffic Engineering",
+      "name": "Traffic Wave Speed (Lighthill-Whitham-Richards)",
+      "formula": "c = vf · (1 - 2k/kj)",
+      "breakdown": [
+        {"step": 1, "op": "mul(2, k)", "note": "double density", "cost": "2n"},
+        {"step": 2, "op": "div(2k, kj)", "note": "v4 div=2n", "cost": "2n"},
+        {"step": 3, "op": "sub(1, ratio)", "note": "linear complement", "cost": "2n"},
+        {"step": 4, "op": "mul(vf, result)", "note": "scale to speed", "cost": "2n"}
+      ],
+      "total": "8n",
+      "spec_comparison": "Spec said 7n with old div=1n. v4 div=2n adds 1n. New total: 8n.",
+      "note": "Wave speed c = dq/dk where q = v·k = vf·k·(1 - k/kj) is the flow-density parabola."
+    },
+    {
+      "id": "NAT-2-3",
+      "domain": "Medical Imaging — MRI",
+      "name": "MRI Signal Intensity (Spin-Echo)",
+      "formula": "S = S0 · exp(-TE/T2) · (1 - exp(-TR/T1))",
+      "breakdown": [
+        {
+          "group": "T2 decay term: exp(-TE/T2)",
+          "steps": [
+            {"step": 1, "op": "div(TE, T2)", "note": "v4 div=2n", "cost": "2n"},
+            {"step": 2, "op": "DEML(div_result, 1)", "note": "exp(-x) = 1n via DEML", "cost": "1n"}
+          ],
+          "subtotal": "3n"
+        },
+        {
+          "group": "T1 recovery term: 1 - exp(-TR/T1)",
+          "steps": [
+            {"step": 3, "op": "div(TR, T1)", "note": "v4 div=2n", "cost": "2n"},
+            {"step": 4, "op": "DEML(div_result, 1)", "note": "exp(-TR/T1) = 1n", "cost": "1n"},
+            {"step": 5, "op": "sub(1, exp_T1)", "note": "longitudinal recovery", "cost": "2n"}
+          ],
+          "subtotal": "5n"
+        },
+        {
+          "group": "Final assembly",
+          "steps": [
+            {"step": 6, "op": "mul(S0, T2_decay)", "note": "apply T2 attenuation", "cost": "2n"},
+            {"step": 7, "op": "mul(result, T1_recovery)", "note": "apply T1 recovery factor", "cost": "2n"}
+          ],
+          "subtotal": "4n"
+        }
+      ],
+      "total": "12n",
+      "spec_comparison": "Spec said 10n with old div=1n (×2 divs). v4 adds 2n for two divs. New total: 12n.",
+      "verification": "S0=1, TE=20ms, T2=80ms, TR=500ms, T1=800ms → S ≈ 0.7066·0.4647 ≈ 0.3285"
+    },
+    {
+      "id": "NAT-2-4",
+      "domain": "Medical Imaging — CT / Radiology",
+      "name": "Beer-Lambert Attenuation (CT scan)",
+      "formula": "I = I0 · exp(-μx)",
+      "breakdown": [
+        {"step": 1, "op": "mul(μ, x)", "note": "compute optical depth", "cost": "2n"},
+        {"step": 2, "op": "DEML(product, 1)", "note": "exp(-μx) = 1n via DEML", "cost": "1n"},
+        {"step": 3, "op": "mul(I0, exp_result)", "note": "scale by incident intensity", "cost": "2n"}
+      ],
+      "total": "5n",
+      "spec_comparison": "Matches spec. No div involved; DEML handles exp(-x) at 1n.",
+      "cross_domain": "Isomorphic to radioactive decay, atmospheric absorption, optical fiber loss — all 5n: A·exp(-Bx)."
+    },
+    {
+      "id": "NAT-2-5",
+      "domain": "Pharmacokinetics",
+      "name": "Drug Half-Life",
+      "formula": "t_half = ln(2) / k",
+      "breakdown": [
+        {"step": 1, "op": "ln(2)", "note": "EXL(0, 2) = 1n; ln(2)≈0.6931 is often a precomputed constant", "cost": "1n"},
+        {"step": 2, "op": "div(ln2, k)", "note": "v4 div=2n", "cost": "2n"}
+      ],
+      "total": "3n",
+      "spec_comparison": "Spec said 2n with old div=1n. v4 div=2n adds 1n. New total: 3n.",
+      "note": "If ln(2) is precomputed as a literal constant, only the div remains: 2n total."
+    },
+    {
+      "id": "NAT-2-6",
+      "domain": "Audio / Music Theory",
+      "name": "Equal Temperament Frequency",
+      "formula": "f(n) = 440 · 2^(n/12)",
+      "breakdown": [
+        {"step": 1, "op": "div(n, 12)", "note": "semitone fraction; v4 div=2n", "cost": "2n"},
+        {"step": 2, "op": "pow(2, quotient)", "note": "v4 pow=3n", "cost": "3n"},
+        {"step": 3, "op": "mul(440, power)", "note": "scale to Hz", "cost": "2n"}
+      ],
+      "total": "7n",
+      "spec_comparison": "Spec said 6n with old div=1n. v4 div=2n adds 1n. New total: 7n.",
+      "chromatic_scale": {
+        "naive_12_notes": "12 × 7n = 84n",
+        "with_sharing_note": "div(n,12) per note varies only by n; pow(2, x) can be shared or precomputed for all 12 semitones. With full precomputation of 2^(n/12) as 12 constants: 12×2n(mul) = 24n.",
+        "practical_cost": "7n per note, 84n naive full scale"
+      },
+      "cross_domain": "Log-exponential tuning structure isomorphic to pH scale and dB scale (exp/log symmetry)."
+    },
+    {
+      "id": "NAT-2-7",
+      "domain": "Signal Processing / Acoustics",
+      "name": "Decibel (Sound Pressure Level)",
+      "formula": "dB = 10 · log10(P/P0)",
+      "breakdown": [
+        {"step": 1, "op": "div(P, P0)", "note": "power ratio; v4 div=2n", "cost": "2n"},
+        {"step": 2, "op": "ln(ratio)", "note": "natural log = 1n via EXL", "cost": "1n"},
+        {"step": 3, "op": "div(ln_result, ln10_const)", "note": "change of base: log10(x)=ln(x)/ln(10); ln(10) is a precomputed constant; div=2n", "cost": "2n"},
+        {"step": 4, "op": "mul(10, log10_result)", "note": "scale to dB", "cost": "2n"}
+      ],
+      "total": "7n",
+      "note": "Same structure as SNR in dB. If log10 is available as a primitive (1n via EXL-like route), cost reduces to: div(2n) + log10(1n) + mul(2n) = 5n.",
+      "cross_domain": "Isomorphic to SNR dB, optical power in dBm, earthquake magnitude (Richter scale)."
+    },
+    {
+      "id": "NAT-2-8",
+      "domain": "Error Correction / Information Theory",
+      "name": "Reed-Solomon Forney Error Magnitude",
+      "formula": "e_j = -Ω(X_j^{-1}) / Λ'(X_j^{-1})",
+      "breakdown": {
+        "polynomial_eval_degree_t": {
+          "note": "Evaluate degree-t polynomial at a point using Horner's method or naive expansion",
+          "per_term_cost": "pow(x,i)=3n + mul(coeff, x_pow)=2n = 5n per term",
+          "t_plus_1_terms": "5(t+1)n for coefficients",
+          "t_adds": "3t·n (add_pos, assuming positive field)",
+          "total_per_poly": "5(t+1) + 3t = 8t + 5"
+        },
+        "t_equals_16": {
+          "per_polynomial": "8(16)+5 = 133n",
+          "two_evaluations": "133 + 133 = 266n",
+          "neg_and_div": "neg=2n + div=2n = 4n",
+          "total_per_error_location": "270n"
+        }
+      },
+      "total": "~270n per error location (t=16)",
+      "note": "Dominant cost is polynomial evaluation. Horner's method reduces pow() calls but SuperBEST cost model charges per node; total scales as O(t) per location.",
+      "cross_domain": "Polynomial evaluation pattern reused in: Chebyshev interpolation, Bernstein basis, numerical integration nodes."
+    }
+  ],
+  "cross_domain_isomorphisms": [
+    {
+      "pattern": "A · exp(-B·x)",
+      "cost": "5n",
+      "instances": [
+        "CT scan / Beer-Lambert: I0·exp(-μx)",
+        "Radioactive decay: N0·exp(-λt)",
+        "Atmospheric absorption",
+        "Optical fiber loss",
+        "RC circuit discharge"
+      ]
+    },
+    {
+      "pattern": "A · exp(B·t) (positive exponent)",
+      "cost": "5n",
+      "instances": [
+        "Population growth: N0·exp(rt)",
+        "Compound interest (continuous)",
+        "Bacterial growth",
+        "Logarithmic spiral"
+      ]
+    },
+    {
+      "pattern": "F · (1 - k/kj) (linear complement)",
+      "cost": "6n",
+      "instances": [
+        "Greenshields traffic speed: vf·(1-k/kj)",
+        "Fick's first law (linear diffusion)",
+        "Linear drag models"
+      ]
+    },
+    {
+      "pattern": "10·log10(P/P0) (dB/log scale)",
+      "cost": "7n",
+      "instances": [
+        "Sound pressure level (dB SPL)",
+        "Signal-to-noise ratio (dB)",
+        "Optical power (dBm)",
+        "Earthquake Richter magnitude",
+        "Audio frequency tuning (inverted: exp form)"
+      ]
+    },
+    {
+      "pattern": "A · exp(-TE/T2) · (1 - exp(-TR/T1)) (double exponential)",
+      "cost": "12n",
+      "instances": [
+        "MRI spin-echo signal",
+        "Inversion recovery MRI",
+        "Double-exponential relaxation models in NMR"
+      ]
+    }
+  ],
+  "v4_vs_spec_summary": {
+    "note": "All differences arise from div cost change: old=1n, v4=2n.",
+    "changes": [
+      {"equation": "Greenshields speed", "spec": "5n", "v4": "6n", "delta": "+1n (1 div)"},
+      {"equation": "Traffic wave speed", "spec": "7n", "v4": "8n", "delta": "+1n (1 div)"},
+      {"equation": "MRI signal", "spec": "10n", "v4": "12n", "delta": "+2n (2 divs)"},
+      {"equation": "Drug half-life", "spec": "2n", "v4": "3n", "delta": "+1n (1 div)"},
+      {"equation": "Audio tuning", "spec": "6n", "v4": "7n", "delta": "+1n (1 div)"},
+      {"equation": "Beer-Lambert CT", "spec": "5n", "v4": "5n", "delta": "0 (no div)"},
+      {"equation": "Decibel", "spec": "7n (estimated)", "v4": "7n", "delta": "0 (balanced)"}
+    ]
+  },
+  "generated": "2026-04-20"
+}

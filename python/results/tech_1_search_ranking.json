@@ -1,0 +1,50 @@
+{
+  "session": "TECH-1",
+  "date": "2026-04-20",
+  "topic": "Search Engines and Ranking",
+  "superbest_version": "v4",
+  "equations": [
+    {
+      "name": "PageRank per page",
+      "formula": "PR(A) = (1-d) + d·Σ(PR(Ti)/C(Ti))",
+      "cost_formula": "5N + 4",
+      "cost_at": [{"N": 5, "cost": 29}, {"N": 10, "cost": 54}, {"N": 100, "cost": 504}],
+      "breakdown": "N divs(2n) + (N-1) adds_pos(3n) + mul(d,sum)(2n) + add_pos(1-d, prod)(3n) + sub(1,d)(2n) = 5N+4",
+      "note": "Old cost was 4N+4 using div=1n. Updated to 5N+4 with v4 div=2n."
+    },
+    {
+      "name": "TF-IDF per term-document pair",
+      "formula": "tf-idf(t,d) = tf(t,d) · log(N/df(t))",
+      "cost": 7,
+      "breakdown": "div(count,total)(2n) + div(N,df)(2n) + ln(ratio)(1n) + mul(tf,log)(2n) = 7n",
+      "note": "Old cost was 5n using div=1n. Updated to 7n with v4."
+    },
+    {
+      "name": "Cosine similarity",
+      "formula": "sim(A,B) = (A·B)/(|A|·|B|)",
+      "cost_formula": "15d - 1",
+      "cost_at": [{"d": 3, "cost": 44}, {"d": 10, "cost": 149}, {"d": 100, "cost": 1499}],
+      "breakdown": "dot(A,B)(5d-3) + sqrt(dot(A,A))(5d-1) + sqrt(dot(B,B))(5d-1) + mul(|A|,|B|)(2n) + div(dot,prod)(2n) = 15d-1"
+    },
+    {
+      "name": "BM25 per query term",
+      "formula": "IDF(qi) · f(qi,D)·(k1+1) / (f(qi,D) + k1·(1-b+b·|D|/avgdl))",
+      "cost": 34,
+      "cost_Q_terms": "37Q - 3",
+      "breakdown": "IDF(11n) + numerator(5n) + denominator(14n) + div(2n) + mul(IDF, fraction)(2n) = 34n",
+      "idf_breakdown": "sub(N,df)(2n) + add_pos(+0.5)(3n) + add_pos(df,0.5)(3n) + div(2n) + ln(1n) = 11n"
+    },
+    {
+      "name": "Softmax for neural search",
+      "formula": "P(i) = exp(xi) / Σ exp(xj)",
+      "cost_formula": "4N - 3",
+      "note": "Established result. N documents."
+    }
+  ],
+  "observations": [
+    "TF-IDF at 7n is remarkably cheap for a foundational information retrieval algorithm",
+    "PageRank cost grows linearly with incoming links: 5N+4",
+    "BM25 is 34n per query term — 5× more expensive than TF-IDF",
+    "Cosine similarity grows linearly with dimension: 15d-1"
+  ]
+}

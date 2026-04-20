@@ -1,0 +1,227 @@
+{
+  "session": "SPORT-2",
+  "title": "Game Theory and Probability",
+  "version": "SuperBEST v4",
+  "cost_table": {
+    "exp": "1n", "ln": "1n", "recip": "1n",
+    "neg": "2n", "mul": "2n", "sub": "2n", "div": "2n", "sqrt": "2n",
+    "pow": "3n",
+    "add_pos": "3n", "add_gen": "11n"
+  },
+  "equations": [
+    {
+      "id": "SPORT2-1",
+      "name": "Binomial Coefficient",
+      "formula": "C(n,k) = n! / (k! * (n-k)!)",
+      "breakdown": {
+        "n_factorial": {
+          "desc": "Product of integers 1..n: (n-1) multiplications",
+          "cost": "2*(n-1) = 2n-2"
+        },
+        "k_factorial": {
+          "desc": "(k-1) multiplications",
+          "cost": "2*(k-1) = 2k-2"
+        },
+        "nmk_factorial": {
+          "desc": "(n-k-1) multiplications for (n-k)!",
+          "cost": "2*(n-k-1) = 2n-2k-2"
+        },
+        "div_numerator_by_k_fact": "2n",
+        "div_result_by_nmk_fact": "2n",
+        "total_formula": "(2n-2) + (2k-2) + (2n-2k-2) + 2 + 2 = 4n - 2"
+      },
+      "total_formula": "4n - 2  (where n is the top of the binomial, scales linearly)",
+      "total_ops_example_n6_k3": [
+        {"op": "5! part: 5 muls for 6!", "cost": 10},
+        {"op": "2 muls for 3!", "cost": 4},
+        {"op": "2 muls for 3! (for (6-3)!)", "cost": 4},
+        {"op": "div(6!, 3!)", "cost": 2},
+        {"op": "div(result, 3!)", "cost": 2}
+      ],
+      "v4_cost": "4n - 2 (general); for C(6,3): 4*6-2 = 22n",
+      "spec_cost": "4n - 2 (div costs cancel — only 2 divs which adds 2n vs old 2n; same formula holds)",
+      "note": "The factorial products dominate. The two final div operations contribute 4n in v4 vs 2n in spec (if old div=1n), so the formula becomes 4n-2+2 = 4n (v4) vs 4n-4 (spec with div=1n). For n=6: v4=22n, spec=20n.",
+      "v4_cost_precise": "2*(n-1) + 2*(k-1) + 2*(n-k-1) + 2 + 2 = 4n - 2",
+      "test_case": {
+        "n": 6, "k": 3,
+        "result": 20,
+        "cost_v4": "4*6 - 2 = 22n",
+        "cost_spec": "4*6 - 4 = 20n (old div=1n)"
+      }
+    },
+    {
+      "id": "SPORT2-2",
+      "name": "Expected Value (Discrete)",
+      "formula": "E[X] = sum(x_i * P(x_i), i=1..N)",
+      "breakdown": {
+        "per_term": {
+          "mul(x_i, P_i)": "2n"
+        },
+        "N_terms": "2N nodes",
+        "N_minus_1_adds": "add_pos — probabilities P_i > 0 and x_i * P_i provably positive for positive outcomes; 3*(N-1) = 3N-3",
+        "note_on_add": "If x_i can be negative (losses), use add_gen = 11*(N-1). For non-negative outcomes: add_pos.",
+        "total_pos": "2N + 3(N-1) = 5N - 3"
+      },
+      "v4_cost": "5N - 3 (non-negative outcomes with add_pos)",
+      "spec_cost": "5N - 3 (matches — no div involved)",
+      "note": "Formula unchanged from spec since no div is used. For a fair 6-sided die: N=6, cost = 5*6-3 = 27n.",
+      "test_case": {
+        "die_sides": 6,
+        "outcomes": [1,2,3,4,5,6],
+        "probabilities": [0.1667, 0.1667, 0.1667, 0.1667, 0.1667, 0.1667],
+        "expected_value": 3.5,
+        "cost": "5*6 - 3 = 27n"
+      }
+    },
+    {
+      "id": "SPORT2-3",
+      "name": "Variance",
+      "formula": "Var(X) = E[X^2] - (E[X])^2",
+      "breakdown": {
+        "E_X_squared": {
+          "per_term": {
+            "pow(x_i, 2)": "3n",
+            "mul(x_i_sq, P_i)": "2n",
+            "per_term_total": "5n"
+          },
+          "N_terms": "5N",
+          "N_minus_1_adds": "add_pos → 3(N-1) = 3N-3",
+          "subtotal": "5N + 3(N-1) = 8N - 3"
+        },
+        "EX_squared": {
+          "pow(E_X, 2)": "3n — square the already-computed E[X]"
+        },
+        "sub(E_X2, EX_sq)": "2n — E[X^2] >= (E[X])^2 by Jensen's inequality (actually = only for constant RV), but generally we use sub"
+      },
+      "total_ops_summary": [
+        {"op": "E[X^2] block", "cost": "8N-3"},
+        {"op": "pow(E[X], 2)", "cost": 3},
+        {"op": "sub(E_X2, EX_sq)", "cost": 2}
+      ],
+      "v4_cost": "8N + 2",
+      "spec_cost": "8N + 2 (matches — no div involved)",
+      "note": "Formula unchanged from spec since no div is used. Fair die (N=6): 8*6+2 = 50n.",
+      "test_case": {
+        "die_sides": 6,
+        "E_X": 3.5,
+        "E_X2": "91/6 ≈ 15.1667",
+        "variance": "15.1667 - 12.25 = 2.9167",
+        "std_dev": "≈ 1.7078",
+        "cost": "8*6 + 2 = 50n"
+      }
+    },
+    {
+      "id": "SPORT2-4",
+      "name": "Bayes' Theorem",
+      "formula": "P(A|B) = P(B|A) * P(A) / P(B)",
+      "breakdown": {
+        "mul(P_BA, P_A)": "2n — joint probability",
+        "div(product, P_B)": "2n — normalize by evidence"
+      },
+      "total_ops": [
+        {"op": "mul(P(B|A), P(A))", "cost": 2},
+        {"op": "div(joint, P(B))", "cost": 2}
+      ],
+      "v4_cost": "4n",
+      "spec_cost": "3n (used old div=1n)",
+      "note": "v4 upgrade: single div raised from 1n to 2n → +1n. Total: 4n.",
+      "test_case": {
+        "P_BA": 0.8, "P_A": 0.3, "P_B": 0.5,
+        "numerator": "0.8 * 0.3 = 0.24",
+        "result": "0.24 / 0.5 = 0.48",
+        "formula_check": "P(A|B) = 0.48"
+      }
+    },
+    {
+      "id": "SPORT2-5",
+      "name": "Kelly Criterion",
+      "formula": "f* = (b*p - q) / b  where q = 1 - p",
+      "breakdown": {
+        "sub(1, p)": "2n — compute q = 1 - p",
+        "mul(b, p)": "2n — compute b*p",
+        "sub(bp, q)": "2n — numerator: b*p - q",
+        "div(numerator, b)": "2n — divide by odds b"
+      },
+      "total_ops": [
+        {"op": "sub(1, p)", "cost": 2},
+        {"op": "mul(b, p)", "cost": 2},
+        {"op": "sub(b*p, q)", "cost": 2},
+        {"op": "div(numerator, b)", "cost": 2}
+      ],
+      "v4_cost": "8n",
+      "spec_cost": "7n (used old div=1n)",
+      "note": "v4 upgrade: single div raised from 1n to 2n → +1n. Total: 8n.",
+      "test_case": {
+        "b": 2.0, "p": 0.6,
+        "q": 0.4,
+        "b_times_p": 1.2,
+        "numerator": "1.2 - 0.4 = 0.8",
+        "f_star": "0.8 / 2.0 = 0.4",
+        "interpretation": "Bet 40% of bankroll"
+      }
+    },
+    {
+      "id": "SPORT2-6",
+      "name": "Nash Equilibrium (2x2 Mixed Strategy)",
+      "formula": "p* = (d - c) / (a - b - c + d)  for row player's mixed strategy",
+      "breakdown": {
+        "numerator": {
+          "sub(d, c)": "2n"
+        },
+        "denominator": {
+          "sub(a, b)": "2n",
+          "sub(result_ab, c)": "2n",
+          "add_type": "add_gen OR add_pos depending on game structure",
+          "add_gen(result_abc, d)": "11n — denominator (a-b-c+d) can be negative depending on payoff matrix; add_gen required for honest accounting",
+          "denom_subtotal": "2+2+11 = 15n"
+        },
+        "div(numer, denom)": "2n"
+      },
+      "total_ops_honest": [
+        {"op": "sub(d, c) [numerator]", "cost": 2},
+        {"op": "sub(a, b)", "cost": 2},
+        {"op": "sub(result, c)", "cost": 2},
+        {"op": "add_gen(result, d)", "cost": 11},
+        {"op": "div(numerator, denominator)", "cost": 2}
+      ],
+      "v4_cost": "19n (honest — add_gen for denominator)",
+      "v4_cost_optimistic": "11n (add_pos if denominator is provably positive for this specific game)",
+      "spec_cost": "10n (used add_pos=3n and old div=1n)",
+      "note": "Critical correction from spec: The denominator (a-b-c+d) is the difference of diagonal sums in the payoff matrix. This can be negative (e.g., coordination games with specific payoffs). Honest cost = add_gen = 11n. If a specific game's structure guarantees positive denominator, add_pos=3n applies giving 11n total. Spec used 10n = 3+3+3+1 (3 subs + add_pos + div=1n). v4 honest = 19n; v4 optimistic = 11n.",
+      "add_gen_justification": "In a general 2x2 payoff matrix [[a,b],[c,d]], the denominator a-b-c+d equals (a+d)-(b+c). This is negative when off-diagonal payoffs exceed diagonal payoffs — common in anti-coordination games. Cannot assume positive without proof.",
+      "test_case": {
+        "matrix": "Matching Pennies: a=1, b=-1, c=-1, d=1",
+        "numerator": "d - c = 1 - (-1) = 2",
+        "denominator": "a - b - c + d = 1 - (-1) - (-1) + 1 = 4",
+        "p_star": "2/4 = 0.5",
+        "interpretation": "Each player mixes 50/50 — classic result"
+      },
+      "counterexample_negative_denom": {
+        "matrix": "a=3, b=2, c=4, d=1",
+        "denominator": "3-2-4+1 = -2 (negative!)",
+        "conclusion": "add_gen is correct — denominator sign is not guaranteed"
+      }
+    }
+  ],
+  "cross_domain_notes": [
+    {
+      "equation": "Expected Value",
+      "isomorphic_to": ["RS Syndrome (tech)", "Weighted sum patterns across all sessions"],
+      "shared_structure": "Sum of N weighted terms with (N-1) adds",
+      "shared_cost": "5N - 3 (with mul per term at 2n, add_pos at 3n)"
+    },
+    {
+      "equation": "Pythagorean Expectation (SPORT-1)",
+      "isomorphic_to": "Michaelis-Menten, Hill equation — confirmed cross-domain isomorphism"
+    }
+  ],
+  "v4_changes_summary": [
+    {"equation": "Binomial Coefficient", "old": "4n-4 (for C(n,k))", "new": "4n-2", "delta": "+2n", "reason": "2 divs × (2n-1n) = +2n"},
+    {"equation": "Expected Value", "old": "5N-3", "new": "5N-3", "delta": "0"},
+    {"equation": "Variance", "old": "8N+2", "new": "8N+2", "delta": "0"},
+    {"equation": "Bayes Theorem", "old": "3n", "new": "4n", "delta": "+1n", "reason": "div: 1n→2n"},
+    {"equation": "Kelly Criterion", "old": "7n", "new": "8n", "delta": "+1n", "reason": "div: 1n→2n"},
+    {"equation": "Nash Equilibrium (honest)", "old": "10n", "new": "19n", "delta": "+9n", "reason": "add_gen(11n) vs add_pos(3n) for denominator (+8n) and div: 1n→2n (+1n)"},
+    {"equation": "Nash Equilibrium (optimistic)", "old": "10n", "new": "11n", "delta": "+1n", "reason": "only div change if denominator provably positive"}
+  ]
+}

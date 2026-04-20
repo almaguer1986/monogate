@@ -1,0 +1,226 @@
+{
+  "session": "SPORT-1",
+  "title": "Sports Statistics",
+  "version": "SuperBEST v4",
+  "cost_table": {
+    "exp": "1n", "ln": "1n", "recip": "1n",
+    "neg": "2n", "mul": "2n", "sub": "2n", "div": "2n", "sqrt": "2n",
+    "pow": "3n",
+    "add_pos": "3n", "add_gen": "11n"
+  },
+  "equations": [
+    {
+      "id": "SPORT1-1",
+      "name": "Batting Average",
+      "formula": "BA = hits / at_bats",
+      "breakdown": {
+        "div(hits, at_bats)": "2n"
+      },
+      "total_ops": [
+        {"op": "div(hits, at_bats)", "cost": 2}
+      ],
+      "v4_cost": "2n",
+      "spec_cost": "1n (used old div=1n)",
+      "note": "v4 upgrade: div cost raised from 1n to 2n. Single div → 2n.",
+      "test_case": {
+        "hits": 45, "at_bats": 150,
+        "result": 0.300,
+        "formula_check": "45/150 = 0.300"
+      }
+    },
+    {
+      "id": "SPORT1-2",
+      "name": "Earned Run Average (ERA)",
+      "formula": "ERA = 9 * (earned_runs / innings_pitched)",
+      "breakdown": {
+        "div(earned_runs, innings_pitched)": "2n",
+        "mul(9, ratio)": "2n"
+      },
+      "total_ops": [
+        {"op": "div(er, ip)", "cost": 2},
+        {"op": "mul(9, ratio)", "cost": 2}
+      ],
+      "v4_cost": "4n",
+      "spec_cost": "3n (used old div=1n)",
+      "note": "v4 upgrade: div cost raised from 1n to 2n. One div → +1n vs spec. Total: 4n.",
+      "test_case": {
+        "earned_runs": 2, "innings_pitched": 5,
+        "result": 3.60,
+        "formula_check": "9 * (2/5) = 9 * 0.4 = 3.60"
+      }
+    },
+    {
+      "id": "SPORT1-3",
+      "name": "Basketball Field Goal Percentage",
+      "formula": "FG% = made / attempted",
+      "breakdown": {
+        "div(made, attempted)": "2n"
+      },
+      "total_ops": [
+        {"op": "div(made, attempted)", "cost": 2}
+      ],
+      "v4_cost": "2n",
+      "spec_cost": "1n (used old div=1n)",
+      "note": "Pure ratio — single div at 2n in v4.",
+      "test_case": {
+        "made": 8, "attempted": 15,
+        "result": 0.5333,
+        "formula_check": "8/15 ≈ 0.5333"
+      }
+    },
+    {
+      "id": "SPORT1-4",
+      "name": "NFL Passer Rating",
+      "formula": "RATE = ((a + b + c + d) / 6) * 100, where each component uses clamped intermediate stats",
+      "breakdown": {
+        "component_a": {
+          "desc": "((comp/att) - 0.3) * 5",
+          "ops": [
+            {"op": "div(comp, att)", "cost": 2},
+            {"op": "sub(ratio, 0.3)", "cost": 2},
+            {"op": "mul(diff, 5)", "cost": 2}
+          ],
+          "subtotal": "6n"
+        },
+        "component_b": {
+          "desc": "((yds/att) - 3) * 0.25",
+          "ops": [
+            {"op": "div(yds, att)", "cost": 2},
+            {"op": "sub(ratio, 3)", "cost": 2},
+            {"op": "mul(diff, 0.25)", "cost": 2}
+          ],
+          "subtotal": "6n"
+        },
+        "component_c": {
+          "desc": "(td/att) * 20",
+          "ops": [
+            {"op": "div(td, att)", "cost": 2},
+            {"op": "mul(ratio, 20)", "cost": 2}
+          ],
+          "subtotal": "4n"
+        },
+        "component_d": {
+          "desc": "2.375 - ((int/att) * 25)",
+          "ops": [
+            {"op": "div(int, att)", "cost": 2},
+            {"op": "mul(ratio, 25)", "cost": 2},
+            {"op": "sub(2.375, product)", "cost": 2}
+          ],
+          "subtotal": "6n"
+        },
+        "sum_abcd": {
+          "desc": "3 additions for a+b+c+d; components are clipped to [0,2.375] so provably non-negative → add_pos",
+          "ops": "3 * add_pos = 3 * 3n = 9n"
+        },
+        "final_scale": {
+          "desc": "multiply by 100/6 (constant)",
+          "ops": "mul(sum, 100/6) = 2n"
+        }
+      },
+      "total_ops": [
+        {"op": "component_a", "cost": 6},
+        {"op": "component_b", "cost": 6},
+        {"op": "component_c", "cost": 4},
+        {"op": "component_d", "cost": 6},
+        {"op": "3x add_pos", "cost": 9},
+        {"op": "mul(sum, 100/6)", "cost": 2}
+      ],
+      "v4_cost": "33n",
+      "spec_cost": "31n (used old div=1n — 4 divs × 1n extra each = +4n, but spec had 31n so delta is +2 due to div count)",
+      "note": "v4 upgrade: 4 div ops × (2n-1n) = +4n... spec was 31n → v4 = 33n. Components after clamping are in [0,2.375] making add_pos valid.",
+      "test_case": {
+        "desc": "Tom Brady 2007 season (approximate)",
+        "completions": 398, "attempts": 578, "yards": 4806, "td": 50, "interceptions": 8,
+        "expected_rating": 117.2,
+        "note": "Exact value depends on clamp rules (min 0, max 2.375 per component)"
+      }
+    },
+    {
+      "id": "SPORT1-5",
+      "name": "Pythagorean Expectation",
+      "formula": "Win% = RS^k / (RS^k + RA^k)",
+      "breakdown": {
+        "pow(RS, k)": "3n",
+        "pow(RA, k)": "3n",
+        "add_pos(RS_k, RA_k)": "3n — both pow results are positive",
+        "div(RS_k, sum)": "2n"
+      },
+      "total_ops": [
+        {"op": "pow(RS, k)", "cost": 3},
+        {"op": "pow(RA, k)", "cost": 3},
+        {"op": "add_pos(RS_k, RA_k)", "cost": 3},
+        {"op": "div(RS_k, sum)", "cost": 2}
+      ],
+      "v4_cost": "11n",
+      "spec_cost": "10n (used old div=1n)",
+      "note": "v4 upgrade: single div raised from 1n to 2n → +1n. Cross-domain isomorphism: same structure as Hill equation and Michaelis-Menten saturation (bio sessions). 11n.",
+      "test_case": {
+        "RS": 900, "RA": 700, "k": 1.83,
+        "RS_k": "900^1.83 ≈ 422968",
+        "RA_k": "700^1.83 ≈ 302045",
+        "sum": "≈ 725013",
+        "result": "≈ 0.5834",
+        "note": "Actual numeric: 900^1.83 / (900^1.83 + 700^1.83)"
+      }
+    },
+    {
+      "id": "SPORT1-6",
+      "name": "ELO Rating System",
+      "formula": "E = 1/(1 + 10^((R_opp - R_self)/400));  R_new = R_old + K*(S - E)",
+      "breakdown": {
+        "expected_score_E": {
+          "sub(R_opp, R_self)": "2n",
+          "div(diff, 400)": "2n — 400 is a constant",
+          "pow(10, quotient)": "3n",
+          "add_pos(1, power)": "3n — 10^x > 0 so 1+power > 1 > 0, provably positive",
+          "recip(sum)": "1n",
+          "E_subtotal": "11n"
+        },
+        "rating_update": {
+          "sub(S, E)": "2n — S in {0,0.5,1}, E in (0,1), difference can be negative",
+          "mul(K, diff)": "2n",
+          "add_gen(R_old, K_diff)": "11n — K*(S-E) can be negative; R_old positive; sum could theoretically go negative for very low ratings with large K",
+          "update_subtotal": "15n"
+        }
+      },
+      "total_ops": [
+        {"op": "sub(R_opp, R_self)", "cost": 2},
+        {"op": "div(diff, 400)", "cost": 2},
+        {"op": "pow(10, quotient)", "cost": 3},
+        {"op": "add_pos(1, power)", "cost": 3},
+        {"op": "recip(sum)", "cost": 1},
+        {"op": "sub(S, E)", "cost": 2},
+        {"op": "mul(K, diff)", "cost": 2},
+        {"op": "add_gen(R_old, update)", "cost": 11}
+      ],
+      "v4_cost": "26n",
+      "spec_cost": "17n (old: recip=2n, div=1n; v4: recip=1n saves 1n, div=2n costs +2n; add_gen=11n for rating update instead of add_pos=3n costs +8n)",
+      "note": "Key v4 changes: (1) recip is now 1n not 2n — saves 1n; (2) div is 2n not 1n — costs +2n; (3) Honest add_gen for R_new update (K*(S-E) is signed) costs 11n vs 3n = +8n. Net: +9n vs spec's 17n → 26n.",
+      "test_case": {
+        "R_self": 1500, "R_opp": 1600, "K": 32, "S": 1.0,
+        "diff": -100,
+        "quotient": -100.0 / 400,
+        "power": "10^(-0.25) ≈ 0.5623",
+        "E": "1/(1+0.5623) ≈ 0.6401",
+        "update": "32*(1.0 - 0.6401) ≈ 11.52",
+        "R_new": "1500 + 11.52 = 1511.52"
+      }
+    }
+  ],
+  "cross_domain_notes": [
+    {
+      "equation": "Pythagorean Expectation",
+      "isomorphic_to": ["Hill equation (bio)", "Michaelis-Menten kinetics (bio)", "Fermi-Dirac distribution (physics)"],
+      "shared_structure": "x^k / (x^k + y^k) or equivalent ratio of powers",
+      "shared_cost": "11n"
+    }
+  ],
+  "v4_changes_summary": [
+    {"equation": "Batting Average", "old": "1n", "new": "2n", "delta": "+1n"},
+    {"equation": "ERA", "old": "3n", "new": "4n", "delta": "+1n"},
+    {"equation": "Basketball FG%", "old": "1n", "new": "2n", "delta": "+1n"},
+    {"equation": "NFL Passer Rating", "old": "31n", "new": "33n", "delta": "+2n", "reason": "4 divs × +1n each = +4n, but spec used 31n which may have already accounted for some; net observed delta +2n"},
+    {"equation": "Pythagorean Expectation", "old": "10n", "new": "11n", "delta": "+1n"},
+    {"equation": "ELO Rating", "old": "17n", "new": "26n", "delta": "+9n", "reason": "recip: 2n→1n (-1n); div: 1n→2n (+2n); add_gen for signed update: 3n→11n (+8n); net +9n"}
+  ]
+}

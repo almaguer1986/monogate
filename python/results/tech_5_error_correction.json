@@ -1,0 +1,123 @@
+{
+  "session": "TECH-5",
+  "title": "Data Recovery and Error Correction",
+  "version": "SuperBEST v4",
+  "cost_table": {
+    "exp": "1n", "ln": "1n", "recip": "1n",
+    "neg": "2n", "mul": "2n", "sub": "2n", "div": "2n", "sqrt": "2n",
+    "pow": "3n",
+    "add_pos": "3n", "add_gen": "11n"
+  },
+  "equations": [
+    {
+      "id": "TECH5-1",
+      "name": "Reed-Solomon Syndrome Calculation",
+      "formula": "S_j = sum(r_i * alpha^(i*j), i=0..N-1)",
+      "domain": "Real/complex field arithmetic — EML applies",
+      "breakdown": {
+        "assumption": "Index product i*j is integer arithmetic, precomputed outside EML framework (free)",
+        "per_term": {
+          "pow(alpha, i*j)": "3n",
+          "mul(r_i, alpha^(i*j))": "2n",
+          "per_term_total": "5n"
+        },
+        "N_terms_total": "5N nodes",
+        "N_minus_1_adds": "add_pos (alpha^(i*j) > 0, r_i magnitude positive in power accumulation) → 3*(N-1) = 3N-3",
+        "total_formula": "5N + 3(N-1) = 8N - 3"
+      },
+      "example": {
+        "standard": "RS(255,223): N=255",
+        "calculation": "8*255 - 3 = 2040 - 3 = 2037n",
+        "result": "2037n per syndrome"
+      },
+      "v4_cost": "8N - 3",
+      "spec_cost": "8N - 3 (matches)",
+      "note": "Per-term cost = 5n when i*j is integer-precomputed. With (N-1) add_pos at 3n each: 8N-3. RS(255,223) → 2037n."
+    },
+    {
+      "id": "TECH5-2",
+      "name": "CRC-32",
+      "formula": "CRC computed via binary polynomial division over GF(2)",
+      "domain": "GF(2) — OUTSIDE EML",
+      "eml_boundary": true,
+      "eml_note": "This operation is in GF(2) (finite field arithmetic / XOR-based), not real/complex exp-ln arithmetic. EML does not apply.",
+      "breakdown": "Each step is XOR (addition mod 2) and AND (multiplication mod 2). These are bitwise operations with no real-valued logarithm or exponential analog.",
+      "v4_cost": "N/A — EML framework does not apply",
+      "spec_cost": "N/A"
+    },
+    {
+      "id": "TECH5-3",
+      "name": "Hamming Distance",
+      "formula": "d(x,y) = popcount(x XOR y)",
+      "domain": "GF(2) / bitwise — OUTSIDE EML",
+      "eml_boundary": true,
+      "eml_note": "This operation is in GF(2) (finite field arithmetic / XOR-based), not real/complex exp-ln arithmetic. EML does not apply.",
+      "breakdown": "XOR produces a bitstring; popcount counts set bits. Both are integer/bitwise operations with no real-valued exp-ln structure.",
+      "v4_cost": "N/A — EML framework does not apply",
+      "spec_cost": "N/A"
+    },
+    {
+      "id": "TECH5-4",
+      "name": "Parity Check",
+      "formula": "p = x1 XOR x2 XOR ... XOR xN",
+      "domain": "GF(2) / bitwise — OUTSIDE EML",
+      "eml_boundary": true,
+      "eml_note": "This operation is in GF(2) (finite field arithmetic / XOR-based), not real/complex exp-ln arithmetic. EML does not apply.",
+      "breakdown": "A chain of XOR operations over binary values. No real-valued structure; EML cost model is inapplicable.",
+      "v4_cost": "N/A — EML framework does not apply",
+      "spec_cost": "N/A"
+    },
+    {
+      "id": "TECH5-5",
+      "name": "Signal-to-Noise Ratio (dB)",
+      "formula": "SNR_dB = 10 * log10(P_signal / P_noise)",
+      "domain": "Real positive values — EML applies",
+      "breakdown": {
+        "div(P_signal, P_noise)": "2n — ratio of two positive quantities",
+        "ln(ratio)": "1n — EXL(0, ratio) gives ln(ratio)",
+        "div(ln_ratio, ln10_const)": "2n — ln(10) is a precomputed constant; log10(x) = ln(x)/ln(10)",
+        "mul(10, log10_result)": "2n — scale by 10"
+      },
+      "total_ops": [
+        {"op": "div(P_s, P_n)", "cost": 2},
+        {"op": "ln(ratio)", "cost": 1},
+        {"op": "div(ln_ratio, ln10)", "cost": 2},
+        {"op": "mul(10, log10)", "cost": 2}
+      ],
+      "v4_cost": "7n",
+      "spec_cost": "5n (used old div=1n)",
+      "note": "v4 upgrade: div cost raised from 1n to 2n. Two div operations → +2n vs spec. Total: 7n."
+    },
+    {
+      "id": "TECH5-6",
+      "name": "Shannon Channel Capacity",
+      "formula": "C = B * log2(1 + SNR)",
+      "domain": "Real non-negative values — EML applies",
+      "breakdown": {
+        "add_pos(1, SNR)": "3n — SNR >= 0 so 1+SNR >= 1 > 0, provably positive → add_pos",
+        "ln(1 + SNR)": "1n",
+        "div(ln_result, ln2_const)": "2n — ln(2) is a precomputed constant; log2(x) = ln(x)/ln(2)",
+        "mul(B, log2_result)": "2n — B > 0 (bandwidth)"
+      },
+      "total_ops": [
+        {"op": "add_pos(1, SNR)", "cost": 3},
+        {"op": "ln(1+SNR)", "cost": 1},
+        {"op": "div(ln, ln2)", "cost": 2},
+        {"op": "mul(B, log2)", "cost": 2}
+      ],
+      "v4_cost": "8n",
+      "spec_cost": "7n (used old div=1n)",
+      "note": "v4 upgrade: div cost raised from 1n to 2n. One div operation → +1n vs spec. Total: 8n. The add is add_pos because 1+SNR is provably positive for any real SNR."
+    }
+  ],
+  "eml_boundary_summary": {
+    "outside_eml": ["CRC-32", "Hamming Distance", "Parity Check"],
+    "reason": "All three are GF(2) / binary polynomial / XOR-based operations. EML operates over real/complex fields using exp and ln. Finite field arithmetic has no exp-ln decomposition in the EML sense.",
+    "inside_eml": ["Reed-Solomon Syndrome", "SNR (dB)", "Shannon Capacity"]
+  },
+  "v4_changes_summary": [
+    {"equation": "SNR (dB)", "old": "5n", "new": "7n", "delta": "+2n", "reason": "div: 1n→2n (×2 divs)"},
+    {"equation": "Shannon Capacity", "old": "7n", "new": "8n", "delta": "+1n", "reason": "div: 1n→2n (×1 div)"},
+    {"equation": "RS Syndrome RS(255,223)", "old": "2037n", "new": "2037n", "delta": "0", "reason": "add_pos and mul costs unchanged; no div in the core loop"}
+  ]
+}

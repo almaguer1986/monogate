@@ -1,0 +1,165 @@
+{
+  "session": "NAT-1",
+  "title": "SuperBEST v4 — Natural Patterns Node Cost Computation",
+  "version": "SuperBEST v4",
+  "cost_table": {
+    "exp": "1n (EML/DEML route)",
+    "ln": "1n (EXL route)",
+    "recip": "1n (R16-C1)",
+    "neg": "2n",
+    "mul": "2n",
+    "sub": "2n",
+    "div": "2n",
+    "sqrt": "2n",
+    "pow": "3n",
+    "add_pos": "3n (inputs provably positive)",
+    "add_gen": "11n (general case)",
+    "sin_cos": "1n each (complex ceml route)",
+    "atan": "3n (complex route)",
+    "exp_neg_x": "1n via DEML(x,1) = exp(-x)"
+  },
+  "patterns": [
+    {
+      "id": "NAT-1-1",
+      "name": "Golden Ratio",
+      "formula": "φ = (1 + √5) / 2",
+      "breakdown": [
+        {"step": 1, "op": "sqrt(5)", "note": "√5, v4 sqrt=2n", "cost": "2n"},
+        {"step": 2, "op": "add_pos(1, sqrt5)", "note": "both inputs positive → add_pos", "cost": "3n"},
+        {"step": 3, "op": "div(sum, 2)", "note": "v4 div=2n", "cost": "2n"}
+      ],
+      "total": "7n",
+      "v4_note": "sqrt saved 1n vs old pow(5,0.5)=3n; div cost 1n more vs old div=1n. Net: same as spec 7n.",
+      "verification": "φ ≈ 1.6180339887; φ² - φ - 1 = 0 (golden ratio identity)"
+    },
+    {
+      "id": "NAT-1-2",
+      "name": "Logarithmic Spiral",
+      "formula": "r = a · e^(bθ)",
+      "breakdown": [
+        {"step": 1, "op": "mul(b, θ)", "note": "scale exponent", "cost": "2n"},
+        {"step": 2, "op": "exp(product)", "note": "EML(mul_result, 0) = exp(x), 1n", "cost": "1n"},
+        {"step": 3, "op": "mul(a, exp_result)", "note": "scale amplitude", "cost": "2n"}
+      ],
+      "total": "5n",
+      "v4_note": "No div involved; same cost as spec. exp via EML route = 1n.",
+      "cross_domain": "Isomorphic to population growth N0·e^(rt) and compound interest — all 5n."
+    },
+    {
+      "id": "NAT-1-3",
+      "name": "Sunflower Seed Angle (Phyllotaxis)",
+      "formula": "θ_n = n · 2π / φ²",
+      "breakdown_literal_phi": {
+        "note": "φ is a known constant; φ² = 2.6180... is precomputed as a literal",
+        "steps": [
+          {"step": 1, "op": "div(2π, φ²_const)", "note": "φ² is a literal constant, only div needed", "cost": "2n"},
+          {"step": 2, "op": "mul(n, angle_const)", "note": "scale by step index n", "cost": "2n"}
+        ],
+        "total": "4n"
+      },
+      "breakdown_from_scratch": {
+        "note": "φ computed from scratch then squared",
+        "steps": [
+          {"step": 1, "op": "golden_ratio φ", "ref": "NAT-1-1", "cost": "7n"},
+          {"step": 2, "op": "pow(φ, 2)", "note": "φ² = φ·φ, v4 pow=3n", "cost": "3n"},
+          {"step": 3, "op": "div(2π, φ²)", "cost": "2n"},
+          {"step": 4, "op": "mul(n, angle)", "cost": "2n"}
+        ],
+        "total": "14n"
+      },
+      "totals": {"with_literal_phi_squared": "4n", "from_scratch": "14n"},
+      "v4_note": "Report both modes. Literal constant mode is the realistic deployment case."
+    },
+    {
+      "id": "NAT-1-4",
+      "name": "Population Growth",
+      "formula": "N(t) = N0 · e^(rt)",
+      "breakdown": [
+        {"step": 1, "op": "mul(r, t)", "note": "compute exponent", "cost": "2n"},
+        {"step": 2, "op": "exp(product)", "note": "EML route = 1n", "cost": "1n"},
+        {"step": 3, "op": "mul(N0, exp_result)", "note": "scale by initial population", "cost": "2n"}
+      ],
+      "total": "5n",
+      "cross_domain": "Isomorphic to logarithmic spiral (NAT-1-2), bacterial growth, radioactive decay — all 5n pattern A·exp(Bt).",
+      "verification": "N(10)=100·e^0.2≈122.14, N(50)=100·e^1≈271.83, N(100)=100·e^2≈738.91"
+    },
+    {
+      "id": "NAT-1-5",
+      "name": "Fractal Dimension",
+      "formula": "D = log(N(ε)) / log(1/ε)",
+      "breakdown": [
+        {"step": 1, "op": "ln(N_eps)", "note": "EXL(0, N_eps) = 1n", "cost": "1n"},
+        {"step": 2, "op": "recip(ε)", "note": "R16-C1: recip=1n", "cost": "1n"},
+        {"step": 3, "op": "ln(recip_result)", "note": "ln(1/ε) = -ln(ε), EXL route = 1n", "cost": "1n"},
+        {"step": 4, "op": "div(ln_N, ln_recip_eps)", "note": "v4 div=2n", "cost": "2n"}
+      ],
+      "total": "5n",
+      "v4_note": "recip is 1n in v4 (R16-C1), cheaper than old neg(ln(ε))=3n. div=2n. Net: 5n same as spec.",
+      "note": "Self-similar fractals: Cantor set D=log(2)/log(3)≈0.631, Sierpinski D=log(3)/log(2)≈1.585"
+    },
+    {
+      "id": "NAT-1-6",
+      "name": "L-System Eigenvalue (Golden Ratio)",
+      "formula": "λ = (1 + √5) / 2 = φ",
+      "note": "Identical computation to NAT-1-1. Fibonacci L-system growth rate equals the golden ratio.",
+      "total_from_scratch": "7n",
+      "total_if_constant": "0n",
+      "cross_domain": "Same formula as NAT-1-1. L-system branching ratio = φ is a widely shared mathematical constant."
+    },
+    {
+      "id": "NAT-1-7",
+      "name": "Phyllotaxis Divergence Angle",
+      "formula": "α = 360° / φ² ≈ 137.507°",
+      "breakdown_literal_phi": {
+        "note": "φ² ≈ 2.6180 is a precomputed literal constant",
+        "steps": [
+          {"step": 1, "op": "div(360, φ²_const)", "note": "only one div needed", "cost": "2n"}
+        ],
+        "total": "2n"
+      },
+      "breakdown_from_scratch": {
+        "steps": [
+          {"step": 1, "op": "golden_ratio φ", "ref": "NAT-1-1", "cost": "7n"},
+          {"step": 2, "op": "pow(φ, 2)", "cost": "3n"},
+          {"step": 3, "op": "div(360, φ²)", "cost": "2n"}
+        ],
+        "total": "12n"
+      },
+      "totals": {"with_literal_phi_squared": "2n", "from_scratch": "12n"},
+      "note": "Golden angle = 360°/φ² = 360°(1-1/φ) = 360°(2-φ) ≈ 137.5077°"
+    }
+  ],
+  "cross_domain_isomorphisms": [
+    {
+      "pattern": "A · exp(B·x)",
+      "cost": "5n",
+      "instances": [
+        "Population growth: N0·e^(rt)",
+        "Logarithmic spiral: a·e^(bθ)",
+        "Bacterial colony expansion",
+        "Radioactive decay (B negative, use DEML)",
+        "Compound interest (continuous)"
+      ]
+    },
+    {
+      "pattern": "Golden ratio φ and φ²",
+      "cost": "7n from scratch, 0-2n if constant",
+      "instances": [
+        "Golden ratio φ = (1+√5)/2",
+        "L-system Fibonacci eigenvalue",
+        "Phyllotaxis divergence angle",
+        "Sunflower seed angle"
+      ]
+    },
+    {
+      "pattern": "log(N)/log(1/ε) (ratio of logs)",
+      "cost": "5n",
+      "instances": [
+        "Fractal dimension (Hausdorff)",
+        "Box-counting dimension",
+        "Renyi entropy dimension"
+      ]
+    }
+  ],
+  "generated": "2026-04-20"
+}

@@ -1,0 +1,32 @@
+{
+  "compilation_date": "2026-04-20",
+  "sessions": ["TECH-1", "TECH-2", "TECH-3", "TECH-4", "TECH-5", "SPORT-1", "SPORT-2", "NAT-1", "NAT-2"],
+  "equations_added": 57,
+  "previous_catalog_size": 157,
+  "new_catalog_size": 214,
+  "superbest_version": "v4",
+  "key_extremes": {
+    "cheapest": {"name": "ETA / Batting Average / FG%", "cost": 2, "formula": "x/y"},
+    "most_expensive_computable": {"name": "RS Syndrome RS(255,223)", "cost": 2037, "formula": "8N-3, N=255"},
+    "most_expensive_outside_eml": {"names": ["CRC-32", "Hamming", "Parity"], "reason": "GF(2) bitwise arithmetic"},
+    "most_surprising": {"name": "NFL Passer Rating", "cost": 33, "note": "More complex than Hodgkin-Huxley (30n)"},
+    "most_evaluated_daily": {"name": "Haversine", "cost": 28, "note": "Every maps query, millions/day"}
+  },
+  "cross_domain_isomorphisms": [
+    {"cost": 2, "pattern": "x/y", "instances": ["batting average", "FG%", "ETA", "any ratio"]},
+    {"cost": 5, "pattern": "A·exp(-Bx)", "instances": ["Beer-Lambert", "CT scan", "radioactive decay", "RC discharge", "atmospheric absorption"]},
+    {"cost": 5, "pattern": "A·exp(Bt)", "instances": ["population growth", "compound interest", "log spiral"]},
+    {"cost": 7, "pattern": "10·log10(ratio)", "instances": ["dB SPL", "SNR", "Richter", "dBm", "audio loudness"]},
+    {"cost": 11, "pattern": "x^k/(x^k+y^k)", "instances": ["Pythagorean expectation", "Hill equation", "Michaelis-Menten"]},
+    {"cost": "5d-3", "pattern": "dot product", "instances": ["CF recommendation", "neural layer", "cosine numerator", "any inner product"]}
+  ],
+  "eml_boundary_result": {
+    "outside_eml": ["CRC-32", "Hamming distance", "parity check"],
+    "reason": "GF(2) XOR-based polynomial arithmetic. EML handles real/complex exp-ln arithmetic only."
+  },
+  "v4_corrections_from_spec": {
+    "div_change": "1n → 2n affects all division-containing formulas",
+    "recip_change": "2n → 1n reduces sigmoid by 1n (7n instead of 8n)",
+    "add_gen_correction": "ELO update and Nash denominator required add_gen=11n; spec had incorrectly used add_pos"
+  }
+}

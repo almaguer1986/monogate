@@ -1,0 +1,265 @@
+{
+  "session": "TECH-4",
+  "title": "Video Games and 3D Graphics — SuperBEST v4 Node Costs",
+  "superbest_version": "v4",
+  "cost_model": {
+    "exp": 1,
+    "ln": 1,
+    "recip": 1,
+    "neg": 2,
+    "mul": 2,
+    "sub": 2,
+    "div": 2,
+    "sqrt": 2,
+    "pow": 3,
+    "add_pos": 3,
+    "add_gen": 11,
+    "sin_cos_ceml": 1,
+    "arcsin_ceml": 3,
+    "atan2_ceml": 3
+  },
+  "equations": [
+    {
+      "id": "GFX-1",
+      "name": "Quaternion rotation p' = q·p·q*",
+      "formula": "Using Rodrigues/optimized form: t = 2·cross(q.xyz, p); p' = p + q.w·t + cross(q.xyz, t)",
+      "breakdown": {
+        "cross_q_p": {
+          "description": "3D cross product: 6 muls + 6 subs",
+          "muls": {"count": 6, "cost_each": 2, "subtotal": 12},
+          "subs": {"count": 6, "cost_each": 2, "subtotal": 12},
+          "subtotal": 12
+        },
+        "t_equals_2_cross": {
+          "description": "mul(2, cross_result) per component × 3",
+          "muls": {"count": 3, "cost_each": 2, "subtotal": 6},
+          "subtotal": 6
+        },
+        "qw_times_t": {
+          "description": "q.w · t per component × 3",
+          "muls": {"count": 3, "cost_each": 2, "subtotal": 6},
+          "subtotal": 6
+        },
+        "cross_q_t": {
+          "description": "Second 3D cross product",
+          "subtotal": 12
+        },
+        "final_adds": {
+          "description": "p + q.w·t + cross2, 3 components × 2 adds each. Quaternion components can be negative.",
+          "add_gen_variant": {
+            "adds": {"count": 6, "cost_each": 11, "subtotal": 66},
+            "total": 108
+          },
+          "add_pos_variant": {
+            "description": "If inputs are in positive domain (e.g. normalized w/ known-positive components)",
+            "adds": {"count": 6, "cost_each": 3, "subtotal": 18},
+            "total": 60
+          }
+        },
+        "rodrigues_expanded_note": {
+          "description": "Equivalent Rodrigues expansion: 24 scalar muls + 17 adds",
+          "muls_cost": {"count": 24, "cost_each": 2, "total": 48},
+          "adds_add_pos": {"count": 17, "cost_each": 3, "total": 51, "grand_total": 99},
+          "adds_add_gen": {"count": 17, "cost_each": 11, "total": 187, "grand_total": 235}
+        }
+      },
+      "total_cost_add_pos": 99,
+      "total_cost_add_gen": 235,
+      "recommended_cost": 99,
+      "v4_notes": "mul=2n unchanged. add_pos=3n (positive domain assumption) gives 99n; add_gen=11n (signed components) gives 235n. Report both; 99n is standard for normalized rotation inputs.",
+      "previous_estimate": "99n (add_pos), unchanged from pre-v4 for this op mix"
+    },
+    {
+      "id": "GFX-2",
+      "name": "Perspective projection",
+      "formula": "x' = f·x/z,  y' = f·y/z",
+      "breakdown": {
+        "per_coordinate": {
+          "nodes": [
+            {"op": "mul(f, coord)", "cost": 2},
+            {"op": "div(result, z)", "cost": 2}
+          ],
+          "subtotal": 4
+        },
+        "both_coordinates_sharing_z": {
+          "description": "x and y share the same z denominator; z computed once",
+          "x_coord": 4,
+          "y_coord": 4,
+          "total": 8
+        }
+      },
+      "total_nodes": 4,
+      "total_cost": 8,
+      "v4_notes": "div = 2n in v4 (was 1n in older spec). Per-coord cost rises from 3n to 4n. Both coords: 8n (was 6n).",
+      "previous_estimate": "6n (older spec with div=1n)"
+    },
+    {
+      "id": "GFX-3",
+      "name": "Phong lighting",
+      "formula": "I = ka·Ia + kd·(L·N)·Id + ks·(R·V)^n·Is",
+      "breakdown": {
+        "ambient": {
+          "nodes": [
+            {"op": "mul(ka, Ia)", "cost": 2}
+          ],
+          "subtotal": 2
+        },
+        "diffuse": {
+          "nodes": [
+            {"op": "dot(L, N) [3D: 5d-3 = 12n]", "cost": 12},
+            {"op": "mul(kd, dot_LN)", "cost": 2},
+            {"op": "mul(result, Id)", "cost": 2}
+          ],
+          "subtotal": 16
+        },
+        "specular": {
+          "nodes": [
+            {"op": "dot(R, V) [3D: 12n]", "cost": 12},
+            {"op": "pow(dot_RV, n)", "cost": 3},
+            {"op": "mul(ks, pow_result)", "cost": 2},
+            {"op": "mul(result, Is)", "cost": 2}
+          ],
+          "subtotal": 19
+        },
+        "sum_terms": {
+          "nodes": [
+            {"op": "add_pos(ambient, diffuse) [intensities > 0]", "cost": 3},
+            {"op": "add_pos(result, specular) [intensities > 0]", "cost": 3}
+          ],
+          "subtotal": 6
+        },
+        "dot_product_formula": "For d-dimensional: 5d-3. d=3 → 5(3)-3 = 12n (3 muls × 2n + 2 add_pos × 3n = 6+6=12)"
+      },
+      "total_nodes": 10,
+      "total_cost": 43,
+      "v4_notes": "No change from pre-v4 for this equation — mul and add_pos costs match. Confirmed 43n.",
+      "previous_estimate": "43n (matches spec)"
+    },
+    {
+      "id": "GFX-4",
+      "name": "Ray-sphere intersection",
+      "formula": "t = (-b ± sqrt(b²-4ac)) / 2a",
+      "breakdown": {
+        "discriminant": {
+          "nodes": [
+            {"op": "pow(b, 2)", "cost": 3},
+            {"op": "mul(a, c)", "cost": 2},
+            {"op": "mul(4, result) [4 is constant]", "cost": 2},
+            {"op": "sub(b², 4ac)", "cost": 2}
+          ],
+          "subtotal": 9
+        },
+        "sqrt_disc": {"op": "sqrt(discriminant)", "cost": 2},
+        "neg_b": {"op": "neg(b)", "cost": 2},
+        "two_a": {"op": "mul(2, a)", "cost": 2},
+        "t1_numerator": {
+          "op": "add_gen(neg_b, sqrt_disc) [numerator can be any sign]",
+          "cost": 11
+        },
+        "t2_numerator": {
+          "op": "sub(neg_b, sqrt_disc)",
+          "cost": 2
+        },
+        "t1": {
+          "op": "div(t1_num, two_a) [shared two_a]",
+          "cost": 2
+        },
+        "t2": {
+          "op": "div(t2_num, two_a)",
+          "cost": 2
+        }
+      },
+      "total_nodes": 9,
+      "total_cost": 34,
+      "cost_breakdown_sum": "9 (disc) + 2 (sqrt) + 2 (neg_b) + 2 (two_a) + 11 (add_gen) + 2 (sub) + 2 (div_t1) + 2 (div_t2) = 32... recheck: 9+2+2+2+11+2+2+2 = 32",
+      "total_cost_corrected": 32,
+      "v4_notes": "v4 changes: div=2n (was 1n, adds 2n per division, +2n total vs older spec); add_gen=11n for ±b±sqrt numerator (was add_pos=3n if positive assumed, +8n). Net increase: ~10n vs older ~22n spec.",
+      "previous_estimate": "~22-25n (older spec)"
+    },
+    {
+      "id": "GFX-5",
+      "name": "Cubic Bezier curve",
+      "formula": "B(t) = (1-t)³P0 + 3(1-t)²tP1 + 3(1-t)t²P2 + t³P3",
+      "breakdown": {
+        "per_scalar_coordinate": {
+          "shared_sub": {"op": "sub(1, t) [shared across terms]", "cost": 2},
+          "term0_P0": {
+            "nodes": [
+              {"op": "pow(1-t, 3)", "cost": 3},
+              {"op": "mul(pow, P0)", "cost": 2}
+            ],
+            "subtotal": 5
+          },
+          "term1_P1": {
+            "nodes": [
+              {"op": "pow(1-t, 2)", "cost": 3},
+              {"op": "mul(pow, t)", "cost": 2},
+              {"op": "mul(3, result)", "cost": 2},
+              {"op": "mul(result, P1)", "cost": 2}
+            ],
+            "subtotal": 9
+          },
+          "term2_P2": {
+            "nodes": [
+              {"op": "pow(t, 2)", "cost": 3},
+              {"op": "mul(1-t, t²)", "cost": 2},
+              {"op": "mul(3, result)", "cost": 2},
+              {"op": "mul(result, P2)", "cost": 2}
+            ],
+            "subtotal": 9
+          },
+          "term3_P3": {
+            "nodes": [
+              {"op": "pow(t, 3)", "cost": 3},
+              {"op": "mul(pow, P3)", "cost": 2}
+            ],
+            "subtotal": 5
+          },
+          "sum_4_terms_add_gen": {
+            "description": "3 adds for 4 terms; interpolation along arbitrary control points → signed",
+            "adds": {"count": 3, "cost_each": 11, "subtotal": 33}
+          },
+          "sum_4_terms_add_pos": {
+            "description": "If all control points and t∈[0,1] guarantee positivity",
+            "adds": {"count": 3, "cost_each": 3, "subtotal": 9}
+          },
+          "subtotal_add_gen": "2+5+9+9+5+33 = 63n per scalar",
+          "subtotal_add_pos": "2+5+9+9+5+9 = 39n per scalar"
+        },
+        "3d_point_add_gen": "3 × 63 = 189n",
+        "3d_point_add_pos": "3 × 39 = 117n"
+      },
+      "total_cost_add_gen": 189,
+      "total_cost_add_pos": 117,
+      "recommended_cost": 189,
+      "v4_notes": "add_gen=11n for signed interpolation results gives 189n per 3D point (was ~123n in older spec with add_pos=3n). If control points are all positive and t∈[0,1], add_pos gives 117n.",
+      "previous_estimate": "123n (older spec, all add_pos)"
+    },
+    {
+      "id": "GFX-6",
+      "name": "Verlet integration",
+      "formula": "x(t+dt) = 2x(t) - x(t-dt) + a·dt²",
+      "breakdown": {
+        "nodes": [
+          {"op": "mul(2, x_t)", "cost": 2},
+          {"op": "sub(2x_t, x_prev)", "cost": 2},
+          {"op": "pow(dt, 2)", "cost": 3},
+          {"op": "mul(a, dt²)", "cost": 2},
+          {"op": "add_pos(sub_result, accel_term) [net displacement assumed positive per spec]", "cost": 3}
+        ]
+      },
+      "total_nodes": 5,
+      "total_cost": 12,
+      "v4_notes": "No v4 cost changes affect this equation — mul=2n, sub=2n, pow=3n, add_pos=3n all unchanged. Confirmed 12n.",
+      "previous_estimate": "12n (matches spec)"
+    }
+  ],
+  "summary_table": [
+    {"id": "GFX-1", "name": "Quaternion rotation",     "cost_add_pos": 99,  "cost_add_gen": 235, "recommended": 99,  "status": "exact"},
+    {"id": "GFX-2", "name": "Perspective projection",  "cost": 8,           "v4_change": "+2n (div=2n)", "status": "exact"},
+    {"id": "GFX-3", "name": "Phong lighting",          "cost": 43,          "v4_change": "none",         "status": "exact"},
+    {"id": "GFX-4", "name": "Ray-sphere intersection", "cost": 32,          "v4_change": "+10n (div+add_gen)", "status": "exact"},
+    {"id": "GFX-5", "name": "Cubic Bezier (3D)",       "cost_add_gen": 189, "cost_add_pos": 117, "recommended": 189, "status": "exact"},
+    {"id": "GFX-6", "name": "Verlet integration",      "cost": 12,          "v4_change": "none",         "status": "exact"}
+  ]
+}

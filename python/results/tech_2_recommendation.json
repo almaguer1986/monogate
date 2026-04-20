@@ -1,0 +1,59 @@
+{
+  "session": "TECH-2",
+  "date": "2026-04-20",
+  "topic": "Recommendation Systems",
+  "superbest_version": "v4",
+  "equations": [
+    {
+      "name": "Collaborative filtering dot product",
+      "formula": "prediction(u,i) = u·i",
+      "cost_formula": "5d - 3",
+      "cost_at_d100": 497
+    },
+    {
+      "name": "Matrix factorization loss (fit term per rating)",
+      "formula": "L_fit = (rui - pu·qi)²",
+      "cost_formula": "5d + 2",
+      "breakdown": "dot(p,q)(5d-3) + sub(r,dot)(2n) + pow(diff,2)(3n) = 5d+2"
+    },
+    {
+      "name": "Matrix factorization regularization",
+      "formula": "L_reg = λ(|pu|² + |qi|²)",
+      "cost_formula": "10d + 1",
+      "breakdown": "dot(p,p)(5d-3) + dot(q,q)(5d-3) + add_pos(3n) + mul(λ, sum)(2n) = 10d+1"
+    },
+    {
+      "name": "Sigmoid for implicit feedback",
+      "formula": "P(click) = 1/(1+exp(-x·theta))",
+      "cost_formula": "5d + 4",
+      "body_cost": 7,
+      "breakdown": "dot(5d-3) + neg(2n) + exp(1n) + add_pos(1,exp)(3n) + recip(1n) = 5d+4",
+      "note": "Sigmoid body = 7n with v4 recip=1n (was 8n with recip=2n)"
+    },
+    {
+      "name": "Bayesian Personalized Ranking loss",
+      "formula": "L = -ln(σ(x_uij)) where x_uij = dot(u, i-j)",
+      "cost_formula": "5d + 7",
+      "breakdown": "dot(5d-3) + sigmoid_body(7n) + ln(1n) + neg(2n) = 5d+7"
+    },
+    {
+      "name": "Cosine similarity (content-based)",
+      "formula": "sim(A,B) = (A·B)/(|A|·|B|)",
+      "cost_formula": "15d - 1",
+      "note": "Same as TECH-1"
+    },
+    {
+      "name": "Cosine annealing learning rate",
+      "formula": "lr(t) = lr_min + 0.5(lr_max - lr_min)(1 + cos(πt/T))",
+      "cost": 17,
+      "breakdown": "div(t,T)(2n) + mul(π,div)(2n) + cos(1n,ceml) + add_pos(1,cos)(3n) + sub(lr_max,lr_min)(2n) + mul(0.5,sub)(2n) + mul(factor,1+cos)(2n) + add_pos(lr_min,prod)(3n) = 17n"
+    }
+  ],
+  "observations": [
+    "Recommendation systems dominated by dot products: O(d) per prediction",
+    "BPR loss: 5d+7 — adds only 10 nodes on top of the dot product",
+    "Sigmoid body: 7n with v4 recip=1n",
+    "Cosine annealing at 17n — optimization metadata costs more than simple exponential decay (5n)",
+    "Cross-domain: collaborative filtering dot product = neural network forward pass = any d-dimensional inner product"
+  ]
+}
