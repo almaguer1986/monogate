@@ -220,13 +220,10 @@ export default async function HomePage() {
               Challenge Board
             </div>
           </div>
-          <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
-            <a href="/" className="nav-link">Home</a>
-            <a href="/explorer" className="nav-link">Explorer</a>
+          <div style={{ display: "flex", gap: 14, flexWrap: "wrap", alignItems: "center" }}>
             <a href="/challenge/search" className="nav-link">Search</a>
             <a href="/challenge/leaderboard" className="nav-link">Leaderboard</a>
             <a href="/how-to-submit" className="nav-link">Submit</a>
-            <a href="https://monogate.org" className="nav-link" target="_blank" rel="noopener noreferrer">Research ↗</a>
           </div>
         </div>
         <div style={{ marginTop: 14, fontSize: 11, color: C.muted, lineHeight: 1.8, maxWidth: 540 }}>

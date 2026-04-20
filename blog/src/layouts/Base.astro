@@ -43,7 +43,7 @@ const { title, description, date } = Astro.props;
       a:hover { text-decoration: underline; }
       nav {
         border-bottom: 1px solid var(--border);
-        padding: 16px 24px;
+        padding: 14px 24px;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -51,6 +51,7 @@ const { title, description, date } = Astro.props;
         font-size: 12px;
         max-width: 800px;
         margin: 0 auto;
+        position: relative;
       }
       nav .brand { color: var(--orange); font-weight: 700; letter-spacing: 2px; text-transform: uppercase; text-decoration: none; }
       nav .brand:hover { text-decoration: none; }
@@ -58,6 +59,46 @@ const { title, description, date } = Astro.props;
       nav .links a { color: var(--muted); }
       nav .links a:hover { color: var(--text); text-decoration: none; }
       nav .links a.active { color: var(--text); }
+      .hamburger {
+        display: none;
+        background: none;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        color: var(--muted);
+        font-size: 14px;
+        padding: 5px 9px;
+        cursor: pointer;
+        font-family: var(--mono);
+        line-height: 1;
+        transition: border-color 0.15s, color 0.15s;
+      }
+      .hamburger:hover { border-color: var(--accent); color: var(--accent); }
+      .mobile-menu {
+        display: none;
+        flex-direction: column;
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+        font-family: var(--mono);
+        font-size: 11px;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      .mobile-menu.open { display: flex; }
+      .mobile-menu a {
+        padding: 13px 24px;
+        border-bottom: 1px solid var(--border);
+        color: var(--muted);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        text-decoration: none;
+        transition: color 0.15s, background 0.15s;
+      }
+      .mobile-menu a:last-child { border-bottom: none; }
+      .mobile-menu a:hover { color: var(--text); background: rgba(255,255,255,0.02); }
+      @media (max-width: 600px) {
+        nav .links { display: none; }
+        .hamburger { display: block; }
+      }
       main {
         max-width: 680px;
         margin: 0 auto;
@@ -131,7 +172,7 @@ const { title, description, date } = Astro.props;
     </style>
   </head>
   <body>
-    <nav>
+    <nav id="site-nav">
       <a class="brand" href="/">monogate.org</a>
       <div class="links">
         <a href="/blog">Blog</a>
@@ -140,7 +181,15 @@ const { title, description, date } = Astro.props;
         <a href="/paper">Paper</a>
         <a href="https://monogate.dev" target="_blank" rel="noopener noreferrer">Library ↗</a>
       </div>
+      <button class="hamburger" id="nav-toggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
     </nav>
+    <div class="mobile-menu" id="mobile-menu" role="menu">
+      <a href="/blog" role="menuitem">Blog</a>
+      <a href="/theorems" role="menuitem">Theorems</a>
+      <a href="/atlas" role="menuitem">Atlas</a>
+      <a href="/paper" role="menuitem">Paper</a>
+      <a href="https://monogate.dev" target="_blank" rel="noopener noreferrer" role="menuitem">Library ↗</a>
+    </div>
     <main>
       <slot />
     </main>
@@ -148,4 +197,13 @@ const { title, description, date } = Astro.props;
       monogate.org · eml(x,y) = exp(x) − ln(y) · <a href="https://arxiv.org/abs/2603.21852">arXiv:2603.21852</a> · <a href="https://monogate.dev">monogate.dev</a>
     </footer>
   </body>
+  <script>
+    const toggle = document.getElementById('nav-toggle')!;
+    const menu   = document.getElementById('mobile-menu')!;
+    toggle.addEventListener('click', () => {
+      const open = menu.classList.toggle('open');
+      toggle.textContent = open ? '✕' : '☰';
+      toggle.setAttribute('aria-expanded', String(open));
+    });
+  </script>
 </html>

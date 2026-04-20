@@ -55,25 +55,6 @@ export default function LandingPage() {
   return (
     <div style={{ background: C.bg, minHeight: "100vh", maxWidth: 680, margin: "0 auto", padding: "0 16px 80px" }}>
 
-      {/* Nav */}
-      <nav style={{ borderBottom: `1px solid ${C.border}`, padding: "16px 0", marginBottom: 60, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 10 }}>
-        <span style={{ fontSize: 13, fontWeight: 700, color: C.orange, letterSpacing: "0.06em" }}>monogate</span>
-        <div style={{ display: "flex", gap: 20 }}>
-          {[
-            { href: "/explorer", label: "Explorer" },
-            { href: "/challenge", label: "Challenge" },
-            { href: "/lab", label: "Lab" },
-            { href: "/docs", label: "Docs" },
-            { href: "https://monogate.org", label: "Research ↗", external: true },
-          ].map(({ href, label, external }) => (
-            <a key={label} href={href}
-              {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-              style={{ fontSize: 12, color: C.muted, textDecoration: "none" }}
-            >{label}</a>
-          ))}
-        </div>
-      </nav>
-
       {/* Hero */}
       <section style={{ marginBottom: 56 }}>
         <div style={{ fontSize: 11, color: C.muted, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 16 }}>

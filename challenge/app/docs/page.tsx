@@ -27,24 +27,6 @@ export default function DocsPage() {
   return (
     <div style={{ background: C.bg, minHeight: "100vh", maxWidth: 680, margin: "0 auto", padding: "0 16px 80px" }}>
 
-      <nav style={{ borderBottom: `1px solid ${C.border}`, padding: "16px 0", marginBottom: 36, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 10 }}>
-        <a href="/" style={{ fontSize: 13, fontWeight: 700, color: C.orange, letterSpacing: "0.06em", textDecoration: "none" }}>monogate</a>
-        <div style={{ display: "flex", gap: 20 }}>
-          {[
-            { href: "/explorer", label: "Explorer" },
-            { href: "/challenge", label: "Challenge" },
-            { href: "/lab", label: "Lab" },
-            { href: "/docs", label: "Docs", active: true },
-            { href: "https://monogate.org", label: "Research ↗", external: true },
-          ].map(({ href, label, active, external }) => (
-            <a key={label} href={href}
-              {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-              style={{ fontSize: 12, color: active ? C.text : C.muted, textDecoration: "none" }}
-            >{label}</a>
-          ))}
-        </div>
-      </nav>
-
       <h1 style={{ fontSize: 26, fontWeight: 700, color: C.text, letterSpacing: "-0.02em", marginBottom: 8 }}>Documentation</h1>
       <p style={{ fontSize: 13, color: C.muted, marginBottom: 36 }}>monogate — EML operator library · <a href="https://arxiv.org/abs/2603.21852" target="_blank" rel="noopener noreferrer" style={{ color: C.blue }}>arXiv:2603.21852</a></p>
 
