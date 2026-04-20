@@ -1,0 +1,9 @@
+{
+  "lemma_4_2_repaired": true,
+  "gap_1_repaired": true,
+  "t30_verdict_after_repair": "PROPOSITION",
+  "gaps_remaining": [
+    "GAP-3: depth census citations",
+    "GAP-4: division case"
+  ]
+}

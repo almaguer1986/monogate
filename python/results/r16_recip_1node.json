@@ -1,0 +1,9 @@
+{
+  "verified": true,
+  "construction": "ELSb(0, x)",
+  "formula": "exp(0 - ln(x)) = 1/x",
+  "old_nodes": 2,
+  "new_nodes": 1,
+  "superbest_total_old": 19,
+  "superbest_total_new": 18
+}

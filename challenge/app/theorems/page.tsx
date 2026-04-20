@@ -214,13 +214,13 @@ const RESULTS: Result[] = [
   // ─── PROPOSITIONS (10) ────────────────────────────────────────────────────
   {
     id: "T08",
-    name: "SuperBEST Table — 19 Nodes, 74.0% Savings",
+    name: "SuperBEST Table v4 — 18 Nodes, 75.3% Savings",
     tier: "PROPOSITION",
-    session: "Sprint2 / Sprint3",
+    session: "Sprint2 / Sprint3 / R16",
     category: "Core Algebra",
-    statement: "The SuperBEST v3 routing table achieves 19 total nodes for the 9 standard arithmetic operations vs 73 naive, a 74.0% reduction. Updated from v1 (21 nodes / 71.2%) after T10u (mul = 2n in F16) and T33 (sub = 2n).",
-    evidence: "Construction + exhaustive verification that no shorter trees exist for any entry. Source: python/results/superbest_v3.json.",
-    deps: "T09, T10u, T12.",
+    statement: "SuperBEST v4: 18 total nodes vs 73 naive = 75.3% savings. recip drops 2n→1n: ELSb(0,x) = exp(0−ln(x)) = 1/x (R16-C1, verified). R16 structural proofs: add lower bound via cross-derivative (∂²(x+y)/∂x∂y=0 but nonzero for all F16 2-node trees); pow via 3-intermediate counting.",
+    evidence: "ELSb(0,x)=1/x confirmed numerically (R19). Structural proofs in R16_T08_Structural_Proofs.tex. Reclassification to THEOREM pending full audit of all 9 entries.",
+    deps: "T09, T10u, T12, R16-C1.",
   },
   {
     id: "T15",

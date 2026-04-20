@@ -107,11 +107,11 @@ const results: Result[] = [
     deps: 'T34.' },
 
   // ─── PROPOSITIONS (10) ──────────────────────────────────────────────────────
-  { id: 'T08', tier: 'PROPOSITION', name: 'SuperBEST Table — 19 Nodes, 74.0% Savings',
-    session: 'Sprint2 / Sprint3', category: 'Core Algebra',
-    statement: 'The SuperBEST v3 routing table achieves 19 total nodes for the 9 standard arithmetic operations vs 73 naive, a 74.0% reduction. Updated from v1 (21 nodes / 71.2%) after T10u (mul = 2n in F16) and T33 (sub = 2n).',
-    evidence: 'Construction + exhaustive verification that no shorter trees exist for any entry. Source: python/results/superbest_v3.json.',
-    deps: 'T09, T10u, T12.' },
+  { id: 'T08', tier: 'PROPOSITION', name: 'SuperBEST Table v4 — 18 Nodes, 75.3% Savings',
+    session: 'Sprint2 / Sprint3 / R16', category: 'Core Algebra',
+    statement: 'SuperBEST v4 routing table: 18 total nodes for the 9 standard arithmetic operations vs 73 naive, a 75.3% reduction. Key entries: neg=2n (EXL+DEML), mul=2n (ELAd/F16), recip=1n (ELSb — R16-C1 new), sub=2n, div=1n, ln=1n, pow=3n. R16 structural proofs: add lower bound via cross-derivative (∂²/∂x∂y=0 for x+y but nonzero for all F16 2-node trees), pow via 3-intermediate counting.',
+    evidence: 'recip=1n: ELSb(0,x)=exp(−ln(x))=1/x verified numerically (R19). Structural proofs for add, pow, recip in R16_T08_Structural_Proofs.tex. Reclassification to THEOREM pending T08-full audit.',
+    deps: 'T09, T10u, T12, R16-C1.' },
   { id: 'T15', tier: 'PROPOSITION', name: 'Pumping Lemma for EML Trees',
     session: 'Sprint2', category: 'Analytic Properties',
     statement: 'Depth-k EML trees have at most 2^k real zeros (proved). Observed computational maximum is O(k), suggesting the bound is far from tight.',

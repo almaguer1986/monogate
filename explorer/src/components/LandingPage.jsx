@@ -144,8 +144,8 @@ export default function LandingPage({ onEnter }) {
           </div>
           <div style={{ display: "flex", gap: 28, flexWrap: "wrap", marginBottom: 12 }}>
             {[
-              { n: "17",  label: "theorems",     color: "#5ec47a", note: "complete proofs" },
-              { n: "10",  label: "propositions",  color: "#6ab0f5", note: "proved, routine" },
+              { n: "19",  label: "theorems",     color: "#5ec47a", note: "complete proofs" },
+              { n: "8",   label: "propositions",  color: "#6ab0f5", note: "proved, routine" },
               { n: "3",   label: "conjectures",   color: C.accent,  note: "open, unproved" },
               { n: "9",   label: "observations",  color: "#fbbf24", note: "empirical" },
               { n: "4",   label: "definitions",   color: "#a78bfa", note: "framework choices" },

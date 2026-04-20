@@ -40,7 +40,7 @@ const strata = [
     entries: [
       { name: 'ln(x)',                      cost: '1 node (EXL)', proof: 'T04, T08' },
       { name: 'neg(x) = −x',               cost: '2 nodes (EXL∘DEML)', proof: 'T09' },
-      { name: 'recip(x) = 1/x',            cost: '2 nodes (EDL)', proof: 'T08' },
+      { name: 'recip(x) = 1/x',            cost: '1 node (ELSb)', proof: 'R16-C1' },
       { name: 'x^n  (integer power)',       cost: '3 nodes (EXL)', proof: 'T08' },
       { name: 'x^r  (real power)',          cost: '3 nodes',       proof: 'T08' },
       { name: 'sqrt(x)',                    cost: '2 nodes',       proof: 'T08' },
@@ -106,7 +106,7 @@ const superbest = [
   { op: 'exp(x)',   family: 'EML',      nodes: 1,  naive: 1,  note: 'native' },
   { op: 'ln(x)',    family: 'EXL',      nodes: 1,  naive: 3,  note: '' },
   { op: 'neg(x)',   family: 'EXL+DEML', nodes: 2,  naive: 9,  note: 'T09' },
-  { op: 'recip(x)', family: 'EDL',      nodes: 2,  naive: 5,  note: '' },
+  { op: 'recip(x)', family: 'ELSb',     nodes: 1,  naive: 5,  note: 'R16-C1' },
   { op: 'sqrt(x)',  family: 'EXL',      nodes: 2,  naive: 7,  note: '' },
   { op: 'sub(x,y)', family: 'EML',      nodes: 3,  naive: 5,  note: 'T11' },
   { op: 'add(x,y)', family: 'EAL',      nodes: 3,  naive: 11, note: 'x>0' },
@@ -130,7 +130,7 @@ const savings = Math.round((1 - totalSuperbest/totalNaive)*100);
     Mathematical objects classified by EML depth and operator cost.
   </p>
   <p style="color: #4a4d62; font-size: 0.85rem; margin-bottom: 32px;">
-    Last updated: 2026-04-20 · T38 (Cost Decomposition) · T41 (Structural Classes) · T42 (QCC) · 157-equation catalog
+    Last updated: 2026-04-20 · R16-C1: recip drops 2n→1n (ELSb) · SuperBEST v4: 18n, 75.3% savings · T35/T40 → THEOREM
   </p>
 
   <div class="divider"></div>
