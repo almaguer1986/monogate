@@ -1,0 +1,195 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,booktabs,geometry,xcolor,hyperref}
+\geometry{margin=1in}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{conjecture}{Conjecture}
+\newtheorem{definition}{Definition}
+
+\definecolor{high}{RGB}{220,60,60}
+\definecolor{med}{RGB}{200,140,0}
+\definecolor{low}{RGB}{100,160,100}
+\newcommand{\hp}{\textcolor{high}{\textbf{HIGH}}}
+\newcommand{\mp}{\textcolor{med}{\textbf{MED}}}
+\newcommand{\lp}{\textcolor{low}{\textbf{LOW}}}
+
+\title{Open Conjecture Prioritization\\After 21-Theorem Machine Verification Sprint}
+\author{Arturo R. Almaguer}
+\date{2026-04-21}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+With the EML taxonomy closed at exactly 23 operators (CONJ\_NO\_OP\_24 proved) and
+16 theorems machine-verified in Lean, this document ranks the remaining open conjectures
+by mathematical leverage and feasibility. We select CONJ\_MUL\_GEN\_TIGHT as the
+highest-priority next target and outline a concrete attack plan.
+\end{abstract}
+
+\section{Closed Conjectures (Not Repeating)}
+
+For completeness, the following conjectures have been resolved since the previous
+prioritization:
+\begin{itemize}
+\item CONJ\_NO\_OP\_24 (taxonomy closed at 23): \textbf{PROVED} (exhaustive closure).
+\item C02 (EML density in $H(K)$): resolved as T31.
+\item C03 ($i$ as accumulation point): resolved as T31.
+\end{itemize}
+
+\section{Remaining Open Conjectures}
+
+\subsection{CONJ\_MUL\_GEN\_TIGHT — Exact General Mul Cost}
+
+\begin{conjecture}
+$\mathrm{SB}(\mathrm{mul}, \text{general}) = 6$.
+No expression using fewer than 6 F16 nodes computes $x \cdot y$ for all
+real $x, y$.
+\end{conjecture}
+
+\noindent\textbf{Known}: Lower bound $\geq 2$ (Lean-verified, \texttt{MulLowerBound.lean}).
+Upper bound $\leq 6$ (explicit construction: $\text{neg}(\text{mul}(\text{neg}(x), y))$).\\
+\textbf{Gap}: $[2, 6]$. Need to rule out 2, 3, 4, 5 nodes.\\
+\textbf{Priority}: \hp
+
+\subsection{CONJ\_BOUNDARY\_DECIDABLE — ELC-Membership Decidability}
+
+\begin{conjecture}
+Assuming Schanuel's Conjecture and an effective depth bound (EDB), ELC-membership
+is decidable: given a closed-form expression $E$, there is an algorithm that
+decides whether $E \in \varepsilon(\mathbb{R})$ in finite time.
+\end{conjecture}
+
+\noindent\textbf{Known}: Positive-domain EDB proved (Lean-verified). Negative EDB
+from T01a (partial). The full EDB for general-domain expressions is open.\\
+\textbf{Priority}: \hp (high leverage; conditional on SC which is a deep open problem).
+
+\subsection{CONJ\_TRIG\_DEPTH\_TOWER — sin Tower Algebraic Independence}
+
+\begin{conjecture}
+The sequence $s_0 = 1$, $s_1 = \sin(1)$, $s_2 = \sin(\sin(1))$, \ldots is
+algebraically independent over $\varepsilon(\mathbb{R})$.
+\end{conjecture}
+
+\noindent\textbf{Structure} (four-level hierarchy):
+\begin{itemize}
+\item L1: $s_1 = \sin(1) \notin \varepsilon(\mathbb{R})$ — follows from Infinite Zeros
+  Barrier (T01, partially Lean-verified) + Hermite-Lindemann (sin(1) transcendental).
+\item L2: $s_2 \notin \varepsilon(\mathbb{R})(s_1)$ — requires GAIL conjecture
+  (if $\alpha \notin \varepsilon(\mathbb{R})$ then $\sin(\alpha) \notin \varepsilon(\mathbb{R})$).
+\item L3: Full tower independence — requires Schanuel's Conjecture.
+\item L4: Quantitative version — additional analytic tools.
+\end{itemize}
+\textbf{Priority}: \mp (L1 within reach; L2-L4 require deep open conjectures).
+
+\subsection{GAIL — General Algebraic Isolation Lemma}
+
+\begin{conjecture}
+If $\alpha \notin \varepsilon(\mathbb{R})$, then $\sin(\alpha) \notin \varepsilon(\mathbb{R})$.
+\end{conjecture}
+
+\noindent\textbf{Status}: Known to follow from Schanuel's Conjecture. No unconditional proof.\\
+\textbf{Priority}: \mp (important bridge lemma; depends on deeply open SC).
+
+\subsection{CONJ\_PUMPING\_TIGHT — Tight Zeros Bound}
+
+\begin{conjecture}
+The correct (tight) upper bound on zeros of a depth-$k$ EML tree in a compact
+interval is $O(k)$, not the current $2^k$ from T14.
+\end{conjecture}
+
+\noindent\textbf{Status}: T14 proves $\leq 2^k$. Computational evidence suggests $O(k)$.
+No proof of tightness.\\
+\textbf{Priority}: \lp (interesting but not blocking anything).
+
+\subsection{P-NNP / ACL Tightness — Cost Law Sharpness}
+
+These are propositions that the cost decomposition theorems (T38, T40) have no
+slack: the formulas are equalities, not merely bounds. All are believed true based
+on the R-series audit but could benefit from tighter Lean formalization.\\
+\textbf{Priority}: \lp.
+
+\section{Priority Ranking}
+
+\begin{center}
+\begin{tabular}{lrll}
+\toprule
+Conjecture & Priority & Feasibility & Blocking? \\
+\midrule
+CONJ\_MUL\_GEN\_TIGHT & \hp & High (exhaustive search or Lean tactic) & No \\
+CONJ\_BOUNDARY\_DECIDABLE & \hp & Med (needs EDB; conditional on SC) & No \\
+CONJ\_TRIG\_DEPTH\_TOWER L1 & \mp & Med (needs T01 Lean completion) & No \\
+GAIL & \mp & Low (needs SC) & T01-L2 \\
+CONJ\_PUMPING\_TIGHT & \lp & Low (no strong tools) & No \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Top Target: CONJ\_MUL\_GEN\_TIGHT}
+
+We select CONJ\_MUL\_GEN\_TIGHT as the highest-priority target for the following reasons:
+
+\begin{enumerate}
+\item \textbf{The gap is concrete and small}: prove lower bound $\geq k$ for
+  $k = 3, 4, 5, 6$. Each step requires showing no $k$-node F16 circuit computes mul.
+\item \textbf{The method is established}: the witness approach (already Lean-verified
+  for $k=1$) extends directly to $k$-node circuits via exhaustive enumeration.
+\item \textbf{Lean automation is plausible}: $|F16|^k$ is $16^1 = 16$, $16^2 = 256$,
+  $16^3 = 4096$ — all feasible for \texttt{decide} or \texttt{native\_decide}.
+\item \textbf{No external open problems required}: unlike GAIL or SC, this is
+  self-contained within the F16 framework.
+\end{enumerate}
+
+\subsection{Attack Plan for CONJ\_MUL\_GEN\_TIGHT}
+
+\paragraph{Step 1: Prove SB(mul, general) $\geq$ 3.}
+Enumerate all 2-node F16 circuits: composition $F_i(F_j(x, y), z)$ and
+$F_i(x, F_j(y, z))$ for $i, j \in F16$. Total: $16 \times 16 \times 4 = 1024$ cases
+(allowing $z \in \{x, y\}$). For each, exhibit a witness $(x_0, y_0)$ where
+the circuit disagrees with mul. This is automatable in Python or Lean.
+
+\paragraph{Step 2: Prove SB(mul, general) $\geq$ 4, 5, 6.}
+Iteratively extend to $k$-node circuits. Each step multiplies the search space by $\times 16$.
+At $k = 6$ (256K circuits), the search may need a smarter structural argument (e.g.,
+derivative obstruction: $\partial_x(\text{mul}) = y$, but all F16 compositions introduce
+$\exp(x)$ factors in the $x$-derivative, which cannot equal $y$ for all $(x, y)$).
+
+\paragraph{Step 3: Lean proof.}
+Once the bound is identified (say, $\geq 4$), encode the witness for each of the
+$(k-1)$-node circuits in Lean. The structure is identical to
+\texttt{MulLowerBound.lean}; the main change is the nesting depth.
+
+\paragraph{Timeline estimate:}
+\begin{itemize}
+\item Step 1 ($\geq 3$): 1 session (Python exhaustive search + Lean proof sketch)
+\item Step 2 ($\geq 4, 5$): 2-3 sessions (structural argument or extended search)
+\item Step 3 ($\geq 6$, tight): 1-2 sessions (Lean encode + verify)
+\end{itemize}
+
+\section{Second Priority: T01 Completion in Lean}
+
+The sorry in \texttt{InfiniteZerosBarrier.lean}
+(\texttt{eml\_tree\_analytic}, \texttt{analytic\_finite\_zeros\_compact}) would:
+\begin{enumerate}
+\item Complete the machine-verification of T01 (sin $\notin$ EML$_k$).
+\item Enable the Negative EDB (Proposition in EDB paper).
+\item Make CONJ\_TRIG\_DEPTH\_TOWER L1 fully Lean-verified.
+\end{enumerate}
+
+The key Mathlib lemma needed: \texttt{AnalyticOn.zero\_of\_frequently\_zero}
+(analytic functions with a limit point of zeros are identically zero).
+This is in \texttt{Mathlib.Analysis.Analytic.IsolatedZeros}.
+
+\section{Third Priority: CONJ\_BOUNDARY\_DECIDABLE EDB}
+
+Once CONJ\_MUL\_GEN\_TIGHT is resolved (giving tight costs for all operations)
+and T01 is completed (giving the negative EDB), the missing piece for
+CONJ\_BOUNDARY\_DECIDABLE is the positive EDB for the general domain.
+This requires:
+\begin{enumerate}
+\item A bound on the depth of the minimal EML tree for any expression with $n$ operators
+  (Lean: formalize T30 which currently has 4 structural gaps).
+\item A decidability algorithm that terminates in finite time given the EDB.
+\end{enumerate}
+
+\end{document}

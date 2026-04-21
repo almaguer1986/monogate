@@ -32,7 +32,8 @@ type Result = {
   evidence: string;
   verify?: string;
   deps?: string;
-  resolvedBy?: string;  // for struck-through conjectures
+  resolvedBy?: string;
+  lean?: { file: string; theorem: string; status: "verified" | "partial" };
 };
 
 const RESULTS: Result[] = [
@@ -57,6 +58,7 @@ const RESULTS: Result[] = [
     statement: "neg(x) = −x is computable in exactly 2 EML-family nodes: exl(0, deml(x,1)) = −x. Optimal; 1 node is impossible by exhaustive search.",
     evidence: "Exhaustive search over all 1-node candidates finds no neg construction. Upper bound: explicit 2-node construction verified.",
     verify: "python -c \"import math; exl=lambda x,y: math.exp(x)*math.log(y); deml=lambda x,y: math.exp(-x)-math.log(y); print(round(exl(0,deml(1.5,1)),10))\"",
+    lean: { file: "NegLowerBound.lean", theorem: "SB_neg_ge_two", status: "verified" },
   },
   {
     id: "T10u",
@@ -187,8 +189,9 @@ const RESULTS: Result[] = [
     session: "DOOR-1",
     category: "Core Algebra",
     statement: "In any 1-operator family F where the operator has the form h(exp(±x), ln(y)), multiplication x·y requires at least 2 nodes. A single operator node cannot compute mul.",
-    evidence: "Derivative obstruction: ∂op/∂x always contains an exp(x) factor, which cannot equal y for all (x,y). Boundary value at x=0 confirms. Verified for all 16 operators in F16.",
+    evidence: "Derivative obstruction: ∂op/∂x always contains an exp(x) factor, which cannot equal y for all (x,y). Boundary value at x=0 confirms. Verified for all 16 operators in F16 with 0 sorries in Lean.",
     deps: "T29, T10u.",
+    lean: { file: "MulLowerBound.lean", theorem: "SB_mul_ge_two", status: "verified" },
   },
   {
     id: "T34",
@@ -209,6 +212,69 @@ const RESULTS: Result[] = [
     statement: "For any expression E: Cost(E) = NaiveCost(E) − SharingDiscount(E) − PatternBonus(E). All three terms are non-negative. The decomposition is unique for a fixed pattern set and canonical sharing strategy.",
     evidence: "Proved in R2_Decomposition_Theorem.tex. SharingDiscount ≥ 0: merging shared nodes cannot increase cost. PatternBonus ≥ 0: each compound pattern replaces more-expensive naive subtrees. Uniqueness: canonical sharing + greedy pattern matching.",
     deps: "T34.",
+  },
+
+  // ─── LEAN-VERIFIED ADDITIONS (Sprint 2026-04-21) ─────────────────────────
+  {
+    id: "ADD-T1",
+    name: "Addition in ≥ 2 Nodes — Lean Lower Bound",
+    tier: "THEOREM",
+    session: "Lean Sprint 2026-04-21",
+    category: "Core Algebra",
+    statement: "No single F16 operator computes x+y for all real x, y. Combined with the explicit 2-node construction LEDIV(x, DEML(y,1)) = x+y, SB(add) = 2.",
+    evidence: "Lean 4, 0 sorries. Witness-based proof: for each of 16 F16 operators, exhibit (x₀,y₀) where op(x₀,y₀) ≠ x₀+y₀.",
+    lean: { file: "AddLowerBound.lean", theorem: "SB_add_ge_two", status: "verified" },
+  },
+  {
+    id: "T33",
+    name: "Subtraction in ≥ 2 Nodes — Lean Lower Bound",
+    tier: "THEOREM",
+    session: "Lean Sprint 2026-04-21",
+    category: "Core Algebra",
+    statement: "No single F16 operator computes x−y for all real x, y. Combined with explicit 2-node construction, SB(sub) = 2.",
+    evidence: "Lean 4, 0 sorries. Witness-based exhaustive proof over all 16 F16 operators.",
+    lean: { file: "SubLowerBound.lean", theorem: "SB_sub_ge_two", status: "verified" },
+  },
+  {
+    id: "T_DIV_GEN_LB",
+    name: "Division ≥ 2 Nodes (General Domain) — Lean Lower Bound",
+    tier: "THEOREM",
+    session: "Lean Sprint 2026-04-21",
+    category: "Core Algebra",
+    statement: "No single F16 operator computes x/y for all real x, y. Positive domain: exp(ln x − ln y) = x/y is 1 node. General domain requires ≥ 2 nodes.",
+    evidence: "Lean 4, 0 sorries. Witness (0,1): each F16 operator gives a value ≠ 0/1 = 0.",
+    lean: { file: "DivLowerBound.lean", theorem: "SB_div_ge_two", status: "verified" },
+  },
+  {
+    id: "T_SUPERBEST_UB",
+    name: "SuperBEST Upper Bounds — 5 Positive-Domain Identities (Lean)",
+    tier: "THEOREM",
+    session: "Lean Sprint 2026-04-21",
+    category: "Core Algebra",
+    statement: "Five algebraic identities proved in Lean (0 sorries): exp(x) = F1(x,1) (1 node); exp(ln x + ln y) = xy for x,y>0 (1 node); exp(n·ln x) = xⁿ for x>0 (1 node); exp(−ln x) = 1/x for x>0 (1 node); exp(½·ln x) = √x for x>0 (1 node). Together: SB(exp)=SB(mul+)=SB(pow+)=SB(recip+)=SB(sqrt+)=1. SuperBEST v5.2 positive total: 15n.",
+    evidence: "Lean 4, 0 sorries. UpperBounds.lean + ModelAudit.lean. Uses Real.exp_add, Real.exp_log, Real.rpow_def_of_pos, Real.sqrt_eq_rpow.",
+    lean: { file: "UpperBounds.lean", theorem: "superbest_positive_one_node_ops", status: "verified" },
+  },
+  {
+    id: "T_EULER_LEAN",
+    name: "Euler Gateway + Euler Identity + Depth Hierarchy (Lean)",
+    tier: "THEOREM",
+    session: "Lean Sprint 2026-04-21",
+    category: "Complex EML",
+    statement: "Three results proved in EMLDepth.lean (0 sorries): (T03) ceml(ix,1) = exp(ix) for all x∈ℝ — Euler Gateway; (T05) ceml(iπ,1)+1 = 0 — Euler Identity e^{iπ}+1=0; (T06) exp(x) is EML-1 but not constant, witnessing EML-0 ⊊ EML-1 (strict depth hierarchy).",
+    evidence: "Lean 4, 0 sorries. euler_gateway uses Complex.log_one. euler_identity uses Complex.exp_pi_mul_I. exp_not_constant uses Real.exp_one_gt_d9 via real-part extraction.",
+    lean: { file: "EMLDepth.lean", theorem: "euler_gateway / euler_identity / exp_not_constant", status: "verified" },
+  },
+  {
+    id: "T01a",
+    name: "sin Has Infinitely Many Zeros (Lean)",
+    tier: "THEOREM",
+    session: "Lean Sprint 2026-04-21",
+    category: "Analytic Properties",
+    statement: "The zero set {x∈ℝ | sin(x)=0} is infinite. Explicit construction: sin(nπ)=0 for all n∈ℤ, and the map n↦nπ is injective. This is Part A of the Infinite Zeros Barrier (T01); Parts B and C (EML trees have finitely many zeros) remain open.",
+    evidence: "Lean 4, 0 sorries. sin_int_pi_zero: Real.sin_int_mul_pi. sin_has_infinitely_many_zeros: Set.infinite_range_of_injective applied to n↦nπ.",
+    lean: { file: "InfiniteZerosBarrier.lean", theorem: "sin_has_infinitely_many_zeros", status: "verified" },
+    deps: "T01 (partial).",
   },
 
   // ─── PROPOSITIONS (6) ─────────────────────────────────────────────────────
@@ -512,6 +578,20 @@ const TIER_ORDER: Array<keyof typeof TIER_META> = [
   "THEOREM", "PROPOSITION", "CONJECTURE", "OBSERVATION", "DEFINITION", "SPECULATION",
 ];
 
+function LeanBadge({ lean }: { lean: NonNullable<Result["lean"]> }) {
+  const color = lean.status === "verified" ? C.green : lean.status === "partial" ? C.yellow : C.muted;
+  const label = lean.status === "verified" ? "LEAN ✓" : lean.status === "partial" ? "LEAN ~" : "LEAN ?";
+  return (
+    <span title={`${lean.file} / ${lean.theorem}`} style={{
+      display: "inline-block", fontSize: 9, fontWeight: 700,
+      letterSpacing: "0.08em", padding: "2px 6px", borderRadius: 3,
+      background: `${color}18`, border: `1px solid ${color}50`, color,
+    }}>
+      {label}
+    </span>
+  );
+}
+
 function TierBadge({ tier }: { tier: keyof typeof TIER_META }) {
   const m = TIER_META[tier];
   return (
@@ -545,6 +625,7 @@ function ResultCard({ r }: { r: Result }) {
               RESOLVED → {r.resolvedBy}
             </span>
           )}
+          {r.lean && <LeanBadge lean={r.lean} />}
         </div>
         <TierBadge tier={r.tier} />
       </div>
