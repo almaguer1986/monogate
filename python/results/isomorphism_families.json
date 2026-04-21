@@ -1,0 +1,186 @@
+{
+  "title": "SuperBEST Cross-Domain Isomorphism Families",
+  "version": "SuperBEST v4",
+  "cost_model_note": "recip=1n, div=2n, mul=2n, sub=2n, neg=2n, add_pos=3n, add_gen=11n, pow=3n, ln=1n, exp=1n, sqrt=2n, DEML(0,x)=exp(-x)=1n",
+  "families": [
+    {
+      "name": "1n–2n Division primitive",
+      "cost": "1–2n",
+      "canonical": "recip(x) = 1/x = 1n via ELSb(0, ln(x)); div(a, b) = a/b = 2n via ELSb(ln(a), ln(b))",
+      "members": [
+        "Wien's displacement lambda_max = b/T (2n)",
+        "Batting average H/AB (2n)",
+        "ETA = distance/speed (2n)",
+        "Curie law chi = C/T (2n)",
+        "Ohm's law solved for I: I = V/R (2n)",
+        "Pressure ratio P = F/A (2n)",
+        "Frequency f = 1/T (1n recip)",
+        "Harmonic oscillator frequency omega = 1/sqrt(LC) (1n recip after sqrt)"
+      ],
+      "structural_note": "All are single division or reciprocal. recip is 1n; div is 2n. The ln-domain representation is ln(a)-ln(b), a single subtraction — but sub=2n in SuperBEST, so div=2n exactly."
+    },
+    {
+      "name": "2n Pure multiplication",
+      "cost": 2,
+      "canonical": "mul(a, b) = 2n via ELAd(ln(a), ln(b))",
+      "members": [
+        "Ohm's Law V = IR",
+        "Newton's Second Law F = ma",
+        "Momentum p = mv",
+        "Wave speed v = f*lambda",
+        "Electric power P = VI",
+        "Work (theta=0) W = Fd",
+        "Power W = P*t",
+        "Impulse J = F*t",
+        "Charge Q = I*t"
+      ],
+      "structural_note": "Two variable inputs, one ELAd node. The simplest non-trivial computation class. Any y=a*b is 2n regardless of physical domain."
+    },
+    {
+      "name": "4n neg-mul pattern",
+      "cost": 4,
+      "canonical": "neg(mul(a, b)) = 4n",
+      "members": [
+        "Hooke's Law F = -kx (4n)",
+        "Viscous drag F = -b*v (4n)",
+        "Gravitational potential energy U = -GMm/r (add div; but -sign adds 2n to any positive-output formula)"
+      ],
+      "structural_note": "The 2n extra cost from neg is the consistent price of sign flip. Any restoring or opposing force formula adds 2n over its positive-valued base."
+    },
+    {
+      "name": "5n Universal exponential decay/growth",
+      "cost": 5,
+      "canonical": "mul(A, DEML(0, k*t)) = mul(A, exp(-k*t)); DEML=1n, mul(k,t)=2n, mul(A,exp)=2n. Total=5n.",
+      "members": [
+        "Beer-Lambert transmittance I = I0*exp(-mu*x)",
+        "First-order chemical decay [A] = [A0]*exp(-kt)",
+        "Radioactive decay N = N0*exp(-lambda*t)",
+        "Malthusian growth N = N0*exp(rt) [sign flip: DEML replaced by exp, same cost]",
+        "Compound interest (continuous) A = P*exp(rt)",
+        "Drug elimination (pharmacokinetics) C = C0*exp(-ke*t)",
+        "RC circuit discharge V = V0*exp(-t/RC)",
+        "Population decrease with emigration",
+        "Proton hop rate k_hop = k0*exp(-DeltaG/kBT) [standalone 5n]"
+      ],
+      "structural_note": "All: scale * exp(rate * time). DEML(0,x)=exp(-x) is 1n; mul(rate,time)=2n; mul(scale,exp)=2n. Total=5n. The most universal structure in nature. DEML saves 1n vs neg(x)+exp(x)."
+    },
+    {
+      "name": "5n Log-ratio family",
+      "cost": "5n core",
+      "canonical": "mul(scale_const, ln(div(a, b))) = mul(const, sub(ln(a), ln(b))): ln=1n, div=2n, mul=2n. Total=5n.",
+      "members": [
+        "Decibel dB = 10*log10(P1/P2) (5n)",
+        "pH = -log10([H+]) (5n)",
+        "Richter scale M = log10(A/A0) (5n)",
+        "SNR = 10*log10(signal/noise) (5n)",
+        "Information content I = -log2(p) (5n)",
+        "Relative entropy (single term) p*ln(p/q) (7n)"
+      ],
+      "structural_note": "Core: div(a,b)=2n gives the ratio; ln of ratio=1n; scale by constant=2n. Total=5n. The log10 vs ln distinction vanishes since log10(x)=ln(x)/ln(10) and ln(10) is a constant absorbed into the scale factor."
+    },
+    {
+      "name": "7n Michaelis-Menten / Langmuir saturation",
+      "cost": 7,
+      "canonical": "div(mul(Vmax, S), add_pos(Km, S)): mul=2n, add_pos=3n, div=2n. Total=7n.",
+      "members": [
+        "Michaelis-Menten v = Vmax*S / (Km + S)",
+        "Langmuir adsorption theta = P / (Kd + P) [Vmax=1]",
+        "Hill equation H=1: E = Emax*C / (EC50 + C)",
+        "Receptor occupancy fraction f = [L] / (Kd + [L])",
+        "MOSFET saturation current (simplified) Id = Idss*(1 - Vgs/Vp) approximation"
+      ],
+      "structural_note": "The 7n saturation template: numerator is linear in S (2n mul), denominator is sum of constant and S (3n add_pos), then divide (2n). When Vmax=1 the first mul vanishes: 5n. Hill n=1 is exactly Michaelis-Menten."
+    },
+    {
+      "name": "7n Standalone Arrhenius / Boltzmann",
+      "cost": "5–7n",
+      "canonical": "mul(A, exp(-Ea/RT)): div(Ea,RT)=2n, DEML=1n, mul=2n. Standalone=5n. With A involving its own computation: up to 7n.",
+      "members": [
+        "Arrhenius rate constant k = A*exp(-Ea/RT) (5n standalone)",
+        "Boltzmann factor exp(-E/kBT) (3n: div=2n + DEML=1n)",
+        "Flagellar motor proton hop rate k_hop = k0*exp(-DeltaG/kBT) (5n)",
+        "Transition state theory kTST = (kBT/h)*exp(-DeltaG_ddagger/RT) (7n: adds one div for prefactor)"
+      ],
+      "structural_note": "The Arrhenius and motor hop rate are the same equation. Physics context differs; circuit graph is identical. The 5n family is 'scale factor times decay exponential'. The 7n variant adds computation of the prefactor itself."
+    },
+    {
+      "name": "9n Fermi-Dirac / logistic sigmoid",
+      "cost": 9,
+      "canonical": "recip(add_pos(1, exp(argument))): argument=4n, exp=1n, add_pos=3n, recip=1n. Total=9n.",
+      "members": [
+        "Fermi-Dirac distribution f(E) = 1 / (1 + exp((E-mu)/kT))",
+        "Logistic sigmoid sigma(x) = 1 / (1 + exp(-x))",
+        "Logistic regression P(y=1|x) = sigma(w^T x)",
+        "Normal CDF approximation N(d) ≈ sigma(1.702*d)",
+        "ELO expected score E = 1 / (1 + 10^(delta/400))",
+        "Snell's law (via sigmoid sin approximation) ~9n"
+      ],
+      "structural_note": "All share the canonical 'one over one plus exponential' structure. recip=1n + add_pos=3n + exp=1n + argument_computation=4n = 9n. The Fermi-Dirac distribution in physics is the logistic function in ML — same equation, different vocabulary."
+    },
+    {
+      "name": "9n Inverse-square law",
+      "cost": 9,
+      "canonical": "mul(C, div(a, pow(r, 2))): pow=3n, div=2n, mul=2n, mul(second_const)=2n. Total=9n.",
+      "members": [
+        "Newton's Law of Gravitation F = GMm/r^2",
+        "Coulomb's Law F = kq1q2/r^2",
+        "Gauss's Law flux density E = Q/(4*pi*epsilon0*r^2) [4*pi*epsilon0 as constant: 9n]",
+        "Intensity falloff I = P/(4*pi*r^2) [constant denominator: 5n]",
+        "Gravitational acceleration g = GM/r^2 (7n: one fewer mul)"
+      ],
+      "structural_note": "The inverse-square law circuit graph: pow(r,2)=3n defines the shared denominator; then div scales one variable; then two mul nodes for the two-constant numerator. Gravity and electrostatics are computationally identical."
+    },
+    {
+      "name": "11n Hill equation (H>1) / Pythagorean expectation",
+      "cost": 11,
+      "canonical": "div(pow(x,H), add_pos(pow(K,H), pow(x,H))): two pow=6n, add_pos=3n, div=2n. Total=11n.",
+      "members": [
+        "Hill equation (cooperative, H>1): E = Emax * x^H / (K^H + x^H)",
+        "Pythagorean expectation: W = RS^e / (RS^e + RA^e)",
+        "Cooperative enzyme kinetics (n=2,3,4...)",
+        "Flagellar motor switching probability P = [CheY-P]^H / (Kd^H + [CheY-P]^H)",
+        "Langmuir-Hill adsorption isotherm"
+      ],
+      "structural_note": "The 11n cost is structurally forced by two pow(3n) nodes. The Pythagorean expectation in sports analytics and motor switching probability in biophysics are the same 11n formula — only variable names differ."
+    },
+    {
+      "name": "8n-3 Shannon entropy family",
+      "cost": "8N-3 for N outcomes",
+      "canonical": "sum_i(-p_i * ln(p_i)) = sum_i(p_i * neg(ln(p_i))): per term: ln=1n, neg=2n, mul=2n; chain N terms with (N-1)*add_pos=3(N-1)n. Total = 5N + 3(N-1) = 8N-3.",
+      "members": [
+        "Shannon entropy H(X) = -sum_i p_i ln(p_i)",
+        "Cross-entropy H(P,Q) = -sum_i p_i ln(q_i) [extra div per term: +2N]",
+        "Entropy of mixing Delta_S_mix ≈ -R sum_i x_i ln(x_i)",
+        "KL divergence D(P||Q) = sum_i p_i ln(p_i/q_i) [+2N for div]"
+      ],
+      "structural_note": "neg-first restructuring makes each summand positive (neg applied before mul, not to the sum), allowing add_pos=3n instead of add_gen=11n per accumulation. This is the 'distribute the negation' optimization."
+    },
+    {
+      "name": "6N-3 Softmax / partition function family",
+      "cost": "4N + 3(N-1) = 7N-3 (with normalization); N+3(N-1)=4N-3 (unnormalized sum only)",
+      "canonical": "Z = sum_i exp(-E_i/kT): N DEML nodes (1n each) + (N-1) add_pos nodes (3n each) = N + 3N-3 = 4N-3n for the sum. With normalization: add N div nodes = 4N-3+N? No: softmax per output = 1 div each = N div = 2N more. Normalized: 4N-3+2N=6N-3.",
+      "members": [
+        "Statistical mechanics partition function Z = sum_i exp(-E_i/kT) [unnormalized: 4N-3n]",
+        "Neural network softmax denominator sum_k exp(z_k) [unnormalized: 4N-3n]",
+        "Softmax probabilities exp(z_i)/Z [full normalized: 6N-3n]",
+        "Bayesian model evidence normalization sum_i P(D|Mi)*P(Mi)"
+      ],
+      "structural_note": "The partition function and softmax are the same computation. N exp-nodes accumulate via (N-1) add_pos nodes. Normalized output requires N more div nodes. Physics partition function = ML softmax denominator."
+    },
+    {
+      "name": "Flagellar motor isomorphism cluster",
+      "cost": "5–11n depending on sub-equation",
+      "canonical": "The E. coli flagellar motor uses PMF (7n), torque generation (6n), Arrhenius hop kinetics (5n), Hill-function switching (11n), and efficiency ratios (4–10n) — spanning five different cost families.",
+      "members": [
+        "Proton Motive Force PMF = Deltapsi + 2.303*(kBT/e)*DeltapH (7n)",
+        "Motor torque tau = n_p*PMF*e/(2*pi) (6n)",
+        "Proton hop rate k_hop = k0*exp(-DeltaG/kBT) = Arrhenius (5n)",
+        "CheY-P switching P = [CheY]^H/(Kd^H+[CheY]^H) = Hill equation (11n)",
+        "Motor efficiency eta = omega/(2*pi*rate) simplified (4n)"
+      ],
+      "structural_note": "The motor is not one equation but a family of equations from five different cost classes. The proton hop rate is the Arrhenius equation from chemistry; the switching probability is the Hill equation from enzyme kinetics; the efficiency is a ratio from thermodynamics. Biology assembles known math families."
+    }
+  ],
+  "total_families": 13,
+  "key_insight": "Cross-domain isomorphisms reveal that 300+ equations from 15+ fields compress into approximately 13 structural families. The math does not know what domain it came from. F=ma in physics, V=IR in electronics, and p=mv in mechanics are the same 2n node. Newton's gravity and Coulomb's electrostatics share an identical 9n circuit graph. The Arrhenius equation in chemistry is the flagellar motor's proton hop rate in biophysics. The Fermi-Dirac distribution in quantum mechanics is the logistic sigmoid in machine learning. Structure, not subject, determines computational cost."
+}

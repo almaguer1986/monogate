@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/Base.astro
 title: "214 Equations: The SuperBEST Cost of Science"
-description: "A complete catalog of SuperBEST node counts for standard equations across 9 domains — from 1-node trivialities to 2037-node error correction. Updated from 157 to 214 equations after COMP-ALL sessions TECH-1 through NAT-2."
+description: "A complete catalog of SuperBEST node counts for standard equations across 12+ domains — from 1-node trivialities to 2037-node error correction. Expanded from 157 (Monster Sprint) to 214 (COMP-ALL) to 295+ (domain-2 sessions: FIN, INFO, QM, THERMO, CHEM, BIO, ECON)."
 date: "2026-04-20"
 tag: "observation"
 ---
@@ -14,7 +14,7 @@ tag: "observation"
 
 Not in grant money or compute hours — but in operator nodes. Under the SuperBEST v3 routing table, every equation reduces to a tree of EML-family primitives. Each primitive costs between 1 and 11 nodes. The tree depth is the cost of the science.
 
-We measured 157 standard equations across seven scientific domains: chemistry, biology, astrophysics, neuroscience, geology, economics, and electromagnetism. The range is stark: Wien's displacement law costs **1 node**. The Black-Scholes call price costs **47 nodes**. The gap is a factor of 47 — not because one equation is physically deeper than the other, but because one contains more irreducible arithmetic.
+We measured 295+ standard equations across domains including chemistry, biology, astrophysics, neuroscience, geology, economics, electromagnetism, technology, sports, finance, quantum physics, and epidemiology. The range is stark: Wien's displacement law costs **1 node**. The Black-Scholes call price costs **47 nodes** (83n with full shared DAG). The gap is a factor of 47–83 — not because one equation is physically deeper than the other, but because one contains more irreducible arithmetic. The original catalog of 157 equations (Monster Sprint, seven scientific domains) has been expanded twice: to 214 (COMP-ALL sessions TECH-1 through NAT-2) and then to 295+ (domain-2 expansion: FIN, INFO, QM, THERMO, CHEM, BIO, ECON sessions).
 
 This catalog documents every node count, every cross-domain isomorphism, and the structural rules that determine cost.
 
@@ -98,7 +98,7 @@ The Hodgkin-Huxley equation is expensive for the opposite reason: it contains no
 
 ## Cross-Domain Isomorphisms
 
-The most striking finding of the 157-equation survey is that many equations from unrelated fields are **structurally identical** — they share the same operator tree and thus the same node cost.
+The most striking finding of the 295+-equation survey is that many equations from unrelated fields are **structurally identical** — they share the same operator tree and thus the same node cost.
 
 ### The 5-Node Exponential Template
 
@@ -167,7 +167,7 @@ The Nernst equation costs 5n with RT/nF folded as a single constant and 13n with
 
 ### Rule 3: Class D equations escape O(1) upper bounds
 
-Four structural classes organize all 157 equations:
+Four structural classes organize all equations in the catalog:
 
 - **Class A** — Pure exponential templates (5–12n): one DEML/EML terminal, one or two `mul` nodes
 - **Class B** — Rational functions without transcendentals (1–27n): chains of `mul`, `add`, `div`
@@ -195,7 +195,7 @@ What they reveal is that scientific equations vary enormously in representationa
 
 The 1-node floor — Wien's law, Curie's law, Gauss's flux law, the perpetuity price — represents equations where a single ratio exhausts all the science. The 47-node ceiling — Black-Scholes, where five live variables combine in two interlocking normal CDF evaluations plus discounting — represents equations where no structural simplification is available without fixing a variable.
 
-Between these extremes, the 155 other equations of science distribute themselves according to how many irreducible operations their algebraic form requires. That distribution is the cost of science.
+Between these extremes, the 293+ other equations of science distribute themselves according to how many irreducible operations their algebraic form requires. That distribution is the cost of science.
 
 ---
 

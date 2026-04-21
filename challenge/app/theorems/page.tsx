@@ -36,7 +36,7 @@ type Result = {
 };
 
 const RESULTS: Result[] = [
-  // ─── THEOREMS (17) ─────────────────────────────────────────────────────────
+  // ─── THEOREMS (21) ─────────────────────────────────────────────────────────
   {
     id: "T01",
     name: "EML Universality",
@@ -211,7 +211,7 @@ const RESULTS: Result[] = [
     deps: "T34.",
   },
 
-  // ─── PROPOSITIONS (10) ────────────────────────────────────────────────────
+  // ─── PROPOSITIONS (6) ─────────────────────────────────────────────────────
   {
     id: "T08",
     name: "SuperBEST Table v4 — 19 Nodes, All Entries Structurally Proved",
@@ -422,12 +422,12 @@ const RESULTS: Result[] = [
   },
   {
     id: "O-157",
-    name: "157-Equation Cost Catalog",
+    name: "295+-Equation Cost Catalog",
     tier: "OBSERVATION",
-    session: "Monster Sprint",
+    session: "Monster Sprint + COMP-ALL + domain-2",
     category: "Domain Costs",
-    statement: "157 standard equations across 7 domains (astrophysics, neuroscience, geology, economics, electromagnetism, chemistry, biology) measured under SuperBEST v3. Floor: 1n (7 equations). Ceiling: 47n (Black-Scholes call price).",
-    evidence: "Manual operator-tree analysis for each equation, verified by cross-checking against master_equation_catalog.json. See python/paper/observations/Master_Equation_Catalog.tex.",
+    statement: "295+ standard equations across 12+ domains measured under SuperBEST v3/v4. Floor: 1n (ratio laws, 7+ equations). Ceiling: 2037n (Reed-Solomon). Original: 157 equations (Monster Sprint, 7 domains). Expanded to 214 (COMP-ALL sessions TECH-1 through NAT-2), then to 295+ (domain-2: FIN, INFO, QM, THERMO, CHEM, BIO, ECON sessions).",
+    evidence: "Manual operator-tree analysis for each equation, verified by cross-checking against master_equation_catalog.json. Blind test: 27/30 exact (MAE = 0.20). See python/paper/observations/Master_Equation_Catalog.tex.",
   },
   {
     id: "O-ISO",

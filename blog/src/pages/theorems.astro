@@ -24,7 +24,7 @@ type Result = {
 };
 
 const results: Result[] = [
-  // ─── THEOREMS (17) ──────────────────────────────────────────────────────────
+  // ─── THEOREMS (21) ──────────────────────────────────────────────────────────
   { id: 'T01', tier: 'THEOREM', name: 'EML Universality',
     session: 'External (Odrzywołek 2026)', category: 'Core Algebra',
     statement: 'eml(x, y) = exp(x) − ln(y) generates every elementary function as a finite binary tree. Published arXiv:2603.21852.',
@@ -106,7 +106,7 @@ const results: Result[] = [
     evidence: 'Proved in R2_Decomposition_Theorem.tex. SharingDiscount ≥ 0: merging shared nodes cannot increase cost. PatternBonus ≥ 0: each compound pattern replaces more-expensive naive subtrees. Uniqueness: canonical sharing + greedy pattern matching.',
     deps: 'T34.' },
 
-  // ─── PROPOSITIONS (10) ──────────────────────────────────────────────────────
+  // ─── PROPOSITIONS (6) ───────────────────────────────────────────────────────
   { id: 'T08', tier: 'THEOREM', name: 'SuperBEST Table v4 — 19 Nodes, All Entries Structurally Proved',
     session: 'Sprint2 / Sprint3 / S-T08', category: 'Core Algebra',
     statement: 'SuperBEST v4: 19 nodes total, all 9 entries structurally proved optimal. recip=1n (ELSb(0,x)=1/x), div=2n (ELSb(ln(x),y) — corrected from erroneous 1n entry), sub=2n (T33), mul=2n (T10u/F16), neg=2n (T09), add=3n (cross-derivative lower bound), pow=3n (3-intermediate lower bound), sqrt=2n (derivative obstruction), exp=1n, ln=1n.',
@@ -209,10 +209,10 @@ const results: Result[] = [
     session: 'Sprint2', category: 'Domain Costs',
     statement: 'Each Fourier harmonic = one complex EML node. Timbre measurements: Sine = 1n, Clarinet ≈ 5n, Violin ≈ 12n. 245× fewer nodes than Taylor-based synthesis.',
     evidence: 'Node count matches harmonic count for each instrument timbre.' },
-  { id: 'O-157', tier: 'OBSERVATION', name: '157-Equation Cost Catalog',
-    session: 'Monster Sprint', category: 'Domain Costs',
-    statement: '157 standard equations across 7 domains (astrophysics, neuroscience, geology, economics, electromagnetism, chemistry, biology) measured under SuperBEST v3. Floor: 1n. Ceiling: 47n (Black-Scholes).',
-    evidence: 'Manual operator-tree analysis for each equation, cross-checked against master_equation_catalog.json.' },
+  { id: 'O-157', tier: 'OBSERVATION', name: '295+-Equation Cost Catalog',
+    session: 'Monster Sprint + COMP-ALL + domain-2', category: 'Domain Costs',
+    statement: '295+ standard equations across 12+ domains measured under SuperBEST v3/v4. Floor: 1n (ratio laws). Ceiling: 2037n (Reed-Solomon). Original: 157 equations (Monster Sprint, 7 domains). Expanded: 214 (COMP-ALL), then 295+ (domain-2: FIN, INFO, QM, THERMO, CHEM, BIO, ECON sessions).',
+    evidence: 'Manual operator-tree analysis for each equation, cross-checked against master_equation_catalog.json. Blind test: 27/30 exact (MAE = 0.20).' },
   { id: 'O-ISO', tier: 'OBSERVATION', name: '8 Cross-Domain Isomorphisms',
     session: 'R10', category: 'Domain Costs',
     statement: '8 families of equations from different scientific domains share identical minimal SuperBEST trees differing only in terminal labels: (1) exponential growth/decay, (2) NPV = N-compartment PK, (3) softmax = logit, (4) van\'t Hoff = Clausius-Clapeyron, (5) 1−exp(−t/τ) family, (6) simple ratio laws, (7) linear transport laws, (8) entropy p·ln(p) scaling.',
@@ -265,7 +265,7 @@ const conjCount = openConjectures.length;
 const obsCount = byTier['OBSERVATION'].length;
 ---
 
-<Base title="Theorem Catalog — monogate.org" description="Honest classification of monogate results: 17 theorems, 10 propositions, 3 conjectures, 9 observations. Every result labeled for what it actually is.">
+<Base title="Theorem Catalog — monogate.org" description="Honest classification of monogate results: 21 theorems, 6 propositions, 3 conjectures, 9 observations. Every result labeled for what it actually is.">
 
   <h1>Theorem Catalog</h1>
   <p style="color: #6b7280; margin-bottom: 6px;">

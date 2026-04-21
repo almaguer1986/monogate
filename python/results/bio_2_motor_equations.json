@@ -1,0 +1,105 @@
+{
+  "session": "BIO-2",
+  "title": "Flagellar Motor Equations",
+  "cost_model": {
+    "version": "SuperBEST v4",
+    "recip": "1n",
+    "div": "2n",
+    "mul": "2n",
+    "sub": "2n",
+    "neg": "2n",
+    "add_pos": "3n",
+    "add_gen": "11n",
+    "pow": "3n",
+    "ln": "1n",
+    "exp": "1n",
+    "sqrt": "2n",
+    "DEML": "DEML(0,x) = exp(-x) = 1n"
+  },
+  "equations": [
+    {
+      "name": "Proton Motive Force",
+      "formula": "\\Delta\\mu = \\Delta\\psi + \\frac{2.303\\, k_B T}{e}\\,\\Delta\\text{pH}",
+      "superbest_cost": 7,
+      "cost_breakdown": "With constant folding (2.303*kB/e treated as one literal coefficient c): mul(c, T) = 2n; mul(cT, DeltapH) = 2n; add_gen(Deltapsi, product) = 11n... but Deltapsi and cT*DeltapH are both positive real voltages, so add_pos applies: add_pos(Deltapsi, cT*DeltapH) = 3n. Total = 2+2+3 = 7n.",
+      "verified_at": [
+        {
+          "inputs": { "Deltapsi": 0.12, "kBT_over_e": 0.02585, "DeltapH": 1 },
+          "expected_PMF": 0.180,
+          "computed_PMF": 0.1795,
+          "pass": true,
+          "note": "2.303 * 0.02585 * 1 = 0.0595 V; 0.12 + 0.0595 = 0.1795 V"
+        }
+      ],
+      "cross_domain": "PMF is a thermodynamic potential difference. Structurally analogous to Nernst equation (11n) but the pH correction term here is always positive, dropping add_gen to add_pos and saving 8n."
+    },
+    {
+      "name": "Motor Torque",
+      "formula": "\\tau = \\frac{n_p \\cdot \\text{PMF} \\cdot e}{2\\pi}",
+      "superbest_cost": "6n (2*pi as constant); 8n (2*pi computed)",
+      "cost_breakdown": "mul(PMF, e) = 2n; mul(n_p, product) = 2n; numerator done at 4n. Denominator: if 2*pi is a precomputed constant, div(numerator, 2pi_const) = 2n. Total = 6n. If 2*pi computed explicitly: mul(2, pi) = 2n extra; total = 8n.",
+      "verified_at": [
+        {
+          "inputs": { "n_p": 8, "PMF": 0.18, "e": 1.602e-19 },
+          "expected_tau": 3.68e-20,
+          "computed_tau": 3.6715e-20,
+          "pass": true,
+          "note": "8 * 0.18 * 1.602e-19 / (2*pi) = 3.67e-20 N*m"
+        }
+      ],
+      "cross_domain": "Torque per proton channel times channel count. The div(mul_chain, 2pi) pattern also appears in angular momentum L=r*p/... and rotational power P=tau*omega."
+    },
+    {
+      "name": "Proton Hop Rate (Arrhenius form)",
+      "formula": "k_{\\text{hop}} = k_0\\,\\exp\\!\\left(-\\frac{\\Delta G}{k_B T}\\right)",
+      "superbest_cost": "5n (DeltaG/kBT precomputed); 7n (standalone)",
+      "cost_breakdown": "If activation ratio r = DeltaG/(kBT) is precomputed: DEML(0, r) = exp(-r) = 1n; mul(k0, DEML) = 2n; div for ratio = 2n. Total from ratio: 3n. Standalone: div(DeltaG, kBT) = 2n; DEML(0, ratio) = 1n; mul(k0, exp) = 2n. Total = 5n. Alternatively adding ln-domain: ln(k0) + (-DeltaG/kBT) then exp = 1+2+1=4n + mul... 5n is the canonical standalone count.",
+      "verified_at": [
+        {
+          "inputs": { "k0": 1e9, "DeltaG": 4e-21, "kBT": 4.14e-21 },
+          "expected_k_hop": 3.81e8,
+          "computed_k_hop": 3.8053e8,
+          "pass": true,
+          "note": "exp(-4e-21/4.14e-21) = exp(-0.9662) = 0.3805"
+        }
+      ],
+      "cross_domain": "EXACT isomorph of Arrhenius rate constant k=A*exp(-Ea/RT). Also identical to: radioactive decay rate lambda*exp(-lambda*t), RC circuit discharge, first-order chemical decay. All are the 5n exponential decay family. The motor proton hop rate is Arrhenius — the math does not know it is biology."
+    },
+    {
+      "name": "Motor Switching Probability (Hill Equation)",
+      "formula": "P = \\frac{[\\text{CheY-P}]^H}{K_d^H + [\\text{CheY-P}]^H}",
+      "superbest_cost": 11,
+      "cost_breakdown": "pow([CheY-P], H) = 3n; pow(Kd, H) = 3n; add_pos(Kd^H, [CheY-P]^H) = 3n (both positive); div([CheY-P]^H, denominator) = 2n. Total = 3+3+3+2 = 11n.",
+      "verified_at": [
+        {
+          "inputs": { "CheY_P": 5, "Kd": 3, "H": 2 },
+          "expected_P": 0.735,
+          "computed_P": 0.7353,
+          "pass": true,
+          "note": "25 / (9 + 25) = 25/34 = 0.7353"
+        }
+      ],
+      "cross_domain": "Hill equation is exact isomorph of: Michaelis-Menten (H=1, costs 7n), Pythagorean expectation W=RS^e/(RS^e+RA^e) (11n), enzyme cooperativity, ligand-receptor binding. The 11n cost is the structural signature of the 'two-pow + divide' family. At H=1, one pow becomes trivial and cost drops to 7n."
+    },
+    {
+      "name": "Motor Efficiency",
+      "formula": "\\eta = \\frac{\\tau\\omega}{n_p \\cdot \\text{PMF} \\cdot e \\cdot \\text{rate}}",
+      "superbest_cost": "10n (full form); 4n (simplified, tau cancels with torque definition)",
+      "cost_breakdown": "Full form: mul(tau, omega) = 2n numerator; mul(e, rate) = 2n, mul(PMF, product) = 2n, mul(n_p, product) = 2n denominator = 6n; div(num, denom) = 2n. Total = 10n. Simplified form substituting tau = n_p*PMF*e/(2*pi): cancellation leaves eta = omega/(2*pi*rate). Treating 2*pi as constant: div(omega, mul(2pi_const, rate)) = 2n + 2n = 4n.",
+      "verified_at": [
+        {
+          "inputs": { "omega": 100, "rate": 15.9 },
+          "form": "simplified: omega / (2*pi*rate)",
+          "expected_eta": 1.001,
+          "computed_eta": 1.0010,
+          "pass": true,
+          "note": "100 / (2 * 3.14159 * 15.9) = 100/99.90 = 1.001"
+        }
+      ],
+      "cross_domain": "Mechanical efficiency ratio. The simplified form omega/(2*pi*rate) is structurally a 4n division after constant absorption. The full 10n form is the general mul-chain-divide pattern shared with thermodynamic efficiency eta=W/Q_hot."
+    }
+  ],
+  "catalog_before": 310,
+  "catalog_after": 315,
+  "new_equations": 5
+}

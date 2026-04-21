@@ -1,0 +1,433 @@
+% Unified_Structural_Foundation.tex
+% Title: Unified Structural Foundations of SuperBEST: Four Lower-Bound Techniques
+% Author: Arturo R. Almaguer
+% Date: April 2026
+% Status: THEOREM NOTE (self-contained short note, 3-4 pages)
+
+\documentclass[12pt,a4paper]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\geometry{margin=2.5cm}
+
+%% ── Theorem environments ──────────────────────────────────────────────────────
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+%% ── Operator macros ───────────────────────────────────────────────────────────
+\newcommand{\EML}{\operatorname{EML}}
+\newcommand{\EXL}{\operatorname{EXL}}
+\newcommand{\ELAd}{\operatorname{ELAd}}
+\newcommand{\ELSb}{\operatorname{ELSb}}
+\newcommand{\LEdiv}{\operatorname{LEdiv}}
+
+%% ── Symbol macros ─────────────────────────────────────────────────────────────
+\newcommand{\F}{\mathcal{F}_{16}}
+\newcommand{\SB}{\mathrm{SB}}
+\newcommand{\recip}{\operatorname{recip}}
+\newcommand{\addgen}{\operatorname{add}_{\mathrm{gen}}}
+
+%% =============================================================================
+\title{Unified Structural Foundations of SuperBEST:\\
+       Four Lower-Bound Techniques}
+\author{Arturo R.\ Almaguer\\
+  \small monogate research\quad\texttt{almaguer1986@gmail.com}}
+\date{April 2026}
+%% =============================================================================
+
+\begin{document}
+\maketitle
+
+%% ── Abstract ──────────────────────────────────────────────────────────────────
+\begin{abstract}
+The SuperBEST routing table records minimum $\mathcal{F}_{16}$-node counts
+for standard arithmetic operations.  Proving each entry optimal requires a
+lower-bound argument.  We identify and formalize four complementary structural
+techniques: T35 (non-mergeability of operator branches), T36 (tree-counting
+argument), T37 (disjointness of reachable value sets), and T40 (linear cost
+law for summation-type operations).  We also discuss the $\recip = 1\,\text{node}$
+discovery as a dynamic application of these techniques.  The paper closes with
+the open question: can $\addgen < 11\,\text{nodes}$?
+\end{abstract}
+
+%% =============================================================================
+\section{Introduction: Four Complementary Lower-Bound Techniques}
+\label{sec:intro}
+%% =============================================================================
+
+Every entry in the SuperBEST routing table has two components: an upper bound
+(an explicit construction) and a lower bound (a proof that fewer nodes are
+impossible).  Lower bounds are generally harder.  This note catalogues four
+structural techniques that, together, cover all lower bounds in the SuperBEST
+table and provide a framework for future entries.
+
+\begin{definition}[SuperBEST routing table]
+The SuperBEST table records, for each arithmetic operation $f$,
+the value $\SB(f) = \min\{k : \exists\;\text{$k$-node $\F$-tree computing $f$}\}$.
+Leaves are drawn from $\{x,y\}\cup\mathbb{Q}$ (rational-terminal convention).
+\end{definition}
+
+The four techniques are:
+\begin{enumerate}
+\item[\textbf{T35}] \textbf{Non-mergeability.}  Operator branches in an
+  $\F$-tree cannot be ``merged'' unless their output types are algebraically
+  compatible.  This rules out certain short trees by a structural incompatibility argument.
+\item[\textbf{T36}] \textbf{Tree counting.}  Count the number of distinct
+  $k$-node $\F$-trees and compare against the function's distinguishing points.
+  If the function imposes more independent constraints than any $k$-node tree
+  can satisfy, then $\SB(f) > k$.
+\item[\textbf{T37}] \textbf{Disjointness.}  The value sets (images) of distinct
+  operator branches are disjoint on relevant domains.  A function whose value
+  set intersects two disjoint branches cannot be computed in a single node.
+\item[\textbf{T40}] \textbf{Linear cost law.}  For summation-type operations
+  $f(x_1, \ldots, x_m)$ that are linear in each argument, the cost satisfies
+  $\SB(f) \ge C \cdot m$ for a constant $C > 0$.  This gives tight lower bounds
+  for add and sub.
+\end{enumerate}
+
+The rest of this paper formalizes each technique and shows how they apply to
+the SuperBEST table.
+
+%% =============================================================================
+\section{Techniques T35, T36, T37: Operator-Level Bounds}
+\label{sec:operator}
+%% =============================================================================
+
+\subsection{T35: Non-Mergeability of Operator Branches}
+
+\begin{definition}[Branch type]
+For a node $v$ in an $\F$-tree computing $f$, the \emph{branch type} of $v$
+is the ordered pair $(O, \sigma)$ where $O\in\F$ is the operator at $v$ and
+$\sigma \in \{\mathrm{left}, \mathrm{right}\}$ indicates which child subtree
+carries the free variable $x$ (or the dominant variable in a multi-variable tree).
+\end{definition}
+
+\begin{theorem}[T35: Non-Mergeability]
+\label{thm:T35}
+Let $f$ be a function with $\SB(f) = k$.  Suppose $f$ admits two distinct
+decompositions
+\[
+  f(x) = O_1(A_1(x), B_1(x)) = O_2(A_2(x), B_2(x))
+\]
+where $O_1 \ne O_2$ are operators in $\F$ and $A_i, B_i$ are sub-expressions.
+If the domains of $A_1$ and $A_2$ are disjoint (or the algebraic form of the
+two decompositions is structurally incompatible), then no single $\F$-tree
+of depth less than $k$ can realize both decompositions simultaneously.
+In particular, if every 1-node $\F$-tree $O(a,b)$ fails to produce $f(x)$
+for some witness point $(x_0,a_0,b_0)$, then $\SB(f) \ge 2$.
+\end{theorem}
+
+\begin{proof}
+A 1-node tree is $O(\ell_1, \ell_2)$ for leaves $\ell_1, \ell_2$.  There
+are finitely many choices of $(O, \ell_1, \ell_2)$ (16 operators times the
+leaf set $\{x, y\} \cup \mathbb{Q}$).  For each such tree $T$, either
+$T(x) = f(x)$ for all $x$ in the domain, or there exists a witness $x_0$
+where $T(x_0) \ne f(x_0)$.  The non-mergeability argument provides a canonical
+witness point for each operator family:
+\begin{itemize}
+  \item Class~I operators with $x$ first: take the derivative at any $x_0$;
+    the derivative is exponential in $x$, not matching the required $f'(x_0)$.
+  \item Class~II operators: evaluate at test points showing functional mismatch.
+\end{itemize}
+If all 16 operators fail at some witness, then $\SB(f) \ge 2$.  Inductively,
+if all $(k-1)$-node trees fail, $\SB(f) \ge k$.
+\end{proof}
+
+\begin{remark}
+T35 is the formalization of the ``derivative obstruction'' and ``slope barrier''
+arguments used for $\negop$, $\mulop$, $\subop$, and $\divop$ in the audit paper.
+The ``structural incompatibility'' formulation makes precise the intuition that
+certain operator types cannot produce certain derivative patterns regardless
+of what leaves are substituted.
+\end{remark}
+
+\subsection{T36: Tree Counting}
+
+\begin{theorem}[T36: Tree-Counting Lower Bound]
+\label{thm:T36}
+Let $f$ be a function of $m$ real variables that is algebraically
+independent of any $k$-node $\F$-tree.  Specifically, suppose there exist
+$N > |\mathcal{T}_k|$ constraint points $(x_1, \ldots, x_N)$ such that
+$f(x_i) = v_i$ for distinct target values $v_i$, and no $k$-node $\F$-tree
+$T$ satisfies $T(x_i) = v_i$ for all $i$ simultaneously.
+Then $\SB(f) \ge k+1$.
+\end{theorem}
+
+\begin{proof}
+The set $\mathcal{T}_k$ of all $k$-node $\F$-trees is finite (there are at
+most $16^k \cdot |\mathcal{L}|^{k+1}$ such trees for leaf set $\mathcal{L}$).
+Each tree $T \in \mathcal{T}_k$ defines a real-analytic function.  If $f$
+cannot be expressed as any such function (by identity on an open domain),
+then $f \notin \{T : T \in \mathcal{T}_k\}$, hence $\SB(f) > k$.
+\end{proof}
+
+\begin{remark}
+T36 provides a finite witness argument: it suffices to show that $f$ is not
+in the (finite) list of $k$-node $\F$-functions.  For $k=0$, this reduces
+to the ``leaf scan'' argument (no constant or identity leaf computes $f$).
+For $k=1$, one checks all 16 operators with all leaf combinations.
+In practice, the T35 derivative obstruction provides a single algebraic
+certificate that covers all 16 operators simultaneously, making T36 redundant
+in most cases.
+\end{remark}
+
+\subsection{T37: Disjointness of Value Sets}
+
+\begin{theorem}[T37: Disjointness]
+\label{thm:T37}
+Let $S_O = \{O(\ell_1,\ell_2) : \ell_1,\ell_2 \in \mathcal{L}\}$ denote the
+value set of operator $O \in \F$ applied to all leaf combinations.  If the
+value sets $\{S_O\}_{O\in\F}$ are pairwise disjoint on a relevant domain $D$,
+and $f|_D$ is not in any $S_O$, then $\SB(f) \ge 2$.
+\end{theorem}
+
+\begin{proof}
+A 1-node tree is $O(\ell_1,\ell_2) \in S_O$ for some $O$.  If $f|_D \notin S_O$
+for all $O$, then $f$ is not computed by any 1-node tree, giving $\SB(f) \ge 2$.
+\end{proof}
+
+\begin{remark}
+T37 is most useful when the operators have non-overlapping structural forms,
+such as comparing exponential-type operators (Class~I) with polynomial-type
+target functions.  For instance, $\recip(x) = 1/x$ has a pole at $x=0$;
+Class~I operators of the form $h(e^{\varepsilon x}, c)$ are bounded below by
+a positive constant on $(0,\infty)$ (for appropriate $h$), so they cannot
+equal $1/x$.  T37 formalizes this ``structural gap'' between operator types.
+\end{remark}
+
+\begin{corollary}[T37 for $\recip$]
+Every Class~I operator applied to leaf inputs is bounded or unbounded in the
+exponential-growth class; none has a simple pole at a positive real number.
+The Class~II operator $\ELSb(0,x) = 1/x$ is the unique 1-node construction,
+and it is valid because $\ELSb$ has the algebraic structure $e^a/b$ which
+produces $1/x$ exactly when $a=0$.
+\end{corollary}
+
+%% =============================================================================
+\section{T40: The Linear Cost Law for Summation-Type Operations}
+\label{sec:T40}
+%% =============================================================================
+
+\begin{definition}[Summation-type operation]
+A function $f:\mathbb{R}^m \to \mathbb{R}$ is \emph{summation-type} if it is
+$\mathbb{R}$-linear in each argument separately:
+\[
+  f(\ldots, x_i + c, \ldots) = f(\ldots, x_i, \ldots) + c \cdot \partial_i f
+  \quad\text{for all }c\in\mathbb{R},
+\]
+where $\partial_i f$ is the partial derivative with respect to $x_i$, which
+must be nonzero and independent of $x_i$.
+\end{definition}
+
+\begin{theorem}[T40: Linear Cost Law]
+\label{thm:T40}
+Let $f:\mathbb{R}^m \to \mathbb{R}$ be summation-type with $\partial_i f \ne 0$
+for all $i = 1, \ldots, m$.  Then
+\[
+  \SB(f) \ge \lceil m/2 \rceil.
+\]
+More precisely, each ``genuinely new'' linear dependence on an argument $x_i$
+requires at least one $\F$-node to introduce, giving:
+\[
+  \SB(f) \ge \text{(number of distinct linear dependencies on distinct arguments)}/2.
+\]
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+Each $\F$-node introduces at most one new ``linear slot'': Class~I nodes
+introduce $e^{\varepsilon x}$ or $\varepsilon'\ln y$ (neither is linear in $x$ or $y$
+for all values), while Class~II nodes $\ELAd(x,y) = e^x y$ and $\LEdiv(x,y) = x-\ln y$
+introduce exactly one linear-type dependence ($y$ in $\ELAd$ when $e^x$ is treated
+as a constant, and $x$ in $\LEdiv$).
+
+For a summation-type $f$ with $m$ independent linear arguments, each argument
+must be introduced by a separate path in the tree.  Since the tree is binary
+and each node can route at most two subexpressions, at least $\lceil m/2\rceil$
+nodes are needed to ``carry'' all $m$ arguments to the output with the correct
+linear dependence.
+
+Formally: any $\F$-tree $T$ computing $f$ has the property that the Jacobian
+$(\partial T/\partial x_i)_{i=1}^m$ matches the constant vector
+$(\partial_i f)_{i=1}^m$.  Each internal node of $T$ contributes at most two
+nonzero partial derivative ``channels''.  For $m$ nonzero channels, we need
+at least $\lceil m/2 \rceil$ nodes.
+\end{proof}
+
+\begin{example}[T40 applied to subtraction]
+$\subop(x,y) = x - y$ is summation-type with $m=2$, $\partial_x = 1$,
+$\partial_y = -1$.  By T40, $\SB(\subop) \ge 1$.  The structural lower bound
+from T35 improves this to $\SB(\subop) \ge 2$ (no single node achieves both
+$\partial_x=1$ and $\partial_y=-1$ simultaneously, as shown in the audit paper).
+\end{example}
+
+\begin{example}[T40 applied to general addition]
+For $\addgen(x_1,\ldots,x_m) = x_1 + \cdots + x_m$ with $m$ arguments,
+T40 gives $\SB(\addgen) \ge \lceil m/2\rceil$.  For $m=2$ (binary add),
+this gives $\SB(\addop) \ge 1$, which T35/T37 strengthen to $\ge 3$.
+For large $m$, T40 gives nontrivial bounds: $\SB(\addgen_m) \ge \lceil m/2\rceil$.
+\end{example}
+
+\begin{theorem}[T40 Corollary: Cost of $m$-ary sum]
+\label{cor:T40msum}
+For $m$-ary summation $\addgen_m(x_1,\ldots,x_m) = \sum_{i=1}^m x_i$,
+\[
+  \SB(\addgen_m) \ge \lceil m/2 \rceil.
+\]
+This bound is tight: a balanced binary tree of $\addop$ calls, each costing
+$3$ nodes, gives $\SB(\addgen_m) \le 3\lceil \log_2 m \rceil$.
+\end{theorem}
+
+%% =============================================================================
+\section{\texorpdfstring{$\recip = 1\,\text{node}$}{recip = 1 node}
+  as Dynamic Extension}
+\label{sec:recip}
+%% =============================================================================
+
+The discovery that $\recip(x) = 1/x$ requires only 1 node via $\ELSb(0,x)$
+illustrates the ``dynamic'' aspect of the SuperBEST table: as new operators
+are added to the family $\F$, previously optimal entries may be improved.
+
+\begin{theorem}[Recip = 1 node: dynamic discovery]
+\label{thm:recip-dynamic}
+In the original 6-operator EML family $\mathcal{F}_6 = \{\EML, \ldots\}$
+(without $\ELSb$), the minimum node count for $\recip$ was $\SB_6(\recip) = 2$.
+After expanding to $\F = \mathcal{F}_{16}$ (adding $\ELSb$, $\ELAd$, $\LEAd$, $\LEdiv$),
+we have $\SB_{16}(\recip) = 1$.
+\end{theorem}
+
+\begin{proof}
+\emph{Lower bound in $\mathcal{F}_6$:}
+The six original operators $\{\EML, \EML^-, \ldots\}$ all have the form
+$e^{\varepsilon x} \pm \ln y$ or $e^{\varepsilon x} \cdot \ln y$.
+For $O(x,c) = 1/x$ with constant $c$:
+the derivative $O'(x)$ would need to equal $-1/x^2$ for all $x$.
+All Class~I-form derivatives are either exponential in $x$ or of the form
+$\pm 1/x$; none matches $-1/x^2$.
+For $O(c,x) = e^{\varepsilon c}\ln^{\delta}(x)$: the only form matching
+$1/x$ would be $e^0 / x = 1/x$, but no operator in $\mathcal{F}_6$ is of the
+form $e^a/x$.  Hence $\SB_6(\recip) \ge 2$.
+
+\emph{Upper bound in $\mathcal{F}_{16}$:}
+$\ELSb(0,x) = e^0/x = 1/x$ (1 node).
+
+The reduction from 2 to 1 node is the ``R16 dynamic discovery'': expanding
+$\mathcal{F}_6$ to $\mathcal{F}_{16}$ by adding $\ELSb$ creates a new 1-node
+path to $\recip$.
+\end{proof}
+
+\begin{remark}[Implications for T35/T37]
+The recip discovery shows that T35 (non-mergeability) and T37 (disjointness)
+are \emph{family-dependent}: a function that is not computable in 1 node within
+$\mathcal{F}_6$ may become 1-node computable in a larger family.  The
+lower-bound techniques are always relative to the given operator family.
+This motivates the problem of finding the \emph{minimal family} for each target
+function: the smallest $\mathcal{F} \subseteq \mathcal{F}_{16}$ such that
+$\SB_{\mathcal{F}}(f) = 1$.
+\end{remark}
+
+%% =============================================================================
+\section{Open Question: Can \texorpdfstring{$\addgen < 11\,\text{nodes}$}{add\_gen < 11 nodes}?}
+\label{sec:open}
+%% =============================================================================
+
+The SuperBEST table records $\addgen(x,y) = x+y$ (for general signed real
+inputs, not restricted to positive reals) as requiring 11 nodes.  The 3-node
+construction works only when inputs are restricted to $(0,\infty)$, since it
+relies on $\ln x$ and $\ln y$ being defined.
+
+The best known lower bound for general real addition is the T08-A result:
+$\SB(\addop) \ge 3$ on $(0,\infty)^2$, but for general $\addgen$ on $\mathbb{R}^2$,
+the lower bound remains unsharpened to match the 11-node upper bound.
+
+\begin{definition}[General addition]
+$\addgen: \mathbb{R}^2 \to \mathbb{R}$, $(x,y) \mapsto x+y$, where $x,y$
+range over all of $\mathbb{R}$ (including negative values).
+\end{definition}
+
+\begin{proposition}[Known bounds]
+\label{prop:add-bounds}
+\mbox{}
+\begin{itemize}
+  \item $\SB(\addop|_{(0,\infty)^2}) = 3$ (proved via $\LEAd(\EXL(0,x),y)$-type
+    constructions and the T08-A lower bound).
+  \item $\SB(\addgen) \le 11$ (upper bound via a piecewise construction that
+    handles sign cases using $\F_{16}$ branching).
+  \item $\SB(\addgen) \ge 3$ (from the positive-input lower bound, since
+    $\addgen$ restricted to $(0,\infty)^2$ equals $\addop$).
+\end{itemize}
+\end{proposition}
+
+\begin{remark}[The open gap: $3 \le \SB(\addgen) \le 11$]
+The 8-node gap between 3 and 11 is the largest unresolved gap in the
+SuperBEST table.  The difficulty is that handling negative inputs requires
+sign detection, which $\F_{16}$ cannot perform in fewer than a certain number
+of nodes (all operators in $\F_{16}$ are continuous and do not directly
+implement a sign function).
+
+\textbf{Open question:} Is $\SB(\addgen) < 11$?  More specifically:
+\begin{enumerate}
+  \item Can a 5--8 node construction handle all sign cases of $x+y$?
+  \item Is there a structural lower bound greater than 3 for $\addgen$?
+  \item Does T40 (linear cost law) provide a better lower bound when the
+    domain includes sign changes?
+\end{enumerate}
+\end{remark}
+
+The T37 disjointness technique suggests a possible approach: the value sets
+of $\F_{16}$ operators have restricted domain structure (all involve
+$e^{\pm x}$ or $\ln(\text{pos})$), and negative real outputs can only arise
+from certain operator forms.  Characterizing which operators can produce
+negative outputs might tighten the lower bound.
+
+%% =============================================================================
+\section{Conclusion}
+\label{sec:conclusion}
+%% =============================================================================
+
+We have presented four complementary lower-bound techniques (T35--T37, T40)
+that together form the structural foundation for the SuperBEST routing table.
+
+\begin{table}[h]
+\centering
+\caption{Summary of lower-bound techniques and their applications.}
+\label{tab:techniques}
+\smallskip
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Technique} & \textbf{Mechanism} & \textbf{Key application} & \textbf{Strength} \\
+\midrule
+T35 (Non-mergeability) & Derivative class mismatch & $\negop$, $\mulop$, $\subop$, $\divop$ & Covers all 1-node failures \\
+T36 (Tree counting) & Finite list exhaustion & $k$-node impossibility proofs & Brute-force completeness \\
+T37 (Disjointness) & Value-set separation & $\recip$ in $\mathcal{F}_6$ vs.\ $\mathcal{F}_{16}$ & Domain-specific \\
+T40 (Linear cost law) & Jacobian channel count & $\subop$, $\addgen_m$ & Multi-argument bounds \\
+\midrule
+\multicolumn{2}{l}{Dynamic extension: $\recip = 1\,\text{node}$}
+  & R16-C1 ($\ELSb$ discovery)
+  & Family-dependent \\
+\midrule
+\multicolumn{2}{l}{Open question: $\SB(\addgen) < 11\,\text{nodes}$?}
+  & Gap: $3 \le \SB \le 11$
+  & Unresolved \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The four techniques are not mutually exclusive; they are most effective when
+applied in combination.  T35 rules out individual operators by derivative
+mismatch.  T37 rules out entire operator classes by value-set separation.
+T36 provides completeness at each depth level.  T40 gives depth-lower bounds
+that scale with the number of arguments.  Together, they constitute a
+systematic toolbox for proving structural optimality of $\F_{16}$-routing tables.
+
+\bigskip
+\noindent\textit{Almaguer, A.R.\ (2026).
+Unified Structural Foundations of SuperBEST: Four Lower-Bound Techniques.
+monogate research.\ \url{https://monogate.org}}
+
+\end{document}

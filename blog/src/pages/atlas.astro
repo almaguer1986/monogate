@@ -339,6 +339,96 @@ const savings = Math.round((1 - totalSuperbest/totalNaive)*100);
 
   <div class="divider"></div>
 
+  <!-- ── DOMAIN CATALOG HIGHLIGHTS ───────────────────────────────────────── -->
+  <h2>Domain Catalog — 295+ Equations</h2>
+  <p style="color: #6b7280; margin-bottom: 6px; font-size: 0.9rem;">
+    Selected SuperBEST v4 node counts across technology, sports, neural networks, physics, biology, quantum, and finance.
+    Full catalog: <a href="/blog/157-equations">295+ Equations →</a>
+  </p>
+  <p style="color: #4a4d62; font-size: 0.8rem; margin-bottom: 20px;">
+    Expanded from 157 (Monster Sprint) → 214 (COMP-ALL) → 295+ (domain-2: FIN, INFO, QM, THERMO, CHEM, BIO, ECON sessions).
+  </p>
+
+  {[
+    {
+      domain: 'Technology',
+      color: '#06b6d4',
+      entries: [
+        { name: 'PageRank (per page, N pages)',    cost: '5N+4 nodes', note: 'web ranking' },
+        { name: 'TF-IDF',                          cost: '7n',        note: 'document relevance' },
+        { name: 'Haversine distance',              cost: '28n',       note: 'GPS/navigation' },
+      ],
+    },
+    {
+      domain: 'Sports',
+      color: '#e8a020',
+      entries: [
+        { name: 'NFL passer rating',               cost: '33n',       note: 'most complex sports formula' },
+        { name: 'ELO rating update',               cost: '26n',       note: 'chess/competitive ratings' },
+        { name: 'Pythagorean expectation',         cost: '11n',       note: 'same structure as Hill equation' },
+      ],
+    },
+    {
+      domain: 'Neural Networks',
+      color: '#8b5cf6',
+      entries: [
+        { name: 'Softplus ln(1+eˣ)',               cost: '1n via LEAd(x,1)', note: 'cheapest smooth activation' },
+        { name: 'Sigmoid σ(x)',                    cost: '7n',               note: 'standard activation' },
+        { name: 'Cross-entropy loss (N classes)',  cost: '8N−3n',            note: 'training loss' },
+      ],
+    },
+    {
+      domain: 'Physics',
+      color: '#4ade80',
+      entries: [
+        { name: "Ohm's law V=IR",                  cost: '2n',   note: 'product of two scalars' },
+        { name: 'Kinetic energy ½mv²',             cost: '7n',   note: 'v² = mul chain' },
+        { name: 'Gravitational force GMm/r²',      cost: '9n',   note: 'power-law denominator' },
+      ],
+    },
+    {
+      domain: 'Biology / Epidemiology',
+      color: '#fbbf24',
+      entries: [
+        { name: 'Basic reproduction number R₀=β/γ', cost: '2n',  note: 'cheapest important metric' },
+        { name: 'SIR model per-step',               cost: '20n', note: 'full epidemic simulation' },
+      ],
+    },
+    {
+      domain: 'Quantum',
+      color: '#ec4899',
+      entries: [
+        { name: 'Fermi-Dirac distribution',          cost: '9n',   note: 'same structure as sigmoid' },
+        { name: 'Partition function Z (N terms)',     cost: '6N−3n', note: 'same as softmax denominator' },
+      ],
+    },
+    {
+      domain: 'Finance',
+      color: '#a78bfa',
+      entries: [
+        { name: 'Sharpe ratio',                      cost: '4n',  note: 'mean/std ratio' },
+        { name: 'Black-Scholes full DAG (shared)',   cost: '83n', note: 'most expensive EML computation' },
+      ],
+    },
+  ].map(sec => (
+    <section style={`border-left: 3px solid ${sec.color}; padding: 0 0 0 20px; margin-bottom: 24px;`}>
+      <div style={`font-size: 0.85rem; font-weight: 700; color: ${sec.color}; margin-bottom: 8px; font-family: var(--mono);`}>{sec.domain}</div>
+      <table style="width: 100%; border-collapse: collapse; font-size: 0.82rem;">
+        <tbody>
+          {sec.entries.map(e => (
+            <tr style="border-bottom: 1px solid #0d0f18;">
+              <td style="padding: 4px 8px 4px 0; color: #d4d4d4; font-family: var(--mono); font-size: 0.8rem; width: 44%;">{e.name}</td>
+              <td style={`padding: 4px 8px; color: ${sec.color}; font-family: var(--mono); font-size: 0.78rem; width: 18%;`}>{e.cost}</td>
+              <td style="padding: 4px 0 4px 8px; color: #4a4d62; font-size: 0.76rem;">{e.note}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+  ))}
+
+  <div class="divider"></div>
+
   <!-- ── COST THEORY ───────────────────────────────────────────────────────── -->
   <h2>Cost Theory</h2>
   <p style="color: #6b7280; margin-bottom: 6px; font-size: 0.9rem;">
@@ -393,7 +483,7 @@ const savings = Math.round((1 - totalSuperbest/totalNaive)*100);
         { thm: 'T38-NNP',        stmt: 'No Nesting Penalty',                  detail: 'Cost(O₁(O₂(A,B),C)) = c(O₁)+c(O₂)+Cost(A)+Cost(B)+Cost(C).' },
         { thm: 'T40 (Add Law)',   stmt: 'Cost(op(E₁,E₂)) = Cost(E₁)+Cost(E₂)+1', detail: 'For independent sub-expressions. Explains Lorentz (57n).' },
         { thm: 'T40 (Linear)',    stmt: 'N-term sum: (α₀+3)N − 3',            detail: 'Exact formula. Softmax: 4N−3. Shannon: 6N−3. Taylor: 8N−3.' },
-        { thm: 'T41 (Domain)',    stmt: 'Positive routing saves 8n/add',       detail: '3n (EAL) vs 11n (general add). ~1208n saved across 157-eq catalog.' },
+        { thm: 'T41 (Domain)',    stmt: 'Positive routing saves 8n/add',       detail: '3n (EAL) vs 11n (general add). ~1750n saved across 295-eq catalog.' },
         { thm: 'T41 (ISO)',       stmt: '8 cross-domain isomorphism families', detail: 'Radioactive decay = compound interest = population growth (same tree).' },
         { thm: 'T42 (QCC)',       stmt: 'Cost ≤ O(N²) conjecture',             detail: 'No standard scientific equation exceeds quadratic growth. Open.' },
         { thm: 'T43 (Linear Ceil)', stmt: 'Cost ≤ O(N) conjecture',           detail: 'Linear Ceiling: no standard equation exceeds O(N). Open.' },
@@ -436,7 +526,7 @@ const savings = Math.round((1 - totalSuperbest/totalNaive)*100);
 
   <p style="color: #4a4d62; font-size: 0.82rem; margin-bottom: 32px;">
     Blind test validation: 27/30 exact (MAE = 0.20) on held-out fluid dynamics, optics, acoustics, materials, epidemiology equations.
-    See <a href="/blog/cost-theory">Cost Theory →</a> and <a href="/blog/157-equations">157 Equations →</a>
+    See <a href="/blog/cost-theory">Cost Theory →</a> and <a href="/blog/157-equations">295+ Equations →</a>
   </p>
 
   <div class="divider"></div>

@@ -1,0 +1,187 @@
+{
+  "session": "PHYS-1",
+  "title": "Basic Physics Equations",
+  "cost_model": {
+    "version": "SuperBEST v4",
+    "recip": "1n",
+    "div": "2n",
+    "mul": "2n",
+    "sub": "2n",
+    "neg": "2n",
+    "add_pos": "3n",
+    "add_gen": "11n",
+    "pow": "3n",
+    "ln": "1n",
+    "exp": "1n",
+    "sqrt": "2n"
+  },
+  "equations": [
+    {
+      "name": "Ohm's Law",
+      "formula": "V = IR",
+      "superbest_cost": 2,
+      "cost_breakdown": "mul(I, R) = 2n",
+      "verified_at": [
+        { "inputs": { "I": 2, "R": 5 }, "expected_V": 10, "computed_V": 10, "pass": true }
+      ],
+      "cross_domain": "Isomorphic to F=ma (2n pure multiplication family). Also: Fourier's heat law Q=kA*dT/dx, Fick's diffusion J=D*dC/dx."
+    },
+    {
+      "name": "Newton's Second Law",
+      "formula": "F = ma",
+      "superbest_cost": 2,
+      "cost_breakdown": "mul(m, a) = 2n",
+      "verified_at": [
+        { "inputs": { "m": 3, "a": 4 }, "expected_F": 12, "computed_F": 12, "pass": true }
+      ],
+      "cross_domain": "Same structure as V=IR, p=mv, W=Pt. Universal 2n multiplication pair."
+    },
+    {
+      "name": "Kinetic Energy",
+      "formula": "KE = \\frac{1}{2}mv^2",
+      "superbest_cost": 7,
+      "cost_breakdown": "pow(v, 2) = 3n; mul(m, pow(v,2)) = 2n; mul(0.5, product) = 2n. Total = 7n. (0.5 treated as precomputed constant literal.)",
+      "verified_at": [
+        { "inputs": { "m": 2, "v": 3 }, "expected_KE": 9.0, "computed_KE": 9.0, "pass": true }
+      ],
+      "cross_domain": "Rotational KE = 0.5*I*omega^2 is structurally identical (7n). Spring potential PE = 0.5*k*x^2 is also identical (7n)."
+    },
+    {
+      "name": "Newton's Law of Gravitation",
+      "formula": "F = \\frac{GMm}{r^2}",
+      "superbest_cost": 9,
+      "cost_breakdown": "pow(r, 2) = 3n; div(m, pow(r,2)) = 2n; mul(M, div(...)) = 2n; mul(G, product) = 2n. Total = 9n.",
+      "verified_at": [
+        {
+          "inputs": { "G": 6.674e-11, "M": 5.972e24, "m": 1, "r": 6371000 },
+          "expected_F_approx": 9.82,
+          "computed_F": 9.8195,
+          "pass": true
+        }
+      ],
+      "cross_domain": "Isomorphic to Coulomb's law F=kq1q2/r^2 (same 9n structure). Both are inverse-square laws sharing identical circuit graph."
+    },
+    {
+      "name": "Wave Speed",
+      "formula": "v = f\\lambda",
+      "superbest_cost": 2,
+      "cost_breakdown": "mul(f, lambda) = 2n",
+      "verified_at": [
+        { "inputs": { "f": 440, "lambda": 0.773 }, "expected_v": 340.0, "computed_v": 340.12, "pass": true }
+      ],
+      "cross_domain": "2n multiplication pair family: identical structure to V=IR, F=ma, p=mv."
+    },
+    {
+      "name": "Hooke's Law",
+      "formula": "F = -kx",
+      "superbest_cost": 4,
+      "cost_breakdown": "mul(k, x) = 2n; neg(mul(k,x)) = 2n. Total = 4n.",
+      "verified_at": [
+        { "inputs": { "k": 50, "x": 0.1 }, "expected_F": -5.0, "computed_F": -5.0, "pass": true }
+      ],
+      "cross_domain": "The neg wrapper adds 2n to any 2n product. Pattern: neg(mul(a,b)) = 4n. Common in restoring-force contexts."
+    },
+    {
+      "name": "Electric Power (simple form)",
+      "formula": "P = VI",
+      "superbest_cost": 2,
+      "cost_breakdown": "mul(V, I) = 2n. Note: P=I^2*R costs 5n (pow=3n + mul=2n); P=V^2/R costs 5n (pow=3n + div=2n). Simplest form P=VI reported.",
+      "verified_at": [
+        { "inputs": { "V": 10, "I": 2 }, "expected_P": 20, "computed_P": 20, "pass": true }
+      ],
+      "cross_domain": "P=VI is the 2n canonical. The 5n forms P=I^2R and P=V^2/R are in the pow-then-scale family."
+    },
+    {
+      "name": "Snell's Law (ratio form)",
+      "formula": "\\frac{n_1}{n_2} = \\frac{\\sin\\theta_2}{\\sin\\theta_1}",
+      "superbest_cost": "9n (approximate)",
+      "cost_breakdown": "sin() is outside the real EML primitive set. Via complex EML approximation using two sigmoid-based sin approximations (each ~4n via Taylor or CORDIC analog), plus div = 2n: total approximately 9n. In practice, if angles are precomputed: div(sin_theta2, sin_theta1) = 2n straightforward.",
+      "verified_at": [],
+      "cross_domain": "If both angles precomputed to real values: reduces to 2n division. The sin-domain penalty is architectural, not inherent to the ratio."
+    },
+    {
+      "name": "Pressure",
+      "formula": "P = \\frac{F}{A}",
+      "superbest_cost": 2,
+      "cost_breakdown": "div(F, A) = 2n",
+      "verified_at": [
+        { "inputs": { "F": 100, "A": 5 }, "expected_P": 20.0, "computed_P": 20.0, "pass": true }
+      ],
+      "cross_domain": "1n family member when denominator is variable only: recip(A)*F. As div: 2n. Pattern shared with current density J=I/A, stress sigma=F/A."
+    },
+    {
+      "name": "Work (theta=0 or known angle)",
+      "formula": "W = Fd\\cos\\theta",
+      "superbest_cost": "4n (theta constant); 6n (theta variable, cos approximated)",
+      "cost_breakdown": "If theta is a known constant: mul(F, d) = 2n, then mul(cos_theta_literal, Fd) = 2n. Total = 4n. If theta is variable: cos approximation adds 2n more via sigmoid identity cos(x) = 1-2*sin^2(x/2), total ~6n approximate.",
+      "verified_at": [
+        { "inputs": { "F": 10, "d": 5, "theta": 0 }, "expected_W": 50, "computed_W": 50, "pass": true }
+      ],
+      "cross_domain": "At theta=0: degenerates to 2n pure multiplication. General form is the cos-penalty pattern."
+    },
+    {
+      "name": "Momentum",
+      "formula": "p = mv",
+      "superbest_cost": 2,
+      "cost_breakdown": "mul(m, v) = 2n",
+      "verified_at": [
+        { "inputs": { "m": 5, "v": 3 }, "expected_p": 15, "computed_p": 15, "pass": true }
+      ],
+      "cross_domain": "Exact isomorph of F=ma, V=IR, p=mv, W=Pt. All 2n. The simplest non-trivial computation class."
+    },
+    {
+      "name": "Centripetal Acceleration",
+      "formula": "a = \\frac{v^2}{r}",
+      "superbest_cost": 5,
+      "cost_breakdown": "pow(v, 2) = 3n; div(pow(v,2), r) = 2n. Total = 5n.",
+      "verified_at": [
+        { "inputs": { "v": 4, "r": 2 }, "expected_a": 8.0, "computed_a": 8.0, "pass": true }
+      ],
+      "cross_domain": "5n pow-then-div family. Related to kinetic energy per unit mass (v^2 factor). Also: angular velocity omega=v/r costs 2n; centripetal force F=mv^2/r costs 7n."
+    },
+    {
+      "name": "Period of Simple Pendulum (small angle)",
+      "formula": "T = 2\\pi\\sqrt{\\frac{L}{g}}",
+      "superbest_cost": 8,
+      "cost_breakdown": "div(L, g) = 2n; sqrt(div(L,g)) = 2n; mul(pi, sqrt) = 2n; mul(2, product) = 2n. Total = 8n. (Treating 2*pi as merged constant: 6n.)",
+      "verified_at": [
+        { "inputs": { "L": 1, "g": 9.81 }, "expected_T": 2.006, "computed_T": 2.0061, "pass": true }
+      ],
+      "cross_domain": "8n sqrt-family. Same cost as orbital period T=2*pi*sqrt(a^3/GM) modulo one extra mul. The sqrt(ratio) pattern appears in resonant systems universally."
+    },
+    {
+      "name": "Coulomb's Law",
+      "formula": "F = \\frac{kq_1 q_2}{r^2}",
+      "superbest_cost": 9,
+      "cost_breakdown": "pow(r, 2) = 3n; div(q2, pow(r,2)) = 2n; mul(q1, div(...)) = 2n; mul(k, product) = 2n. Total = 9n.",
+      "verified_at": [
+        {
+          "inputs": { "k": 8.99e9, "q1": 1e-6, "q2": 1e-6, "r": 1 },
+          "expected_F": 8.99e-3,
+          "computed_F": 8.99e-3,
+          "pass": true
+        }
+      ],
+      "cross_domain": "Exact isomorph of Newton's gravitational law (9n). Both are three-variable inverse-square laws. The circuit graph is identical — only the physical constants differ."
+    },
+    {
+      "name": "Wien's Displacement Law",
+      "formula": "\\lambda_{\\max} = \\frac{b}{T}",
+      "superbest_cost": 2,
+      "cost_breakdown": "div(b, T) = 2n. (b = 2.898e-3 m·K is a constant; if treated as ELSb(ln(b), ln(T)): still 2n for the ln-domain division.)",
+      "verified_at": [
+        {
+          "inputs": { "b": 2.898e-3, "T": 5778 },
+          "expected_lambda": 5.015e-7,
+          "computed_lambda": 5.0156e-7,
+          "pass": true,
+          "note": "Solar surface temperature gives peak emission in visible green"
+        }
+      ],
+      "cross_domain": "2n division family: Curie law chi=C/T (same structure), Bragg's law d=lambda/(2*sin_theta) (sin penalty), harmonic period f=1/T (1n recip)."
+    }
+  ],
+  "catalog_before": 295,
+  "catalog_after": 310,
+  "new_equations": 15
+}

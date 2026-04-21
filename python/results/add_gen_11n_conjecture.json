@@ -1,0 +1,50 @@
+{
+  "session": "SESSION-5",
+  "title": "add_gen = 11n: Evidence and Conjecture",
+  "date": "2026-04-20",
+  "superbest_version": "v4",
+  "status": "CONJECTURE",
+
+  "question": "Can general-domain addition x+y be computed in fewer than 11 nodes in F16?",
+
+  "current_cost": "11n",
+  "best_known_lower_bound": "2n (trivial: any tree needs >= 1 node per operand)",
+  "structural_lower_bound": "5n (see argument below)",
+  "exhaustive_bound": "No tree of <= 3 nodes found; enumeration becomes intractable at N=4",
+
+  "why_11n": {
+    "positive_domain": "add_pos(x,y) costs 3n via EXL+LEAd+EML route. Requires x,y > 0 for ln(x), ln(y) to be real.",
+    "negative_domain_obstruction": "For general x,y including negatives: ln(x) is undefined for x <= 0. Every F16 operator uses exp or ln internally. The 11n EML construction avoids ln of the inputs entirely by working in the exponentiated domain.",
+    "lse_does_not_help": "log-sum-exp LSE(x,y) = ln(exp(x)+exp(y)) != x+y except when x=y=-inf. At x=-3, y=-2: lse=-1.687 != -5 = x+y. At x=2, y=7: lse=7.007 != 9 = x+y.",
+    "sign_problem": "Producing a negative result from F16 operators requires neg(2n). After paying 2n for negation, we still need to sum two independent variables, which costs at least 3n more. Minimum: 5n. The remaining gap to 11n is the cost of determining which sign to use without a conditional operator."
+  },
+
+  "key_tests": [
+    {"x": -3, "y": -2, "expected": -5, "note": "Both negative, sum negative"},
+    {"x": -1, "y": 0.5, "expected": -0.5, "note": "Mixed sign, sum negative"},
+    {"x": 0.5, "y": 2, "expected": 2.5, "note": "Both positive — add_pos handles this at 3n"},
+    {"x": 2, "y": 7, "expected": 9, "note": "Both positive"},
+    {"x": -3, "y": 7, "expected": 4, "note": "Mixed sign, sum positive"}
+  ],
+
+  "structural_argument": [
+    "Step 1: Any tree T computing x+y must handle x=-3, y=-2 -> -5.",
+    "Step 2: All F16 operators have exp in their output (positive) or ln in their structure. To produce -5, at least one neg node is required. Cost: 2n minimum.",
+    "Step 3: After paying for neg, we still need to combine x and y. The cheapest two-operand F16 combination is 1n (e.g. EML, DEML, etc.), but none directly computes x+y.",
+    "Step 4: To correctly handle BOTH (x=-3,y=-2) AND (x=-3,y=7) (same x, different y, different sign of result), the tree must process both x and y independently. Minimum: 2 input-touching nodes.",
+    "Step 5: Combined lower bound estimate: 5n. The 11n construction is the best known algebraic identity that avoids branching.",
+    "Step 6: The 11n construction uses: exp(ln(exp(x/(a)) + exp(y/(a)))*a) for suitable a, avoiding any direct ln of input. This requires 11 F16 operator applications.",
+    "Conjecture: 11n is tight. No tree with 4-10 nodes computes x+y for all real x,y in F16."
+  ],
+
+  "open_questions": [
+    "Can a 4-10 node tree be found computationally? (Exhaustive search is expensive but feasible up to N=5 or 6)",
+    "Is there a provable 11n lower bound (not just best-known)?",
+    "If we add a conditional operator IF(cond, a, b) to F16, add drops to 3n. Is this the right extension?",
+    "In F17 = F16 + {min, max}: min(x,y) and max(x,y) allow add-via-cancellation at lower cost?"
+  ],
+
+  "implication": "If add_gen = 11n is proved tight, then polynomial evaluation is genuinely expensive in F16 (every sum of signed terms costs 11n per addition), explaining why EML-based symbolic regression loses to standard neural nets on polynomial targets.",
+
+  "lean_status": "No Lean proof of 11n lower bound exists. The positive-domain lower bound (add_pos >= 3n) is proved (T08). The general lower bound is open."
+}

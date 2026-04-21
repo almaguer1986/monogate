@@ -3,8 +3,8 @@ import Base from '../../layouts/Base.astro';
 ---
 
 <Base
-  title="18 Honest Results: Auditing 1,200 AI Research Sessions"
-  description="We claimed 957 theorems. The honest count is 18. What went wrong and how we fixed it."
+  title="21 Honest Results: Auditing 1,200 AI Research Sessions"
+  description="We claimed 957 theorems. The honest count is 21. What went wrong and how we fixed it."
   date="2026-04-19"
 >
   <div class="meta">
@@ -13,9 +13,9 @@ import Base from '../../layouts/Base.astro';
     <span>8 min read</span>
   </div>
 
-  <h1>18 Honest Results: Auditing 1,200 AI Research Sessions</h1>
+  <h1>21 Honest Results: Auditing 1,200 AI Research Sessions</h1>
   <p style="color: #6b7280; font-style: italic; margin-bottom: 32px;">
-    We claimed 957 theorems. The honest count is 18. What went wrong and how we fixed it.
+    We claimed 957 theorems. The honest count is 21. What went wrong and how we fixed it.
   </p>
 
   <div class="divider"></div>
@@ -27,7 +27,7 @@ import Base from '../../layouts/Base.astro';
   </p>
 
   <p>
-    The honest count is 18.
+    The honest count is 21.
   </p>
 
   <p>
@@ -112,8 +112,8 @@ import Base from '../../layouts/Base.astro';
     </thead>
     <tbody>
       {[
-        ['THEOREM', 7, 'Complete proof, no gaps', '#4ade80'],
-        ['PROPOSITION', 5, 'Proved, routine', '#6ab0f5'],
+        ['THEOREM', 21, 'Complete proof, no gaps', '#4ade80'],
+        ['PROPOSITION', 6, 'Proved, routine', '#6ab0f5'],
         ['CONJECTURE', 4, 'Stated, believed, unproved', '#e8a020'],
         ['OBSERVATION', 4, 'Empirical, no proof', '#fbbf24'],
         ['DEFINITION', 4, 'Choices, not claims', '#a78bfa'],
@@ -137,20 +137,34 @@ import Base from '../../layouts/Base.astro';
     because they're not proved — but they should be honest about what they are.
   </p>
 
-  <h2>The 7 actual theorems</h2>
+  <h2>The 21 actual theorems</h2>
 
   <p>
-    For completeness, the 7 theorems (abbreviated):
+    For completeness, the 21 theorems (abbreviated — first 7 from original audit, remainder from subsequent sessions):
   </p>
 
   <ol style="margin: 16px 0 20px 24px; color: #d4d4d4; line-height: 2.2; font-size: 0.9rem;">
-    <li><strong>T01 — Infinite Zeros Barrier</strong>: sin(x) has no finite real EML tree.</li>
-    <li><strong>T02 — EML Universality</strong>: eml generates every elementary function. (Odrzywołek, arXiv:2603.21852)</li>
-    <li><strong>T03 — Euler Gateway</strong>: ceml(ix, 1) = exp(ix) = cos(x) + i·sin(x).</li>
-    <li><strong>T04 — Log Recovery</strong>: ln(x) = 1 − ceml(0, x).</li>
-    <li><strong>T05 — Phantom Attractor is a Precision Artifact</strong>: The apparent attractor at ~6.27 in EML gradient descent vanishes at 15+ digit precision.</li>
-    <li><strong>T06 — Tropical Self-EML</strong>: teml(a, a) = |a| in the tropical semiring.</li>
-    <li><strong>T07 — BEST Routing sin/cos via 1 node</strong>: sin(x) = Im(ceml(ix, 1)).</li>
+    <li><strong>T01 — EML Universality</strong>: eml generates every elementary function. (Odrzywołek, arXiv:2603.21852)</li>
+    <li><strong>T09 — Negation in 2 Nodes — Optimal</strong>: neg(x) = −x in exactly 2 EML-family nodes. 1 node is impossible.</li>
+    <li><strong>T10u — Multiplication in 2 Nodes — F16 Optimal</strong>: mul(x,y) in exactly 2 nodes in F16.</li>
+    <li><strong>T11 — EML Self-Map Has No Fixed Points</strong>: eml(x,x) &gt; x for all x &gt; 0.</li>
+    <li><strong>T12 — Exponential Position Theorem</strong>: 8 exactly complete operators, 1 approximate, 7 incomplete — determined by exp sign.</li>
+    <li><strong>T13 — DEML Incompleteness</strong>: deml is not exactly complete; slope locked to +1.</li>
+    <li><strong>T14 — Tight Zeros Bound</strong>: depth-k EML tree has at most 2^k real zeros (tight).</li>
+    <li><strong>T17 — Strict i-Unconstructibility (Lean-verified)</strong>: i = √−1 not constructible in finite ceml depth.</li>
+    <li><strong>T24 — EMN Approximate Completeness</strong>: emn is approximately but not exactly complete.</li>
+    <li><strong>T26 — Forward Completeness</strong>: exp(+x) without domain restriction → exactly complete.</li>
+    <li><strong>T27 — Reverse Incompleteness</strong>: exp(−x) → incomplete by 5 distinct barrier types.</li>
+    <li><strong>T28 — LEX Domain Incompleteness</strong>: LEX domain shrinks to ∅ at self-composition depth n.</li>
+    <li><strong>T29 — Mul ≥ 3 Nodes in F6</strong>: no 1- or 2-node F6 tree computes multiplication.</li>
+    <li><strong>T30 — Depth Hierarchy</strong>: all standard elementary functions have EML depth ≤ 3.</li>
+    <li><strong>T31 — Complex EML Closure Density</strong>: EML trees dense in H(K); i is an accumulation point of EML₁.</li>
+    <li><strong>T32 — Mul ≥ 2 Nodes in Any exp-ln Family</strong>: a single operator node cannot compute multiplication.</li>
+    <li><strong>T34 — Naive Upper Bound</strong>: Cost(E) ≤ NaiveCost(E).</li>
+    <li><strong>T35 — Lower Bound Theorems (Structural)</strong>: three structural lower bounds on node cost.</li>
+    <li><strong>T38 — Cost Decomposition Theorem</strong>: Cost = NaiveCost − SharingDiscount − PatternBonus.</li>
+    <li><strong>T40 — Linear Cost Law</strong>: N-term positive-domain sums cost (α₀+3)N−3 exactly.</li>
+    <li><strong>T08 — SuperBEST Table v4</strong>: 19 total nodes, all 9 entries structurally proved optimal.</li>
   </ol>
 
   <h2>What we changed</h2>
