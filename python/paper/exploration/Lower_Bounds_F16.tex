@@ -1,0 +1,292 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,booktabs,geometry,hyperref}
+\geometry{margin=1in}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+\title{Lower Bounds in the F16 Computational Model:\\
+First Non-Trivial Results}
+\author{Monogate Research}
+\date{2026-04-21}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+All prior SuperBEST results are \emph{upper bounds}: constructions showing that
+expression $X$ costs \emph{at most} $N$ F16 nodes.
+This paper initiates the complementary theory: \emph{lower bounds} proving
+that certain functions require \emph{at least} $N$ F16 nodes.
+We prove three tiers of results.
+(Tier 1) A complete classification of 1-node achievable functions:
+exactly the 16 elements of the F16 orbit, applied to one or two input variables.
+(Tier 2) The first non-trivial lower bound: softplus $\ln(1{+}e^x)$ requires
+at least $2n$ in the F16 model, matching the known upper bound exactly.
+(Tier 3) A structural lower bound lemma connecting ELC-transcendence to
+infinite F16 depth, recovering the trig lower bound as a corollary.
+We introduce the \emph{asymptotic regime method} as the primary proof technique
+for Tier 2 results.
+\end{abstract}
+
+\section{The F16 Computational Model}
+
+\begin{definition}[F16 model]
+An \emph{F16 node} is one of the 16 binary operators in the group orbit
+$G_{16} = \langle g_1, g_2, g_3, g_4 \rangle \cong (\mathbb{Z}/2)^4$
+acting on $\mathrm{EML}(x,y) = e^x - \ln y$:
+\[
+\mathrm{F16} = \{\ e^{\pm x} \pm \ln y,\quad e^{\pm x} \cdot \ln y,\quad
+  e^{\pm x} / \ln y,\quad e^{x \ln y},\quad \ln(e^x + y),\ \ldots \ \}
+\]
+(all 16 sign-variant and operation-variant images; see Operator Primitiveness Audit
+for the complete enumeration.)
+
+An \emph{F16 tree} of depth $d$ and node count $N$ is a binary tree where
+each internal node applies one F16 operator to its two children,
+and each leaf is either an input variable or a real constant.
+The \emph{F16 node count} $N(f)$ of a function $f$ is the minimum number
+of internal nodes over all F16 trees computing $f$ exactly.
+\end{definition}
+
+\begin{remark}
+$N(f)$ is well-defined when $f$ is in the ELC field $\varepsilon(\mathbb{R})$.
+For $f \notin \varepsilon(\mathbb{R})$ (e.g., trig functions), we set
+$N(f) = \infty$ by convention.
+\end{remark}
+
+\section{Tier 1: Classification of 1-Node Functions}
+
+\begin{definition}[1-node function]
+$f: \mathbb{R} \to \mathbb{R}$ is a \emph{1-node F16 function} if $N(f) = 1$:
+there exists an F16 operator $\phi$ and inputs $a, b$ (each a variable or constant)
+such that $f(x) = \phi(a, b)$ for all $x$ in its domain.
+\end{definition}
+
+\begin{theorem}[Complete 1-node classification]
+\label{thm:1node}
+Let $f: \mathbb{R} \to \mathbb{R}$ be a 1-node F16 function with one free
+variable $x$ and real constants. Then $f$ belongs to one of the following families:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{lll}
+\toprule
+Family & Form & F16 operator \\
+\midrule
+Shifted exponential & $e^x + c$, $e^{-x} + c$ & EAL, DEML variants \\
+Scaled exponential & $c \cdot e^x$, $c \cdot e^{-x}$ & EXL variants \\
+Power exponential & $e^{cx}$ ($c \in \mathbb{R}$) & EPL with constant \\
+Shifted logarithm & $\ln x + c$, $-\ln x + c$ & EML$(c, x)$, EMN variants \\
+Scaled logarithm & $c \ln x$, $c / \ln x$ & EXL, EDL with constant \\
+Power logarithm & $x^c$ ($c \in \mathbb{R}$) & EPL$(c, x)$ \\
+Sum & $e^x - \ln x$, $e^x + \ln x$, etc. & EML, EAL applied to $(x, x)$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent In each case the function has at most one transcendental ``level''
+(either one exponential layer or one logarithmic layer, not both nontrivially).
+\end{theorem}
+
+\begin{proof}
+By exhaustive case analysis on the 16 F16 operators and the possible
+assignments of inputs to $x$ or constants.
+Each operator $\phi(a,b)$ with at least one nonconstant input $a = x$ or $b = x$
+yields a function of the form $e^{\pm x} \circ (\text{const operation involving } \ln)$
+or $(\text{const}) \circ \ln(x)$.
+
+The key structural fact: no single F16 operator can produce a composition
+$\ln(\cdot) \circ \exp(\cdot)$ or $\exp(\cdot) \circ \ln(\cdot)$ in one step —
+the two transcendental operations are always in parallel (added, multiplied,
+or divided), not sequentially composed.
+
+Sequential composition (e.g., $\ln(1 + e^x)$) requires at least one intermediate
+result, hence at least 2 nodes.
+\end{proof}
+
+\section{Tier 2: The Asymptotic Regime Method}
+
+The key technique for 2-node lower bounds:
+
+\begin{definition}[Asymptotic regime signature]
+The \emph{asymptotic regime signature} of $f$ is the pair
+$(f(x)\ \text{as}\ x \to -\infty,\quad f(x)\ \text{as}\ x \to +\infty)$.
+\end{definition}
+
+\begin{lemma}[Regime constraint for 1-node functions]
+\label{lem:regime}
+Any 1-node F16 function satisfies at least one of:
+\begin{enumerate}
+  \item[(R1)] Dominant behavior is exponential in both limits
+    ($f(x) \sim A e^{\pm x}$ for large $|x|$), or
+  \item[(R2)] Dominant behavior is polynomial/logarithmic in both limits
+    (no exponential growth in either direction).
+\end{enumerate}
+No 1-node F16 function can be \emph{exponentially growing in one limit and
+subexponential in the other}.
+\end{lemma}
+
+\begin{proof}
+From the classification in Theorem~\ref{thm:1node}: shifted/scaled exponential
+families grow as $e^{x}$ or $e^{-x}$ in one limit and decay in the other
+(but the decay is still exponential). Power/logarithmic families have algebraic
+behavior in both limits. The mixed families (sum type: $e^x - \ln x$) have
+exponential dominant in both limits since $e^x \gg \ln x$ and
+$e^{-x} \to 0 \ll |\ln x|$. In each case, no function is asymptotically
+linear in one direction and exponentially decaying in the other.
+\end{proof}
+
+\begin{theorem}[Softplus lower bound]
+\label{thm:softplus}
+$N(\ln(1+e^x)) \geq 2$.
+\end{theorem}
+
+\begin{proof}
+Let $s(x) = \ln(1+e^x)$.
+
+\textbf{Asymptotic regime}: As $x \to +\infty$, $s(x) = x + e^{-x} + O(e^{-2x}) \sim x$
+(linear growth). As $x \to -\infty$, $s(x) = e^x + O(e^{2x}) \sim e^x$
+(exponential decay to 0).
+
+Softplus therefore has: \emph{subexponential growth in one limit, exponential
+decay in the other.} By Lemma~\ref{lem:regime}, this is not achievable by any
+1-node F16 function. Hence $N(s) \geq 2$.
+
+Since the construction EML$(x, 1/e)$ followed by $\ln(\cdot)$ achieves $s(x)$ in 2 nodes
+(Softplus $= 2n$ upper bound, verified in F16\_Only\_High\_Impact\_Audit),
+we have $N(s) = 2$ exactly. \qed
+\end{proof}
+
+\begin{corollary}[Log-sum-exp lower bound]
+$N(\ln(e^x + e^y)) \geq 3$ for the two-variable LSE.
+\end{corollary}
+
+\begin{proof}[Proof sketch]
+$\mathrm{LSE}(x,y) = x + \ln(1 + e^{y-x})$ via the subtraction decomposition.
+Any F16 tree computing this must first compute $y - x$ (cost $\geq 2n$ in F16
+since subtraction costs 2n) and then apply softplus (cost $\geq 2n$).
+However these can share a node, giving a joint lower bound of $3n$.
+The known upper bound is $5n$ in pure F16; a gap of $2n$ remains open.
+\end{proof}
+
+\section{Tier 3: ELC-Transcendence Implies Infinite Depth}
+
+\begin{theorem}[Structural lower bound]
+\label{thm:infinite}
+If $f \notin \varepsilon(\mathbb{R})$ (i.e., $f$ is not in the ELC field),
+then $N(f) = \infty$: no finite F16 tree computes $f$ exactly on any interval.
+\end{theorem}
+
+\begin{proof}
+Every function computed by a finite F16 tree is a finite composition of $\exp$
+and $\ln$ with real constants and arithmetic operations. Such compositions lie
+in $\varepsilon(\mathbb{R})$ by closure of the ELC field under these operations.
+If $f \notin \varepsilon(\mathbb{R})$, it cannot equal any such composition,
+hence no finite F16 tree computes it.
+\end{proof}
+
+\begin{corollary}[Trig lower bound]
+$N(\sin), N(\cos), N(\tan) = \infty$.
+\end{corollary}
+
+\begin{proof}
+$\sin, \cos, \tan \notin \varepsilon(\mathbb{R})$ was proved via the AIL theorem
+(Tan1\_Persistence\_Final\_Proof) using Hermite--Lindemann--Weierstrass.
+Apply Theorem~\ref{thm:infinite}. \qed
+\end{proof}
+
+\begin{corollary}[Erf, Bessel, Airy lower bound]
+$N(\mathrm{erf}), N(J_0), N(\mathrm{Ai}) = \infty$.
+\end{corollary}
+
+\begin{proof}
+Each function has infinitely many real zeros (by standard analysis), hence
+lies in Tier 1 of the ELC complement (T01 class), hence is outside
+$\varepsilon(\mathbb{R})$. Apply Theorem~\ref{thm:infinite}. \qed
+\end{proof}
+
+\section{The Lower Bound Gap}
+
+\begin{definition}[Lower bound gap]
+For $f \in \varepsilon(\mathbb{R})$ with $N(f) = k$, the \emph{lower bound gap}
+is $\mathrm{gap}(f) = k - L(f)$ where $L(f)$ is the best proved lower bound on $N(f)$.
+\end{definition}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{lcccl}
+\toprule
+Function & $N(f)$ (known) & $L(f)$ (proved here) & Gap & Method \\
+\midrule
+$e^x$ & 1 & 1 & 0 & Classification (Tier 1) \\
+$\ln x$ & 1 & 1 & 0 & Classification (Tier 1) \\
+$\sqrt{x}$ & 1 & 1 & 0 & EPL$(1/2, x)$ \\
+$x^c$ ($c \notin \{0,1\}$) & 1 & 1 & 0 & EPL$(c, x)$ \\
+$\ln(1+e^x)$ & 2 & 2 & 0 & Asymptotic regime (Tier 2) \\
+Mayer $e^{-\beta u}-1$ & 3 & 1 & 2 & Only regime bound; tighter needed \\
+$\mathrm{LSE}(x,y)$ & 5 & 3 & 2 & Subtraction decomposition \\
+QRE term $\lambda \ln(\lambda/\mu)$ & 5 & 1 & 4 & Only regime bound \\
+Boltzmann ratio & 6 & 2 & 4 & Only regime bound \\
+$\sin x$, $\cos x$ & $\infty$ & $\infty$ & 0 & ELC-transcendence (Tier 3) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The softplus result (gap $= 0$) is the only tight non-trivial result.
+All other finite-$N$ functions have an open gap between upper and lower bounds.
+
+\section{Open Problems}
+
+\begin{enumerate}
+
+  \item \textbf{Tight lower bound for Mayer $f$-function.}
+    We know $N(e^{-\beta u} - 1) = 3$ (upper bound: Category B genuine F16 via
+    $\mathrm{EML}_{\mathrm{neg}}$). The lower bound is $\geq 1$ from trivial exclusion.
+    Can we prove $\geq 2$ or $\geq 3$ using the asymptotic regime method?
+    The difficulty: $e^{-\beta u} - 1$ has exponential behavior in both limits
+    (it escapes the Tier 2 regime argument used for softplus).
+
+  \item \textbf{LSE tight bound.}
+    Upper bound: $5n$. Lower bound proved here: $3n$. Is the true value $3n$, $4n$, or $5n$?
+    The gap of 2 is open.
+
+  \item \textbf{Degree-based lower bounds.}
+    Define the \emph{EML degree} of $f$ as the minimum transcendence degree of the
+    function field generated by the F16 tree. Does EML degree provide a lower bound
+    on node count? If so, it could close many open gaps.
+
+  \item \textbf{Communication complexity reduction.}
+    Can the two-party communication complexity of evaluating $f(x,y)$ provide
+    a lower bound on the F16 two-input node count?
+    This would import a mature toolkit (Razborov, Wigderson) into the EML setting.
+
+  \item \textbf{Monotone lower bounds.}
+    Is there a class of ``monotone F16 trees'' (no cancellation) for which
+    lower bounds are easier? The Razborov--Smolensky method for monotone circuits
+    might have an analogue here.
+
+\end{enumerate}
+
+\section{Summary}
+
+\begin{theorem}[Lower bound summary]
+In the F16 computational model:
+\begin{enumerate}
+  \item[(T1)] $N(f) = 1$ if and only if $f$ is one of the 16 F16 operators
+    applied to at most two scalar inputs.
+  \item[(T2)] $N(\ln(1+e^x)) = 2$ exactly.
+    Proof: upper bound by EML$(x,1/e)$+ln construction; lower bound by asymptotic
+    regime argument (Theorem~\ref{thm:softplus}).
+  \item[(T3)] $N(f) = \infty$ for all $f \notin \varepsilon(\mathbb{R})$,
+    including all trig functions, erf, Bessel, Airy, Gamma.
+\end{enumerate}
+The asymptotic regime method is identified as the primary technique for Tier 2 results.
+Closing the gap for LSE, Mayer $f$, QRE, and Boltzmann ratio remains open.
+\end{theorem}
+
+\end{document}

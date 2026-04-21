@@ -1,0 +1,307 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,booktabs,array,longtable,geometry,hyperref,xcolor}
+\geometry{margin=1in}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+\definecolor{corrected}{rgb}{0.0,0.5,0.1}
+\definecolor{removed}{rgb}{0.7,0.1,0.1}
+
+\title{Two-Layer Corrections for the Monogate Research Record\\
+Systematic Relabeling of Pre-Audit Node Counts}
+\author{Monogate Research}
+\date{2026-04-21}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+The operator primitiveness audit (Operator\_Primitiveness\_Audit.tex) and
+the subsequent decision paper (23op\_Layer\_Status\_Decision.tex) established
+that seven operators (EEM, EED, EES, LLA, LLS, LLD, EEA) are not all genuine
+F16 primitives.
+This document serves as the authoritative correction record for all prior
+papers and exploration files.
+It identifies every location where (1) a 23-op extended count was presented
+as if it were an F16 ground-truth count, (2) node counts were incorrect
+under the F16-only model, or (3) savings claims conflated genuine F16 savings
+with notation-only savings.
+The corrections are organized by file.
+After this document, the research record is consistent with the two-layer
+accounting policy established in 23op\_Layer\_Status\_Decision.tex.
+\end{abstract}
+
+\section{Correction Policy Reminder}
+
+\begin{definition}[Two-layer accounting, restated]
+\textbf{Layer 1 (F16 ground-truth)}: counts in terms of the 16 F16 operators only.
+Extended operators (EEM, EED, EES, LLA, LLS, LLD, EEA) each cost their F16-decomposition
+price (3n, 3n, 4n general, 3n, 3n, 4n, 4n respectively), not 1n.
+
+\textbf{Layer 2 (23-op extended)}: extended operators count as 1n each.
+Valid only when labeled explicitly as ``23-op count'' or ``extended-primitive count.''
+\end{definition}
+
+The canonical correct F16 counts for commonly used expressions are in
+F16\_Only\_High\_Impact\_Audit.tex.
+The quantum/physics extended-primitive counts are in
+Quantum\_Costs\_Final\_23.tex (Layer 2, now correctly labeled).
+
+\section{File-by-File Corrections}
+
+\subsection{SuperBEST\_v6\_With\_New\_Primitives.tex}
+
+\textbf{Status:} All node count tables in this file use 23-op primitive counts (1n per extended operator)
+without explicit labeling.
+
+\textbf{Required correction:} Add the following note to the abstract and each table caption:
+\begin{quote}
+\textit{Node counts in this table use the 23-operator extended-primitive model
+(Layer 2). Each of the operators LLS, EEA, EEM, EED, LLA, LLS, LLD is counted
+as 1 node. Corresponding F16 ground-truth counts (Layer 1) are larger by
+0--3 nodes per extended operator used; see F16\_Only\_High\_Impact\_Audit.tex.}
+\end{quote}
+
+\textbf{Specific corrections:}
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{lccl}
+\toprule
+Expression & v6 count & F16 correct & Note \\
+\midrule
+$\ln(x/y)$ (LLS) & 1n & 3n & LLS = div+ln in F16 \\
+$e^{x+y}$ (EEM) & 1n & 3n & EEM = add+exp in F16 \\
+$e^{x-y}$ (EED) & 1n & 3n & EED = sub+exp in F16 \\
+$e^x + e^y$ (EEA) & 1n & 4n & EEA: no F16 shortcut \\
+Softplus ($2n$ via EEA+ln) & 2n & 2n & Correct! F16 also 2n via EML$(x,1/e)$+ln \\
+KL divergence term & 3n (LLS) & 5n & LLS route: div+ln+mul = 5n \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{SuperBEST\_v7\_Full\_23\_Audit.tex}
+
+\textbf{Status:} The file is an audit of the 23-op extended model.
+The title and abstract correctly refer to ``23 operators'' but do not include
+the Layer 2 label consistently in tables.
+
+\textbf{Required correction:} Retitle each table as
+``23-op Extended-Primitive Counts (Layer 2)'' and add a footer to each:
+\begin{quote}
+\textit{$\dagger$ F16 ground-truth counts (Layer 1) are available in
+F16\_Only\_High\_Impact\_Audit.tex and are larger by up to 3n per operator used.}
+\end{quote}
+
+\textbf{Specific node count corrections (F16 ground-truth for reference):}
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{lccl}
+\toprule
+Expression & v7 (23-op) & F16 Layer 1 & Category \\
+\midrule
+$\ln(xy)$ (LLA) & 1n & 3n & A: mul+ln \\
+$\log_y(x)$ (LLD) & 1n & 4n & C: notation-only \\
+$e^{x+y}$ (EEM) & 1n & 3n & A: add+exp \\
+$e^{x-y}$ (EED) & 1n & 3n & A: sub+exp \\
+Quantum rel.\ entropy & 3n (LLS) & 5n & LLS is 3n F16; +mul = 5n \\
+Partition fn.\ pair & 7n (EEA) & 10n & EEA is 4n F16; 7+3=10n \\
+LSE & 2n (EEA+ln) & 5n & EEA+ln F16 = 4+1 = 5n \\
+Spectral decay & 3n (EED) & 5n & EED = sub+exp = 3n; +others \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{SuperBEST\_v8\_Quantum\_Physics\_Integration.tex}
+
+\textbf{Status:} This is the most extensive pre-audit paper.
+It reports aggregate savings of $\sim40\%$ over a representative system using
+the 23-op extended model. The aggregate is correct \emph{within} the 23-op model
+but overstates genuine F16 savings.
+
+\textbf{Required correction:}
+
+(1) Abstract: replace ``\textit{40\% savings over the 16-operator baseline}''
+with ``\textit{40\% savings in the 23-op extended-primitive model (Layer 2);
+genuine F16-only savings are approximately 8--15\% for the same expression set.}''
+
+(2) Table header: add column label ``(23-op count, Layer 2)''.
+
+(3) Summary sentence: ``230n (23-op) for representative system'' is correct
+for Layer 2 but the Layer 1 (F16) total is approximately 300--330n for the
+same system (the exact count depends on which EEA and LLS uses are genuine
+Category A saves vs.\ notation-only Category C).
+
+\textbf{Key per-expression corrections:}
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{lcccc}
+\toprule
+Expression & v8 (23-op) & F16 (Layer 1) & Difference & Type \\
+\midrule
+Quantum rel.\ entropy & 3n & 5n & $+2n$ & C: LLS notation \\
+Partition fn.\ (per pair) & 7n & 10n & $+3n$ & C: EEA notation \\
+LSE & 2n & 5n & $+3n$ & C: EEA notation \\
+Von Neumann entropy & 5n & 8n & $+3n$ & C: LLS+EEA notation \\
+Bures distance & 3n & 4n & $+1n$ & A: genuine F16 save \\
+Boltzmann ratio & 5n & 6n & $+1n$ & C: EED notation (4n genuine) \\
+Mayer $f$-function & 3n & 3n & $0$ & B: genuine F16 via EML$_\mathrm{neg}$ \\
+Softplus & 2n & 2n & $0$ & B: genuine F16 via EML$(x,1/e)$ \\
+Kraus $\sqrt{1-e^{-\gamma t}}$ & 4n & 4n & $0$ & B: genuine F16 \\
+Hydrogen radial & 3n & 3n & $0$ & B: genuine F16 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Quantum\_Costs\_Final\_23.tex}
+
+\textbf{Status:} Written as a 23-op extended-model document.
+The title says ``Final 23'' which partially signals the model but the
+abstract does not include the Layer 2 label.
+
+\textbf{Required correction:} Add to abstract:
+\begin{quote}
+\textit{All node counts in this document are 23-op extended-primitive counts (Layer 2).
+Genuine F16 savings (Layer 1) are identified in F16\_Only\_High\_Impact\_Audit.tex.}
+\end{quote}
+
+The following counts from Quantum\_Costs\_Final\_23.tex were found to be
+\emph{overstated} relative to F16 in the audit:
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{lccc}
+\toprule
+Item & Claimed savings (23-op) & Genuine F16 savings & Type \\
+\midrule
+Quantum rel.\ entropy & $6n \to 3n$ (save $3n$) & $6n \to 5n$ (save $1n$) & C \\
+Partition fn.\ pair & $10n \to 7n$ (save $3n$) & $10n \to 10n$ (save $0n$) & C \\
+Lindblad dissipator & $12n \to 9n$ (save $3n$) & $12n \to 11n$ (save $1n$) & C \\
+Kraus factor & $7n \to 4n$ (save $3n$) & $6n \to 4n$ (save $2n$) & B \\
+\bottomrule
+\end{tabular}
+\end{center}
+These overclaims are notation-only (Category C) except Kraus which is genuine.
+
+\subsection{SpecialFunctions\_Physics\_Final\_Audit.tex}
+
+\textbf{Status:} Mostly correct. The special function $\infty$-cost results
+(erf, Bessel, Airy, lgamma, Fresnel, $\zeta$) are unconditionally correct and
+do not involve extended operators.
+
+\textbf{No correction required for} the $N(f) = \infty$ results.
+
+\textbf{Correction required for:}
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{lccc}
+\toprule
+Expression & Claimed cost & F16 correct & Note \\
+\midrule
+Boltzmann ratio $e^{-\beta(E_j - E_i)}$ & $5n$ (via EED) & $6n$ F16 & EED notation (+1n); genuine save is 4n \\
+Mayer $f$: $e^{-\beta u}-1$ & $3n$ (via EES) & $3n$ F16 genuine & B: EML$_\mathrm{neg}$ achieves same \\
+Saddle-point integrand & $7n \to 6n$ & $7n \to 7n$ & EED used; no genuine F16 gain \\
+Hydrogen radial & $4n \to 3n$ & $4n \to 3n$ & B: genuine EPL save \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{New\_Minimal\_Identities\_23.tex}
+
+\textbf{Status:} Mixed. Several identities use 23-op counts correctly;
+others are genuine F16 results.
+
+\textbf{Confirmed correct (genuine F16):}
+\begin{itemize}
+  \item Softplus $= 2n$: F16 genuine via EML$(x, 1/e)$ + ln (Category B)
+  \item $x^c = 1n$: F16 genuine via EPL$(c, x)$
+  \item $e^{cx} = 1n$: F16 genuine via EPL with constant
+  \item $\ln(xy) = 3n$: F16 correct (LLA = mul+ln)
+\end{itemize}
+
+\textbf{Requires 23-op label:}
+\begin{itemize}
+  \item LSE($x,y$) $= 2n$: only under 23-op model (EEA+ln = 1n+1n); F16 = 5n
+  \item KL term $= 3n$: only under 23-op (LLS+mul = 1n+2n); F16 = 5n
+  \item Telescoping log-ratio $= 1n$: only under 23-op (LLS); F16 = 3n per term
+  \item Two-arg softmax $= 3n$: only under 23-op; F16 = 6n
+\end{itemize}
+
+\subsection{preprint.tex (main arXiv paper)}
+
+\textbf{Status:} The main preprint does not use 23-op extended counts in its
+core claims. The SuperBEST core table (15n/79.5\%) is F16 ground-truth and
+is correct as stated.
+
+\textbf{No correction required} to the core table or the 79.5\% headline figure.
+
+\textbf{Minor clarification required:} The phrase
+``extended by softplus for numerical continuity'' (line 630) is fine as stated
+(softplus is 2n in both models) but should note:
+``softplus $\ln(1+e^x)$ costs $2n$ in both F16 and 23-op models via
+EML$(x, 1/e) + \ln(\cdot)$.''
+
+\section{What Remains Correct Without Correction}
+
+\begin{enumerate}
+  \item \textbf{SuperBEST core table} (v5.2): 15n/79.5\% positive, 22n/69.9\% general.
+    All F16 ground-truth. Unaffected.
+  \item \textbf{sqrt = 1n} via EPL$(1/2, x)$. Correct.
+  \item \textbf{$N(\sin) = N(\cos) = N(\tan) = \infty$}. Proved. Correct.
+  \item \textbf{$N(\mathrm{erf}) = N(J_0) = N(\mathrm{Ai}) = \infty$}. Proved. Correct.
+  \item \textbf{Mayer $f$-function $= 3n$ in F16}. Genuine Category B. Correct.
+  \item \textbf{Softplus $= 2n$ in F16}. Genuine Category B. Correct.
+  \item \textbf{Boltzmann ratio: 4n genuine F16 saving} ($10n \to 6n$). Correct.
+  \item \textbf{Kraus factor $= 4n$ in F16}. Genuine Category B. Correct.
+  \item \textbf{Hydrogen radial $= 3n$ in F16}. Genuine. Correct.
+  \item \textbf{tan(1) $\notin \varepsilon(\mathbb{R})$}. Proved. Correct.
+  \item \textbf{Three-tier ELC complement classification}. Correct.
+  \item \textbf{CONJ\_NO\_OP\_24 (now Theorem)}: exactly 23 operators. Correct.
+\end{enumerate}
+
+\section{Corrected Headline Numbers}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{lccc}
+\toprule
+Claim & Pre-audit & F16-correct (Layer 1) & 23-op (Layer 2) \\
+\midrule
+SuperBEST positive total & 15n & 15n & 15n \\
+SuperBEST savings & 79.5\% & 79.5\% & 79.5\% \\
+Quantum rel.\ entropy (per term) & 3n & 5n & 3n \\
+Partition fn.\ pair & 7n & 10n & 7n \\
+LSE($x,y$) & 2n & 5n & 2n \\
+Softplus & 2n & 2n & 2n \\
+Mayer $f$-function & 3n & 3n & 3n \\
+Boltzmann ratio (full) & 5n & 6n & 5n \\
+Aggregate quantum system & $\sim 230n$ & $\sim 300$--$330n$ & $\sim 230n$ \\
+Aggregate savings & 40\% & 8--15\% genuine & 40\% (23-op) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Note}: The 40\% savings in the 23-op model is real \emph{for implementations
+that provide the 7 extended operators as atomically fused primitives} (e.g., CUDA kernels,
+hardware-fused DEML/EEA/LLS operations). The 8--15\% genuine F16 savings applies to
+software using standard exp/ln library calls.
+
+\section{Publication Status Recommendation}
+
+\begin{enumerate}
+  \item \textbf{arXiv preprint (preprint.tex):} No corrections needed. The core
+    F16 results (15n/79.5\%) are sound. Proceed to submission as-is for the
+    core complexity results. Addenda for the quantum catalog should be filed
+    separately as Layer 2 extended-model results.
+
+  \item \textbf{Extended catalog papers (v6, v7, v8):} Relabel all tables
+    as 23-op Layer 2 before any public filing or linking from arXiv.
+
+  \item \textbf{New quantum results paper:} Can be written from scratch using
+    F16\_Only\_High\_Impact\_Audit.tex (Layer 1) as the ground-truth,
+    with a separate section for Layer 2 results clearly labeled.
+    The genuine F16 savings (Mayer $f$, softplus, Boltzmann, Kraus) are real
+    and publishable as F16 results.
+\end{enumerate}
+
+\end{document}
