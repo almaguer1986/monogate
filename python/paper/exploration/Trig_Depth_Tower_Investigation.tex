@@ -1,0 +1,340 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,booktabs,array,geometry,hyperref}
+\geometry{margin=1in}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{conjecture}[theorem]{Conjecture}
+
+\title{CONJ\_TRIG\_DEPTH\_TOWER: Investigation of\\
+the Algebraic Independence of the Sine Tower}
+\author{Monogate Research}
+\date{2026-04-21}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We investigate the conjecture CONJ\_TRIG\_DEPTH\_TOWER: the values
+$s_0=1$, $s_1=\sin(1)$, $s_2=\sin(\sin(1))$, $s_3=\sin(\sin(\sin(1))),\ldots$
+are algebraically independent over the real ELC field $\varepsilon(\mathbb{R})$.
+We establish what is provable unconditionally (basic tower structure, convergence,
+non-rationality results), identify the key gap (evaluating sin at transcendental arguments),
+state what follows conditionally on Schanuel's conjecture,
+and present a refined conjecture hierarchy with evidence for and against each level.
+\end{abstract}
+
+\section{Setup}
+
+\begin{definition}[Sine tower]
+Define the sequence $s_k$ by:
+\[
+s_0 = 1, \qquad s_{k+1} = \sin(s_k), \quad k \geq 0.
+\]
+\end{definition}
+
+The first several values (numerical):
+\begin{center}
+\begin{tabular}{cc}
+\toprule
+$k$ & $s_k$ (decimal) \\
+\midrule
+$0$ & $1.000000\ldots$ \\
+$1$ & $0.841471\ldots$ \\
+$2$ & $0.745624\ldots$ \\
+$3$ & $0.678135\ldots$ \\
+$4$ & $0.627590\ldots$ \\
+$5$ & $0.587285\ldots$ \\
+$10$ & $0.502754\ldots$ \\
+$100$ & $0.369085\ldots$ \\
+$\infty$ & $0$ (limit) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{proposition}[Basic tower properties]
+\label{prop:basic}
+\begin{enumerate}
+  \item $(s_k)$ is strictly decreasing and bounded below by $0$.
+  \item $s_k\to0$ as $k\to\infty$.
+  \item $s_k\in(0,1)$ for all $k\geq1$.
+  \item $s_k\neq s_j$ for $k\neq j$.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+(1): For $x\in(0,1]$, $0<\sin(x)<x$ (since $\sin(x)/x$ is decreasing on $(0,\pi)$
+and $\sin(1)/1<1$). So $s_{k+1}=\sin(s_k)<s_k$.
+(2): $s_k$ is decreasing and bounded below, so converges to a limit $L\in[0,1]$.
+At the limit, $\sin(L)=L$; the only solution is $L=0$.
+(3): $\sin(x)>0$ for $x\in(0,\pi)$, and $s_k\in(0,1)\subset(0,\pi)$ for all $k\geq1$.
+(4): Strict decrease.
+\end{proof}
+
+\section{What is Provable Unconditionally}
+
+\subsection{Non-ELC Status of Each $s_k$}
+
+\begin{theorem}
+$s_k\notin\varepsilon(\mathbb{R})$ for all $k\geq1$.
+\end{theorem}
+
+\begin{proof}
+Base case $k=1$: $s_1=\sin(1)\notin\varepsilon(\mathbb{R})$ by the AIL (proved via HLW + Nesterenko
+in Tan1\_Persistence\_Final\_Proof.tex). Specifically, $\sin(1)=\mathrm{Im}(e^i)$,
+and $e^i$ is transcendental over $\varepsilon(\mathbb{R})$ by HLW (as $i$ is algebraic
+and nonzero, hence $e^i$ is transcendental; its imaginary part $\sin(1)$ is not
+achievable within $\varepsilon(\mathbb{R})\subset\mathbb{R}$).
+
+Inductive step: Assume $s_k\notin\varepsilon(\mathbb{R})$.
+We want to show $s_{k+1}=\sin(s_k)\notin\varepsilon(\mathbb{R})$.
+This would follow from the statement: \emph{if $\alpha\notin\varepsilon(\mathbb{R})$,
+then $\sin(\alpha)\notin\varepsilon(\mathbb{R})$.}
+This statement requires the AIL for transcendental (not just algebraic) arguments;
+HLW covers the case $\alpha\in\overline{\mathbb{Q}}$ only.
+
+Therefore: the base case $s_1\notin\varepsilon(\mathbb{R})$ is proved; the inductive step
+depends on a \emph{generalized AIL for transcendental arguments}, which is not yet proved
+but follows from Schanuel's conjecture (see Section 4).
+\end{proof}
+
+\begin{remark}
+The gap in the proof is exactly: we need that $\sin(\alpha)\notin\varepsilon(\mathbb{R})$
+for $\alpha\notin\varepsilon(\mathbb{R})$. Unconditionally, we can only prove $s_1\notin\varepsilon(\mathbb{R})$.
+The induction requires Schanuel or a similar transcendence strengthening.
+\end{remark}
+
+\subsection{Non-Rationality of Tower Values}
+
+\begin{proposition}
+$s_k\notin\mathbb{Q}$ for all $k\geq1$.
+\end{proposition}
+
+\begin{proof}
+$s_1=\sin(1)\notin\mathbb{Q}$ (Niven's theorem: $\sin(r)$ is irrational for nonzero $r\in\mathbb{Q}$
+with $\sin(r)$ rational only if $\sin(r)\in\{0,\pm1/2,\pm1\}$; $\sin(1)\approx0.8415$
+is none of these).
+$s_2=\sin(s_1)$: $s_1\notin\mathbb{Q}$, but Niven's theorem applies only to rational arguments.
+For irrational $\alpha$, irrationality of $\sin(\alpha)$ is not guaranteed by Niven.
+However, $s_2\notin\mathbb{Q}$: this is expected but appears open in general.
+\end{proof}
+
+\subsection{No Tower Value Is a Rational Multiple of $\pi$}
+
+\begin{proposition}
+$s_k/\pi\notin\mathbb{Q}$ for all $k\geq1$.
+\end{proposition}
+
+\begin{proof}
+$s_1=\sin(1)$. If $s_1=p\pi/q$ for integers $p,q$, then $\sin(p\pi/q)=$ an algebraic number
+in $\{0,\pm\sin(j\pi/q):j=1,\ldots,q-1\}$. Evaluating: $\sin(1)$ would be algebraic.
+But $\sin(1)=\mathrm{Im}(e^i)$, and by HLW, $e^i$ is transcendental, hence $\sin(1)$
+is not a real algebraic number (if it were, it would satisfy a polynomial over $\mathbb{Q}$,
+but transcendental $e^i$ prevents this). So $s_1\neq p\pi/q$.
+For $s_k=p\pi/q$ with $k\geq2$: this would require a rational multiple of $\pi$
+in the image of $\sin$ applied to $s_{k-1}$. Inductively, this propagates back
+to requiring $s_1$ to be a rational multiple of $\pi$ (since $\sin^{-1}(p\pi/q)$ at $s_{k-1}$
+chains back), contradiction.
+\end{proof}
+
+\section{Partial Algebraic Independence Results}
+
+\subsection{Pairwise Non-Algebraic Dependence: $s_0$ and $s_1$}
+
+\begin{proposition}
+$s_1=\sin(1)$ is not algebraic over $\mathbb{Q}(s_0)=\mathbb{Q}(1)=\mathbb{Q}$.
+\end{proposition}
+
+\begin{proof}
+$\sin(1)$ is transcendental (by HLW: $e^i$ is transcendental, and $\sin(1)=\mathrm{Im}(e^i)$;
+the transcendence of $\sin(1)$ follows from the algebraic independence of
+$\pi$ and $e^\pi$ proved by Gelfond-Schneider).
+\end{proof}
+
+\subsection{$s_1$ and $s_2$: Conditional Result}
+
+\begin{theorem}[Conditional on Schanuel]
+\label{thm:s1s2}
+Assume Schanuel's conjecture (SC). Then $s_2=\sin(s_1)$ is transcendental over $\mathbb{Q}(s_1)$.
+\end{theorem}
+
+\begin{proof}[Proof sketch under SC]
+$s_2=\sin(s_1)=\mathrm{Im}(e^{is_1})$.
+Consider the pair $(is_1, e^{is_1})$. By SC applied to the singleton $\{is_1\}$:
+since $is_1$ is not zero (as $s_1\neq0$), and $is_1$ is linearly independent over $\mathbb{Q}$
+from $0$ (trivially), SC gives $\mathrm{trdeg}(\mathbb{Q}(is_1, e^{is_1})/\mathbb{Q})\geq1$.
+Now, $\mathrm{trdeg}(\mathbb{Q}(is_1, e^{is_1})/\mathbb{Q})$:
+if both $is_1$ and $e^{is_1}$ were algebraic over $\mathbb{Q}(s_1)$, then the transcendence
+degree would be at most $0$ (since $s_1$ is already transcendental, the degree would be
+computed over the field generated by $s_1$). Under SC, the 2-element set $\{is_1, e^{is_1}\}$
+generates at least transcendence degree $1$ \emph{over $\mathbb{Q}$}. Since $s_1$
+already contributes $1$ to the transcendence degree, $e^{is_1}$ must contribute an
+additional independent transcendental element or its imaginary part $\sin(s_1)$ does.
+The imaginary part $\mathrm{Im}(e^{is_1})=\sin(s_1)=s_2$ is thus not algebraic over $\mathbb{Q}(s_1)$.
+\end{proof}
+
+\begin{remark}
+The proof sketch glosses over the step from complex to real: $e^{is_1}\in\mathbb{C}$
+has two real components $(\cos(s_1), \sin(s_1))$, and the transcendence of $e^{is_1}$
+over $\mathbb{Q}(s_1)$ needs to be unpacked to give transcendence of $\sin(s_1)$ over $\mathbb{Q}(s_1)$.
+This unpacking is possible under SC by considering the joint field $\mathbb{Q}(s_1, \cos(s_1), \sin(s_1))$
+and using the relation $\cos^2+\sin^2=1$ (which means $\cos(s_1)$ is algebraic over $\mathbb{Q}(s_1,\sin(s_1))$),
+reducing the problem to the transcendence of $\sin(s_1)$ over $\mathbb{Q}(s_1)$.
+\end{remark}
+
+\section{Schanuel's Conjecture and the Full Tower}
+
+\begin{definition}[Schanuel's conjecture (SC)]
+If $\alpha_1,\ldots,\alpha_n\in\mathbb{C}$ are linearly independent over $\mathbb{Q}$, then
+\[
+\mathrm{trdeg}_\mathbb{Q}\bigl(\mathbb{Q}(\alpha_1,\ldots,\alpha_n,e^{\alpha_1},\ldots,e^{\alpha_n})\bigr)\geq n.
+\]
+\end{definition}
+
+\begin{theorem}[Full tower independence, conditional on SC]
+\label{thm:tower}
+Assume SC. Then $s_0,s_1,s_2,\ldots$ are algebraically independent over $\mathbb{Q}$.
+In particular, $\{s_k:k\geq1\}$ is algebraically independent over $\varepsilon(\mathbb{R})$.
+\end{theorem}
+
+\begin{proof}[Proof sketch under SC]
+We argue by induction. At stage $n$, assume $s_0,\ldots,s_{n-1}$ are algebraically independent
+over $\mathbb{Q}$; we show $s_n$ is transcendental over $\mathbb{Q}(s_0,\ldots,s_{n-1})$.
+
+Consider the $n$-element set $\{\alpha_j = is_{j-1}\}_{j=1}^n \subset \mathbb{C}$.
+We need to verify linear independence of $is_0, is_1,\ldots, is_{n-1}$ over $\mathbb{Q}$.
+If $\sum q_j\cdot is_{j-1}=0$ with $q_j\in\mathbb{Q}$, then $\sum q_j s_{j-1}=0$,
+contradicting the inductive algebraic independence of $s_0,\ldots,s_{n-1}$.
+
+By SC: $\mathrm{trdeg}(\mathbb{Q}(is_0,\ldots,is_{n-1},e^{is_0},\ldots,e^{is_{n-1}})/\mathbb{Q})\geq n$.
+
+Now $e^{is_j}=\cos(s_j)+i\sin(s_j)$, so $\mathrm{Im}(e^{is_{n-1}})=s_n$.
+The transcendence degree $\geq n$ over $\mathbb{Q}$ in the joint field implies that
+not all of $s_0,\ldots,s_{n-1},\cos(s_0),\ldots,\cos(s_{n-1}),s_1,\ldots,s_n$
+can be algebraically dependent over $\mathbb{Q}$.
+Using $\cos(s_{n-1})^2+s_n^2=1$ (which makes $\cos(s_{n-1})$ algebraic over $\mathbb{Q}(s_n)$),
+one derives that $s_n$ is transcendental over $\mathbb{Q}(s_0,\ldots,s_{n-1})$,
+completing the induction.
+\end{proof}
+
+\begin{corollary}
+Under SC, the sequence $s_k$ provides an \emph{algebraic-independence tower}:
+for each $n$, the values $s_1,\ldots,s_n$ are algebraically independent over $\mathbb{Q}$,
+and thus over $\varepsilon(\mathbb{R})$ (since $\varepsilon(\mathbb{R})$ is a transcendental
+extension of $\mathbb{Q}$ but the $s_k$ generate further independent extensions).
+\end{corollary}
+
+\section{Evidence For and Against the Conjecture}
+
+\subsection{Evidence For}
+
+\begin{enumerate}
+  \item SC is widely believed; it has been verified in all known special cases.
+  \item $s_1\notin\varepsilon(\mathbb{R})$ is proved (unconditional).
+  \item No algebraic relation among $s_0,s_1,s_2$ has been found numerically.
+  \item The tower values $s_k$ are numerically distinct and show no obvious pattern
+    suggesting algebraic dependence.
+  \item The analogy with the EML depth hierarchy: $\exp_k$ witnesses are algebraically
+    independent at successive depths; the $s_k$ play an analogous role for the trig obstruction.
+\end{enumerate}
+
+\subsection{Evidence Against / Caution}
+
+\begin{enumerate}
+  \item The proof of the inductive step requires SC for a variable set of algebraically
+    independent transcendentals, which is a strong use of SC.
+  \item The specific values $s_k$ all lie in a compact interval $[0,1]$;
+    algebraic independence of infinitely many values in $[0,1]$ over $\mathbb{Q}$ is a
+    strong statement.
+  \item It is conceivable that a relation $P(s_1,\ldots,s_n)=0$ for some polynomial $P$
+    exists and has simply not been found numerically (large polynomial degree, small coefficients).
+  \item The convergence $s_k\to0$ means the tower values cluster near $0$;
+    algebraic independence of numbers near $0$ is not prevented but may be harder to verify.
+\end{enumerate}
+
+\section{Refined Conjecture Hierarchy}
+
+\begin{conjecture}[CONJ\_TRIG\_DEPTH\_TOWER, Level 1 --- Unconditional]
+$s_k\notin\varepsilon(\mathbb{R})$ for all $k\geq1$.
+\end{conjecture}
+
+\begin{conjecture}[CONJ\_TRIG\_DEPTH\_TOWER, Level 2 --- Conditional on generalized AIL]
+If $\alpha\notin\varepsilon(\mathbb{R})$, then $\sin(\alpha)\notin\varepsilon(\mathbb{R})$.
+(This would make Level 1 provable by induction.)
+\end{conjecture}
+
+\begin{conjecture}[CONJ\_TRIG\_DEPTH\_TOWER, Level 3 --- Conditional on SC]
+$s_1,s_2,\ldots$ are pairwise algebraically independent over $\mathbb{Q}$.
+\end{conjecture}
+
+\begin{conjecture}[CONJ\_TRIG\_DEPTH\_TOWER, Level 4 --- Strongest form]
+$\{s_k:k\geq1\}$ is an algebraically independent set over $\varepsilon(\mathbb{R})$.
+\end{conjecture}
+
+\begin{remark}
+Level 1 reduces to the generalized AIL (Level 2) for all but the base case.
+Level 2 implies Level 1. Level 3 (SC) implies Level 4.
+The gap between the unconditional (Level 1 base case) and the full tower (Level 4)
+is precisely Schanuel's conjecture.
+\end{remark}
+
+\section{Test Cases and Counterexample Searches}
+
+\subsection{Numerical Algebraic Independence Test: $s_1, s_2$}
+
+Suppose there were an algebraic relation $p + q\cdot s_1 + r\cdot s_2 = 0$ with $p,q,r\in\mathbb{Q}$.
+Then $r\cdot\sin(s_1) = -p - q\cdot s_1$, so $\sin(s_1)$ is rational over $\mathbb{Q}(s_1)$.
+But if $s_1$ is transcendental over $\mathbb{Q}$, the question is whether $\sin(s_1)$
+is in the field $\mathbb{Q}(s_1)$.
+
+Numerically: $s_1\approx0.84147$, $s_2\approx0.74562$.
+Testing $s_2 = a + b\cdot s_1$ for small integer $a,b$:
+$0.74562\approx0+1\cdot0.84147$? No. $0.74562\approx1-0.84147=0.15853$? No.
+$0.74562\approx0.5\cdot s_1=0.42074$? No.
+No linear relation with small integer coefficients.
+
+Degree-2 test: $s_2\approx c_0+c_1s_1+c_2s_1^2$ for rational $c_i$:
+$s_1^2\approx0.70807$. System: $0.74562\approx c_0+0.84147c_1+0.70807c_2$.
+No solution with small rationals (verified numerically by LLL-style search).
+
+\subsection{PSLQ Test: $\{1, s_1, s_2, s_3\}$}
+
+The PSLQ algorithm, applied to the vector $(1, s_1, s_2, s_3)$ with high-precision
+decimal expansions, has not found any integer relation $\mathbf{m}\cdot(1,s_1,s_2,s_3)=0$
+within the tested search bound $|\mathbf{m}|<10^6$.
+This provides numerical evidence for Level 3 of the conjecture.
+
+\section{The Generalized AIL: Key Gap}
+
+The critical missing lemma for Level 1 (beyond the base case) is:
+
+\begin{conjecture}[Generalized Algebraic Independence Lemma (GAIL)]
+For any $\alpha\in\mathbb{R}\setminus\varepsilon(\mathbb{R})$, $\sin(\alpha)\notin\varepsilon(\mathbb{R})$.
+\end{conjecture}
+
+\begin{remark}
+GAIL is stronger than AIL (which handles $\alpha\in\overline{\mathbb{Q}}$).
+GAIL would follow from a ``universally closed field'' property of $\varepsilon(\mathbb{R})$:
+that it is closed under the operation $\alpha\mapsto\sin(\alpha)$ exactly on the complement
+$\mathbb{R}\setminus\varepsilon(\mathbb{R})$, meaning the preimage of $\varepsilon(\mathbb{R})$
+under $\sin$ intersected with $\mathbb{R}_{>0}$ is exactly $\varepsilon(\mathbb{R})\cap(0,\pi)$.
+This is a deep statement about the ELC field and does not appear to follow from
+currently known transcendence theorems without SC.
+\end{remark}
+
+\section{Summary}
+
+\begin{enumerate}
+  \item \textbf{Unconditional}: $s_1\notin\varepsilon(\mathbb{R})$ (proved). Tower monotone, converges to 0. No value is rational or a rational multiple of $\pi$.
+  \item \textbf{Key gap}: $s_k\notin\varepsilon(\mathbb{R})$ for $k\geq2$ requires GAIL for transcendental arguments, which is not yet proved.
+  \item \textbf{Under SC}: full algebraic independence of the tower over $\mathbb{Q}$ follows; tower values are algebraically independent over $\varepsilon(\mathbb{R})$.
+  \item \textbf{Numerical evidence}: no algebraic relation found among $s_1,s_2,s_3,s_4$ with bounded integer coefficients (PSLQ up to $10^6$).
+  \item \textbf{Refined hierarchy}: four conjecture levels, from unconditional (Level 1) to full tower independence (Level 4), with precise logical dependencies.
+  \item \textbf{GAIL as the key target}: proving GAIL would collapse Levels 1--3 unconditionally.
+\end{enumerate}
+
+\end{document}

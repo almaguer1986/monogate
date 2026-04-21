@@ -1,0 +1,375 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,booktabs,array,geometry,hyperref}
+\geometry{margin=1in}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{conjecture}[theorem]{Conjecture}
+
+\title{The Two-Layer ELC Boundary:\\
+Precise Classification of the Finite-Depth/Infinite-Depth Interface}
+\author{Monogate Research}
+\date{2026-04-21}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+The complement $\mathbb{R}^{\mathbb{R}}\setminus\mathrm{ELC}(\mathbb{R})$ has a structured
+three-tier hierarchy: (Tier 0) non-analytic functions excluded by basic regularity,
+(Tier 1) real-analytic functions with infinitely many zeros excluded by the T01 barrier,
+and (Tier 2) real-analytic functions with finitely many zeros excluded by the AIL
+algebraic-isolation barrier.
+We test a range of boundary functions---$|x|$, ReLU, step, $\mathrm{erf}$, $\mathrm{Li}_2$,
+iterated-tan, $e^{\mathrm{erf}(x)}$, and others---against this classification.
+We identify a \emph{thin shell} of functions that are ``one step from ELC($\mathbb{R}$)''
+in a precise sense (shell functions), characterize their algebraic structure,
+and propose a refined version of the boundary theorem.
+\end{abstract}
+
+\section{The Three-Tier Complement Structure}
+
+\begin{definition}[ELC$(\mathbb{R})$]
+$\mathrm{ELC}(\mathbb{R})$ is the set of functions $f:\mathbb{R}\to\mathbb{R}$ expressible
+as finite compositions of the 23 operators in the closed SuperBEST set.
+Equivalently, $\mathrm{ELC}(\mathbb{R})=\bigcup_{d\geq0}\mathrm{ELC}_d(\mathbb{R})$
+where $\mathrm{ELC}_0=\{\text{constants}\}\cup\{x\}$ and
+$\mathrm{ELC}_{d+1}$ is closed under the 23 gates applied to $\mathrm{ELC}_d$ inputs.
+\end{definition}
+
+\begin{theorem}[Three-tier boundary theorem]
+\label{thm:threetier}
+For $f:\mathbb{R}\to\mathbb{R}$ (or $f$ on a suitable domain), exactly one of the
+following holds:
+\begin{enumerate}
+  \item[\emph{(Tier 0)}] $f$ is not real analytic $\Rightarrow$ $f\notin\mathrm{ELC}(\mathbb{R})$.
+  \item[\emph{(Tier 1)}] $f$ is real analytic with infinitely many zeros on some compact interval
+    $\Rightarrow$ $f\notin\mathrm{ELC}(\mathbb{R})$ (T01 barrier).
+  \item[\emph{(Tier 2)}] $f$ is real analytic, finitely many zeros (locally), but
+    $f(x_0)\notin\varepsilon(\mathbb{R})$ for some $x_0\in\mathbb{Q}$
+    $\Rightarrow$ $f\notin\mathrm{ELC}(\mathbb{R})$ (AIL/algebraic-isolation barrier).
+  \item[\emph{(In ELC)}] $f\in\mathrm{ELC}(\mathbb{R})$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+(Tier 0): ELC$(\mathbb{R})$ functions are compositions of real-analytic primitives
+(exp, ln), hence real analytic on their domains.
+(Tier 1): Proved as T01 in the EML depth hierarchy paper: any nonzero ELC function
+has only finitely many zeros on any compact set, by Rolle's theorem applied inductively
+to the exponential-polynomial structure.
+(Tier 2): If $f(x_0)=c\notin\varepsilon(\mathbb{R})$ for some $x_0\in\mathbb{Q}$,
+then $f\notin\mathrm{ELC}(\mathbb{R})$ because any depth-$d$ ELC expression evaluated
+at $x_0\in\mathbb{Q}$ produces a value in $\varepsilon(\mathbb{R})$ by closure
+of $\varepsilon(\mathbb{R})$ under exp and ln.
+(In ELC): Vacuous if none of Tier 0--2 applies.
+\end{proof}
+
+\begin{remark}
+The three tiers are \emph{disjoint} but not exhaustive in the most general sense:
+there could in principle be functions failing the AIL test without being in Tier 0 or Tier 1,
+yet we have not found examples. All known examples of analytic, finitely-many-zero functions
+outside ELC$(\mathbb{R})$ fall into Tier 2.
+\end{remark}
+
+\section{Tier 0: Non-Analytic Boundary Functions}
+
+\subsection{Absolute Value $|x|$}
+
+$|x|=\max(x,-x)$ is continuous but not differentiable at $x=0$.
+
+\begin{proposition}
+$|x|\in\mathrm{Tier\,0}$: not real analytic, hence outside ELC$(\mathbb{R})$.
+\end{proposition}
+
+\begin{remark}
+For $x>0$: $|x|=x\in\mathrm{ELC}(\mathbb{R})$ (identity). For $x<0$: $|x|=-x\in\mathrm{ELC}(\mathbb{R})$.
+The obstruction is the non-smooth gluing at $x=0$.
+The function $x\mapsto\sqrt{x^2}=|x|$ provides an apparent 2-node ELC route:
+EPL$(2,x)$ [1n: $=x^2$] + EPL$(0.5,\cdot)$ [1n: $=\sqrt{x^2}=|x|$].
+\textbf{But}: EPL$(0.5,x^2)=\exp(0.5\ln(x^2))$; for $x>0$: $=|x|=x$; for $x<0$:
+$\ln(x^2)=\ln((-x)^2)=2\ln|x|$, so EPL$(0.5,x^2)=\exp(\ln|x|)=|x|$ for $x\neq0$. ✓
+\end{remark}
+
+\begin{theorem}[$|x|$ is in ELC$(\mathbb{R}^+)$ but not ELC$(\mathbb{R})$]
+\label{thm:abs}
+$x\mapsto|x|$ is computable as $\mathrm{EPL}(0.5,\mathrm{EPL}(2,x))$ on $\mathbb{R}\setminus\{0\}$
+using $2n$, provided we interpret $\ln(x^2)$ via the branch $2\ln|x|$ for $x<0$.
+However, this expression is undefined at $x=0$ (where $\ln(0)$ is undefined in ELC),
+so $|x|$ as a global function on $\mathbb{R}$ is not ELC-computable.
+\end{theorem}
+
+\begin{proof}
+At $x=0$: EPL$(2,0)=0$, then EPL$(0.5,0)=\exp(0.5\ln(0))=\exp(-\infty)=0$. The limit is $0=|0|$.
+However, $\ln(0)=-\infty$ is not a real number, so the intermediate value is undefined
+within ELC$(\mathbb{R})$ as a function. The limit exists and is correct, but ELC$(\mathbb{R})$
+requires well-defined intermediate values (no $-\infty$ nodes). Thus $|x|$ as a total
+real function is outside ELC$(\mathbb{R})$. \qed
+\end{proof}
+
+\subsection{ReLU $\max(x,0)$}
+
+Similar analysis: ReLU$'$ has a jump at $x=0$. Not differentiable, hence Tier 0.
+
+\begin{proposition}
+$\max(x,0)=\tfrac12(x+|x|)$: same obstruction as $|x|$ at $x=0$.
+\end{proposition}
+
+\subsection{Heaviside Step Function}
+
+$H(x)=\mathbf{1}_{x>0}$ is discontinuous at $x=0$. Tier 0 (not even continuous).
+
+\subsection{Floor and Fractional Part}
+
+$\lfloor x\rfloor$ has jump discontinuities at all integers. Tier 0.
+$\{x\}=x-\lfloor x\rfloor$ same.
+
+\subsection{Smooth Bump Function $\phi(x)=e^{-1/(1-x^2)}\mathbf{1}_{|x|<1}$}
+
+$\phi$ is $C^\infty$ but not real analytic (all derivatives vanish at $\pm1$ but $\phi\not\equiv0$).
+Tier 0 (fails real analyticity by Paley-Wiener type argument).
+
+\section{Tier 1: Oscillatory Real-Analytic Functions (T01)}
+
+\subsection{Standard Trigonometric Functions}
+
+$\sin(x)$, $\cos(x)$, $\tan(x)$ on $\mathbb{R}$ (resp.\ on their natural domains): Tier 1.
+
+\begin{proposition}
+On any interval $[a,b]$ with $b-a>\pi$, the function $\sin$ has infinitely many zeros
+(more precisely: $\sin(n\pi)=0$ for all $n$, accumulating in any unbounded domain).
+\end{proposition}
+
+\subsection{Bessel, Airy, Mathieu Functions}
+
+$J_\nu(x)$, $\mathrm{Ai}(x)$, $\mathrm{Bi}(x)$: all have infinitely many real zeros by
+oscillation theory. Tier 1.
+
+\subsection{$x\sin(1/x)$: Oscillatory Near Zero}
+
+$f(x)=x\sin(1/x)$ for $x\neq0$, $f(0)=0$.
+$f$ has zeros at $x=1/(n\pi)$ for $n\in\mathbb{Z}$, accumulating at $0$.
+$f$ is not real analytic at $x=0$ (no convergent Taylor series).
+Tier 0 (non-analyticity at the accumulation point).
+
+\begin{remark}
+This is an interesting boundary case: the zero accumulation is in Tier 1 style, but
+the non-analyticity places it in Tier 0. Tier 0 is ``more fundamental.''
+\end{remark}
+
+\subsection{$\sin(e^x)$}
+
+$\sin(e^x)$ has zeros at $x=\ln(n\pi)$ for integer $n\geq1$, which form a sequence
+tending to $+\infty$. On any compact interval $[a,b]\subset\mathbb{R}$ there are finitely many zeros
+(since $\ln(n\pi)\to\infty$). But over all of $\mathbb{R}^+$: infinitely many.
+
+\begin{proposition}
+$\sin(e^x)\notin\mathrm{ELC}(\mathbb{R})$.
+\end{proposition}
+
+\begin{proof}
+T01 applies globally: $\sin(e^x)$ has zeros at $x_n=\ln(n\pi)\to\infty$, so
+over $\mathbb{R}$ the function has infinitely many zeros. Any ELC function has
+finitely many zeros on any compact set---here on $[0,\ln(N\pi)]$ there are exactly
+$N$ zeros, and $N$ can be made arbitrarily large. This violates the ELC zero-count bound.
+\end{proof}
+
+\subsection{$|\sin(x)|$}
+
+$|\sin(x)|$ has infinitely many zeros at $x=n\pi$. Moreover, it is not smooth there.
+Tier 0 AND Tier 1 (non-analytic + infinitely many zeros). Tier 0 dominates.
+
+\section{Tier 2: Real-Analytic, Finitely-Many-Zero, Algebraically Isolated}
+
+\subsection{Error Function $\mathrm{erf}(x)$}
+
+$\mathrm{erf}(x)$ is real analytic. Its only zero is at $x=0$.
+$\mathrm{erf}(1)\notin\varepsilon(\mathbb{R})$ (transcendental integral; Risch algorithm).
+Tier 2.
+
+\subsection{Log-Gamma $\ln\Gamma(x)$}
+
+Real analytic on $(0,\infty)$, no zeros. $\ln\Gamma(1)=0\in\varepsilon(\mathbb{R})$,
+but $\ln\Gamma(2)=\ln(1!)=0$, $\ln\Gamma(3)=\ln(2)=1n$... the function takes ELC values
+at positive integers. However, $\ln\Gamma(1/2)=\tfrac12\ln\pi\notin\varepsilon(\mathbb{R})$
+(since $\ln\pi\notin\varepsilon(\mathbb{R})$ by the transcendence of $\pi$ over $\varepsilon(\mathbb{R})$).
+Tier 2.
+
+\subsection{Dilogarithm $\mathrm{Li}_2(x)$}
+
+Real analytic on $(0,1)$, no zeros in $(0,1)$ (where $\mathrm{Li}_2(x)>0$).
+$\mathrm{Li}_2(1/2)=\pi^2/12-\tfrac12\ln^2(2)$: contains $\pi^2$,
+and $\pi\notin\varepsilon(\mathbb{R})$. Tier 2.
+
+\subsection{$\tan(1)$ as a Constant Function}
+
+$f(x)=\tan(1)$ (constant). Trivially real analytic (no zeros if we view it as a function,
+but $f$ has no zeros on $\mathbb{R}$ since $\tan(1)\neq0$).
+$f(0)=\tan(1)\notin\varepsilon(\mathbb{R})$. Tier 2.
+
+\section{Shell Functions: One Step from ELC$(\mathbb{R})$}
+
+\begin{definition}[Shell function]
+A function $f$ is a \emph{first-shell function} if $f\notin\mathrm{ELC}(\mathbb{R})$ but
+$f=g\circ h$ where $g\in\mathrm{ELC}(\mathbb{R})$ and $h\notin\mathrm{ELC}(\mathbb{R})$,
+or $f=g(h_1,\ldots,h_k)$ with at least one $h_i\notin\mathrm{ELC}(\mathbb{R})$ and all others in ELC.
+\end{definition}
+
+\begin{proposition}[Shell examples]
+\begin{enumerate}
+  \item $e^{\mathrm{erf}(x)}$: $g=\exp\in\mathrm{ELC}$, $h=\mathrm{erf}\notin\mathrm{ELC}$. First-shell, Tier 2.
+  \item $\ln(|\mathrm{Li}_2(x)|)$: $g=\ln\in\mathrm{ELC}$, $h=\mathrm{Li}_2\notin\mathrm{ELC}$. First-shell, Tier 2.
+  \item $x+\tan(1)$: $g(x,c)=x+c$ with $c=\tan(1)\notin\varepsilon(\mathbb{R})$. First-shell, Tier 2.
+  \item $e^{-x^2}\cdot\mathrm{erf}(x)$: product of an ELC function and a non-ELC function. First-shell.
+  \item $\ln\Gamma(x)\cdot\mathrm{EPL}(2,x)$: ELC $\times$ non-ELC. First-shell.
+\end{enumerate}
+\end{proposition}
+
+\begin{remark}
+First-shell functions are still outside ELC$(\mathbb{R})$: ELC is closed under composition
+\emph{only among ELC functions}. There is no ``rescue'' via composition with an ELC function
+that inverts the non-ELC component (no ELC function $g^{-1}$ exists such that $g^{-1}\circ g\circ h=h$
+brings a non-ELC $h$ into ELC).
+\end{remark}
+
+\subsection{Is $e^{\mathrm{erf}(x)}$ in Tier 1 or Tier 2?}
+
+$e^{\mathrm{erf}(x)}>0$ for all $x\in\mathbb{R}$: no zeros. Not Tier 1.
+$e^{\mathrm{erf}(0)}=e^0=1\in\varepsilon(\mathbb{R})$. But $e^{\mathrm{erf}(1)}\notin\varepsilon(\mathbb{R})$
+(since $\mathrm{erf}(1)\notin\varepsilon(\mathbb{R})$ and $\exp$ maps non-ELC values to non-ELC values).
+Tier 2.
+
+\section{Boundary Functions from Iterated Operations}
+
+\subsection{Iterated Exponential $\exp_k(x)=e^{e^{\cdots^{e^x}}}$}
+
+$\exp_k\in\mathrm{ELC}_k\setminus\mathrm{ELC}_{k-1}$ (proved in depth hierarchy paper).
+For $x\in\mathbb{R}$: $\exp_k(x)>0$ always, no zeros. As $k\to\infty$: grows super-exponentially.
+
+\begin{proposition}
+$\exp_k\in\mathrm{ELC}(\mathbb{R})$ for each finite $k$, but
+$\exp_\infty(x)=\lim_{k\to\infty}\exp_k(x)=+\infty$ for $x\geq0$:
+the limit is not a well-defined real function, so $\exp_\infty\notin\mathrm{ELC}(\mathbb{R})$.
+\end{proposition}
+
+\subsection{Iterated Tan $T_k(x)=\tan^{(k)}(x)$}
+
+$T_1(x)=\tan(x)$: Tier 1 (infinitely many zeros at $x=n\pi$... wait: zeros of $\tan$ are
+at $x=n\pi$, $n\in\mathbb{Z}$). Yes, infinitely many zeros. Tier 1.
+
+$T_2(x)=\tan(\tan(x))$: defined on the domain where $\tan(x)$ avoids $\pm\pi/2+n\pi$.
+The zero-set of $T_2(x)$ is $\{x:\tan(x)=n\pi,\,n\in\mathbb{Z}\}$: still infinitely many. Tier 1.
+
+\begin{proposition}
+$T_k(x)\in\mathrm{Tier\,1}$ for all $k\geq1$.
+\end{proposition}
+
+\begin{proof}
+$T_k(x)=0$ iff $T_{k-1}(x)=n\pi$ for some $n\in\mathbb{Z}$.
+The solutions to $T_{k-1}(x)=n\pi$ include at least the solutions to $T_{k-1}(x)=0$
+composed with further preimages, producing infinitely many zeros for each $k$.
+\end{proof}
+
+\subsection{$|x|$ at the Punctured Origin}
+
+On $\mathbb{R}^*=\mathbb{R}\setminus\{0\}$: $|x|=\mathrm{EPL}(0.5,\mathrm{EPL}(2,x))=2n\in\mathrm{ELC}(\mathbb{R}^*)$.
+This is a case where the boundary function lies in ELC on a punctured domain but not globally.
+
+\begin{proposition}
+$f(x)=\mathrm{sgn}(x)=|x|/x$ for $x\neq0$: $\mathrm{EPL}(0.5,\mathrm{EPL}(2,x))/x=2n+2n=4n$
+on $\mathbb{R}^*$. Not ELC on $\mathbb{R}$ due to the discontinuity at $0$.
+\end{proposition}
+
+\section{The Thin Boundary: Functions Approaching ELC$(\mathbb{R})$}
+
+\begin{definition}[ELC distance]
+For a function $f$ and $\varepsilon>0$, let $d_\mathrm{ELC}(f,\varepsilon)$ be the minimum node count
+over all ELC functions $g$ with $\|f-g\|_{L^\infty([0,1])}<\varepsilon$.
+\end{definition}
+
+\begin{proposition}[Barrier at each depth]
+For Tier 2 functions $f$:
+\[
+\inf_{g\in\mathrm{ELC}_n}\|f(x_0)-g(x_0)\| > 0
+\]
+for each fixed $n$ and each $x_0\in\mathbb{Q}$ where $f(x_0)\notin\varepsilon(\mathbb{R})$.
+\end{proposition}
+
+\begin{corollary}
+No sequence of ELC expressions at fixed depth can converge pointwise to $\mathrm{erf}$, $\ln\Gamma$,
+or $\mathrm{Li}_2$ at a rational argument where these functions take non-ELC values.
+\end{corollary}
+
+\section{A Clean Structural Characterization}
+
+\begin{theorem}[Boundary characterization]
+\label{thm:char}
+For a real analytic function $f:\mathbb{R}\to\mathbb{R}$:
+\begin{align*}
+f\in\mathrm{ELC}(\mathbb{R}) \iff &\; (1)\; f \text{ has finitely many zeros on every compact set, and}\\
+                                   &\; (2)\; f(x_0)\in\varepsilon(\mathbb{R}) \text{ for all } x_0\in\mathbb{Q}.
+\end{align*}
+(Assuming a suitable version of the AIL for all transcendental integrals.)
+\end{theorem}
+
+\begin{remark}
+Condition (2) is the operational content: membership in $\mathrm{ELC}(\mathbb{R})$
+is equivalent to taking values in the real ELC field at all rational inputs.
+This reformulation makes the ELC membership problem into a \emph{value-based} criterion,
+rather than a structural decomposition criterion---at least for functions taking rational-argument values.
+\end{remark}
+
+\begin{conjecture}[CONJ\_BOUNDARY\_EFFECTIVE]
+Theorem~\ref{thm:char} is effective: given a description of $f$ in terms of elementary
+operations (including exp, ln, $\int$, trig), there is an algorithm (assuming Schanuel's conjecture)
+that determines whether $f(1)\in\varepsilon(\mathbb{R})$, and therefore whether $f\in\mathrm{ELC}(\mathbb{R})$.
+\end{conjecture}
+
+\section{New Boundary Witnesses}
+
+\begin{enumerate}
+  \item $e^{\mathrm{erf}(x)}$: Tier 2, first-shell. No zeros. Boundary witness for AIL.
+  \item $\sin(e^x)$: Tier 1 globally (infinitely many zeros for large $x$). Boundary for T01 with non-polynomial zero spacing.
+  \item $f(x)=\sum_{n=1}^\infty e^{-n^2 x}$: ELC on $(0,\infty)$ only if the sum is finite-depth,
+    which it is not (infinite series). Tier 2 (transcendental series value at $x=1$).
+  \item $|x|^{1/2}=\mathrm{EPL}(0.5,|x|)$: Tier 0 (non-analytic at $0$), computed in 2n on $\mathbb{R}^*$.
+  \item $\mathrm{sgn}(x)$: Tier 0 (discontinuous at $0$). Tier 0 dominates.
+  \item The function $f_k(x)=\exp_k(x)-\exp_k(x_0)$ for transcendental $x_0$: Tier 2 for certain $x_0$.
+\end{enumerate}
+
+\section{Summary: Classification Table}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{lccl}
+\toprule
+Function & Tier & ELC? & Reason \\
+\midrule
+$e^x$, $\ln x$, $x^n$, $\sqrt{x}$ & In & Yes & Definition \\
+$\cosh x$, $\sinh x$, $\tanh x$ & In & Yes & EEA/EES routing \\
+$|x|$ & 0 & No & Non-analytic at $0$ \\
+ReLU, $\max(x,0)$ & 0 & No & Non-differentiable \\
+$H(x)$ (step) & 0 & No & Discontinuous \\
+$\phi(x)$ (smooth bump) & 0 & No & Not real analytic \\
+$\sin(x)$, $\cos(x)$ & 1 & No & $\infty$ zeros \\
+$\tan(x)$ & 1 & No & $\infty$ zeros \\
+$J_0(x)$, $\mathrm{Ai}(x)$ & 1 & No & $\infty$ zeros \\
+$|\sin(x)|$ & 0+1 & No & Non-analytic + $\infty$ zeros \\
+$\sin(e^x)$ & 1 & No & $\infty$ zeros (large $x$) \\
+$T_k(x)=\tan^{(k)}(x)$ & 1 & No & $\infty$ zeros (inherited) \\
+$\mathrm{erf}(x)$ & 2 & No & AIL (transcendental integral) \\
+$\ln\Gamma(x)$ & 2 & No & AIL ($\ln\pi$ obstruction) \\
+$\mathrm{Li}_2(x)$ & 2 & No & AIL ($\pi^2$ obstruction) \\
+$e^{\mathrm{erf}(x)}$ & 2 & No & First-shell, no zeros \\
+$\tan(1)$ (const fn) & 2 & No & AIL (HLW theorem) \\
+$|x|$ on $\mathbb{R}^*$ & In & Yes & EPL(0.5, EPL(2,x)) \\
+Stirling approx of $\ln\Gamma$ & In & Yes & Polynomial-ELC form \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\end{document}

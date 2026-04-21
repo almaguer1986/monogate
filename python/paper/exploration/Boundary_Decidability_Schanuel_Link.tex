@@ -1,0 +1,333 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,booktabs,array,geometry,hyperref}
+\geometry{margin=1in}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{conjecture}[theorem]{Conjecture}
+
+\title{CONJ\_BOUNDARY\_DECIDABLE and the Schanuel Connection:\\
+Logical Dependence of ELC Membership Decidability}
+\author{Monogate Research}
+\date{2026-04-21}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We explore CONJ\_BOUNDARY\_DECIDABLE: does deciding whether a given elementary expression
+$E$ lies in the real ELC field $\varepsilon(\mathbb{R})$ reduce to Schanuel's conjecture?
+We map the exact logical structure: (1) Richardson's undecidability theorem for
+expression zero-testing limits the naive approach; (2) conditional on Schanuel,
+zero-testing of ELC expressions \emph{is} decidable (Baker-Risch algorithm sketch);
+(3) ELC membership is equivalent to a specific zero-testing problem;
+(4) therefore, Schanuel implies CONJ\_BOUNDARY\_DECIDABLE for a natural class of inputs;
+(5) the converse direction (CONJ\_BOUNDARY\_DECIDABLE implies progress on SC) is also explored.
+We conclude with clarifying lemmas and the precise boundary of what SC settles.
+\end{abstract}
+
+\section{Problem Formulation}
+
+\begin{definition}[ELC membership problem]
+Given a closed-form expression $E$ built from rational constants, variables, $+$, $-$,
+$\times$, $\div$, $\exp$, $\ln$, $\sin$, $\cos$, $\int$ (elementary integrals),
+and evaluated at a rational point $x_0\in\mathbb{Q}$, decide:
+\[
+\mathrm{ELC-MEMBER}(E,x_0): \quad E(x_0)\in\varepsilon(\mathbb{R})?
+\]
+\end{definition}
+
+\begin{remark}
+When $E$ uses only $\exp$ and $\ln$ (no trig, no integrals), $E(x_0)\in\varepsilon(\mathbb{R})$
+trivially by the closure of $\varepsilon(\mathbb{R})$ under exp and ln. The problem is nontrivial
+only when $E$ involves operations outside $\varepsilon(\mathbb{R})$: trig functions, $\int$,
+$\Gamma$, etc.
+\end{remark}
+
+\section{Richardson's Undecidability and Its Scope}
+
+\begin{theorem}[Richardson, 1968]
+\label{thm:richardson}
+The problem of deciding whether an expression $E$ built from
+$\{+, -, \times, \exp, \sin, |x|, \text{integer constants}\}$
+satisfies $E(x)=0$ for all $x$ is undecidable.
+\end{theorem}
+
+\begin{remark}
+Richardson's result uses $\sin$ and $|x|$ (the absolute value) in an essential way.
+If either $\sin$ or $|x|$ is removed from the grammar, the zero-equivalence problem
+becomes decidable (this follows from the Risch algorithm for exp/log expressions,
+and from the Tarski--Seidenberg theorem for polynomial and semi-algebraic expressions).
+\end{remark}
+
+\begin{proposition}[Scope of Richardson for ELC membership]
+The ELC membership problem is \emph{not} directly blocked by Richardson's theorem,
+because:
+\begin{enumerate}
+  \item ELC membership asks about a specific value $E(x_0)$, not universal equivalence.
+  \item The expressions we are testing (erf, $\ln\Gamma$, $\mathrm{Li}_2$, $\sin(1)$)
+    are specific numbers, not universally quantified expressions.
+  \item Point-evaluation decidability is weaker than global zero-equivalence.
+\end{enumerate}
+\end{proposition}
+
+\section{Zero-Testing ELC Expressions Under Schanuel}
+
+\subsection{The Shapiro--Risch--Baker Framework}
+
+\begin{definition}[ELC expression at a rational point]
+An \emph{ELC number} is a value of the form $f(x_0)$ where $f\in\mathrm{ELC}(\mathbb{R})$
+and $x_0\in\mathbb{Q}$. The set of all ELC numbers is $\varepsilon(\mathbb{R})\cap\mathbb{R}$
+(a subfield of $\mathbb{R}$).
+\end{definition}
+
+\begin{theorem}[Zero-testing under SC --- Baker-type result]
+\label{thm:zeroing}
+Assume Schanuel's conjecture. Then:
+\begin{enumerate}
+  \item Any nonzero ELC number $c\in\varepsilon(\mathbb{R})$ satisfies $|c|>\exp(-H(c)^C)$
+    for some effective constants depending on the expression complexity $H(c)$
+    (an effective ``lower bound'' analogous to Baker's theorem for linear forms in logarithms).
+  \item Given an ELC expression $E$ with rational constants, one can algorithmically
+    decide whether $E(x_0)=0$ for $x_0\in\mathbb{Q}$: enumerate the ELC expression tree
+    and apply the lower bound to eliminate zero vs.\ nonzero.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}[Sketch]
+Under SC, the transcendence degree of any finite set of exponentials and logarithms
+over $\mathbb{Q}$ is at least the linear independence dimension of the arguments.
+This gives effective algebraic independence measures, which translate to effective
+lower bounds on nonzero expressions via a compactness argument (the expression either
+cancels algebraically---which is checkable---or is bounded away from $0$ by the SC measure).
+\end{proof}
+
+\section{ELC Membership as a Zero-Testing Problem}
+
+\begin{theorem}[Reduction of ELC membership to zero-testing]
+\label{thm:reduction}
+$E(x_0)\in\varepsilon(\mathbb{R})$ if and only if there exists an ELC expression $F$
+such that $E(x_0)-F(x_0)=0$.
+\end{theorem}
+
+\begin{proof}
+Trivial in one direction. In the other: if $E(x_0)=c\in\varepsilon(\mathbb{R})$,
+then there exists an ELC expression $F$ (possibly the constant $c$ expressed as an ELC tree)
+with $F(x_0)=c$, giving $E(x_0)-F(x_0)=0$.
+\end{proof}
+
+\begin{remark}
+The non-trivial content of CONJ\_BOUNDARY\_DECIDABLE is that there is an \emph{effective}
+algorithm to search for or rule out such $F$. The difficulty:
+\begin{enumerate}
+  \item The space of ELC expressions $F$ is infinite (all finite-depth ELC trees).
+  \item We need to either find $F$ or prove no such $F$ exists.
+\end{enumerate}
+Under Theorem~\ref{thm:zeroing} (SC), we can in principle test:
+for each candidate $F$ (enumerated by depth), decide whether $E(x_0)-F(x_0)=0$
+using the SC-based zero-test. If the answer is always ``No'' and we can bound
+the depth at which a match must occur (if it occurs), we obtain decidability.
+\end{remark}
+
+\section{The Schanuel Implication: SC $\Rightarrow$ CONJ\_BOUNDARY\_DECIDABLE}
+
+\begin{theorem}[SC implies conditional decidability]
+\label{thm:sctocbd}
+Assume:
+\begin{enumerate}
+  \item[(A)] Schanuel's conjecture (SC).
+  \item[(B)] The expression $E$ is built from the 23-operator set plus trig functions $\sin,\cos$
+    and a finite list of transcendental integrals (erf, $\ln\Gamma$, $\mathrm{Li}_2$, etc.).
+  \item[(C)] $x_0\in\mathbb{Q}$.
+\end{enumerate}
+Then ELC-MEMBER$(E,x_0)$ is decidable.
+\end{theorem}
+
+\begin{proof}[Sketch]
+Under SC + (B), every nonzero combination $E(x_0)-F(x_0)$ for $F\in\mathrm{ELC}$
+satisfies an effective lower bound $|E(x_0)-F(x_0)|\geq \delta(H)>0$, where $H$
+is the complexity (number of nodes, height of coefficients) of the combined expression.
+
+Algorithm:
+\begin{enumerate}
+  \item Enumerate ELC expressions $F_1,F_2,\ldots$ in order of increasing depth.
+  \item For each $F_k$: compute $d_k=E(x_0)-F_k(x_0)$ to precision $\delta(H_k)/2$.
+  \item If $|d_k|<\delta(H_k)/2$: by the SC lower bound, $d_k=0$, so $E(x_0)=F_k(x_0)\in\varepsilon(\mathbb{R})$. Return YES.
+  \item Otherwise: $d_k\neq0$; continue.
+  \item Termination: if $E(x_0)\notin\varepsilon(\mathbb{R})$, then by the AIL/SC framework,
+    no $F_k$ will match. We need a termination criterion for the NO case.
+\end{enumerate}
+
+The termination issue: without an upper bound on the depth of the matching $F$,
+the algorithm is semi-decidable (YES is always found in finite time; NO may not terminate).
+Under SC + a strengthening (an \emph{effective depth bound}: if $E(x_0)\in\varepsilon(\mathbb{R})$
+with an $n$-node ELC expression, then there is an expression of depth $\leq B(H_E)$ for
+some effective bound $B$), the algorithm terminates.
+\end{proof}
+
+\begin{remark}
+The \emph{effective depth bound} is the crucial missing piece.
+It is not implied by SC alone; it requires an additional ``complexity'' version of SC
+that bounds the minimum ELC tree representing a given ELC number in terms of its
+arithmetic complexity. This is analogous to the Kolmogorov complexity interpretation
+of SC and is an open problem.
+\end{remark}
+
+\section{The Converse: CONJ\_BOUNDARY\_DECIDABLE $\Rightarrow$ ? }
+
+\begin{proposition}[What decidability implies]
+If ELC-MEMBER is decidable (CONJ\_BOUNDARY\_DECIDABLE), then:
+\begin{enumerate}
+  \item For every algebraic $\alpha\in\overline{\mathbb{Q}}$, $\sin(\alpha)\notin\varepsilon(\mathbb{R})$
+    can be decided: this is already handled by HLW (unconditional).
+  \item For every specific transcendental constant ($\pi$, $e^\pi$, $\Gamma(1/4)$, etc.),
+    membership in $\varepsilon(\mathbb{R})$ is decidable.
+  \item The ``constant problem''---deciding whether two ELC numbers are equal---is decidable
+    (by ELC-MEMBER applied to their difference).
+\end{enumerate}
+\end{proposition}
+
+\begin{theorem}[Partial SC-consequence of decidability]
+\label{thm:converse}
+If ELC-MEMBER is decidable and the algorithm is \emph{uniform} in the following sense:
+for each expression $E$ it produces either a matching ELC expression $F$ or a proof
+that none exists (not just an answer YES/NO), then the algorithm witnesses effective
+lower bounds on nonzero ELC differences.
+Such effective lower bounds, when extracted and generalized, imply specific cases of SC
+(namely, for expressions in the decidability grammar).
+\end{theorem}
+
+\begin{proof}
+The ``proof of NO'' in a decidability algorithm must certify $E(x_0)\notin\varepsilon(\mathbb{R})$.
+By Theorem~\ref{thm:reduction}, this is equivalent to certifying $E(x_0)-F(x_0)\neq0$
+for all ELC $F$. For the certificate to be finite and checkable, it must invoke
+an algebraic independence result (an explicit lower bound). Extracting this bound
+gives a specific case of SC: the transcendence degree of the expressions involved
+is at least the linear independence dimension of their arguments.
+\end{proof}
+
+\section{Cases Where Schanuel Is Not Needed}
+
+\begin{proposition}[Decidable without SC]
+The following cases of ELC-MEMBER are decidable unconditionally:
+\begin{enumerate}
+  \item $E$ uses only $\exp$ and $\ln$: trivially in $\varepsilon(\mathbb{R})$. Decide YES.
+  \item $E=\sin(r)$ for $r\in\mathbb{Q}$: $\sin(r)\notin\varepsilon(\mathbb{R})$ iff $r\neq0$
+    (by HLW). Decidable: YES iff $r=0$.
+  \item $E=p(\sin(r_1),\ldots,\sin(r_k))$ for $p$ a polynomial with rational coefficients
+    and $r_i\in\mathbb{Q}$: decidable by the algebraic independence of $\sin(r_i)$ over $\mathbb{Q}$
+    (HLW implies these are independent transcendentals when the $r_i/\pi$ are linearly
+    independent over $\mathbb{Q}$).
+  \item $E=\mathrm{erf}(1)$: Risch algorithm certifies $\notin$ elementary functions,
+    hence $\notin\varepsilon(\mathbb{R})$. Decide NO.
+  \item $E=\ln\Gamma(p/q)$ for $p/q\notin\mathbb{Z}^+$: Gauss's reflection formula and
+    the algebraic independence of $\pi$ certify $\notin\varepsilon(\mathbb{R})$. Decide NO.
+\end{enumerate}
+\end{proposition}
+
+\section{The Exact Logical Dependence Map}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{lll}
+\toprule
+Statement & Strength & Status \\
+\midrule
+HLW (Hermite--Lindemann--Weierstrass) & Decidability for algebraic-argument trig & Proved \\
+Risch algorithm & Decidability for elementary integrals & Proved \\
+Baker's theorem & Effective lower bounds for log-linear forms & Proved \\
+Gelfond--Schneider & Transcendence of $\alpha^\beta$, $\alpha,\beta\in\overline{\mathbb{Q}}$ & Proved \\
+\midrule
+AIL (our algebraic-independence lemma) & $\sin(1)\notin\varepsilon(\mathbb{R})$ & Proved \\
+\midrule
+Schanuel's conjecture (SC) & General transcendence degree lower bound & Open \\
+GAIL (generalized AIL) & $\sin(\alpha)\notin\varepsilon(\mathbb{R})$ for $\alpha\notin\varepsilon(\mathbb{R})$ & Open; follows from SC \\
+Effective depth bound (EDB) & Matching ELC $F$ has bounded depth & Open; strengthens SC \\
+\midrule
+CONJ\_BOUNDARY\_DECIDABLE & ELC-MEMBER is decidable & Open; follows from SC+EDB \\
+Zero-testing of ELC expressions & Equality of two ELC numbers & Open; follows from SC \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{theorem}[Main reduction]
+\label{thm:main}
+The following implications hold:
+\[
+\mathrm{SC} + \mathrm{EDB} \Rightarrow \mathrm{CONJ\_BOUNDARY\_DECIDABLE} \Rightarrow \text{specific cases of SC}.
+\]
+In particular:
+\begin{itemize}
+  \item SC alone implies semi-decidability (YES is always verified in finite time).
+  \item SC + EDB implies full decidability.
+  \item CONJ\_BOUNDARY\_DECIDABLE (as a uniform algorithm) implies specific instances of SC.
+  \item CONJ\_BOUNDARY\_DECIDABLE does \emph{not} imply SC in general without additional
+    uniformity assumptions.
+\end{itemize}
+\end{theorem}
+
+\section{Clarifying Lemmas}
+
+\begin{lemma}[ELC field is not effectively enumerable in the usual sense]
+$\varepsilon(\mathbb{R})$ is a countable subfield of $\mathbb{R}$, but the \emph{membership test}
+(given a real number $r$, is $r\in\varepsilon(\mathbb{R})$?) is not decidable from a raw
+decimal expansion: we cannot in general recognize an ELC number from its decimal expansion alone.
+\end{lemma}
+
+\begin{proof}
+Any effective recognition of ELC numbers from decimal expansions would give a decision
+procedure for the zero-equivalence problem (compare two ELC number decimal expansions),
+which is undecidable by Richardson's theorem for sufficiently rich expression grammars.
+However, our ELC grammar (exp + log, no $\sin$) has decidable zero-equivalence (Risch),
+so the lemma applies only to grammars including trig or transcendental integrals.
+\end{proof}
+
+\begin{lemma}[SC is not equivalent to CONJ\_BOUNDARY\_DECIDABLE]
+SC is strictly stronger than CONJ\_BOUNDARY\_DECIDABLE: there exist statements implied
+by SC that are not implied by ELC-MEMBER decidability alone.
+\end{lemma}
+
+\begin{proof}
+SC implies algebraic independence of $\{\pi, e^\pi, e^{e^\pi}, \ldots\}$ (Nesterenko's theorem
+implies some of this). CONJ\_BOUNDARY\_DECIDABLE decides only whether a specific value
+is in $\varepsilon(\mathbb{R})$; it does not give the full transcendence degree of
+arbitrary exponential-logarithmic expressions.
+\end{proof}
+
+\begin{lemma}[The restriction to real ELC is essential]
+CONJ\_BOUNDARY\_DECIDABLE for real $\varepsilon(\mathbb{R})$ is strictly easier than
+the analogous problem for complex $\varepsilon(\mathbb{C})$, because:
+\begin{enumerate}
+  \item The complex ELC field includes $\sin(1)=\mathrm{Im}(e^i)$ as a 1-node expression.
+  \item Deciding real vs.\ complex ELC membership for trig values is essentially the
+    imaginary-part projection problem.
+  \item SC for real ELC restricts to real arguments and real exponentials, a proper subcase.
+\end{enumerate}
+\end{lemma}
+
+\section{Summary and Open Questions}
+
+\begin{enumerate}
+  \item \textbf{SC $\Rightarrow$ semi-decidability}: Under SC, ELC-MEMBER is semi-decidable (YES in finite time).
+  \item \textbf{SC + EDB $\Rightarrow$ full decidability}: With an effective depth bound, ELC-MEMBER is fully decidable.
+  \item \textbf{Converse (partial)}: A uniform YES/NO algorithm for ELC-MEMBER implies specific instances of SC.
+  \item \textbf{Richardson limit}: Full decidability for grammars including $\sin$ and $|x|$ is blocked by Richardson; the ELC membership problem avoids this by restricting to specific function classes.
+  \item \textbf{Already decidable}: All cases with algebraic-argument trig (HLW), elementary integrals (Risch), and specific constants ($\pi$, $e^\pi$) are decidable unconditionally.
+  \item \textbf{Open}: The effective depth bound (EDB). Without it, SC gives only semi-decidability.
+  \item \textbf{Open}: Whether CONJ\_BOUNDARY\_DECIDABLE follows from SC alone (without EDB).
+\end{enumerate}
+
+\begin{conjecture}[Refined CONJ\_BOUNDARY\_DECIDABLE]
+ELC-MEMBER is decidable for all inputs in the grammar of Section 1, assuming:
+(a) Schanuel's conjecture, and
+(b) the effective depth bound: if $E(x_0)\in\varepsilon(\mathbb{R})$, then the minimum ELC tree
+for $E(x_0)$ has depth at most $B(H_E)$ for a primitive recursive function $B$.
+Part (b) is expected to hold and may follow from SC + an effective version of
+the Risch structure theorem, but is not yet proved.
+\end{conjecture}
+
+\end{document}
