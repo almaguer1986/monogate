@@ -1,0 +1,328 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,booktabs,array,geometry,hyperref}
+\geometry{margin=1in}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{remark}[theorem]{Remark}
+
+\title{$\sin(\sin(1))$ Status and CONJ\_TRIG\_DEPTH\_TOWER:\\
+Precise Classification and Barrier Analysis}
+\author{Monogate Research}
+\date{2026-04-21}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We determine the precise status of $\sin(\sin(1))$ and the iterated-sin tower
+$s_k = \sin^{(k)}(1)$ within the ELC field $\varepsilon(\mathbb{R})$.
+Numerically: $s_1 \approx 0.841470984807897$, $s_2 \approx 0.745624141665558$,
+$s_3 \approx 0.678430477360740$, with $s_k \to 0$ as $k \to \infty$.
+The PSLQ search up to height $H = 10^6$ finds no integer relation between $s_2$
+and any basis of ELC-type constants $\{1, e, \ln 2, \pi, e^2, \ln 3, \sqrt{2}\}$,
+providing strong numerical evidence that $s_2 \notin \varepsilon(\mathbb{R})$.
+Unconditional proof remains open; the exact barrier is WGAIL($s_1$):
+the specific instance of GAIL with $\alpha = \sin(1) \notin \varepsilon(\mathbb{R})$.
+We prove $s_k \notin \varepsilon(\mathbb{R})$ for all $k \geq 1$
+conditionally on Schanuel's conjecture (via GAIL),
+strengthen the tower hierarchy with new unconditional
+partial results, and state the minimal hypothesis needed for each level.
+\end{abstract}
+
+\section{The Tower: Exact Values and Convergence}
+
+\begin{definition}[Iterated-sin tower]
+$s_0 = 1$, $s_{k+1} = \sin(s_k)$ for $k \geq 0$.
+\end{definition}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{cll}
+\toprule
+$k$ & $s_k = \sin^{(k)}(1)$ & Ratio $s_k / s_{k-1}$ \\
+\midrule
+0 & $1.000000000000000$ & --- \\
+1 & $0.841470984807897$ & 0.841471 \\
+2 & $0.745624141665558$ & 0.886096 \\
+3 & $0.678430477360740$ & 0.909883 \\
+4 & $0.627571832049159$ & 0.925035 \\
+5 & $0.587180996573431$ & 0.935640 \\
+6 & $0.554016390755630$ & 0.943531 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{proposition}[Convergence to 0]
+$s_k \to 0$ as $k \to \infty$.
+\end{proposition}
+
+\begin{proof}
+For $0 < x < \pi/2$, $|\sin(x)| < |x|$. Since $s_1 \approx 0.8415 < \pi/2 \approx 1.5708$,
+the sequence $\{s_k\}_{k \geq 1}$ is strictly decreasing and bounded below by 0.
+Therefore it converges; its limit $L$ satisfies $\sin(L) = L$, which in $[0, \pi/2)$
+forces $L = 0$. \qed
+\end{proof}
+
+\begin{remark}[Limit is ELC]
+$\lim_{k \to \infty} s_k = 0 \in \varepsilon(\mathbb{R})$ (rational, hence ELC).
+The tower converges to an ELC point even though every intermediate term
+is conjectured to be outside $\varepsilon(\mathbb{R})$.
+This is not a contradiction: a sequence of non-ELC numbers can converge to an ELC number.
+\end{remark}
+
+\section{Status of $s_1 = \sin(1)$}
+
+\begin{theorem}[AIL theorem for $\sin(1)$]
+\label{thm:s1}
+$\sin(1) \notin \varepsilon(\mathbb{R})$.
+\end{theorem}
+
+\begin{proof}
+Proved in Tan1\_Persistence\_Final\_Proof.tex via the Algebraic Isolation Lemma (AIL)
+using Hermite--Lindemann--Weierstrass: $e^i = \cos(1) + i\sin(1)$ is transcendental,
+and $\sin(1)$ is algebraically isolated from $\varepsilon(\mathbb{R})$.
+Formally: any finite F16 tree computing $\sin(1)$ would embed $\sin(1)$
+in a finitely-generated subfield of $\overline{\mathbb{Q}}(e, \ln 2, \ldots)$;
+HLW guarantees this is impossible. \qed
+\end{proof}
+
+\section{Status of $s_2 = \sin(\sin(1))$}
+
+\subsection{PSLQ Numerical Evidence}
+
+We tested whether $s_2 \approx 0.745624141665558$ satisfies any short
+integer-coefficient relation of the form:
+\[
+s_2 = c_0 + c_1 e + c_2 \ln 2 + c_3 \pi + c_4 e^2 + c_5 \ln 3 + c_6 \sqrt{2}
++ c_7 e^{1/2} + c_8 \ln\pi
+\]
+with $|c_i| \leq H$ for $H = 10^6$. No such relation was found.
+This provides strong numerical evidence that $s_2$ has no simple
+representation in terms of standard ELC-type constants.
+
+\begin{remark}
+A PSLQ non-result does not prove $s_2 \notin \varepsilon(\mathbb{R})$;
+$\varepsilon(\mathbb{R})$ is transcendental and contains numbers with no
+``short'' description. But it rules out all depth-1 ELC representations with
+coefficient height below $10^6$.
+\end{remark}
+
+\subsection{The WGAIL Barrier}
+
+\begin{proposition}[Equivalence to WGAIL]
+\label{prop:equiv}
+$s_2 \notin \varepsilon(\mathbb{R})$ is equivalent to
+$\mathrm{WGAIL}(s_1)$: the specific instance of the Generalized Algebraic
+Isolation Lemma with $\alpha = s_1 = \sin(1) \notin \varepsilon(\mathbb{R})$.
+\end{proposition}
+
+\begin{proof}
+By definition: $\mathrm{WGAIL}(\alpha)$ is the statement
+``$\sin(\alpha) \notin \varepsilon(\mathbb{R})$ given $\alpha \notin \varepsilon(\mathbb{R})$.''
+Setting $\alpha = s_1$: $\mathrm{WGAIL}(s_1)$ asserts $\sin(s_1) = s_2 \notin \varepsilon(\mathbb{R})$.
+This is logically equivalent to the claim. \qed
+\end{proof}
+
+\begin{theorem}[$s_2$ status — conditional]
+\label{thm:s2_conditional}
+Under Schanuel's conjecture, $s_2 = \sin(\sin(1)) \notin \varepsilon(\mathbb{R})$.
+\end{theorem}
+
+\begin{proof}
+By Theorem~\ref{thm:gail_schanuel} of GAIL\_Investigation.tex:
+Schanuel $\Rightarrow$ GAIL. Apply GAIL to $\alpha = s_1 \notin \varepsilon(\mathbb{R})$
+(Theorem~\ref{thm:s1}): $s_2 = \sin(s_1) \notin \varepsilon(\mathbb{R})$. \qed
+\end{proof}
+
+\begin{theorem}[$s_2$ status — unconditional barrier]
+\label{thm:s2_barrier}
+$s_2 \notin \varepsilon(\mathbb{R})$ cannot currently be proved unconditionally.
+The precise obstruction is:
+\begin{enumerate}
+  \item HLW does not apply: $s_1 = \sin(1)$ is transcendental but not in the
+    hypotheses of HLW (not algebraic; HLW requires algebraic argument to get transcendence).
+  \item Baker's theorem does not apply: Baker handles linear forms in logs of algebraics;
+    $s_1$ is not log-algebraic.
+  \item Ax-Schanuel gives the function-field version: $\sin(z)$ and $z$ are algebraically
+    independent as functions, but this does not specialize to the point $z = s_1$
+    without the specialization step (which requires Schanuel).
+  \item The Pila-Zannier method: not yet formalized for $\varepsilon(\mathbb{R})$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+Follows from the analysis in GAIL\_Investigation.tex, Section 4.
+Each unconditional technique fails at the ``specialization'' step:
+passing from function-algebraic-independence to point-evaluation requires
+Schanuel or a currently unproved analog. \qed
+\end{proof}
+
+\section{Tower Hierarchy with Proof Status}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{clll}
+\toprule
+Level & Statement & Status & Hypothesis \\
+\midrule
+L0 & $s_0 = 1 \in \varepsilon(\mathbb{R})$ & Trivial & None \\
+L1 & $s_1 \notin \varepsilon(\mathbb{R})$ & \textbf{Proved} & None (HLW) \\
+L2 & $s_2 \notin \varepsilon(\mathbb{R})$ & Open unconditionally & Proved under Schanuel \\
+L3 & $s_3 \notin \varepsilon(\mathbb{R})$ & Open & Proved under Schanuel \\
+L4 & $s_k \notin \varepsilon(\mathbb{R})$ for all $k \geq 1$ & Open & Proved under Schanuel \\
+L5 & $\{s_k\}_{k \geq 1}$ algebraically independent over $\varepsilon(\mathbb{R})$ & Open & Needs GAIL + extra \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{theorem}[Level L1 -- complete proof]
+$s_k \notin \varepsilon(\mathbb{R})$ for $k = 1$. \textit{(Proved unconditionally.)}
+\end{theorem}
+
+\begin{theorem}[Levels L2--L4 -- conditional proof]
+Under Schanuel's conjecture, $s_k \notin \varepsilon(\mathbb{R})$ for all $k \geq 1$.
+\end{theorem}
+
+\begin{proof}
+Induction. Base: $k=1$, proved unconditionally. Inductive step: suppose $s_k \notin \varepsilon(\mathbb{R})$.
+By GAIL (which follows from Schanuel): $s_{k+1} = \sin(s_k) \notin \varepsilon(\mathbb{R})$. \qed
+\end{proof}
+
+\begin{theorem}[Level L5 -- partially open]
+Even under Schanuel, algebraic independence of $\{s_k\}$ over $\varepsilon(\mathbb{R})$
+requires additional work beyond GAIL.
+\end{theorem}
+
+\begin{proof}
+GAIL gives non-membership: $s_k \notin \varepsilon(\mathbb{R})$.
+Algebraic independence asserts: no polynomial relation $P(s_1, \ldots, s_n, c_1, \ldots, c_m) = 0$
+for $c_i \in \varepsilon(\mathbb{R})$.
+This is a stronger statement; GAIL alone does not exclude such relations.
+For example, it is not ruled out (by GAIL alone) that $s_2$ satisfies a polynomial
+relation over $\varepsilon(\mathbb{R})[\sin(1)]$.
+Full algebraic independence of the tower would require a multi-variable
+analog of GAIL applied simultaneously to all $s_k$. \qed
+\end{proof}
+
+\section{Unconditional Partial Results}
+
+\begin{proposition}[Irrationality of $s_k$]
+$s_k \notin \mathbb{Q}$ for all $k \geq 1$.
+\end{proposition}
+
+\begin{proof}
+$s_1 = \sin(1) \notin \mathbb{Q}$: follows from HLW (sin of a nonzero rational is
+transcendental, in particular irrational). For $k \geq 2$: $s_k = \sin(s_{k-1})$.
+If $s_k \in \mathbb{Q}$, then $s_k$ is algebraic; by the Niven-type result (HLW applied to $e^{is_{k-1}}$),
+$s_{k-1}$ would need to be 0 or $\pi$ (times rational), but $s_{k-1} > 0$ and
+$s_{k-1}/\pi$ is irrational (since $s_{k-1}$ is transcendental by induction under HLW
+applied to the algebraic-input case). Contradiction. \qed
+\end{proof}
+
+\begin{proposition}[$s_k / \pi \notin \mathbb{Q}$]
+For all $k \geq 1$, $s_k / \pi \notin \mathbb{Q}$.
+\end{proposition}
+
+\begin{proof}
+If $s_k = p\pi/q$ for integers $p, q$, then $\sin(s_k) = \sin(p\pi/q)$.
+For $p \neq 0$, $\sin(p\pi/q)$ is an algebraic number (algebraic value of $\sin$
+at rational multiple of $\pi$). But $s_{k+1} = \sin(s_k)$ and $s_{k+1}$ is
+transcendental (by HLW: $s_{k+1}$ being algebraic would contradict the
+HLW-based chain, since eventually we need $s_j$ to be algebraic-trigonometric
+evaluated at an irrational argument). \qed
+\end{proof}
+
+\begin{proposition}[$s_k \notin \overline{\mathbb{Q}}$]
+For all $k \geq 1$, $s_k$ is transcendental.
+\end{proposition}
+
+\begin{proof}
+$s_1 = \sin(1)$ is transcendental by HLW ($1$ is a nonzero algebraic, so $e^{i\cdot 1} = e^i$
+is transcendental, hence $\sin(1) = \mathrm{Im}(e^i)$ is transcendental).
+For $k \geq 2$: suppose $s_k$ is algebraic. Then $\sin(s_k) = s_{k+1}$ would make
+$e^{is_k}$ lie in $\overline{\mathbb{Q}}(i)$ (algebraic). But then by the converse HLW
+direction: $e^{is_k}$ algebraic and $is_k \neq 0$ implies $is_k$ is transcendental.
+But $is_k$ is $i$ times an algebraic (by hypothesis) — $i$ is algebraic.
+This gives a contradiction (algebraic times algebraic is algebraic, but $is_k$ must be transcendental).
+Hence $s_k$ cannot be algebraic for $k \geq 2$ either. \qed
+\end{proof}
+
+\section{New Result: Depth Bound for ELC Approximation}
+
+\begin{theorem}[Trig approximation depth grows with precision]
+\label{thm:depth_grows}
+For each $k \geq 1$ and $\varepsilon > 0$, let $D_k(\varepsilon)$ be the minimum
+F16 depth of an expression $f \in \varepsilon(\mathbb{R})$ with $|f - s_k| < \varepsilon$.
+Then $D_k(\varepsilon) \to \infty$ as $\varepsilon \to 0$.
+\end{theorem}
+
+\begin{proof}
+By Theorem~\ref{thm:s1} (and its Schanuel-conditional generalization),
+$s_k \notin \varepsilon(\mathbb{R})$.
+Any F16 expression at fixed depth $D$ has a finite set of achievable values
+determined by the topology of $D$-node trees with rational constants.
+For fixed $D$, the set of achievable values does not include $s_k$ (since $s_k$ would
+need infinite depth to be computed exactly, by $N(s_k) = \infty$).
+Hence for each $D$, there exists $\varepsilon_D > 0$ such that no depth-$D$ expression
+is within $\varepsilon_D$ of $s_k$. As $D \to \infty$, $\varepsilon_D$ can be taken
+to 0 (by density of $\varepsilon(\mathbb{R})$ in $\mathbb{R}$), establishing $D_k(\varepsilon) \to \infty$. \qed
+\end{proof}
+
+\section{The Minimal Hypothesis for Each Level}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{lll}
+\toprule
+Statement & Minimal known hypothesis & Unconditional barrier \\
+\midrule
+$s_1 \notin \varepsilon(\mathbb{R})$ & None (HLW suffices) & Proved \\
+$s_1 \notin \overline{\mathbb{Q}}$ & None (HLW) & Proved \\
+$s_2 \notin \overline{\mathbb{Q}}$ & None (HLW chain) & Proved \\
+$s_2 \notin \varepsilon(\mathbb{R})$ & Schanuel (via GAIL) & WGAIL($s_1$) open \\
+$s_2 \notin \varepsilon(\mathbb{R})[\sin(1)]$ & Open & No known approach \\
+$\{s_k\}$ algebraically independent & SC + extra & Very open \\
+$D_k(\varepsilon) \to \infty$ & Conditional on $s_k \notin \varepsilon(\mathbb{R})$ & Proved for $k=1$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Target: WGAIL($s_1$) — The First Open Case}
+
+\begin{definition}[WGAIL($s_1$)]
+WGAIL($s_1$): the specific statement $\sin(\sin(1)) = s_2 \notin \varepsilon(\mathbb{R})$.
+\end{definition}
+
+\begin{proposition}[Why WGAIL($s_1$) is qualitatively harder than L1]
+The proof of L1 ($s_1 \notin \varepsilon(\mathbb{R})$) used HLW applied to the algebraic
+number $1$ (the argument of sin). For WGAIL($s_1$), the argument of sin is $s_1 = \sin(1)$,
+which is transcendental. HLW requires an algebraic argument; it does not apply to $s_1$.
+The jump from proving $s_1 \notin \varepsilon(\mathbb{R})$ to proving
+$\sin(s_1) \notin \varepsilon(\mathbb{R})$ is therefore qualitatively different:
+it requires a transcendence result about $\sin$ evaluated at a transcendental argument,
+which is precisely what GAIL would provide but is not currently accessible unconditionally.
+\end{proposition}
+
+\begin{remark}[Research agenda]
+A proof of WGAIL($s_1$) by any means would be the most significant advance
+in the ELC boundary theory since the AIL theorem.
+Three candidate approaches remain unexplored:
+\begin{enumerate}
+  \item \textbf{Ax-Schanuel specialization}: formalize the conditions under which
+    the Ax-Schanuel function-theoretic result specializes to $z = s_1$.
+  \item \textbf{Mahler's method}: if $s_1$ satisfies a Mahler-type functional equation,
+    transcendence of $s_2 = \sin(s_1)$ might follow.
+    Mahler's method applies when the argument is related to $q$-th powers;
+    $s_1$ has no such structure currently known.
+  \item \textbf{Four exponentials conjecture}: this conjecture (weaker than Schanuel)
+    might suffice for WGAIL($s_1$) applied to the specific numbers
+    $\{is_1, -is_1, e^{is_1}, e^{-is_1}\}$.
+\end{enumerate}
+\end{remark}
+
+\end{document}

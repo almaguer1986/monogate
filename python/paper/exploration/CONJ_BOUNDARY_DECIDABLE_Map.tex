@@ -1,0 +1,337 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,booktabs,array,longtable,geometry,hyperref,tikz}
+\geometry{margin=1in}
+\usetikzlibrary{arrows.meta,positioning,shapes}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+\title{CONJ\_BOUNDARY\_DECIDABLE: Exact Dependency Map\\
+Between Schanuel, GAIL, EDB, and ELC Decidability}
+\author{Monogate Research}
+\date{2026-04-21}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+CONJ\_BOUNDARY\_DECIDABLE asserts that membership in $\varepsilon(\mathbb{R})$
+(the ELC field) is decidable, given sufficient hypotheses.
+We produce the exact logical dependency map between Schanuel's conjecture (SC),
+the Generalized Algebraic Isolation Lemma (GAIL), the Effective Depth Bound (EDB),
+and decidability.
+We catalog which classes of inputs already yield decidable membership
+(via HLW, Baker's theorem, the Risch algorithm, and related tools)
+and which remain open.
+The main result: SC + EDB $\Rightarrow$ CBD (Conjectural Boundary Decidability),
+and CBD $\Rightarrow$ a partial converse of SC.
+EDB is identified as the critical missing bridge — the hypothesis with the
+highest leverage for advancing decidability unconditionally.
+\end{abstract}
+
+\section{The Decision Problem}
+
+\begin{definition}[ELC membership problem]
+Given a real number $\alpha$ (presented as an oracle or by a finite algebraic/analytic description),
+determine whether $\alpha \in \varepsilon(\mathbb{R})$ (the ELC field).
+\end{definition}
+
+\begin{remark}[Input model]
+In practice, $\alpha$ is presented as:
+(a) a finite algebraic expression over $\mathbb{Q}$ with $\exp, \ln, +, -, \times, \div$;
+(b) an oracle that evaluates $\alpha$ to arbitrary precision; or
+(c) a value defined by a convergent series or integral.
+Case (a) is the most tractable; cases (b) and (c) are harder.
+\end{remark}
+
+\section{Key Hypotheses}
+
+\begin{definition}[SC — Schanuel's Conjecture]
+If $\alpha_1, \ldots, \alpha_n \in \mathbb{C}$ are $\mathbb{Q}$-linearly independent, then
+\[
+\mathrm{trdeg}(\mathbb{Q}(\alpha_1, \ldots, \alpha_n, e^{\alpha_1}, \ldots, e^{\alpha_n})/\mathbb{Q}) \geq n.
+\]
+\end{definition}
+
+\begin{definition}[GAIL — Generalized Algebraic Isolation Lemma]
+For all $\alpha \in \mathbb{R}$: $\alpha \notin \varepsilon(\mathbb{R}) \Rightarrow \sin(\alpha) \notin \varepsilon(\mathbb{R})$.
+Equivalently: $\sin^{-1}(\varepsilon(\mathbb{R})) \cap \varepsilon(\mathbb{R})^c = \emptyset$.
+\end{definition}
+
+\begin{definition}[EDB — Effective Depth Bound]
+For each $\alpha \in \varepsilon(\mathbb{R})$ with a computable presentation of complexity $C(\alpha)$,
+there exists a computable function $D(C(\alpha))$ such that $\alpha$ is computable
+by an F16 tree of depth at most $D(C(\alpha))$.
+Equivalently: ELC membership at complexity $C$ is witnessed by a tree of bounded depth.
+\end{definition}
+
+\begin{definition}[CBD — Conjectural Boundary Decidability]
+The ELC membership problem for inputs presented in complexity class $\mathcal{C}$
+is decidable: there exists a Turing machine that, given input $\alpha \in \mathcal{C}$,
+halts and outputs ``yes'' ($\alpha \in \varepsilon(\mathbb{R})$) or ``no'' ($\alpha \notin \varepsilon(\mathbb{R})$).
+\end{definition}
+
+\section{The Dependency Map}
+
+\begin{theorem}[Main dependency chain]
+\label{thm:chain}
+The following implications hold (all arrows are strict — no known reversals):
+\[
+\mathrm{SC} \;\Rightarrow\; \mathrm{GAIL} \;\Rightarrow\;
+\mathrm{CBD}(\text{trig args}) \;\xleftarrow{\text{also}}\; \mathrm{EDB}
+\]
+\[
+\mathrm{SC} + \mathrm{EDB} \;\Rightarrow\; \mathrm{CBD}(\text{general})
+\]
+\[
+\mathrm{CBD}(\text{general}) \;\Rightarrow\; \text{partial SC}
+\]
+\end{theorem}
+
+\subsection{SC $\Rightarrow$ GAIL}
+
+Proved in GAIL\_Investigation.tex (Theorem 4.1).
+The key step: if $\alpha \notin \varepsilon(\mathbb{R})$ and $\sin(\alpha) \in \varepsilon(\mathbb{R})$,
+then $e^{i\alpha} \in \varepsilon(\mathbb{C})$ (complex ELC field),
+so $i\alpha \in \varepsilon(\mathbb{C})$ by taking log,
+so $\alpha \in \varepsilon(\mathbb{R})$ — contradiction.
+The step ``$e^{i\alpha} \in \varepsilon(\mathbb{C}) \Rightarrow i\alpha \in \varepsilon(\mathbb{C})$''
+uses SC to prevent algebraic coincidences.
+
+\subsection{GAIL $\Rightarrow$ CBD for trig arguments}
+
+If GAIL holds, then for $\alpha \in \varepsilon(\mathbb{R})$, we know $\sin(\alpha) \in \varepsilon(\mathbb{R})$
+(by direct computation). And for $\alpha \notin \varepsilon(\mathbb{R})$, GAIL gives
+$\sin(\alpha) \notin \varepsilon(\mathbb{R})$. This makes the trig-evaluation step decidable.
+Combined with HLW-based decidability for algebraic arguments, CBD holds for
+``trig of ELC inputs.''
+
+\subsection{SC + EDB $\Rightarrow$ CBD (general)}
+
+Without EDB, even knowing SC, the decision procedure might not terminate:
+there is no bound on how deep the ELC tree for $\alpha$ might be.
+With EDB: given complexity $C(\alpha)$, search all F16 trees of depth $\leq D(C(\alpha))$.
+If any evaluates to $\alpha$ (to sufficient precision), output ``yes''; otherwise ``no.''
+SC ensures correctness of the classification; EDB ensures termination.
+
+\subsection{CBD $\Rightarrow$ partial SC}
+
+If CBD holds, it implies that questions of the form
+``does $e^{i\alpha} \in \varepsilon(\mathbb{C})$ for $\alpha \in \varepsilon(\mathbb{R})$?''
+are decidable. This gives a specific decidability result about transcendence degrees
+of exponential extensions of $\mathbb{Q}$, which is a partial consequence of SC
+in a restricted setting.
+
+\section{Catalog of Decidable Cases}
+
+\subsection{Always decidable (unconditional)}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{lll}
+\toprule
+Input class & Decision & Reason \\
+\midrule
+$\alpha \in \mathbb{Q}$ & Yes (in $\varepsilon$) & $\mathbb{Q} \subset \varepsilon(\mathbb{R})$ by construction \\
+$\alpha \in \overline{\mathbb{Q}}$ & Yes (in $\varepsilon$) & Algebraics computable by EPL \\
+$\alpha = e^q$ for $q \in \mathbb{Q}$ & Yes (in $\varepsilon$) & $\exp(q)$ is 1 F16 node \\
+$\alpha = \ln q$ for $q \in \mathbb{Q}_{>0}$ & Yes (in $\varepsilon$) & $\ln(q)$ is 1 F16 node \\
+$\alpha = \sin(q)$ for $q \in \mathbb{Q} \setminus \{0\}$ & No (not in $\varepsilon$) & HLW: $e^{iq}$ transcendental \\
+$\alpha = \cos(q)$ for $q \in \mathbb{Q} \setminus \{0\}$ & No (not in $\varepsilon$) & HLW \\
+$\alpha = \tan(q)$ for rational $q/\pi \notin \mathbb{Q}$ & No (not in $\varepsilon$) & AIL theorem \\
+$\alpha = \mathrm{erf}(q)$ for $q \in \mathbb{Q} \setminus \{0\}$ & No (not in $\varepsilon$) & T01 class (infinite zeros) \\
+$\alpha = J_0(q)$ for $q \in \mathbb{Q} \setminus \{0\}$ & No (not in $\varepsilon$) & T01 class \\
+$\alpha = \mathrm{Ai}(q)$ for $q \in \mathbb{Q}$ & No (not in $\varepsilon$) & T01 class \\
+Linear ELC forms & Yes (in $\varepsilon$) & Baker's theorem (effective) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Decidable under Baker's Theorem}
+
+Baker's theorem (1966, effective): for algebraic $\alpha_0, \alpha_1, \ldots, \alpha_n \neq 0$
+and algebraic $\beta_j$ not all zero,
+$|\beta_0 + \beta_1 \ln \alpha_1 + \cdots + \beta_n \ln \alpha_n| > C(\alpha,\beta) H^{-\kappa}$
+where $H$ is the height and $C, \kappa$ are effective.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{lll}
+\toprule
+Input type & Decision & Reason \\
+\midrule
+$\alpha = \beta_0 + \sum \beta_j \ln \alpha_j$ (algebraic $\alpha_j, \beta_j$) & Yes/No & Baker effective \\
+$\alpha = $ period of an elliptic curve over $\overline{\mathbb{Q}}$ & Open & Conjectured not in $\varepsilon$; no proof \\
+$\alpha = \Gamma(1/4)$ & Open & Nesterenko: algebraically independent from $\pi, e^\pi$; not ELC \\
+$\alpha = \zeta(3)$ & Open & Apéry: irrational; ELC status unknown \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Decidable via Richardson's Theorem (restricted)}
+
+Richardson (1968) showed that the sign of expressions built from $\mathbb{Q}$,
+$\pi$, $\ln 2$, $e^x$, $\sin(x \pi)$, and $|x|$ is undecidable in general.
+However, for the restricted ELC field (no trig, no $\pi$), sign-decidability holds
+for expressions with rational constants, by the Tarski--Seidenberg theorem applied
+to the ordered field structure.
+
+\begin{proposition}
+For $\alpha$ presented as an F16 expression with rational constants
+(i.e., $\alpha$ has an explicit ELC representation), ELC membership is trivially
+decidable (``yes'' by the given representation).
+The hard problem is the \emph{converse}: given a numeric value $\alpha$,
+decide whether it \emph{has} an ELC representation.
+\end{proposition}
+
+\subsection{Open cases}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{lll}
+\toprule
+Input & Decision status & Blocking hypothesis \\
+\midrule
+$\sin(\sin(1))$ & Open & WGAIL($\sin(1)$) = GAIL instance \\
+$\sin^{(k)}(1)$ for $k \geq 2$ & Open & GAIL (k steps) \\
+$e^{i\alpha}$ for $\alpha \in \varepsilon(\mathbb{R})$ & Open in general & SC \\
+$\Gamma(1/3)$ & Open & Algebraic independence unknown \\
+$\ln(\pi)$ & Open & Open unconditionally \\
+$\pi + e$ & Open & Basic open problem \\
+$\pi \cdot e$ & Open & SC would settle \\
+Generic depth-$\geq 2$ ELC expression & Open & EDB \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{EDB: The Critical Missing Bridge}
+
+\begin{proposition}[EDB leverage]
+\label{prop:edb_leverage}
+Of the three hypotheses SC, GAIL, EDB, the effective depth bound EDB has the
+highest leverage for advancing decidability without full SC:
+\begin{enumerate}
+  \item \textbf{GAIL alone} $\Rightarrow$ CBD for trig-class inputs only.
+    Trig is a specific sub-problem; most ELC membership questions do not involve sin/cos.
+  \item \textbf{SC alone} $\Rightarrow$ GAIL (and hence the trig case),
+    but SC does not give an algorithm without EDB (no termination bound).
+  \item \textbf{EDB alone} $\Rightarrow$ CBD conditioned on correctness of the
+    tree search (not on SC). If EDB holds and the search terminates,
+    the decision is correct assuming ELC is what we think it is
+    (no new algebraic coincidences). EDB plus precision bounds gives a
+    practical decision procedure.
+\end{enumerate}
+\end{proposition}
+
+\begin{definition}[EDB conjecture]
+For all $\alpha \in \varepsilon(\mathbb{R})$ presented by a convergent limit
+of rational F16 approximations with precision function $\varepsilon(n) = 2^{-n}$:
+the minimum depth $D$ of an exact F16 tree for $\alpha$ satisfies
+$D \leq f(K)$ where $K$ is the complexity of the presentation
+and $f$ is a computable function.
+\end{definition}
+
+\begin{remark}[Why EDB is hard]
+EDB would imply that there are no ``deeply buried'' ELC numbers —
+no real number that is in $\varepsilon(\mathbb{R})$ but requires an
+uncomputable depth of tree to witness.
+Proving EDB would require understanding the full structure of the ELC field,
+including all algebraic relations between $e$ and the reals.
+It is at least as hard as Schanuel in the algebraic-independence direction.
+\end{remark}
+
+\section{Complete Dependency Diagram}
+
+\[
+\boxed{\mathrm{SC}}
+\;\Longrightarrow\;
+\boxed{\mathrm{GAIL}}
+\;\Longrightarrow\;
+\begin{cases}
+\text{CBD for trig inputs} \\
+\text{WGAIL}(s_1) \Rightarrow s_2 \notin \varepsilon(\mathbb{R}) \\
+\text{Tower: } s_k \notin \varepsilon(\mathbb{R})\ \forall k \geq 1
+\end{cases}
+\]
+\[
+\boxed{\mathrm{EDB}}
+\;\Longrightarrow\;
+\text{CBD terminates (given correct classification)}
+\]
+\[
+\boxed{\mathrm{SC} + \mathrm{EDB}}
+\;\Longrightarrow\;
+\boxed{\mathrm{CBD (general)}}
+\;\Longrightarrow\;
+\text{partial SC}
+\]
+\[
+\boxed{\mathrm{HLW}}
+\;\Longrightarrow\;
+\text{CBD for algebraic-argument trig}
+\quad (\text{proved; unconditional})
+\]
+\[
+\boxed{\mathrm{Baker}}
+\;\Longrightarrow\;
+\text{CBD for log-linear forms over } \overline{\mathbb{Q}}
+\quad (\text{proved; effective})
+\]
+\[
+\boxed{\mathrm{Ax\text{-}Schanuel}}
+\;\Longrightarrow\;
+\text{function-field CBD (proved; does not specialize)}
+\]
+
+\section{Provable Decidability Results (Summary)}
+
+\begin{theorem}[Decidable cases — unconditional]
+The following instances of ELC membership are decidable without any open hypothesis:
+\begin{enumerate}
+  \item All algebraic numbers: in $\varepsilon(\mathbb{R})$ (constructively).
+  \item All rational multiples of $e, e^2, \ln 2, \ln 3, \ldots, \ln p$ for prime $p$:
+    in $\varepsilon(\mathbb{R})$ (constructively).
+  \item $\sin(q)$, $\cos(q)$, $\tan(q)$ for nonzero rational $q$:
+    \textbf{not} in $\varepsilon(\mathbb{R})$ (HLW).
+  \item All special functions with infinitely many real zeros
+    (erf, Bessel, Airy, Fresnel, lgamma on suitable domain):
+    \textbf{not} in $\varepsilon(\mathbb{R})$ (T01 class theorem).
+  \item $\beta_0 + \sum \beta_j \ln \alpha_j$ for algebraic $\alpha_j, \beta_j$:
+    membership status decidable effectively (Baker).
+\end{enumerate}
+\end{theorem}
+
+\begin{theorem}[Conditionally decidable cases]
+Under GAIL (which follows from SC):
+\begin{enumerate}
+  \item $\sin^{(k)}(1) \notin \varepsilon(\mathbb{R})$ for all $k \geq 1$.
+  \item More generally: $\sin(\alpha) \notin \varepsilon(\mathbb{R})$ for all $\alpha \notin \varepsilon(\mathbb{R})$.
+  \item Same for $\cos, \tan$ (by analogous GAIL statements using $e^{i\alpha}$).
+\end{enumerate}
+\end{theorem}
+
+\section{Research Priorities}
+
+\begin{enumerate}
+  \item \textbf{Unconditional WGAIL($s_1$)}: Decide $\sin(\sin(1)) \notin \varepsilon(\mathbb{R})$
+    without SC. This is the single highest-priority open problem.
+
+  \item \textbf{Formalize EDB for depth-1 expressions}:
+    Prove that if $\alpha \in \varepsilon(\mathbb{R})$ and is ``naturally depth-1''
+    (e.g., $e^q$ for $q \in \mathbb{Q}$), then no deeper expression equals $\alpha$
+    unless algebraically forced. This is a weak form of EDB and may be accessible.
+
+  \item \textbf{Richardson scope}: Precisely characterize which ELC sub-problems
+    fall within Richardson's decidability zone (sign decision for sub-ELC expressions
+    without $\pi$ or sin) versus which require Schanuel.
+
+  \item \textbf{Four exponentials conjecture}: Determine whether the four-exponentials
+    conjecture (weaker than SC, still open) suffices for GAIL in the specific
+    case of $\alpha = \sin(1)$.
+\end{enumerate}
+
+\end{document}

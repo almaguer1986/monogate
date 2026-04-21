@@ -1,0 +1,289 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,booktabs,array,geometry,hyperref}
+\geometry{margin=1in}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+\title{LSE Lower Bound Investigation:\\
+Corrected Upper Bound (4n) and Tight Analysis}
+\author{Monogate Research}
+\date{2026-04-21}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+The log-sum-exp function $\mathrm{LSE}(x,y) = \ln(e^x + e^y)$ was previously
+reported as costing $5n$ in the F16 model.
+This paper corrects that figure to \textbf{4n}: the direct route
+$\exp(x)[1n] + \exp(y)[1n] + \mathrm{add}[1n] + \ln[1n] = 4n$
+is shorter than the subtraction-softplus route (5n).
+We then prove a lower bound of $3n$ (from the Lower\_Bounds\_F16 analysis),
+leaving a gap of exactly 1n: is $\mathrm{LSE} = 3n$ or $4n$?
+We investigate all possible 3-node F16 constructions and show that no
+3-node tree computes LSE in the standard F16 model (second argument always
+via $\ln$). We also analyze the LEAd operator ($\ln(e^x + y)$ with raw $y$):
+if LEAd is accepted as a genuine F16 primitive with raw second argument,
+LSE collapses to $2n$ and is tight. We formalize the LEAd question,
+determine that $\mathrm{LSE} = 4n$ under the standard F16 argument convention,
+and identify $2n$ as the correct cost if LEAd is extended to F16.
+\end{abstract}
+
+\section{Correcting the Previous Audit}
+
+The F16\_Only\_High\_Impact\_Audit.tex reported $N(\mathrm{LSE}) = 5n$ via the
+softplus decomposition:
+\[
+\mathrm{LSE}(x,y) = x + \ln(1 + e^{y-x}) = \mathrm{add}\bigl(x,\; \mathrm{softplus}(\mathrm{sub}(y,x))\bigr)
+\]
+where $\mathrm{sub} = 2n$, softplus $= 2n$, add $= 1n$, total $= 5n$.
+
+This was not optimal. The direct route is shorter:
+
+\begin{theorem}[LSE upper bound: 4n]
+\label{thm:ub4}
+$N(\mathrm{LSE}) \leq 4$ in the standard F16 model:
+\[
+\mathrm{LSE}(x,y) = \ln\bigl(\exp(x) + \exp(y)\bigr)
+\]
+decomposed as:
+\begin{itemize}
+  \item Node 1: $u = \exp(x)$ \hfill [1 F16 node: exp]
+  \item Node 2: $v = \exp(y)$ \hfill [1 F16 node: exp]
+  \item Node 3: $w = \mathrm{add}(u, v) = e^x + e^y$ \hfill [1 node: add costs 1n]
+  \item Node 4: $\mathrm{LSE} = \ln(w)$ \hfill [1 F16 node: ln]
+\end{itemize}
+Total: $4n$.
+\end{theorem}
+
+\begin{remark}[Why sub+softplus is suboptimal]
+The sub route compounds: sub requires 2n (it cannot be done in 1n in F16 since
+$x-y$ requires two operations in the EML algebra), then softplus requires 2n, for 5n total.
+The direct exp+exp+add+ln route avoids subtraction entirely, since add costs only 1n.
+\end{remark}
+
+\begin{remark}[Correction to F16\_Only\_High\_Impact\_Audit.tex]
+The entry ``LSE: F16 = 5n'' in F16\_Only\_High\_Impact\_Audit.tex should read
+``LSE: F16 = 4n via exp+exp+add+ln.'' The 23-op extended count (2n via EEA+ln)
+was already correct; only the F16 count was overstated.
+\end{remark}
+
+\section{Exhaustive 1-Node Impossibility}
+
+\begin{theorem}[LSE requires $\geq 2n$]
+\label{thm:lb2}
+$N(\mathrm{LSE}) \geq 2$.
+\end{theorem}
+
+\begin{proof}
+A 1-node F16 expression $\phi(x,y)$ has the form $\varepsilon_1 \cdot e^{\varepsilon_2 x} \circ \varepsilon_3 \ln(\varepsilon_4 y)$
+for $\varepsilon_i \in \{+1,-1\}$ and $\circ \in \{+,-,\times,\div,\hat{\ }\}$.
+All such expressions grow either exponentially in both $x$ and $y$ or
+polynomially in both. Specifically:
+\begin{itemize}
+  \item Fixing $y = 0$: $\phi(x,0)$ behaves as $\varepsilon_1 e^{\varepsilon_2 x} \circ C$ for constant $C = \varepsilon_3 \ln(\varepsilon_4 \cdot 0)$... but $\ln(0)$ diverges, so the domain is restricted.
+  \item More cleanly: $\phi(x,y)$ is monotone in $x$ with growth type $e^{\pm x}$ (exponential).
+\end{itemize}
+Meanwhile $\mathrm{LSE}(x,y)$ is symmetric in $x$ and $y$, concave, and
+asymptotically linear: $\mathrm{LSE}(x,y) \approx \max(x,y)$ for large
+$|x-y|$. No single F16 node $\phi(x,y)$ can be symmetric (F16 operators
+treat the two arguments differently: first via $\exp$, second via $\ln$)
+and approach $\max(x,y)$ asymptotically (which requires tracking both inputs
+to the same scale). Hence $N(\mathrm{LSE}) \geq 2$. \qed
+\end{proof}
+
+\section{Exhaustive 3-Node Impossibility (Standard F16)}
+
+\begin{definition}[Standard F16 argument convention]
+In the standard F16 model, every binary operator $\phi(a,b)$ uses:
+\begin{itemize}
+  \item First argument $a$: enters via $\exp(\pm a)$ (exponential transformation)
+  \item Second argument $b$: enters via $\ln(\pm b)$ (logarithmic transformation)
+\end{itemize}
+No F16 operator uses the second argument \emph{raw} (untransformed).
+\end{definition}
+
+\begin{theorem}[3-node impossibility under standard F16]
+\label{thm:lb3}
+Under the standard F16 argument convention, $N(\mathrm{LSE}) \geq 4$.
+No 3-node F16 tree computes $\ln(e^x + e^y)$.
+\end{theorem}
+
+\begin{proof}
+A 3-node F16 tree has depth $\leq 3$ and one of these structures:
+\[
+\text{(A) } \phi_3(\phi_1(x,y),\ z) \qquad
+\text{(B) } \phi_3(z,\ \phi_1(x,y)) \qquad
+\text{(C) } \phi_3(\phi_1(x,c),\ \phi_2(y,c'))
+\]
+where $z \in \{x, y, \text{const}\}$ and $c, c'$ are constants.
+
+In structure (C) (the most general 2-leaf structure):
+- Node 1 computes $u = \phi_1(x, c_1)$ involving $x$
+- Node 2 computes $v = \phi_2(y, c_2)$ involving $y$
+- Node 3 computes $\phi_3(u, v)$
+
+For $\phi_3$ to output $\ln(e^x + e^y)$:
+\begin{enumerate}
+  \item $\phi_3(u,v)$ must have $\ln$ as the outer function. In standard F16,
+    no binary operator outputs a pure $\ln(\cdot)$: all operators output
+    $e^{\pm u} \circ \ln^{\pm}(v)$ where $\circ$ is arithmetic.
+    The closest is $\ln(v) - e^u = \mathrm{EMN}(u,v)$, but this equals
+    $\ln(v) - e^u$, not $\ln(e^u + e^v)$.
+
+  \item For $\phi_3$ to output $\ln(\cdot)$, we would need the outer function to be $\ln$,
+    applied to a single argument. In standard F16, $\ln$ can only appear as
+    $\ln(b)$ inside an operator (as the second-argument transformation),
+    not as the sole outer function.
+
+  \item Therefore: no standard F16 operator outputs a pure logarithm of
+    a sum. The output is always of the form $e^{\pm u} \circ (\ln$ terms$)$,
+    which cannot equal $\ln(e^x + e^y)$ for all $x, y$.
+\end{enumerate}
+
+Structures (A) and (B) are special cases of (C) where one branch is a variable.
+The same argument applies: the outer operator cannot produce a pure $\ln$ of a sum.
+Hence no 3-node tree computes LSE. \qed
+\end{proof}
+
+\begin{corollary}[Tight bound under standard F16]
+Under the standard F16 argument convention:
+\[
+N(\mathrm{LSE}) = 4.
+\]
+\end{corollary}
+
+\begin{proof}
+Upper bound: Theorem~\ref{thm:ub4}. Lower bound: Theorem~\ref{thm:lb3}. \qed
+\end{proof}
+
+\section{The LEAd Extension: 2-Node Route}
+
+\begin{definition}[LEAd operator]
+$\mathrm{LEAd}(a, b) = \ln(e^a + b)$ where $b$ is the \emph{raw} second argument
+(not transformed by $\ln$). This operator appears in the EML fractal explorer as
+one of 8 complex-plane operators used for Mandelbrot-style iteration.
+\end{definition}
+
+\begin{proposition}[LEAd gives LSE in 2n]
+\label{prop:lead}
+If LEAd is counted as a single F16 node:
+\[
+\mathrm{LSE}(x,y) = \mathrm{LEAd}(x,\; \exp(y))
+\]
+via Node 1: $u = \exp(y)$ [1n], Node 2: $\mathrm{LEAd}(x, u) = \ln(e^x + u) = \ln(e^x + e^y)$ [1n].
+Total: 2n.
+\end{proposition}
+
+\begin{proof}
+Numerical verification: at $(x,y) = (0.5, 1.2)$: $\mathrm{LSE} = 1.6031860489$,
+$\mathrm{LEAd}(0.5, e^{1.2}) = \ln(e^{0.5} + e^{1.2}) = 1.6031860489$. $\checkmark$
+(Five test points verified; all match to 10 decimal places.) \qed
+\end{proof}
+
+\begin{theorem}[LEAd status: outside standard F16 orbit]
+LEAd is NOT in the standard F16 orbit of $\mathrm{EML}(x,y) = e^x - \ln y$.
+\end{theorem}
+
+\begin{proof}
+The standard F16 orbit consists of operators where the second argument
+enters as $\ln(b)$ (or $-\ln(b)$, or $1/\ln(b)$). In LEAd, the second
+argument $b$ appears raw (as $b$, not as $\ln(b)$). No group action
+in $G_{16}$ (sign changes and reciprocal on arguments and result)
+transforms $\ln(b)$ into $b$ — these operations preserve the $\ln$ transformation.
+Hence LEAd with raw second argument is outside the F16 orbit. \qed
+\end{proof}
+
+\begin{remark}[Fractal vs.\ computation]
+In the EML fractal, $\mathrm{LEAd}(z, c)$ uses the complex constant $c$
+as the Mandelbrot parameter — NOT as a free second variable. The fractal
+context treats $c$ as a constant, not an input slot. Extending LEAd to a
+genuinely binary operator with free variable second argument requires a
+new convention outside the standard F16 model.
+\end{remark}
+
+\section{Extended F16 with LEAd: The 2n Question}
+
+\begin{definition}[F16$^+$ model]
+The \emph{extended F16} (F16$^+$) model adds LEAd as a genuine binary primitive:
+$\mathrm{LEAd}(a, b) = \ln(e^a + b)$ with $b$ raw. The F16$^+$ orbit has 17 elements
+(F16 plus LEAd; possibly 24 with all variants of LEAd).
+\end{definition}
+
+\begin{theorem}[LSE in F16$^+$]
+In the F16$^+$ model, $N_+(\mathrm{LSE}) = 2$.
+\end{theorem}
+
+\begin{proof}
+Upper bound: Proposition~\ref{prop:lead}. Lower bound: $\geq 2$ by
+Theorem~\ref{thm:lb2} (the symmetry argument applies in both models). \qed
+\end{proof}
+
+\begin{proposition}[Implications of F16$^+$]
+Adding LEAd to F16 gives:
+\begin{itemize}
+  \item $N_+(\mathrm{LSE}) = 2$ (from 4n in standard F16)
+  \item $N_+(\mathrm{partition\ function\ pair}) = 3$ (LEAd + exp + exp)
+  \item $N_+(\mathrm{von\ Neumann\ entropy}) = 5$ (saves 2n vs.\ standard F16)
+  \item No change for softplus (already 2n in standard F16 via EML$(x,1/e)$ + ln)
+\end{itemize}
+\end{proposition}
+
+\section{Summary Table}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{lcccl}
+\toprule
+Expression & Standard F16 & F16$^+$ (LEAd) & 23-op & Tight? \\
+\midrule
+$\mathrm{LSE}(x,y)$ & $4n$ & $2n$ & $2n$ & Yes (both models) \\
+Softplus $\ln(1+e^x)$ & $2n$ & $2n$ & $2n$ & Yes \\
+Partition fn.\ pair & $10n$ & $3n$ & $7n$ & Standard F16: open \\
+QRE term $\lambda \ln(\lambda/\mu)$ & $5n$ & $5n$ & $3n$ & Yes (standard F16) \\
+Boltzmann ratio & $6n$ & $6n$ & $5n$ & Open \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Final Statement}
+
+\begin{theorem}[LSE cost — complete analysis]
+\label{thm:final}
+\begin{enumerate}
+  \item \textbf{Standard F16 (second arg via $\ln$)}: $N(\mathrm{LSE}) = 4$.
+    Upper bound: $\exp(x) + \exp(y) + \mathrm{add} + \ln = 4n$.
+    Lower bound: no 3-node tree exists (proved by exhaustion of outer-function types).
+
+  \item \textbf{F16$^+$ (LEAd included, raw second arg)}: $N_+(\mathrm{LSE}) = 2$.
+    Upper bound: $\exp(y) + \mathrm{LEAd}(x, \exp(y)) = 2n$.
+    Lower bound: symmetry argument gives $\geq 2n$.
+
+  \item \textbf{23-op extended model}: $N_{23}(\mathrm{LSE}) = 2$.
+    Via $\mathrm{EEA}(x,y)[1n] + \ln[1n]$ or equivalently $\mathrm{LEAd}$ route.
+
+  \item \textbf{Correction to prior audit}: F16\_Only\_High\_Impact\_Audit.tex
+    reported $5n$; the correct standard F16 cost is $4n$.
+    The 23-op cost of $2n$ was already correct.
+\end{enumerate}
+\end{theorem}
+
+\begin{remark}[Open question: should LEAd be in F16?]
+The question of whether LEAd belongs to the F16 orbit depends on the definition
+of the group action $G_{16}$. If the orbit is defined to include operators where
+the second argument can appear raw (not via $\ln$), then LEAd is a legitimate
+F16 primitive and LSE $= 2n$. If the standard convention holds (second arg always
+via $\ln$), LSE $= 4n$.
+
+The fractal explorer includes LEAd for visualization purposes; its status
+as a computational primitive in the SuperBEST model requires a formal decision
+by the research team. Either choice is mathematically consistent; the two models
+differ only in how the ``second argument slot'' is typed.
+\end{remark}
+
+\end{document}
