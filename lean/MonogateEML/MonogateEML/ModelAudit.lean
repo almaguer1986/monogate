@@ -14,11 +14,12 @@ EPL(0.5, x) = exp(0.5·log(x)) = x^0.5 = √x for x > 0.
 Empirically: EPL(0.5, 4) = exp(0.5·log(4)) = exp(0.5·1.386) = exp(0.693) = 2.000 ✓
 This is the same mechanism as pow=1n and recip=1n. Corrected.
 
-## mul stays at 2n (verified empirically)
+## mul: 1n (positive domain), 2n (general domain)
 
-No single F16 operator computes x·y from raw inputs x, y.
-Tested: EML(2,3)=6.29, EXL(2,3)=8.12, ELAd(2,3)=22.17, EPL(2,3)=9.00 — none equal 6.
-mul = 2n stands. The v5.1 table is correct on this point.
+For positive domain: F16fn(x,y) = exp(log(x)+log(y)) = x·y. Single F16 node.
+Proved below: mul_is_one_node_positive.
+For general domain (all reals): no single F16 operator computes x·y.
+Proved: MulLowerBound.lean (SB_mul_ge_two), 0 sorries.
 
 ## Corrected SuperBEST v5.2 (positive domain)
 
@@ -53,6 +54,16 @@ theorem sqrt_is_one_node_positive (x : ℝ) (hx : 0 < x) :
   rw [Real.sqrt_eq_rpow]
   simp [Real.rpow_def_of_pos hx]
   ring_nf
+
+-- ================================================================
+-- 1b. mul = 1n (positive domain) — construction proof
+-- ================================================================
+
+/-- F16fn(x,y) = exp(log(x) + log(y)) = x · y for x,y > 0.
+    Multiplication is a single F16 node on the positive domain. -/
+theorem mul_is_one_node_positive (x y : ℝ) (hx : 0 < x) (hy : 0 < y) :
+    Real.exp (Real.log x + Real.log y) = x * y := by
+  rw [Real.exp_add, Real.exp_log hx, Real.exp_log hy]
 
 -- ================================================================
 -- 2. Corrected table total

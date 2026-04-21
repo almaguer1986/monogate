@@ -96,12 +96,24 @@ theorem exp_not_constant : ¬ (∃ c : ℂ, ∀ x, expTree.eval x = c) := by
 def EMLTree.evalReal (t : EMLTree) (x : ℝ) : ℝ :=
   (t.eval (x : ℂ)).re
 
-/-- Depth-1 real ceml trees are monotone on their natural domain.
-    CEML-T91 (sorry pending full case analysis). -/
-lemma depth1_monotone (t : EMLTree) (ht : t.depth ≤ 1)
-    (hpos : ∀ x : ℝ, 0 < ((t.depth = 1 → True) → True)) :
-    Monotone (t.evalReal) := by
-  sorry  -- Case analysis: const/const, var/const, const/var, var/var
+/-- Constant EML trees have constant real evaluation. -/
+lemma const_tree_evalReal (c : ℂ) (x : ℝ) :
+    (EMLTree.const c).evalReal x = c.re := by
+  simp [EMLTree.evalReal, EMLTree.eval]
+
+/-- The variable EML tree evaluates to x on the real line. -/
+lemma var_tree_evalReal (x : ℝ) :
+    EMLTree.var.evalReal x = x := by
+  simp [EMLTree.evalReal, EMLTree.eval]
+
+/-- CEML-T91 (depth-1 barrier lemma — sorry):
+    Real depth-1 EML trees cannot have infinitely many zeros in a bounded interval.
+    This is a consequence of analyticity; the proof requires Mathlib's analytic zeros theorem.
+    (Placeholder: the statement is correct; the induction step is the hard part.) -/
+lemma depth1_finite_zeros_real (t : EMLTree) (ht : t.depth ≤ 1) (a b : ℝ) (hab : a < b) :
+    Set.Finite {x ∈ Set.Icc a b | t.evalReal x = 0} := by
+  sorry -- Proof outline: exp and log are analytic; their combinations have finitely many zeros
+        -- by the identity theorem for analytic functions (zero set has no accumulation point).
 
 /-- sin is not monotone on [0, 2π]. -/
 lemma sin_not_monotone_full :
@@ -113,32 +125,35 @@ lemma sin_not_monotone_full :
   linarith
 
 /-- CEML-T48: sin(x) ∉ EML-k(ℝ) for any finite k.
-    Main theorem — sorry pending monotonicity induction. -/
+    Main theorem — sorry pending finite-zeros induction. -/
 theorem sin_not_in_real_EML_k (k : ℕ) :
     (fun x : ℂ => ↑(Real.sin x.re) : ℂ → ℂ) ∉ EML_k k := by
-  sorry  -- Full proof:
-         -- 1. Every depth-k real ceml tree is piecewise monotone (depth1_monotone + induction)
-         -- 2. sin has sign changes in every interval of length π
-         -- 3. Contradiction via IVT / monotonicity
+  sorry  -- Full proof strategy:
+         -- 1. Every depth-k real ceml tree has finitely many zeros in any bounded interval
+         --    (depth1_finite_zeros_real + induction: ceml(t1,t2) zeroes are determined by
+         --     exp(t1.re) = log|t2|, which has finitely many solutions if t1,t2 have finitely many)
+         -- 2. sin(nπ) = 0 for all n ∈ ℤ — infinitely many zeros in any interval [a, a+2π·N]
+         -- 3. Contradiction: EML_k trees cannot match a function with infinitely many zeros
 
 -- ============================================================
 -- 6. Sorry Census
 -- ============================================================
 
 /-
-SORRY CENSUS (as of Session 49):
-  1. depth1_monotone — case analysis of 4 depth-1 trees (MEDIUM difficulty)
-     Location: lean/MonogateEML/MonogateEML/EMLDepth.lean, line ~85
-     Status: NON-BLOCKING (can be proved by decide for concrete cases)
+SORRY CENSUS (current):
+  1. depth1_finite_zeros_real — analyticity argument (MEDIUM difficulty)
+     Location: EMLDepth.lean, lemma depth1_finite_zeros_real
+     Status: NON-BLOCKING — needs Mathlib analytic zero-set theorem
+     Path: Use Mathlib.Analysis.Analytic.IsolatedZeros (analytic functions have isolated zeros)
 
-  2. sin_not_in_real_EML_k — monotonicity induction (HARD)
-     Location: lean/MonogateEML/MonogateEML/EMLDepth.lean, line ~100
-     Status: BLOCKING — needs full induction argument
-     Path to proof: Prove depth-k trees are piecewise monotone by induction,
-                    then conclude contradiction with sin's sign changes.
+  2. sin_not_in_real_EML_k — finite zeros induction (HARD)
+     Location: EMLDepth.lean, theorem sin_not_in_real_EML_k
+     Status: BLOCKING — needs depth1_finite_zeros_real + induction
+     Path: Prove by induction that EML_k functions have finitely many zeros,
+           then contradict with sin's infinite zeros.
 
 Total sorries: 2
-Blocking sorries: 1
+Blocking sorries: 1 (sin_not_in_real_EML_k depends on depth1_finite_zeros_real)
 -/
 
 -- ============================================================

@@ -1,4 +1,6 @@
 -- MonogateEML/TheoremRegistry.lean
+import Mathlib.Data.Nat.Defs
+
 /-!
 # EML Theorem Registry — Locked Count
 
@@ -147,4 +149,4 @@ Do not increase this number without adding a corresponding Lean proof.
 -/
 
 -- Sanity check: PROVED_COUNT matches the list above
-#check @PROVED_COUNT  -- should be 18
+example : PROVED_COUNT = 18 := rfl
