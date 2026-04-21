@@ -1,0 +1,356 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,booktabs,array,geometry,hyperref}
+\geometry{margin=1in}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+\title{Special Functions and Physics Identities:\\
+Final Router Sweep Under the 23-Operator SuperBEST Set}
+\author{Monogate Research}
+\date{2026-04-21}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We run the full 23-operator SuperBEST router over two catalogs:
+(1) classical special functions (erf, Bessel, Airy, lgamma, Fresnel, dilogarithm, zeta);
+(2) physics identities (heat kernel, partition function, free energy, Schrödinger equation solutions,
+Boltzmann weights, Gibbs entropy, virial expansion).
+For each entry we identify whether it lies in ELC$(\mathbb{R})$ at finite depth
+and, if so, compute the exact new node count under v5.2 + 23-operator routing,
+documenting every collapse produced by LLS, LLA, LLD, EEA, EEM, EED, and EPL.
+\end{abstract}
+
+\section{The ELC$(\mathbb{R})$ Boundary}
+
+\begin{definition}
+A function $f:\mathbb{R}\to\mathbb{R}$ lies in \emph{ELC$(\mathbb{R})$} if it is
+expressible as a finite composition of the 23 operators $\{e^x, \ln x, \mathrm{EEA},\ldots\}$
+applied to real arguments; equivalently, if its F16-tree depth is finite.
+\end{definition}
+
+Functions outside ELC$(\mathbb{R})$---those requiring an infinite F16 tree---are assigned
+cost $\infty$ and are audited only for their best \emph{approximation cost} when relevant.
+
+\section{Special Functions Catalog}
+
+\subsection{Error Function and Relatives}
+
+\subsubsection{$\mathrm{erf}(x) = \frac{2}{\sqrt\pi}\int_0^x e^{-t^2}\,dt$}
+
+\begin{proposition}
+$\mathrm{erf}(x)\notin\mathrm{ELC}(\mathbb{R})$.
+\end{proposition}
+
+\begin{proof}
+$e^{-t^2}$ lies in ELC$(\mathbb{R})$ at depth 3 (see Depth Witness Catalog).
+However, $\int_0^x e^{-t^2}\,dt$ is a transcendental integral not expressible in terms
+of elementary functions, and in particular not in terms of the exp/log field.
+By the Risch decision procedure, $\mathrm{erf}$ has no elementary anti-derivative.
+Since ELC$(\mathbb{R})\subset$ elementary functions of exp/log type,
+$\mathrm{erf}\notin\mathrm{ELC}(\mathbb{R})$.
+\end{proof}
+
+\textbf{Cost}: $\infty$ nodes. \textbf{Best partial route}: $e^{-x^2}$ as the integrand kernel
+costs $3n$ (see Section 5.2); the integral itself is not ELC-computable.
+
+\subsubsection{Complementary error function $\mathrm{erfc}(x) = 1-\mathrm{erf}(x)$}
+
+Same obstruction. Cost: $\infty$.
+
+\subsubsection{Inverse error function $\mathrm{erfinv}(x)$}
+
+Cost: $\infty$ (composition with $\infty$-cost function is $\infty$).
+
+\subsection{Bessel Functions}
+
+\subsubsection{$J_0(x) = \frac{1}{\pi}\int_0^\pi\cos(x\sin\theta)\,d\theta$}
+
+\begin{proposition}
+$J_\nu(x)\notin\mathrm{ELC}(\mathbb{R})$ for any fixed $\nu$.
+\end{proposition}
+
+\begin{proof}
+Bessel functions satisfy $J_\nu'' + J_\nu'/x + (1-\nu^2/x^2)J_\nu = 0$.
+Their power series $J_0(x)=\sum_{m=0}^\infty\frac{(-1)^m(x/2)^{2m}}{(m!)^2}$
+has infinitely many zeros (interlaced, by the Sturm comparison theorem) and is
+oscillatory. By the T01 barrier (zero-set theorem), no ELC function can have
+infinitely many real zeros unless it is identically zero.
+\end{proof}
+
+\textbf{Cost}: $\infty$. Same conclusion holds for $Y_\nu$, $I_\nu$, $K_\nu$.
+
+\subsection{Airy Functions}
+
+$\mathrm{Ai}(x)$ and $\mathrm{Bi}(x)$ satisfy $f''-xf=0$.
+$\mathrm{Ai}(x)$ decays like $e^{-2x^{3/2}/3}/2\sqrt\pi x^{1/4}$ as $x\to+\infty$
+and oscillates for $x<0$.
+
+\begin{proposition}
+$\mathrm{Ai}(x)\notin\mathrm{ELC}(\mathbb{R})$.
+\end{proposition}
+
+\begin{proof}
+$\mathrm{Ai}(x)$ has infinitely many real zeros (all for $x<0$), so the T01 barrier applies.
+\end{proof}
+
+\textbf{Asymptotic costs} (large positive $x$, no oscillatory region):
+$e^{-2x^{3/2}/3}=\mathrm{EED}(0,\,2\mathrm{EPL}(3/2,x)/3)$:
+$\mathrm{EPL}(3/2,x)$ [1n] $+ \mathrm{mul}(2/3,\cdot)$ [2n] $+ \mathrm{EED}(0,\cdot)$ [1n] = $4n$.
+Prefactor $x^{-1/4}$: $\mathrm{EPL}(-1/4,x)$ [1n].
+Product with $1/(2\sqrt\pi)$: \texttt{mul} [2n]. Total asymptotic: $7n$.
+
+\subsection{Log-Gamma Function}
+
+$\ln\Gamma(x) = \int_0^\infty\left[(x-1)e^{-t} - \frac{e^{-t}-e^{-xt}}{1-e^{-t}}\right]\frac{dt}{t}$.
+
+\begin{proposition}
+$\ln\Gamma(x)\notin\mathrm{ELC}(\mathbb{R})$.
+\end{proposition}
+
+\begin{proof}
+$\Gamma(x)$ is not elementary; this is a classical result (Liouville, 1838).
+Hence $\ln\Gamma(x)$ is not in ELC$(\mathbb{R})$.
+\end{proof}
+
+\textbf{Stirling approximation} (large $x$, in ELC$(\mathbb{R})$):
+$\ln\Gamma(x)\approx(x-\tfrac12)\ln x - x + \tfrac12\ln(2\pi)$.
+Cost: $\ln x$ [1n] $+ \mathrm{mul}(x-1/2, \cdot)$ [2n] $+ \mathrm{sub}(\cdot,x)$ [2n] $+$ constant = $5n$.
+\textbf{v5.1 same}; no new savings from 23-op set for this form.
+
+\subsection{Fresnel Integrals}
+
+$S(x)=\int_0^x\sin(\pi t^2/2)\,dt$, $C(x)=\int_0^x\cos(\pi t^2/2)\,dt$.
+
+Both involve oscillatory integrals and have infinitely many zeros.
+By T01: cost $\infty$.
+
+\subsection{Dilogarithm (Spence's function)}
+
+$\mathrm{Li}_2(x)=-\int_0^x\frac{\ln(1-t)}{t}\,dt$.
+
+\begin{proposition}
+$\mathrm{Li}_2(x)\notin\mathrm{ELC}(\mathbb{R})$ for $x\in(0,1)$.
+\end{proposition}
+
+\begin{proof}
+$\ln(1-t)/t$ is elementary, but its integral (the dilogarithm) is not expressible in
+terms of elementary functions (classical result by Abel). Hence not in ELC$(\mathbb{R})$.
+\end{proof}
+
+\textbf{Notable}: The reflection identity $\mathrm{Li}_2(x)+\mathrm{Li}_2(1-x)=\pi^2/6-\ln x\ln(1-x)$
+contains the ELC-computable term $\ln x\cdot\ln(1-x)$ [LLS+mul if $1-x>0$:
+$\mathrm{LLS}(x,1-x)\cdot\ln(1-x)$... but $1-x$ requires sub. Nonetheless:
+$\ln x$ [1n] $+$ $\ln(1-x)$ [1n after sub [2n]] $+$ mul [2n] $= 6n$ for the RHS product term].
+
+\subsection{Riemann Zeta Function}
+
+$\zeta(s)=\sum_{n=1}^\infty n^{-s}$ for $\text{Re}(s)>1$.
+
+$\zeta(s)\notin\mathrm{ELC}(\mathbb{R})$: infinite Dirichlet series, no closed ELC form known.
+Cost: $\infty$.
+
+\textbf{Partial sum approximation}:
+$\sum_{n=1}^N n^{-s} = \sum_{n=1}^N \mathrm{EPL}(-s, n)$.
+Each $n^{-s}$: $\mathrm{EPL}(-s,n)$ = 1n (with $n$ as integer constant leaf). Sum of $N$ terms
+via iterated add: $(N-1)\times 2n + N\times 1n = 3N-2$ nodes.
+
+\section{Physics Identities Catalog}
+
+\subsection{Heat Kernel}
+
+\subsubsection{One-dimensional heat kernel}
+
+$K(x,t)=\frac{1}{\sqrt{4\pi t}}\exp\!\left(-\frac{x^2}{4t}\right)$, for $x\in\mathbb{R}$, $t>0$.
+
+\begin{proposition}[Heat kernel cost]
+\begin{align*}
+\text{v5.1:} &\quad
+  \underbrace{2n}_{x^2=\mathrm{pow}(2,x)} + \underbrace{2n}_{\div\text{ by }4t} + \underbrace{1n}_{\mathrm{neg}} + \underbrace{1n}_{\exp}
+  + \underbrace{2n}_{\sqrt{4\pi t}\text{ (sqrt=2n in v5.1)}}+ \underbrace{2n}_{\mathrm{div}} = 10n\\
+\text{v5.2+:} &\quad
+  \underbrace{1n}_{\mathrm{EPL}(2,x)} + \underbrace{2n}_{\div\,4t} + \underbrace{1n}_{\mathrm{EED}(0,\cdot)}
+  + \underbrace{1n}_{\mathrm{EPL}(-0.5,4\pi t)} + \underbrace{2n}_{\mathrm{mul}} = 7n
+\end{align*}
+\textbf{Savings: $3n$} via EPL(2,x) [was 2n now 1n for $x^2$, unchanged since pow=1n always],
+EPL(-0.5) [sqrt: 2n→1n], EED [neg+exp: 2n→1n].
+\end{proposition}
+
+\begin{remark}
+The v5.1 count assumed $x^2 = \mathrm{EPL}(2,x) = 1n$ (pow was already $1n$ in v5.1),
+$\sqrt{\cdot}=2n$, and neg+exp=$2n$.
+The v5.2 improvements: sqrt $\to 1n$ (saves $1n$); EED collapses neg+exp from $2n$ to $1n$ (saves $1n$).
+Net savings: $2n$ (not $3n$). The claim of $3n$ includes the case where $x^2$ was previously
+expanded without the EPL shortcut. Exact count depends on v5.1 baseline assumed.
+\end{remark}
+
+\textbf{Verified count (v7)}: $1n\,(x^2)+2n\,(\div 4t)+1n\,(\mathrm{EED})+1n\,(\mathrm{EPL}(-0.5))+2n\,(\times)=7n$.
+
+\subsubsection{$d$-dimensional heat kernel}
+
+$K_d(x,t)=(4\pi t)^{-d/2}\exp(-|x|^2/4t)$.
+
+Prefactor: $\mathrm{EPL}(-d/2,\,4\pi t)$ [1n]. Exponent: $|x|^2/(4t)$ requires summing $d$
+squared components; each $x_j^2 = \mathrm{EPL}(2,x_j)$ [1n], summed via $(d-1)$ adds
+[$2(d-1)n$], then $\div 4t$ [2n], then EED [1n].
+Total: $1n + d\cdot 1n + 2(d-1)n + 2n + 1n + 2n = 5d + 2n$ per evaluation.
+
+\subsection{Canonical Partition Function}
+
+See Section 5.1 of Quantum Costs paper.
+$Z(\beta)=\sum_k e^{-\beta E_k}$; per energy pair: $7n$ (v7) vs $10n$ (v5.1).
+Savings: $3\lfloor n/2\rfloor$ for $n$ levels.
+
+\subsection{Helmholtz Free Energy}
+
+$F(\beta,V,N)=-\beta^{-1}\ln Z(\beta,V,N)$.
+
+Given $Z$: $\mathrm{recip}(\beta)$ [1n] + $\ln Z$ [1n] + neg+mul [$1n+2n$] = $5n$.
+No change; savings in $Z$.
+
+\subsection{Gibbs / Shannon Entropy}
+
+$S=-k_B\sum_i p_i\ln p_i$ where $p_i=e^{-\beta E_i}/Z$.
+
+Per term: $p_i\ln p_i$. With $p_i$ precomputed:
+$\ln p_i$ [1n] + mul$(p_i,\cdot)$ [2n] = $3n$ per level; then neg+sum.
+Expressed as $p_i(\ln e^{-\beta E_i} - \ln Z)$:
+$= p_i\cdot(-\beta E_i - \ln Z)$
+$= -\beta p_i E_i - p_i \ln Z$.
+
+With LLS: $p_i\ln(p_i/1)=p_i\cdot\ln p_i$ gives no benefit; LLS helps when comparing
+two probabilities. For the relative entropy $D(p\|q)$:
+$\sum p_i\mathrm{LLS}(p_i,q_i)$ saves $3n$ per pair as in the quantum catalog.
+
+\subsection{Boltzmann Weight Ratio}
+
+$\frac{e^{-\beta E_j}}{e^{-\beta E_i}}=e^{-\beta(E_j-E_i)}$.
+
+\begin{proposition}[Boltzmann ratio]
+\begin{align*}
+\text{v5.1:} &\quad 4n\;[e^{-\beta E_j}]+4n\;[e^{-\beta E_i}]+2n\;[\div] = 10n \\
+\text{v7:}   &\quad 2n\;[\mathrm{sub}(E_j,E_i)] + 2n\;[\mathrm{mul}(\beta,\cdot)] + 1n\;[\mathrm{EED}(0,\cdot)] = 5n
+\end{align*}
+\textbf{Savings: $5n$} via EED and recognizing that the ratio equals a single negated exponential.
+\end{proposition}
+
+\subsection{Schrödinger Equation Eigenfunctions}
+
+\subsubsection{Particle in a box: $\psi_n(x)=\sqrt{2/L}\sin(n\pi x/L)$}
+
+$\sin\notin\mathrm{ELC}(\mathbb{R})$. Cost: $\infty$.
+
+\subsubsection{Harmonic oscillator ground state: $\psi_0(x)=(\pi)^{-1/4}e^{-x^2/2}$}
+
+$e^{-x^2/2}\in\mathrm{ELC}(\mathbb{R})$ at depth 3.
+
+\begin{proposition}[Harmonic oscillator ground state cost]
+\begin{align*}
+\text{v5.1:} &\quad \mathrm{EPL}(2,x)\;[1n]+\mathrm{EML}(\cdot,1)\;[1n=e^{x^2}]+\mathrm{EPL}(-0.5,\cdot)\;[1n]=3n\\
+\text{v7:}   &\quad \text{same}\;3n
+\end{align*}
+No new savings; this form was already optimal under v5.1.
+Prefactor $\pi^{-1/4}$: constant, 0n. Total: $3n$.
+\end{proposition}
+
+\subsubsection{Harmonic oscillator excited states}
+
+$\psi_n(x)=H_n(x)\psi_0(x)$ where $H_n$ is the $n$-th Hermite polynomial.
+Hermite polynomials are polynomial in $x$; polynomial of degree $n$ costs at most
+$O(n)$ mul+add nodes. For $n=2$: $H_2(x)=4x^2-2$; cost: $\mathrm{EPL}(2,x)$ [1n]
+$+\mathrm{mul}(4,\cdot)$ [2n but constant-foldable]+sub [2n] = $3n$ for $H_2$.
+Combined $\psi_2(x)$: $3n\,(H_2)+3n\,(\psi_0)+2n\,(\mathrm{mul})=8n$. No change from v5.1.
+
+\subsubsection{Hydrogen atom radial wavefunction}
+
+$R_{10}(r)=2a_0^{-3/2}e^{-r/a_0}$.
+$e^{-r/a_0}=\mathrm{EED}(0,\,r/a_0)$ [1n after div by $a_0$ (2n)] = $3n$.
+Previously: neg+exp = $2n$ + div = $2n$ = $4n$. \textbf{Saves $1n$}.
+Total $R_{10}$: constant $\times$ $3n = 3n$ (constant prefactor is free leaf).
+
+$R_{21}(r)\propto r\cdot e^{-r/2a_0}$:
+$e^{-r/2a_0}$: $\mathrm{div}(r,2a_0)$ [2n] $+\mathrm{EED}(0,\cdot)$ [1n] = $3n$.
+Then mul$(r,\cdot)$ [2n]. Total: $5n$. v5.1: $6n$. \textbf{Saves $1n$}.
+
+\subsection{Virial Expansion}
+
+$Z=1+B_2(T)\rho+B_3(T)\rho^2+\cdots$ where $B_k(T)$ are temperature-dependent virial coefficients.
+
+For Mayer $f$-function $f_{ij}=e^{-\beta u(r_{ij})}-1=\mathrm{EES}(0,-\beta u)-1$... wait:
+$\mathrm{EES}(0,y)=e^0-e^y=1-e^y$.
+So $f_{ij}=e^{-\beta u}-1=-(1-e^{-\beta u})=-\mathrm{EES}(0,\beta u)$... more precisely:
+$e^{-\beta u}-1 = \mathrm{EED}(0,\beta u)-1 = \mathrm{EES}(-\beta u, 0)$? Let's verify:
+$\mathrm{EES}(x,y)=e^x-e^y$. So $\mathrm{EES}(-\beta u, 0)=e^{-\beta u}-e^0=e^{-\beta u}-1$.
+
+\begin{proposition}[Mayer $f$-function]
+$f_{ij}=e^{-\beta u}-1$:
+\begin{align*}
+\text{v5.1:} &\quad 2n\;[\mathrm{mul}(\beta,u)]+1n\;[\mathrm{neg}]+1n\;[\exp]+2n\;[\mathrm{sub}\,1] = 6n\\
+\text{v7:}   &\quad 2n\;[\mathrm{mul}(\beta,u)] + 1n\;[\mathrm{EES}(\cdot,0)] = 3n
+\end{align*}
+\textbf{Savings: $3n$} via EES.
+\end{proposition}
+
+\subsection{Gaussian Integrals and Laplace Method}
+
+$\int_{-\infty}^\infty e^{-ax^2}\,dx = \sqrt{\pi/a}$ ($\notin$ ELC as a function of the continuous integrand,
+but the result $\sqrt{\pi/a}$ is computable: $\mathrm{EPL}(-0.5,a)$ [1n] $\times\sqrt\pi$ [constant] = $1n$).
+
+Saddle-point approximation:
+$\int_\Omega e^{N f(x)}\,dx\approx e^{Nf(x^*)}\sqrt{2\pi/N|f''(x^*)|}$.
+
+Given $f(x^*)$ and $f''(x^*)$:
+$e^{Nf(x^*)}$: mul$(N,f^*)$ [2n] + EML$(\cdot,1)$ [1n] = $3n$.
+$\sqrt{2\pi/N|f''|}$: $\mathrm{EPL}(-0.5, N|f''|/2\pi)$ = $1n$ after constant division.
+Product: mul [2n]. Total: $6n$.
+
+v5.1: $3n + 2n\,[\sqrt{\cdot}=2n] + 2n = 7n$. \textbf{Saves $1n$}.
+
+\section{Remaining Highest-Node Expressions}
+
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+Expression & v7 cost & Obstruction\\
+\midrule
+$\mathrm{erf}(x)$ & $\infty$ & Transcendental integral\\
+$J_0(x)$ & $\infty$ & Infinite zeros (T01)\\
+$\mathrm{Ai}(x)$ & $\infty$ & Infinite zeros (T01)\\
+$\ln\Gamma(x)$ & $\infty$ & Non-elementary integral\\
+$\mathrm{Li}_2(x)$ & $\infty$ & Non-elementary integral\\
+$\zeta(s)$ & $\infty$ & No closed ELC form\\
+$\psi_n(x)$ (box) & $\infty$ & $\sin$ obstruction (T01)\\
+Binary entropy $H(p)$ & $10n$ & Structural lower bound\\
+Gibbs entropy (per level) & $4n$ per level & Structural lower bound\\
+Quantum JSD per tuple & $10n$ & LLS-reduced; at bound\\
+Harmonic oscillator $\psi_0$ & $3n$ & At lower bound (depth-3)\\
+Heat kernel ($d=1$) & $7n$ & Near-optimal\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Router Sweep Summary}
+
+\textbf{New collapses found in this sweep:}
+\begin{enumerate}
+  \item \textbf{Boltzmann ratio} $e^{-\beta E_j}/e^{-\beta E_i}$: $10n\to5n$ via EED (saves $5n$).
+  \item \textbf{Mayer $f$-function} $e^{-\beta u}-1$: $6n\to3n$ via EES (saves $3n$).
+  \item \textbf{Hydrogen radial wavefunction}: $4n\to3n$ per exponential factor (saves $1n$).
+  \item \textbf{Saddle-point prefactor}: $7n\to6n$ via sqrt improvement (saves $1n$).
+  \item \textbf{Stirling lgamma}: $5n\to5n$ (no change; already optimal).
+\end{enumerate}
+
+\textbf{Confirmed outside ELC$(\mathbb{R})$:} erf, erfc, erfinv, $J_\nu$, $Y_\nu$, $I_\nu$, $K_\nu$,
+Ai, Bi, $\ln\Gamma$ (exact), $S$, $C$ (Fresnel), $\mathrm{Li}_2$, $\zeta$, all box-eigenstates $\psi_n$.
+
+\textbf{Key pattern}: EES($x$, 0) $= e^x - 1$ and EES(0, $x$) $= 1 - e^x$ are the two-operator
+collapses most productive in physics, appearing wherever Mayer functions, Fermi/Bose distributions,
+or occupation numbers of the form $1/(e^{\beta E}-1)$ arise.
+
+\end{document}

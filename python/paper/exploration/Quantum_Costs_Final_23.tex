@@ -1,0 +1,365 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,booktabs,array,geometry,hyperref}
+\geometry{margin=1in}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+\title{Quantum Operation Costs Under the Closed 23-Operator Set:\\
+Final Re-Audit with SuperBEST v5.2 Routing}
+\author{Monogate Research}
+\date{2026-04-21}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We re-compute exact F16-node counts for the full quantum computing catalog---including
+time-evolution operators, von Neumann entropy, quantum relative entropy, Bures distance,
+matrix square root, density-matrix logarithm, partition functions, and related quantities---using
+the locked 23-operator SuperBEST set and v5.2 routing.
+The 23-operator set (F16 plus EEA, EES, EEM, EED and LLS, LLA, LLD)
+produces measurable reductions in five categories of quantum computation.
+We document exact before-vs-after node counts and identify the structural reasons
+for each collapse.
+\end{abstract}
+
+\section{Setup and Notation}
+
+\subsection{The 23-Operator SuperBEST Set}
+
+The closed operator taxonomy consists of:
+\begin{itemize}
+  \item \textbf{F16}: the 16-element orbit of $\mathrm{eml}(x,y)=e^x-\ln y$ under
+    $G_{16}\cong(\mathbb{Z}/2)^4$, covering all sign/reciprocal variants of
+    $\exp(\pm x)\,[\pm]\,\ln(\pm y)$ for $[\pm]\in\{+,-,\times,\div\}$.
+  \item \textbf{EEA}: $e^x+e^y$ (1 node; was $4n$ via two exps + add)
+  \item \textbf{EES}: $e^x-e^y$ (1 node)
+  \item \textbf{EEM}: $e^{x+y}=e^x\cdot e^y$ (1 node)
+  \item \textbf{EED}: $e^{x-y}=e^x/e^y$ (1 node; was $4n$)
+  \item \textbf{LLS}: $\ln(x/y)=\ln x-\ln y$ (1 node; was $4n$)
+  \item \textbf{LLA}: $\ln(xy)=\ln x+\ln y$ (1 node; was $4n$)
+  \item \textbf{LLD}: $\log_y x=\ln x/\ln y$ (1 node; was $4n$)
+\end{itemize}
+
+\subsection{SuperBEST v5.2 Core Costs (Locked)}
+
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+Operator & Positive domain & General domain \\
+\midrule
+$e^x$ & $1n$ & $1n$ \\
+$\ln x$ & $1n$ & $1n$ \\
+$1/x$ & $1n$ & $1n$ \\
+$x^n$ (pow) & $1n$ & $1n$ \\
+$\sqrt{x}$ & $1n$ & $2n$ \\
+$-x$ (neg) & $1n$ & $1n$ \\
+$x\cdot y$ (mul) & $2n$ & $2n$ \\
+$x-y$ (sub) & $2n$ & $2n$ \\
+$x+y$ (add) & $2n$ & $2n$ \\
+$x/y$ (div) & $2n$ & $2n$ \\
+\midrule
+\textbf{Positive total} & \textbf{15n} & --- \\
+\textbf{General total} & --- & \textbf{22n} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Node-Count Measurement Convention}
+
+An \emph{$n$-node expression} requires exactly $n$ applications of 23-operator primitives,
+with inputs (eigenvalues $\lambda_i$, parameters $t$, $\beta$, etc.)\ counted as zero-cost leaves.
+Shared sub-expressions are counted once (DAG semantics, not tree semantics) when explicitly stated.
+
+\section{Quantum Matrix Operations}
+
+\subsection{Matrix Square Root}
+
+For a density matrix $\rho$ with spectral decomposition $\rho=\sum_i \lambda_i |i\rangle\langle i|$,
+the matrix square root $\sqrt{\rho}$ acts spectrally: $\sqrt{\rho}=\sum_i\sqrt{\lambda_i}|i\rangle\langle i|$.
+
+\begin{proposition}[Matrix sqrt cost]
+For each eigenvalue $\lambda_i>0$, the scalar computation $\sqrt{\lambda_i}$ costs:
+\begin{align*}
+\text{v5.1 (16-op):} &\quad 2n \quad [\text{pow via two EML nodes}] \\
+\text{v5.2 (23-op):} &\quad 1n \quad [\mathrm{EPL}(0.5,\lambda_i)=\exp(0.5\ln\lambda_i)=\sqrt{\lambda_i}]
+\end{align*}
+For a $d\times d$ density matrix: total savings $= d$ nodes.
+\end{proposition}
+
+\subsection{Density Matrix Logarithm}
+
+$\ln\rho = \sum_i \ln(\lambda_i)|i\rangle\langle i|$. Each $\ln(\lambda_i)$ costs $1n$ in both versions.
+\textbf{No change.}
+
+\subsection{Matrix Exponential (Spectral Factor)}
+
+The time-evolution operator $U(t)=e^{-iHt}$ acts on eigenvalues of $H$ via $e^{-\lambda_k t}$
+(restricting to the real spectral domain of Hermitian $H$ acting on position eigenstates).
+
+\begin{proposition}[Spectral decay factor]
+For each real eigenvalue $\lambda_k$ and time parameter $t$:
+\begin{align*}
+\text{v5.1:} &\quad \mathrm{mul}(\lambda_k, t)\;[2n] + \mathrm{neg}\;[1n] + \exp\;[1n] = 4n \\
+\text{v7:}   &\quad \mathrm{mul}(\lambda_k, t)\;[2n] + \mathrm{EED}(0,\cdot)\;[1n] = 3n
+\end{align*}
+where $\mathrm{EED}(0, z)=e^{0-z}=e^{-z}$.
+\textbf{Savings: $1n$ per spectral factor.}
+\end{proposition}
+
+\begin{remark}
+$\mathrm{EED}(0, z) = e^{-z}$ provides a direct one-node negated exponential gate.
+This collapses the three-step \texttt{neg}+\texttt{exp}+\texttt{mul} pattern to two steps
+whenever a negative-exponent evaluation is required.
+\end{remark}
+
+\section{Entropy and Information Quantities}
+
+\subsection{Von Neumann Entropy}
+
+$S(\rho)=-\mathrm{Tr}(\rho\ln\rho)=-\sum_i\lambda_i\ln\lambda_i$.
+
+\begin{proposition}[Von Neumann entropy per term]
+For each eigenvalue $\lambda_i$:
+\begin{align*}
+\text{v5.1 and v7:} &\quad \ln(\lambda_i)\;[1n] + \mathrm{neg}\;[1n] + \mathrm{mul}(\lambda_i,\cdot)\;[2n] = 4n
+\end{align*}
+\textbf{No change.} The form $-\lambda\ln\lambda$ is irreducible under F16 (no single 23-operator
+covers the product of an identity gate with a log gate).
+\end{proposition}
+
+\subsection{Quantum Relative Entropy}
+
+$D(\rho\|\sigma)=\mathrm{Tr}(\rho(\ln\rho-\ln\sigma))=\sum_i\lambda_i(\ln\lambda_i-\ln\mu_i)$,
+where $\lambda_i,\mu_i$ are corresponding eigenvalues of $\rho,\sigma$.
+
+\begin{theorem}[Quantum relative entropy collapse]
+For each eigenvalue pair $(\lambda_i,\mu_i)$:
+\begin{align*}
+\text{v5.1:} &\quad \ln\lambda_i\;[1n] + \ln\mu_i\;[1n] + \mathrm{sub}\;[2n] + \mathrm{mul}(\lambda_i,\cdot)\;[2n] = 6n \\
+\text{v7:}   &\quad \mathrm{LLS}(\lambda_i,\mu_i)\;[1n] + \mathrm{mul}(\lambda_i,\cdot)\;[2n] = 3n
+\end{align*}
+where $\mathrm{LLS}(\lambda_i,\mu_i)=\ln(\lambda_i/\mu_i)=\ln\lambda_i-\ln\mu_i$.
+\textbf{Savings: $3n$ per eigenvalue pair; $3d$ total for a $d\times d$ system.}
+\end{theorem}
+
+\begin{proof}
+LLS satisfies all four Primitive Gate Criteria (PGC): (1) outside F16 orbit, (2) depth-1 computable,
+(3) saves $\geq 1n$ vs F16 routing, (4) canonically motivated as log-ratio.
+The routing $\lambda_i\cdot\mathrm{LLS}(\lambda_i,\mu_i)$ is depth-2, taking eigenvalues as leaves.
+\end{proof}
+
+\subsection{Quantum Conditional Entropy}
+
+$S(A|B)_\rho = S(\rho_{AB})-S(\rho_B) = -D(\rho_{AB}\|\mathbf{1}_A\otimes\rho_B)$.
+
+Node count inherits from relative entropy and von Neumann entropy terms.
+With LLS routing: reduces by $3n$ per joint eigenvalue pair over v5.1.
+
+\subsection{Quantum Mutual Information}
+
+$I(A:B)_\rho = S(\rho_A)+S(\rho_B)-S(\rho_{AB})$.
+Each entropy computed at $4n$ per eigenvalue. \textbf{No new savings over v5.1} for
+the entropy terms individually. Total savings come only from sub-expressions
+that use sqrt or log-ratio patterns.
+
+\section{Distance and Fidelity Measures}
+
+\subsection{Bures Distance}
+
+$d_B(\rho,\sigma)=\sqrt{2(1-F(\rho,\sigma))}$ where
+$F(\rho,\sigma)=\left(\mathrm{Tr}\sqrt{\sqrt\rho\,\sigma\sqrt\rho}\right)^2$.
+
+For commuting $\rho,\sigma$ (diagonal in the same basis):
+$F(\rho,\sigma)=\left(\sum_i\sqrt{\lambda_i\mu_i}\right)^2$.
+
+\begin{proposition}[Bures fidelity term]
+For each pair $(\lambda_i,\mu_i)$:
+\begin{align*}
+\text{v5.1:} &\quad \mathrm{mul}(\lambda_i,\mu_i)\;[2n] + \sqrt{\cdot}\;[2n] = 4n \\
+\text{v5.2:} &\quad \mathrm{mul}(\lambda_i,\mu_i)\;[2n] + \mathrm{EPL}(0.5,\cdot)\;[1n] = 3n
+\end{align*}
+\textbf{Savings: $1n$ per eigenvalue pair; $d$ total for $d\times d$ systems.}
+\end{proposition}
+
+\begin{remark}
+An alternative routing: $\sqrt{\lambda_i\mu_i}=\sqrt{\lambda_i}\cdot\sqrt{\mu_i}$
+using $\mathrm{EPL}(0.5,\lambda_i)\cdot\mathrm{EPL}(0.5,\mu_i)$ costs $1+1+2=4n$,
+which is worse. The \texttt{mul}-first strategy is optimal.
+\end{remark}
+
+\subsection{Trace Distance}
+
+$d_T(\rho,\sigma)=\tfrac12\|\rho-\sigma\|_1=\tfrac12\sum_i|\lambda_i-\mu_i|$.
+
+For the scalar step $|\lambda_i-\mu_i|$: requires $\mathrm{sub}$ [2n] + absolute value
+[$\notin$ ELC(ℝ) for general inputs, requires sign analysis].
+No ELC routing improvement. \textbf{No change.}
+
+\subsection{Quantum Jensen--Shannon Divergence}
+
+$\mathrm{JSD}(\rho\|\sigma)=\tfrac12D\!\left(\rho\|\tfrac{\rho+\sigma}{2}\right)+\tfrac12D\!\left(\sigma\|\tfrac{\rho+\sigma}{2}\right)$.
+
+Per eigenvalue tuple $(\lambda_i,\mu_i)$:
+\[
+m_i=\tfrac{\lambda_i+\mu_i}{2},\quad
+\text{term}=\tfrac12\lambda_i\,\mathrm{LLS}(\lambda_i,m_i)+\tfrac12\mu_i\,\mathrm{LLS}(\mu_i,m_i).
+\]
+v7 count per tuple: $\mathrm{add}(\lambda_i,\mu_i)$ [2n] + scale by $\tfrac12$ [implicit constant mul, 0n with constant folding]
++ $\mathrm{LLS}(\lambda_i,m_i)$ [1n] + $\mathrm{mul}(\lambda_i,\cdot)$ [2n] + $\mathrm{LLS}(\mu_i,m_i)$ [1n]
++ $\mathrm{mul}(\mu_i,\cdot)$ [2n] + $\mathrm{add}$ [2n] = $10n$ per tuple.
+
+v5.1 count: two LLS sub-expressions each expand to $1+1+2=4n$ instead of 1n, adding $6n$.
+Total v5.1: $16n$ per tuple.
+\textbf{Savings: $6n$ per eigenvalue tuple via two LLS collapses.}
+
+\section{Partition Functions and Thermal States}
+
+\subsection{Canonical Partition Function}
+
+$Z(\beta)=\sum_{k=1}^n e^{-\beta E_k}$.
+
+\begin{theorem}[Partition function EEA collapse]
+For $n$ energy levels $E_1,\ldots,E_n$ and inverse temperature $\beta$:
+\begin{align*}
+\text{v5.1, per pair }(E_k,E_j): &\quad
+  3n\;[\text{compute }-\beta E_k] + 3n\;[\text{compute }-\beta E_j]\\
+  &\quad+ 1n\;[\exp(-\beta E_k)] + 1n\;[\exp(-\beta E_j)] + 2n\;[\text{add}] = 10n\\
+\text{v7, per pair }(E_k,E_j): &\quad
+  3n + 3n + 1n\;[\mathrm{EEA}(-\beta E_k,-\beta E_j)] = 7n
+\end{align*}
+\textbf{Savings: $3n$ per pair of energy levels; $3\lfloor n/2\rfloor$ total for $n$ levels.}
+\end{theorem}
+
+\begin{proof}
+$\mathrm{EEA}(x,y)=e^x+e^y$ is a single node that subsumes the two \texttt{exp} calls and
+the \texttt{add}, saving $3n$ per pair. The arguments $-\beta E_k$ are computed identically
+in both versions via $\mathrm{EED}(0,\mathrm{mul}(\beta,E_k))$.
+\end{proof}
+
+\subsection{Free Energy}
+
+$F(\beta)=-\beta^{-1}\ln Z(\beta)$.
+
+Given $Z$: $\mathrm{recip}(\beta)$ [1n] + $\ln Z$ [1n] + $\mathrm{neg}$ [1n] + $\mathrm{mul}$ [2n] = $5n$.
+No change from v5.1 at this level. Savings concentrated in $Z$ computation.
+
+\subsection{Thermal State Entropy}
+
+$S(\beta)=\ln Z+\beta\langle E\rangle_\beta$ where $\langle E\rangle_\beta=-\partial_\beta\ln Z$.
+
+Node counts depend on representation of $\langle E\rangle_\beta$. For discrete spectrum:
+$\langle E\rangle_\beta = Z^{-1}\sum_k E_k e^{-\beta E_k}$.
+Each $E_k e^{-\beta E_k}$ costs: $3n$ [$e^{-\beta E_k}$ via EED] + $2n$ [$\mathrm{mul}(E_k,\cdot)$] = $5n$ per level.
+\textbf{No change from v5.1 for individual terms.}
+For paired sums using EEA on the exponential factors: see Section 5.1 approach.
+
+\section{Lindblad and Open Quantum Systems}
+
+\subsection{Lindblad Decay Factor}
+
+Open quantum evolution produces factors of the form $e^{-\gamma_k t}(1-e^{-\gamma_j t})$
+appearing in off-diagonal decoherence elements.
+
+\begin{proposition}[Lindblad factor]
+\begin{align*}
+\text{v5.1:} &\quad 4n\;[e^{-\gamma_k t}] + 4n\;[e^{-\gamma_j t}] + 2n\;[\text{sub from 1}] + 2n\;[\text{mul}] = 12n \\
+\text{v7:}   &\quad 3n\;[\mathrm{EED}(0,\gamma_k t)] + 3n\;[\mathrm{EED}(0,\gamma_j t)]\\
+             &\quad+ 1n\;[\mathrm{EES}(0,\gamma_j t)=1-e^{-\gamma_j t}]\\
+             &\quad+ 2n\;[\mathrm{mul}] = 9n
+\end{align*}
+\textbf{Savings: $3n$ per Lindblad decay pair.}
+\end{proposition}
+
+\begin{remark}
+$\mathrm{EES}(0,z)=e^0-e^z=1-e^z$, so $\mathrm{EES}(0,-\gamma_j t)=1-e^{-\gamma_j t}$.
+This collapses the three-node \texttt{neg}+\texttt{exp}+\texttt{sub-from-1} pattern.
+\end{remark}
+
+\subsection{Quantum Channel Kraus Operators}
+
+Exponential factors in amplitude-damping channels: $\sqrt{1-e^{-\gamma t}}$ and $e^{-\gamma t/2}$.
+
+\begin{align*}
+e^{-\gamma t/2}: &\quad \mathrm{EED}(0,\mathrm{mul}(\gamma,t)/2)\;[2n+1n] = 3n \quad(\text{v7})\\
+                 &\quad 4n\quad(\text{v5.1})\\
+\sqrt{1-e^{-\gamma t}}: &\quad \mathrm{EES}(0,\gamma t)\;[3n]+\mathrm{EPL}(0.5,\cdot)\;[1n] = 4n\quad(\text{v7})\\
+                        &\quad 3n\;[\text{compute }e^{-\gamma t}]+2n\;[\text{sub from 1}]+2n\;[\sqrt{\cdot}] = 7n\quad(\text{v5.1})
+\end{align*}
+\textbf{Savings: $1n$ for $e^{-\gamma t/2}$; $3n$ for $\sqrt{1-e^{-\gamma t}}$.}
+
+\section{Complete Quantum Catalog: Before/After Table}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{lcccc}
+\toprule
+Quantity & Domain & v5.1 (16-op) & v7 (23-op) & $\Delta$\\
+\midrule
+Matrix sqrt $\sqrt{\lambda}$ & per eigenvalue & $2n$ & $1n$ & $-1n$\\
+Density log $\ln\lambda$ & per eigenvalue & $1n$ & $1n$ & $0$\\
+Spectral decay $e^{-\lambda t}$ & per factor & $4n$ & $3n$ & $-1n$\\
+vN entropy term $-\lambda\ln\lambda$ & per eigenvalue & $4n$ & $4n$ & $0$\\
+Rel entropy term $\lambda\ln(\lambda/\mu)$ & per pair & $6n$ & $3n$ & $-3n$\\
+Bures fidelity $\sqrt{\lambda\mu}$ & per pair & $4n$ & $3n$ & $-1n$\\
+JSD term & per tuple & $16n$ & $10n$ & $-6n$\\
+Partition function (per pair) & per 2 levels & $10n$ & $7n$ & $-3n$\\
+Lindblad decay pair & per pair & $12n$ & $9n$ & $-3n$\\
+Kraus $e^{-\gamma t/2}$ & per factor & $4n$ & $3n$ & $-1n$\\
+Kraus $\sqrt{1-e^{-\gamma t}}$ & per factor & $7n$ & $4n$ & $-3n$\\
+Thermal $\langle E\rangle_\beta$ term $E_k e^{-\beta E_k}$ & per level & $5n$ & $5n$ & $0$\\
+Purity $\lambda^2$ & per eigenvalue & $1n$ & $1n$ & $0$\\
+\midrule
+\multicolumn{4}{l}{\textit{Outside ELC(ℝ): quantum gate unitaries ($e^{i\theta\sigma}$), Wigner function, etc.}} & $\infty$\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Aggregate Savings for Standard Quantum Systems}
+
+\subsection{Two-Qubit System ($d=4$)}
+
+Representative computation: quantum relative entropy + Bures distance + matrix sqrt.
+\begin{align*}
+\text{v5.1:} &\quad 4\times 6n\;[\text{rel. ent.}] + 4\times 4n\;[\text{Bures}] + 4\times 2n\;[\text{sqrt}] = 24+16+8 = 48n\\
+\text{v7:}   &\quad 4\times 3n + 4\times 3n + 4\times 1n = 12+12+4 = 28n\\
+\text{Savings:} &\quad 20n \text{ for one relative-entropy + Bures + sqrt computation.}
+\end{align*}
+
+\subsection{$n$-Level System (Partition Function)}
+
+For $n$ energy levels, pairwise EEA reduction:
+\[
+\Delta Z = 3\lfloor n/2\rfloor \text{ nodes saved.}
+\]
+For $n=100$ (atomic/molecular partition function): saves $150n$.
+
+\subsection{Full Lindblad Trajectory ($d$ modes)}
+
+Per time step: $d$ Lindblad decay pairs save $3d$ nodes;
+$d$ Kraus $\sqrt{1-e^{-\gamma t}}$ terms save $3d$ nodes.
+Total per time step: $6d$ nodes saved.
+For $d=10$ modes over $T=1000$ steps: $60{,}000$ node-evaluations eliminated.
+
+\section{Summary of New Collapses}
+
+The five structural collapses produced by the 23-operator extension are:
+
+\begin{enumerate}
+  \item \textbf{Matrix sqrt}: $2n\to1n$ (sqrt correction in v5.2, EPL).
+  \item \textbf{Quantum relative entropy}: $6n\to3n$ per pair (LLS collapses log-difference).
+  \item \textbf{JSD}: $16n\to10n$ per tuple (two LLS collapses).
+  \item \textbf{Partition function}: $10n\to7n$ per pair (EEA collapses exp-pair sum).
+  \item \textbf{Lindblad / Kraus}: $12n\to9n$ and $7n\to4n$ (EED, EES collapse negated exponentials).
+\end{enumerate}
+
+Quantities unchanged: von Neumann entropy ($4n$ per eigenvalue), thermal energy
+expectation ($5n$ per level), density log ($1n$), purity ($1n$). These are already
+at structural lower bounds under the 23-operator taxonomy.
+
+\end{document}

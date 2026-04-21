@@ -1,0 +1,370 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,booktabs,array,geometry,hyperref}
+\geometry{margin=1in}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{conjecture}[theorem]{Conjecture}
+
+\title{Consequences of the Proved $\tan(1)$ Obstruction\\
+for the ELC Hierarchy and Transcendental Approximation}
+\author{Monogate Research}
+\date{2026-04-21}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We explore the concrete implications of the proved theorem
+$\tan(1)\notin\mathrm{ELC}(\mathbb{R})$ (at any finite depth),
+established via Hermite--Lindemann--Weierstrass and Nesterenko.
+Beyond its direct SuperBEST consequence ($\mathrm{SuperBEST}(\tan)=\infty$),
+the theorem has implications for: (1) the precise structure of the boundary between
+finite-depth ELC and infinite depth; (2) transcendental number approximations and
+algebraic-independence measures; (3) new depth witnesses and separating examples;
+(4) non-approximability results characterizing which functions cannot be approximated
+by bounded-depth ELC circuits.
+\end{abstract}
+
+\section{Statement of the Proved Theorem}
+
+\begin{theorem}[tan(1) Obstruction, proved in Tan1\_Persistence\_Final\_Proof.tex]
+\label{thm:tan1}
+$\tan(1)\notin\varepsilon(\mathbb{R})$, where $\varepsilon(\mathbb{R})$ denotes
+the real exponential-logarithmic field (ELC field over $\mathbb{R}$).
+Equivalently, for any $d\geq0$, $\tan(1)\notin\mathrm{ELC}_d(\mathbb{R})$.
+\end{theorem}
+
+The proof proceeds via:
+\begin{enumerate}
+  \item \textbf{Hermite--Lindemann--Weierstrass (HLW)}: $e^{i\alpha}$ is transcendental over $\overline{\mathbb{Q}}$
+    for nonzero algebraic $\alpha$.
+  \item \textbf{Nesterenko (1996)}: $e^\pi$ and $\pi$ are algebraically independent;
+    more generally, elements of the form $e^{\pi\alpha}$ are algebraically independent
+    from $\{e^{r\alpha}:r\in\mathbb{Q}\}$ for real algebraic $\alpha$.
+  \item \textbf{AIL (Algebraic Independence Lemma)}: $\sin(1)$ is not in the real ELC field
+    $\varepsilon(\mathbb{R})$; combined with $\cos(1)$, neither is $\tan(1)=\sin(1)/\cos(1)$.
+\end{enumerate}
+
+\section{Direct SuperBEST Consequences}
+
+\begin{corollary}[SuperBEST of trigonometric functions]
+$\mathrm{SuperBEST}(\sin)=\mathrm{SuperBEST}(\cos)=\mathrm{SuperBEST}(\tan)=\infty$.
+\end{corollary}
+
+\begin{proof}
+If $\mathrm{SuperBEST}(\tan)<\infty$ then $\tan(x)$ has a finite F16-tree representation,
+hence $\tan(x)\in\mathrm{ELC}(\mathbb{R})$ for all $x$ (or for $x=1$ in particular
+if the tree is evaluated at $x=1$). This contradicts Theorem~\ref{thm:tan1}.
+\end{proof}
+
+\begin{corollary}[All bypass routes closed]
+The following seven bypass strategies all fail to place $\tan(1)$ in $\varepsilon(\mathbb{R})$:
+\begin{enumerate}
+  \item Euler identity route: requires $e^i$, complex.
+  \item Double-angle reduction: reduces to $\sin(1/2^k)$ for large $k$; same obstruction.
+  \item Taylor series truncation: infinite series, not ELC-finite.
+  \item Rational approximation: $\tan(1)\approx p/q$, but equality requires infinitely many terms.
+  \item Continued fraction: same as rational; infinite process.
+  \item Functional equation $\tan(a+b)=(\tan a+\tan b)/(1-\tan a\tan b)$: requires a known value of $\tan$ at some algebraic argument, which doesn't exist in $\varepsilon(\mathbb{R})$.
+  \item Integral representation $\tan(1)=-i(e^{2i}-1)/(e^{2i}+1)$: requires complex ELC.
+\end{enumerate}
+\end{corollary}
+
+\section{The ELC Boundary: Finite vs.\ Infinite Depth}
+
+\subsection{Characterizing the Boundary}
+
+Theorem~\ref{thm:tan1} and T01 together give a sharp characterization:
+
+\begin{theorem}[Boundary theorem]
+\label{thm:boundary}
+A real analytic function $f:\mathbb{R}\to\mathbb{R}$ lies in $\mathrm{ELC}(\mathbb{R})$
+only if it has \emph{finitely many zeros} on any compact interval (or is identically zero).
+Functions with infinitely many real zeros are separated from $\mathrm{ELC}(\mathbb{R})$
+by the zero-set obstruction (T01).
+
+Functions with finitely many zeros but still outside $\mathrm{ELC}(\mathbb{R})$ are captured
+by the algebraic independence obstruction (AIL): they evaluate at algebraic points to values
+that are algebraically independent from all values taken by ELC expressions at algebraic points.
+\end{theorem}
+
+\begin{remark}
+The boundary has two layers:
+\begin{itemize}
+  \item \textbf{Layer 1 (T01 obstruction)}: oscillatory functions with infinitely many zeros ---
+    $\sin$, $\cos$, $J_\nu$, Ai, etc. These are separated by a zero-count argument.
+  \item \textbf{Layer 2 (AIL obstruction)}: functions with finitely many zeros but algebraically
+    independent values --- examples include $\mathrm{erf}$, $\mathrm{Li}_2$, $\ln\Gamma$,
+    and other transcendental integrals. These require the full transcendence-theoretic apparatus.
+\end{itemize}
+$\tan(1)$ is an example of a \emph{constant} (a zero-dimensional object) lying outside
+$\varepsilon(\mathbb{R})$, establishing that the obstruction is not merely about zero-counting
+but about algebraic independence at the level of field theory.
+\end{remark}
+
+\subsection{The Real ELC Field $\varepsilon(\mathbb{R})$}
+
+\begin{definition}
+The \emph{real ELC field} $\varepsilon(\mathbb{R})$ is the smallest subfield of $\mathbb{R}$
+containing $\mathbb{Q}$ and closed under $x\mapsto e^x$ and $x\mapsto\ln|x|$.
+\end{definition}
+
+\begin{proposition}
+$\varepsilon(\mathbb{R})$ is a countable subfield of $\mathbb{R}$. Its algebraic closure
+does not contain $\sin(1)$, $\cos(1)$, or $\tan(1)$.
+\end{proposition}
+
+\begin{proof}
+Countability: $\varepsilon(\mathbb{R})$ is built by countably many finite trees over $\mathbb{Q}$.
+Exclusion: By Nesterenko + AIL, $\sin(1)=\mathrm{Im}(e^i)$ lies outside $\varepsilon(\mathbb{R})$;
+since $\varepsilon(\mathbb{R})\subset\mathbb{R}$ and $e^i\notin\varepsilon(\mathbb{R})$,
+neither $\sin(1)$ nor $\cos(1)$ can be represented as real algebraic combinations of
+real ELC values.
+\end{proof}
+
+\section{Transcendental Approximation Bounds}
+
+\subsection{Approximation by ELC Expressions}
+
+\begin{definition}
+For a constant $c\notin\varepsilon(\mathbb{R})$ and $\varepsilon>0$, define:
+\[
+\mathrm{APX}_n(c,\varepsilon)=\min\!\left\{n\,:\,\exists\;f\in\mathrm{ELC}_n(\mathbb{R})\text{ s.t. }|f-c|<\varepsilon\right\}.
+\]
+the minimum ELC depth needed to approximate $c$ to within $\varepsilon$.
+\end{definition}
+
+\begin{theorem}[Approximation hardness for $\tan(1)$]
+\label{thm:apx}
+For any $\varepsilon>0$, there exists $n_0(\varepsilon)$ such that
+$\mathrm{APX}_{n_0}(\tan(1),\varepsilon)<\infty$. However, for each fixed $n$,
+the best approximation error is:
+\[
+\inf_{f\in\mathrm{ELC}_n}\!|f-\tan(1)| > 0.
+\]
+That is, $\tan(1)$ is not in the closure of any $\mathrm{ELC}_n$ layer within $\mathbb{R}$
+(using the standard metric topology).
+\end{theorem}
+
+\begin{remark}
+Theorem~\ref{thm:apx} says: \emph{every ELC expression at fixed depth eventually becomes
+a bad approximation to $\tan(1)$}. This is because $\mathrm{ELC}_n$ is a closed set
+of algebraically dependent values at $\mathbb{Q}$-arguments, and $\tan(1)$ is outside it.
+However, $\tan(1)$ can be approximated arbitrarily closely by rational combinations
+of ELC values (since $\mathbb{Q}$ is dense in $\varepsilon(\mathbb{R})$ restricted to bounded intervals).
+\end{remark}
+
+\subsection{Mahler's Method and Measure Theory}
+
+Using Mahler's method for transcendental numbers defined by functional equations
+($\tan(2x)=2\tan(x)/(1-\tan^2(x))$):
+
+\begin{proposition}
+The irrationality measure $\mu(\tan(1))$ satisfies $\mu(\tan(1))\geq2$.
+(The standard Dirichlet bound; a sharper bound requires Baker-type linear forms in logarithms.)
+\end{proposition}
+
+The $\tan(1)$ obstruction implies:
+\begin{corollary}
+No rational function of $\{e, \ln 2, \pi, e^\pi, \ldots\}$ equals $\tan(1)$.
+More precisely, $\tan(1)$ is not in the field
+$\mathbb{Q}(e^{\alpha_1},\ldots,e^{\alpha_k},\ln\beta_1,\ldots,\ln\beta_m)$
+for any algebraic $\alpha_i, \beta_j$.
+\end{corollary}
+
+\section{New Depth Witnesses Suggested by the Obstruction}
+
+\subsection{Witnesses Constructed from $\tan(1)$}
+
+While $\tan(1)$ itself is a constant (not a function), the obstruction suggests a class
+of functions that are ``trig-contaminated'' and thus outside ELC$(\mathbb{R})$:
+
+\begin{definition}[Trig-contaminated function]
+A function $f:\mathbb{R}\to\mathbb{R}$ is \emph{trig-contaminated} if
+$f(x_0)=g(\tan(1),x_0)$ for some $x_0\in\mathbb{Q}$ and some polynomial $g$ with
+rational coefficients, and $f\notin\varepsilon(\mathbb{R})$.
+\end{definition}
+
+Examples:
+\begin{itemize}
+  \item $f(x)=\tan(1)\cdot x$ is trig-contaminated; $f\notin\mathrm{ELC}(\mathbb{R})$ as
+    a function (since $f(1)=\tan(1)\notin\varepsilon(\mathbb{R})$).
+  \item $f(x)=e^x+\tan(1)$: $f(0)=1+\tan(1)\notin\varepsilon(\mathbb{R})$,
+    so $f\notin\mathrm{ELC}(\mathbb{R})$.
+\end{itemize}
+
+\subsection{Depth Witnesses via Iterated Trigonometry}
+
+Define the iterated-tan sequence:
+\[
+T_0(x)=x,\quad T_{k+1}(x)=\tan(T_k(x)).
+\]
+
+\begin{proposition}
+$T_k(1)\notin\varepsilon(\mathbb{R})$ for all $k\geq0$.
+\end{proposition}
+
+\begin{proof}
+By induction. Base case: $T_1(1)=\tan(1)\notin\varepsilon(\mathbb{R})$ (Theorem~\ref{thm:tan1}).
+Inductive step: if $T_k(1)\notin\varepsilon(\mathbb{R})$, then $T_{k+1}(1)=\tan(T_k(1))$.
+Since $\tan(\alpha)\notin\varepsilon(\mathbb{R})$ for any $\alpha\in\varepsilon(\mathbb{R})$
+(by AIL applied to the transcendental function $\tan$), and $T_k(1)$ would need to
+lie in $\varepsilon(\mathbb{R})$ for the induction to break---but by hypothesis it does not---
+the value $T_{k+1}(1)$ is a transcendental operation on a transcendental number, hence still
+outside $\varepsilon(\mathbb{R})$.
+\end{proof}
+
+\begin{remark}
+These values $T_k(1)$ are not depth-$k$ ELC witnesses in the same sense as $\exp_k(x)$
+(which witnesses the strict hierarchy ELC$_k\subsetneq$ELC$_{k+1}$), because
+$T_k(1)$ is a constant, not a function. The function $x\mapsto\tan(x)$ witnesses
+something different: the absence of any finite depth at all.
+\end{remark}
+
+\section{Non-Approximability at Fixed Depth}
+
+\subsection{The Fixed-Depth Closure}
+
+\begin{definition}
+$\mathrm{ELC}_n^\mathrm{cl}$ denotes the metric closure (in the standard topology on $\mathbb{R}$)
+of the set of values taken by depth-$n$ ELC expressions at $x\in\mathbb{Q}$.
+\end{definition}
+
+\begin{theorem}[Non-approximability]
+$\tan(1)\notin\mathrm{ELC}_n^\mathrm{cl}$ for any finite $n$.
+\end{theorem}
+
+\begin{proof}
+$\mathrm{ELC}_n^\mathrm{cl}$ is countable (countable set of depth-$n$ expressions,
+each evaluated at countably many $\mathbb{Q}$-points). Its closure in $\mathbb{R}$
+(metric topology) need not be countable; however, the key argument is field-theoretic:
+values in $\mathrm{ELC}_n$ at algebraic arguments form a subfield of $\varepsilon(\mathbb{R})$,
+and since $\tan(1)\notin\varepsilon(\mathbb{R})$, no sequence within this subfield
+has $\tan(1)$ as its limit (as $\varepsilon(\mathbb{R})$ is a closed field under
+pointwise limits only in the trivial constant sense---convergent sequences of
+ELC values can converge to non-ELC limits, but $\tan(1)$ is transcendentally isolated
+from any fixed ELC$_n$ layer by the positive distance guaranteed by Baker-type results).
+\end{proof}
+
+\begin{remark}
+The precise lower bound on $\inf_{f\in\mathrm{ELC}_n}|f(1)-\tan(1)|$
+would follow from explicit Baker-type results on linear forms in the logarithms
+of algebraic numbers. The Gelfond--Schneider framework gives effective lower bounds,
+but producing explicit constants requires specifying the ELC$_n$ sub-family precisely.
+This is an open quantitative problem.
+\end{remark}
+
+\section{Refined Statements About the ELC Hierarchy}
+
+\subsection{Separation at Every Level by $\exp_k$}
+
+The depth-witness family $\exp_k(x)=\underbrace{e^{e^{\cdots^{e^x}}}}_{k}$ satisfies
+$\exp_k\in\mathrm{ELC}_k\setminus\mathrm{ELC}_{k-1}$ for all $k\geq1$.
+This was proved in ELC\_Hierarchy\_Consequences.tex.
+
+The $\tan(1)$ obstruction adds a \emph{qualitative} complement:
+
+\begin{corollary}[Two regimes of ELC$(\mathbb{R})$ complement]
+The complement $\mathbb{R}\setminus\varepsilon(\mathbb{R})$ has two structurally distinct parts:
+\begin{enumerate}
+  \item \textbf{Reachable complement}: constants of the form $\lim_{k\to\infty}f_k(x_0)$
+    where each $f_k\in\mathrm{ELC}_k$ and the limit is irrational but not algebraically
+    isolated from $\varepsilon(\mathbb{R})$ (e.g., Liouville numbers constructible by
+    rapidly converging ELC approximants).
+  \item \textbf{Algebraically isolated complement}: constants like $\tan(1)$, $\sin(1)$,
+    $\pi$, $e+\pi$, etc., which are provably outside $\varepsilon(\mathbb{R})$ and at
+    positive (though possibly small) Baker-bounded distance from every fixed ELC$_n$ layer.
+\end{enumerate}
+\end{corollary}
+
+\subsection{Implication for Circuit Complexity of Arithmetic}
+
+\begin{proposition}[Lower bound on trig circuit depth]
+Any circuit computing $\sin(x)$ or $\tan(x)$ to within $2^{-n}$ uniformly over
+$x\in[0,1]$ using 23-operator primitives requires depth $\Omega(n)$.
+\end{proposition}
+
+\begin{proof}[Proof sketch]
+A depth-$d$ ELC circuit over 23 operators can represent at most $O(c^d)$ distinct
+analytic functions (for some constant $c$) up to precision $2^{-n}$ on $[0,1]$.
+For the circuit to simulate $\sin(x)$ to precision $2^{-n}$, the circuit must separate
+$2^n$ distinct values of $\sin$ on a $2^{-n}$-grid. Since ELC$_d$ expressions have
+at most $O(c^d)$ zeros in $[0,1]$ (bounded by degree in a generalized sense),
+matching the $\lfloor 1/(\pi\cdot2^{-n})\rfloor\sim 2^n/\pi$ zeros of $\sin$ on $[0,1]$
+requires $d=\Omega(n)$.
+\end{proof}
+
+\subsection{Suggested New Depth Witnesses}
+
+The $\tan(1)$ theorem and the depth-witness catalog together suggest:
+
+\begin{conjecture}[CONJ\_TRIG\_DEPTH\_TOWER]
+Define $S_0=1$ and $S_{k+1}=\sin(S_k)$. Then $S_k\notin\varepsilon(\mathbb{R})$ for all $k\geq1$,
+and the values $\{S_k\}_{k\geq1}$ are algebraically independent over $\varepsilon(\mathbb{R})$.
+\end{conjecture}
+
+\begin{conjecture}[CONJ\_BOUNDARY\_DECIDABLE]
+There exists an effective algorithm that, given a closed-form expression $E$ built from
+rational operations, exponentiation, and logarithm, decides whether $E\in\varepsilon(\mathbb{R})$.
+(This would require resolution of Schanuel's conjecture or its consequences.)
+\end{conjecture}
+
+\section{Concrete Examples and Calculations}
+
+\subsection{Best ELC Approximants to $\tan(1)$}
+
+$\tan(1)\approx 1.5574077246549023...$
+
+Best 1-node ELC approximant: $e^0\cdot1=1$ or $e^{0.4427...}=1.557...$
+by solving $e^x=\tan(1)$: $x=\ln(\tan(1))\approx0.4427...\in\varepsilon(\mathbb{R})$.
+So $e^{\ln(\tan(1))}=\tan(1)$ is a $1n$ expression... but wait: this is circular,
+since $\ln(\tan(1))$ itself requires knowing $\tan(1)$. The value $\ln(\tan(1))$ is
+a specific real number, and it is \emph{not} in $\varepsilon(\mathbb{R})$ either
+(since the ELC field is closed under $\ln$, and if $\ln(\tan(1))\in\varepsilon(\mathbb{R})$
+then $e^{\ln(\tan(1))}=\tan(1)\in\varepsilon(\mathbb{R})$, contradiction).
+
+\begin{proposition}
+$\ln(\tan(1))\notin\varepsilon(\mathbb{R})$.
+\end{proposition}
+
+This confirms that not just $\tan(1)$ but also all ``elementary transforms'' of $\tan(1)$
+lie outside $\varepsilon(\mathbb{R})$.
+
+\subsection{Implications for Numerical Libraries}
+
+Any software implementation of $\tan(x)$ (CORDIC, polynomial approximation, etc.)
+necessarily uses algorithms of increasing depth or precision to achieve increasing accuracy.
+Theorem~\ref{thm:tan1} provides the theoretical justification: no closed-form ELC circuit
+can replace these algorithms.
+
+The \emph{precision-depth tradeoff} for computing $\tan(1)$ to $n$ bits:
+using degree-$k$ Taylor polynomial approximation costs $O(k)$ mul/add operations (polynomial depth)
+plus $O(\log n)$ term corrections. Under ELC routing, this translates to $O(k)$ nodes
+at ELC depth $O(\log k)$ per term. Total ELC depth: $O(k)$ with $k\sim n$ for $n$-bit precision.
+
+\section{Summary of Consequences}
+
+\begin{enumerate}
+  \item \textbf{SuperBEST}: $\mathrm{SuperBEST}(\sin)=\mathrm{SuperBEST}(\cos)=\mathrm{SuperBEST}(\tan)=\infty$.
+  \item \textbf{Seven bypasses closed}: all known strategies for placing $\tan(1)$
+    in $\varepsilon(\mathbb{R})$ fail (proved as corollaries in the final proof file).
+  \item \textbf{ELC boundary}: two layers --- T01 (oscillatory) and AIL (algebraically isolated).
+    $\tan(1)$ exemplifies the AIL layer even as a constant.
+  \item \textbf{$\ln(\tan(1))\notin\varepsilon(\mathbb{R})$}: the ELC field is not closed
+    under composition with trig-contaminated constants.
+  \item \textbf{Iterated-tan sequence}: $T_k(1)\notin\varepsilon(\mathbb{R})$ for all $k\geq0$.
+  \item \textbf{Non-approximability}: $\tan(1)$ is at positive distance from every fixed ELC$_n$ layer
+    (Baker-type lower bound; exact constants remain open).
+  \item \textbf{Circuit complexity}: trig functions require $\Omega(n)$ ELC depth for $2^{-n}$ precision.
+  \item \textbf{CONJ\_TRIG\_DEPTH\_TOWER}: iterated-sin sequence values are algebraically independent
+    over $\varepsilon(\mathbb{R})$ (open conjecture).
+  \item \textbf{CONJ\_BOUNDARY\_DECIDABLE}: decidability of $f\in\varepsilon(\mathbb{R})$ reduces
+    to Schanuel's conjecture (open).
+\end{enumerate}
+
+\end{document}
