@@ -3,95 +3,208 @@
   "title": "F17d Paradox Resolution: pow = 1n for Positive Domain via EPL/ELMl",
   "date": "2026-04-20",
   "author": "Arturo R. Almaguer",
-  "status": "RESOLVED — inconsistency corrected in superbest_v5_table.json and superbest.py",
-
+  "status": "RESOLVED \u00e2\u20ac\u201d inconsistency corrected in superbest_v5_table.json and superbest.py",
   "paradox_statement": {
     "source": "x20_operator_17.json, section F17d_power_primitive",
     "observation": "EPL(x,y) = exp(x*ln(y)) = y^x appears in Sixteen_Operator_Census.tex as one of the 16 F16 operators (ELMl, Class I). If ELMl is in F16, then pow(x,n) = x^n = EPL(n,x) should cost 1 node, not 3.",
     "v5_claim": "superbest_v5_table.json listed pow cost = 3, construction = 'EML(EXL(EXL(0,n),x),1)'",
     "contradiction": "3-node construction ignores the direct EPL primitive, which is already a member of F16."
   },
-
   "resolution": {
     "answer": "EPL(x,y) = exp(x*ln(y)) = y^x IS in F16. pow(x,n) = x^n = EPL(n,x) for x > 0 is a 1-node F16 application.",
-    "explanation": "The 3-node construction EXL(0,n) → EXL(result,x) → EML(result,1) was an expanded decomposition. It failed to recognize EPL as a usable primitive operator. Once EPL/ELMl is acknowledged as an active F16 operator, the construction collapses to a single node.",
+    "explanation": "The 3-node construction EXL(0,n) \u00e2\u2020\u2019 EXL(result,x) \u00e2\u2020\u2019 EML(result,1) was an expanded decomposition. It failed to recognize EPL as a usable primitive operator. Once EPL/ELMl is acknowledged as an active F16 operator, the construction collapses to a single node.",
     "domain_condition": "x > 0 is required because EPL(n,x) = exp(n*ln(x)) contains ln(x). For x <= 0, ln is undefined in real F16. There is no real F16 tree for pow(x,n) when x can be negative.",
-    "general_domain_cost": "For general real x (possibly negative), the best known cost remains 3n using the expanded EXL+ELAd+EML route — but this also requires x > 0 for the ln step. For truly general x (negative base), no finite real F16 tree exists for non-integer n.",
+    "general_domain_cost": "For general real x (possibly negative), the best known cost remains 3n using the expanded EXL+ELAd+EML route \u00e2\u20ac\u201d but this also requires x > 0 for the ln step. For truly general x (negative base), no finite real F16 tree exists for non-integer n.",
     "integer_exponent_note": "For integer n, pow(x,n) can be handled via repeated mul, but mul itself is domain-restricted to x > 0 in real F16."
   },
-
   "corrected_table": {
     "version": "v5.1",
-    "ops_changed": ["pow"],
+    "ops_changed": [
+      "pow"
+    ],
     "pow": {
       "cost_positive": 1,
       "cost_general": 3,
-      "construction_positive": "EPL(n,x) = ELMl(n,x) = exp(n*ln(x)) = x^n — single F16 node",
-      "construction_general": "eml(exl(exl(0,n),x), 1) — 3-node expanded construction (x > 0 still required)",
+      "construction_positive": "EPL(n,x) = ELMl(n,x) = exp(n*ln(x)) = x^n \u00e2\u20ac\u201d single F16 node",
+      "construction_general": "eml(exl(exl(0,n),x), 1) \u00e2\u20ac\u201d 3-node expanded construction (x > 0 still required)",
       "domain_positive": "x > 0, n real",
       "domain_general": "x > 0 required (ln constraint); same as positive for practical purposes"
     }
   },
-
   "positive_domain_table_v5_1": {
     "description": "Costs for all 10 operations when inputs are positive reals (x > 0, y > 0)",
     "entries": [
-      {"op": "exp(x)",    "cost": 1, "construction": "EML(x,1) = e^x",                          "domain": "all x"},
-      {"op": "ln(x)",     "cost": 1, "construction": "EXL(0,x) = ln(x)",                         "domain": "x > 0"},
-      {"op": "recip(x)",  "cost": 1, "construction": "ELSb(0,x) = exp(-ln(x)) = 1/x",            "domain": "x > 0"},
-      {"op": "div(x,y)",  "cost": 2, "construction": "ELSb(EXL(0,x), y) = x/y",                  "domain": "x > 0, y != 0"},
-      {"op": "neg(x)",    "cost": 2, "construction": "EXL(0, DEML(x,1)) = ln(exp(-x)) = -x",     "domain": "all x"},
-      {"op": "mul(x,y)",  "cost": 2, "construction": "ELAd(EXL(0,x), y) = x*y",                  "domain": "x > 0"},
-      {"op": "sub(x,y)",  "cost": 2, "construction": "LEdiv(x, EML(y,1)) = x - y",               "domain": "all x, y"},
-      {"op": "add(x,y)",  "cost": 2, "construction": "LEdiv(x, DEML(y,1)) = x + y",              "domain": "all x, y"},
-      {"op": "sqrt(x)",   "cost": 2, "construction": "EML(0.5*EXL(0,x), 1) = sqrt(x)",           "domain": "x > 0"},
-      {"op": "pow(x,n)",  "cost": 1, "construction": "EPL(n,x) = exp(n*ln(x)) = x^n  [X20 correction]", "domain": "x > 0"}
+      {
+        "op": "exp(x)",
+        "cost": 1,
+        "construction": "EML(x,1) = e^x",
+        "domain": "all x"
+      },
+      {
+        "op": "ln(x)",
+        "cost": 1,
+        "construction": "EXL(0,x) = ln(x)",
+        "domain": "x > 0"
+      },
+      {
+        "op": "recip(x)",
+        "cost": 1,
+        "construction": "ELSb(0,x) = exp(-ln(x)) = 1/x",
+        "domain": "x > 0"
+      },
+      {
+        "op": "div(x,y)",
+        "cost": 2,
+        "construction": "ELSb(EXL(0,x), y) = x/y",
+        "domain": "x > 0, y != 0"
+      },
+      {
+        "op": "neg(x)",
+        "cost": 2,
+        "construction": "EXL(0, DEML(x,1)) = ln(exp(-x)) = -x",
+        "domain": "all x"
+      },
+      {
+        "op": "mul(x,y)",
+        "cost": 2,
+        "construction": "ELAd(EXL(0,x), y) = x*y",
+        "domain": "x > 0"
+      },
+      {
+        "op": "sub(x,y)",
+        "cost": 2,
+        "construction": "LEdiv(x, EML(y,1)) = x - y",
+        "domain": "all x, y"
+      },
+      {
+        "op": "add(x,y)",
+        "cost": 2,
+        "construction": "LEdiv(x, DEML(y,1)) = x + y",
+        "domain": "all x, y"
+      },
+      {
+        "op": "sqrt(x)",
+        "cost": 2,
+        "construction": "EML(0.5*EXL(0,x), 1) = sqrt(x)",
+        "domain": "x > 0"
+      },
+      {
+        "op": "pow(x,n)",
+        "cost": 1,
+        "construction": "EPL(n,x) = exp(n*ln(x)) = x^n  [X20 correction]",
+        "domain": "x > 0"
+      }
     ],
     "total": 16,
     "naive_total": 73,
     "savings_n": 57,
     "savings_pct": "78.1%",
-    "savings_exact": "57/73 = 0.78082... ≈ 78.1%"
+    "savings_exact": "57/73 = 0.78082... \u00e2\u2030\u02c6 78.1%"
   },
-
   "general_domain_table_v5_1": {
     "description": "Costs for operations under general real-domain assumptions",
     "entries": [
-      {"op": "exp(x)",    "cost": 1,             "construction": "EML(x,1)",                       "domain": "all x"},
-      {"op": "ln(x)",     "cost": 1,             "construction": "EXL(0,x)",                        "domain": "x > 0 only"},
-      {"op": "recip(x)",  "cost": 1,             "construction": "ELSb(0,x)",                       "domain": "x > 0 strict; x != 0 in practice"},
-      {"op": "div(x,y)",  "cost": 2,             "construction": "ELSb(EXL(0,x), y)",              "domain": "x > 0, y != 0"},
-      {"op": "neg(x)",    "cost": 2,             "construction": "EXL(0, DEML(x,1))",              "domain": "all x"},
-      {"op": "mul(x,y)",  "cost": "NO_F16_TREE", "construction": "NO single real F16 tree for all x,y", "domain": "x > 0 only for 2n construction"},
-      {"op": "sub(x,y)",  "cost": 2,             "construction": "LEdiv(x, EML(y,1))",             "domain": "all x, y"},
-      {"op": "add(x,y)",  "cost": 2,             "construction": "LEdiv(x, DEML(y,1))",            "domain": "all x, y"},
-      {"op": "sqrt(x)",   "cost": 2,             "construction": "EML(0.5*EXL(0,x), 1)",           "domain": "x > 0"},
-      {"op": "pow(x,n)",  "cost": 3,             "construction": "eml(exl(exl(0,n),x), 1)",        "domain": "x > 0, n > 0"}
+      {
+        "op": "exp(x)",
+        "cost": 1,
+        "construction": "EML(x,1)",
+        "domain": "all x"
+      },
+      {
+        "op": "ln(x)",
+        "cost": 1,
+        "construction": "EXL(0,x)",
+        "domain": "x > 0 only"
+      },
+      {
+        "op": "recip(x)",
+        "cost": 1,
+        "construction": "ELSb(0,x)",
+        "domain": "x > 0 strict; x != 0 in practice"
+      },
+      {
+        "op": "div(x,y)",
+        "cost": 2,
+        "construction": "ELSb(EXL(0,x), y)",
+        "domain": "x > 0, y != 0"
+      },
+      {
+        "op": "neg(x)",
+        "cost": 2,
+        "construction": "EXL(0, DEML(x,1))",
+        "domain": "all x"
+      },
+      {
+        "op": "mul(x,y)",
+        "cost": "NO_F16_TREE",
+        "construction": "NO single real F16 tree for all x,y",
+        "domain": "x > 0 only for 2n construction"
+      },
+      {
+        "op": "sub(x,y)",
+        "cost": 2,
+        "construction": "LEdiv(x, EML(y,1))",
+        "domain": "all x, y"
+      },
+      {
+        "op": "add(x,y)",
+        "cost": 2,
+        "construction": "LEdiv(x, DEML(y,1))",
+        "domain": "all x, y"
+      },
+      {
+        "op": "sqrt(x)",
+        "cost": 2,
+        "construction": "EML(0.5*EXL(0,x), 1)",
+        "domain": "x > 0"
+      },
+      {
+        "op": "pow(x,n)",
+        "cost": 3,
+        "construction": "eml(exl(exl(0,n),x), 1)",
+        "domain": "x > 0, n > 0"
+      }
     ],
     "total_defined": 16,
-    "excluded": ["mul — NO_F16_TREE for general signed multiplication"],
+    "excluded": [
+      "mul \u00e2\u20ac\u201d NO_F16_TREE for general signed multiplication"
+    ],
     "note": "Summing 9 defined ops: 1+1+1+2+2+2+2+2+3 = 16n general"
   },
-
   "headline_numbers": {
     "positive_domain_total": "16n",
     "positive_domain_savings_vs_naive_73n": "78.1% = (73-16)/73",
     "general_domain_total_9ops": "16n (excluding mul)",
     "v5_total_10ops": "18n (pow=3n, no EPL recognition)",
     "v5_savings": "75.3% = (73-18)/73",
-    "improvement_from_X20": "positive domain drops from 18n to 16n; savings 75.3% → 78.1%",
+    "improvement_from_X20": "positive domain drops from 18n to 16n; savings 75.3% \u00e2\u2020\u2019 78.1%",
     "v5_1_note": "The 78.1% headline applies to the positive domain. For equations mixing positive and negative values, the general-domain 18n figure (v5) applies to most ops except pow where positive-base can still use 1n."
   },
-
   "savings_arithmetic_verification": {
     "naive_costs": {
-      "exp": 1, "ln": 3, "mul": 13, "div": 15, "add": 11,
-      "sub": 5, "neg": 9, "recip": 5, "sqrt": 8, "pow": 15
+      "exp": 1,
+      "ln": 3,
+      "mul": 13,
+      "div": 15,
+      "add": 11,
+      "sub": 5,
+      "neg": 9,
+      "recip": 5,
+      "sqrt": 8,
+      "pow": 15
     },
     "naive_total": 73,
     "superbest_positive_costs": {
-      "exp": 1, "ln": 1, "mul": 2, "div": 2, "add": 2,
-      "sub": 2, "neg": 2, "recip": 1, "sqrt": 2, "pow": 1
+      "exp": 1,
+      "ln": 1,
+      "mul": 2,
+      "div": 2,
+      "add": 2,
+      "sub": 2,
+      "neg": 2,
+      "recip": 1,
+      "sqrt": 2,
+      "pow": 1
     },
     "superbest_positive_total": 16,
     "savings": 57,
@@ -99,7 +212,6 @@
     "rounded": "78.1%",
     "confirmed": true
   },
-
   "downstream_updates_needed": {
     "description": "Any result file or catalog that records pow cost = 3n for positive-base equations should be updated to 1n per operation under positive-domain assumption.",
     "affected_categories": [
@@ -109,30 +221,32 @@
       "Savings percentage for such equations increases by roughly 2k/naive_total per equation."
     ],
     "specific_files_to_check": [
-      "python/results/s93_sb_counterexample.json — check if pow is used; if so, update cost",
-      "python/results/x8_domain_audit_table.json — pow audit entry (3n) correct for expanded construction but should note EPL=1n",
-      "python/results/x7_mul_domain_audit.json — pow domain entry notes 'unknown', should note x > 0 AND EPL route",
+      "python/results/s93_sb_counterexample.json \u00e2\u20ac\u201d check if pow is used; if so, update cost",
+      "python/results/x8_domain_audit_table.json \u00e2\u20ac\u201d pow audit entry (3n) correct for expanded construction but should note EPL=1n",
+      "python/results/x7_mul_domain_audit.json \u00e2\u20ac\u201d pow domain entry notes 'unknown', should note x > 0 AND EPL route",
       "Any catalog equation files listing pow(x,n) cost = 3n in positive context"
     ],
-    "priority": "Medium — the v5 table total (18n) was the advertised headline; it should now be footnoted as 'general domain'. Positive domain (16n = 78.1%) is the new stronger headline for physics applications.",
+    "priority": "Medium \u00e2\u20ac\u201d the v5 table total (18n) was the advertised headline; it should now be footnoted as 'general domain'. Positive domain (16n = 78.1%) is the new stronger headline for physics applications.",
     "note_on_s93": "s93_sb_counterexample.json is in git diff (modified). Check if it references pow cost in a positive-domain context."
   },
-
   "mathematical_note": {
-    "EPL_is_ELMl": "EPL(x,y) = exp(x*ln(y)) = y^x. ELMl in Sixteen_Operator_Census.tex (Class I, combining op h = exponentiation). This is a genuine F16 operator — it is one of the 16 binary compositions of {exp, -exp, ln} with {+, -, *, /} restricted to outputs of the form exp(g(x,y)) or ln(g(x,y)).",
+    "EPL_is_ELMl": "EPL(x,y) = exp(x*ln(y)) = y^x. ELMl in Sixteen_Operator_Census.tex (Class I, combining op h = exponentiation). This is a genuine F16 operator \u00e2\u20ac\u201d it is one of the 16 binary compositions of {exp, -exp, ln} with {+, -, *, /} restricted to outputs of the form exp(g(x,y)) or ln(g(x,y)).",
     "why_not_recognized_in_v5": "SuperBEST v5 used a curated 8-operator subset {EML, DEML, EXL, EAL, LEAd, ELAd, ELSb, LEdiv}. ELMl/EPL was in the census but not in the operational lookup. This is now corrected: EPL is the direct 1-node operator for pow(x,n) = x^n when x > 0.",
     "F16_completeness_preserved": "Adding EPL to the active set does not change which functions are representable (it was already in ELC). It only reduces the cost of pow from 3 to 1 for the positive domain.",
-    "lower_bound_still_valid": "The 3-node lower bound in v5 was proved for the expanded-tree model. It remains valid if EPL is excluded. Once EPL is included, the lower bound is trivially 1 (a single leaf node call). No contradiction — the lower bound proof assumed a specific operator set.",
+    "lower_bound_still_valid": "The 3-node lower bound in v5 was proved for the expanded-tree model. It remains valid if EPL is excluded. Once EPL is included, the lower bound is trivially 1 (a single leaf node call). No contradiction \u00e2\u20ac\u201d the lower bound proof assumed a specific operator set.",
     "X20_verdict": "The F17d paradox is resolved: there is no F17 needed. EPL is already in F16; pow = 1n for positive domain within F16 itself."
   },
-
   "references": [
-    "x20_operator_17.json — F17d paradox first stated",
-    "x8_domain_audit_table.json — domain verification of all 10 ops",
-    "x7_mul_domain_audit.json — mul domain confirmation",
-    "superbest_v5_table.json (updated to v5.1) — dual-domain table",
-    "superbest.py (updated) — predict_cost(positive_domain=True) uses pow=1n",
-    "Sixteen_Operator_Census.tex — ELMl listed as F16 Class I operator",
-    "SuperBEST_v5_Structural_Audit.tex — lower bounds"
-  ]
+    "x20_operator_17.json \u00e2\u20ac\u201d F17d paradox first stated",
+    "x8_domain_audit_table.json \u00e2\u20ac\u201d domain verification of all 10 ops",
+    "x7_mul_domain_audit.json \u00e2\u20ac\u201d mul domain confirmation",
+    "superbest_v5_table.json (updated to v5.1) \u00e2\u20ac\u201d dual-domain table",
+    "superbest.py (updated) \u00e2\u20ac\u201d predict_cost(positive_domain=True) uses pow=1n",
+    "Sixteen_Operator_Census.tex \u00e2\u20ac\u201d ELMl listed as F16 Class I operator",
+    "SuperBEST_v5_Structural_Audit.tex \u00e2\u20ac\u201d lower bounds"
+  ],
+  "dual_headlines": {
+    "positive_domain": "16n / 78.1%",
+    "general_domain": "22n / 69.9%"
+  }
 }

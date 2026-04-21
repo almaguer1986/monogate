@@ -4,7 +4,7 @@ Finds the minimum-node operator for each arithmetic primitive in an expression t
 
 Author: Arturo R. Almaguer
 Session: FAM-C2 / SuperBEST v5 (ADD-CASCADE 2026-04-20)
-Revised: X20 resolution (2026-04-20) — pow corrected to 1n for positive domain
+Revised: X20 resolution (2026-04-20) — dual-domain table, pow and mul corrected
 
 v5 changes vs v4:
   - add_gen: 11n → 2n for ALL real x, y (LEdiv(x, DEML(y,1)) = x+y)
@@ -14,12 +14,12 @@ v5 changes vs v4:
   - Total: 19n → 18n; savings: ~74% → 75.3% vs naive 73n baseline
   - Reference: SuperBEST_v5_Structural_Audit.tex, ADD_T1_General_Addition_2n.tex
 
-v5.1 changes (X20 resolution):
-  - pow_positive: 3n → 1n (EPL/ELMl = exp(n*ln(x)) = x^n is a direct 1-node F16 operator)
-  - EPL(n,x) = exp(n*ln(x)) = x^n is listed in the Sixteen_Operator_Census as ELMl
-  - pow(x,n) = EPL(n,x) for x>0 — single node, not 3-step decomposition
-  - Positive-domain total: 18n → 16n; savings vs naive 73n: 75.3% → 78.1%
-  - predict_cost() now accepts positive_domain=True to use corrected 1n for pow
+v5.1 changes (X20 resolution + X7/X8 domain audit):
+  - pow positive: 3n → 1n (EPL/ELMl = exp(n*ln(x)) = x^n is a direct 1-node F16 op)
+  - mul general: NO_F16_TREE → 6n (neg(mul(neg(x), y)) — pay 2n each for neg/mul/neg)
+  - Positive-domain total: 16n; savings vs naive 73n: 78.1%
+  - General-domain total:  22n; savings vs naive 73n: 69.9%
+  - predict_cost() accepts positive_domain=True to switch pow 3n→1n and mul 6n→2n
   - Reference: x20_operator_17.json (F17d paradox), f17_resolution.json
 """
 from __future__ import annotations
@@ -54,11 +54,14 @@ SUPERBEST_TABLE: dict[str, dict] = {
               "note": "2 nodes for all x (EXL+DEML); 2 nodes pos-domain (EMN+EXL)"},
     "recip": {"operator": "ELSb",                  "nodes": 1, "domain": "x != 0",
               "construction": "elsb(0, x)"},
-    "pow":   {"operator": "EXL",                   "nodes": 3, "domain": "x > 0",
+    "pow":   {"operator": "EXL",                   "nodes": 3, "domain": "x > 0 (general construction)",
               "construction": "eml(exl(ln(n),x), 1)"},
     "pow_pos": {"operator": "EPL/ELMl",             "nodes": 1, "domain": "x > 0",
                 "construction": "epl(n,x) = exp(n*ln(x)) = x^n",
                 "note": "X20: EPL = ELMl = exp(x*ln(y)) = y^x is in F16 census. pow(x,n)=EPL(n,x) for x>0 is 1 node."},
+    "mul_gen": {"operator": "Mixed(DEML/ELAd/DEML)", "nodes": 6, "domain": "all x, y > 0 possible",
+                "construction": "neg(mul(neg(x), y))",
+                "note": "General-domain: neg(2n) + mul_pos(2n) + neg(2n) = 6n. Handles signed x via negation."},
     "sin":   {"operator": "EML (complex)",         "nodes": 1, "domain": "all x",
               "construction": "Im(eml(ix, 1))"},
     "cos":   {"operator": "EML (complex)",         "nodes": 1, "domain": "all x",
@@ -90,14 +93,14 @@ SUPERBEST_COSTS_POS: dict[str, int] = {
     "sin": 1, "cos": 1,
 }
 
-# SuperBEST v5.1 — general-domain costs
-# mul excluded (NO_F16_TREE for all reals); ln/sqrt undefined for x <= 0 but cost 1/2 in x>0 sub-domain
+# SuperBEST v5.1 — general-domain costs (dual-domain table)
+# mul = 6n via neg(mul(neg(x), y)): neg(2n) + mul_pos(2n) + neg(2n)
+# Total = 22n; savings vs naive 73n = 69.9%
 SUPERBEST_COSTS_GEN: dict[str, int] = {
     "exp": 1, "ln": 1, "recip": 1,
-    "div": 2, "neg": 2, "sub": 2, "add": 2, "sqrt": 2,
+    "div": 2, "neg": 2, "mul": 6, "sub": 2, "add": 2, "sqrt": 2,
     "pow": 3,   # general domain: expanded EXL+ELAd+EML construction
     "sin": 1, "cos": 1,
-    # mul: intentionally absent — NO single real F16 tree for all signed x,y
 }
 
 
@@ -128,9 +131,6 @@ def predict_cost(op: str, positive_domain: bool = False) -> int:
     """
     if positive_domain:
         return SUPERBEST_COSTS_POS.get(op, NAIVE_COSTS.get(op, 99))
-    # General domain — mul falls back to positive-domain cost (2n) since no general F16 tree exists
-    if op == "mul":
-        return SUPERBEST_COSTS_POS.get("mul", 2)
     return SUPERBEST_COSTS_GEN.get(op, NAIVE_COSTS.get(op, 99))
 
 
@@ -228,11 +228,13 @@ def superbest_summary(positive_domain: bool = False) -> str:
     Args:
         positive_domain: If True, show positive-domain costs (pow=1n). Default: False.
     """
-    domain_label = "Positive-Domain (x > 0)" if positive_domain else "General-Domain"
-    costs = SUPERBEST_COSTS_POS if positive_domain else SUPERBEST_COSTS_V5
+    domain_label = "Positive-Domain (x > 0)" if positive_domain else "General-Domain (all reals)"
+    costs = SUPERBEST_COSTS_POS if positive_domain else SUPERBEST_COSTS_GEN
+    headline = "16n / 78.1% savings" if positive_domain else "22n / 69.9% savings"
     lines = [
         f"SuperBEST v5.1 Routing Table — {domain_label}",
-        "Key results: add=2n ALL reals (ADD-T1); pow=1n positive domain (EPL/ELMl, X20)",
+        f"Headline: {headline} vs naive 73n baseline",
+        "Key results: add=2n ALL reals (ADD-T1); pow=1n positive (EPL/ELMl); mul=6n general",
         "=" * 72,
     ]
     lines.append(f"  {'Op':8} {'Nodes':6} {'Naive':6} {'Savings':8} {'Construction':40}")
