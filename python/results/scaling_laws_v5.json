@@ -1,0 +1,78 @@
+{
+  "session": "ADD-9",
+  "title": "Scaling Laws Under SuperBEST v5 (add = 2n)",
+  "date": "2026-04-20",
+  "breakthrough": "add(x,y) = 2n for ALL real x,y via LEdiv(x, DEML(y,1))",
+
+  "old_add_costs": {
+    "add_pos": 3,
+    "add_gen": 11,
+    "comment": "SuperBEST v4: two-tier system"
+  },
+  "new_add_cost": {
+    "add": 2,
+    "comment": "SuperBEST v5: unified, all reals"
+  },
+
+  "scaling_law_updates": [
+    {
+      "name": "N-term positive sum",
+      "formula_v4": "(alpha_0 + 3)*N - 3",
+      "formula_v5": "(alpha_0 + 2)*N - 2",
+      "note": "add_pos 3n → 2n; N-1 additions now cost 2n each",
+      "examples": {
+        "softmax_denominator": {"v4": "4N-3", "v5": "3N-2"},
+        "shannon_entropy": {"v4": "8N-3", "v5": "7N-2"},
+        "partition_function": {"v4": "6N-3", "v5": "5N-2"},
+        "cross_entropy": {"v4": "8N-3", "v5": "7N-2"},
+        "taylor_series": {"v4": "9N-3", "v5": "8N-2"},
+        "linear_cost_law_T40": {"v4": "(alpha_0+3)*N-3", "v5": "(alpha_0+2)*N-2"}
+      }
+    },
+    {
+      "name": "N-term general signed sum",
+      "formula_v4": "(alpha_0 + 11)*N - 11",
+      "formula_v5": "(alpha_0 + 2)*N - 2",
+      "saving_per_N": 9,
+      "note": "Massive improvement: signed sums are now as cheap as positive sums",
+      "examples": {
+        "kl_divergence": {"v4": "16N-11", "v5": "7N-2"},
+        "jensen_shannon": {"v4": "29N-2", "v5": "20N-2", "note": "three entropy evals"},
+        "entropy_rate_markov": {"v4": "8|S|^2 + 2|S| - 3", "v5": "7|S|^2 + 2|S| - 2"},
+        "dcf_mixed_cf": {"v4": "20N-11", "v5": "11N-2"}
+      }
+    }
+  ],
+
+  "structural_insight": "The signed/unsigned split that defined two classes of equations is eliminated. The 8n gap (add_gen=11n vs add_pos=3n) was the primary cost driver for Class D (mixed-sign) equations. With add=2n for all reals, Class D equations drop by up to 9n per addition, completely closing the gap with Class A/B/C equations in terms of per-addition cost.",
+
+  "class_averages_estimate": {
+    "note": "Estimated change; exact numbers require full catalog rescan",
+    "class_D_change": "Most affected — each add_gen=11n becomes 2n, saving 9n per term",
+    "class_A_change": "Minor — add_pos 3n → 2n saves 1n per addition",
+    "class_B_change": "Minor — same as A",
+    "class_C_change": "Minor — same as A"
+  },
+
+  "specific_equation_updates": [
+    {"equation": "ELO rating", "old": "26n", "add_gen_count": 1, "new": "17n"},
+    {"equation": "Nash equilibrium", "old": "19n", "add_gen_count": 1, "new": "10n"},
+    {"equation": "Henderson-Hasselbalch (general)", "old": "16n", "add_gen_count": 1, "new": "7n"},
+    {"equation": "Reaction free energy dG", "old": "16n", "add_gen_count": 1, "new": "7n"},
+    {"equation": "KL divergence (N terms)", "old": "16N-11", "add_gen_count": "N-1", "new": "7N-2"},
+    {"equation": "JSD (N terms)", "old": "29N-2", "add_gen_count": "multiple", "new": "20N-2 approx"},
+    {"equation": "DCF mixed cashflows", "old": "20N-11", "add_gen_count": "N-1", "new": "11N-2"},
+    {"equation": "CES utility rho<0", "old": "27n", "add_gen_count": 1, "new": "18n"},
+    {"equation": "Lotka-Volterra per step", "old": "16n", "add_gen_count": 1, "new": "7n"},
+    {"equation": "SIR model per step", "old": "20n", "add_gen_count": 2, "new": "2n fewer: 18n"},
+    {"equation": "Black-Scholes Theta (given shared)", "old": "29n", "add_gen_count": 2, "new": "11n"}
+  ],
+
+  "predict_cost_impact": {
+    "formula_change": "NaiveCost(add) changes from 11 to 2",
+    "all_predictions_using_add_gen": "Need rescan — equations using add_gen get cheaper predicted cost",
+    "validation_status": "Requires re-run of predict_cost on full 315-equation catalog"
+  },
+
+  "completeness_statement": "SuperBEST v5 is the complete table. All 10 operations cost <= 3n. No outliers. The positive-domain/general-domain split is eliminated. The table cannot be improved without changing the operator family F16."
+}

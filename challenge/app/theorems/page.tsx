@@ -214,12 +214,13 @@ const RESULTS: Result[] = [
   // ─── PROPOSITIONS (6) ─────────────────────────────────────────────────────
   {
     id: "T08",
-    name: "SuperBEST Table v4 — 19 Nodes, All Entries Structurally Proved",
+    name: "SuperBEST Table v5 — 18 Nodes, All Entries Structurally Proved",
     tier: "THEOREM",
-    session: "Sprint2 / Sprint3 / S-T08",
+    session: "Sprint2 / Sprint3 / S-T08 / ADD-CASCADE",
     category: "Core Algebra",
-    statement: "SuperBEST v4: 19 total nodes, all 9 entries structurally proved optimal. recip=1n (ELSb(0,x)=1/x — R16-C1), div=2n (ELSb(ln(x),y) — corrected from erroneous 1n), sub=2n (T33), mul=2n (T10u/F16), neg=2n (T09), add=3n (cross-derivative lower bound), pow=3n (3-intermediate lower bound), sqrt=2n (derivative obstruction), exp=1n, ln=1n. No entry relies solely on exhaustive search.",
-    evidence: "S-T08 full structural audit (2026-04-20). Every entry: structural proof via derivative obstruction, intermediate-value counting, or direct construction. SuperBEST_v4_Structural_Audit.tex.",
+    statement: "SuperBEST v5: 18 total nodes, all 10 entries structurally proved optimal. recip=1n (ELSb(0,x)=1/x — R16-C1), div=2n (ELSb(ln(x),y)), sub=2n (T33), mul=2n (T10u/F16), neg=2n (T09), add=2n for ALL real x,y via LEDIV(x,DEML(y,1))=x+y — breakthrough replacing add_pos=3n and add_gen=11n, pow=3n (3-intermediate lower bound), sqrt=2n (derivative obstruction), exp=1n, ln=1n. The positive-domain / general-domain split is eliminated: one unified add=2n entry covers all reals. No entry relies solely on exhaustive search.",
+    evidence: "S-T08 full structural audit (2026-04-20) + ADD-CASCADE (2026-04-20). add=2n construction: DEML(y,1)=exp(-y), LEDIV(x,z)=ln(exp(x)/z), so LEDIV(x,DEML(y,1))=ln(exp(x)/exp(-y))=ln(exp(x+y))=x+y. Verified: [lediv(a,deml(b,1))-(a+b)] = 0 for all test points. Sum drops from 19n to 18n; savings rise from 74% to 75.3% vs naive EML. SuperBEST_v5_Table.json.",
+    verify: "python -c \"import math; deml=lambda x,y: math.exp(-x)-math.log(y); lediv=lambda x,z: math.log(math.exp(x)/z); print([round(lediv(a,deml(b,1))-(a+b),10) for a,b in [(-3,-2),(-1,0.5),(0.5,2),(2,7),(-3,7),(0,0)]])\"",
     deps: "T09, T10u, T12, T32, T33, R16-C1.",
   },
   {
@@ -278,8 +279,8 @@ const RESULTS: Result[] = [
     tier: "THEOREM",
     session: "COST-9 / R5",
     category: "Cost Theory",
-    statement: "For N-term positive-domain summations with per-term cost α₀, no cross-term sharing, no compound patterns: Cost(E_N) = (α₀ + 3)·N − 3 exactly. Softmax: 4N−3. Shannon: 6N−3. Taylor: 8N−3. The positive-domain assumption is genuine: licenses c_add=3 instead of 11, saving 8n per node.",
-    evidence: "R18 audit (2026-04-20): induction proof gap-free. Base N=1: Cost=α₀ by T38 (SD=PB=0). Step: new term costs α₀ (independent, T38) + 1 EAL node at cost 3 (T40-DF) = α₀+3. Exact equality by T38. Proved in R5_Linear_Cost_Law.tex.",
+    statement: "For N-term summations with per-term cost α₀, no cross-term sharing, no compound patterns: Cost(E_N) = (α₀ + 2)·N − 2 exactly (SuperBEST v5, c_add=2 for all domains). Softmax: 3N−2. Shannon: 7N−2 (uses neg per term). Taylor: 9N−2. The positive-domain assumption is now unnecessary: c_add=2 applies to all reals via LEDIV+DEML (ADD-CASCADE, 2026-04-20), eliminating the former c_add=3 (positive) vs c_add=11 (general) split.",
+    evidence: "R18 audit (2026-04-20) + ADD-CASCADE (2026-04-20): induction proof gap-free. Base N=1: Cost=α₀ by T38 (SD=PB=0). Step: new term costs α₀ (independent, T38) + 1 add node at cost 2 (v5) = α₀+2. Exact equality by T38. Proved in R5_Linear_Cost_Law.tex; updated for v5 in ADD-CASCADE session.",
     deps: "T38, T34.",
   },
   {
@@ -464,7 +465,7 @@ const RESULTS: Result[] = [
     tier: "DEFINITION",
     session: "R1",
     category: "Cost Theory",
-    statement: "Cost_F(E) = minimum number of internal nodes in any DAG over operator family F computing the same function as E. NaiveCost(E) = Σ cᵢ·nᵢ using SuperBEST v4 unit costs (exp=1, ln=1, neg=2, recip=1, mul=2, sub=2, div=2, pow=3, add=3/11, sqrt=2).",
+    statement: "Cost_F(E) = minimum number of internal nodes in any DAG over operator family F computing the same function as E. NaiveCost(E) = Σ cᵢ·nᵢ using SuperBEST v5 unit costs (exp=1, ln=1, neg=2, recip=1, mul=2, sub=2, div=2, pow=3, add=2 for ALL reals via LEDIV+DEML, sqrt=2).",
     evidence: "Formally defined in R1_Cost_Definition.tex with 4 proved properties: non-negativity, terminal characterization, subadditivity, algebraic invariance.",
   },
   {

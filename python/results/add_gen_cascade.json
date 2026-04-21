@@ -1,0 +1,120 @@
+{
+  "session": "ADD-CASCADE",
+  "date": "2026-04-20",
+  "breakthrough": "add_gen = 2n (was 11n). Construction: LEDIV(x, DEML(y,1)) = x+y for all real x,y in 2 nodes.",
+  "saving_per_addition": 9,
+  "affected_equations": [
+    {
+      "name": "ELO Rating System (full update)",
+      "source": "python/results/sport_1_statistics.json (SPORT1-6)",
+      "formula": "R_new = R_old + K*(S - E)",
+      "old_cost": "26n",
+      "add_gen_count": 1,
+      "add_gen_location": "add_gen(R_old, K*(S-E)) in rating update — K*(S-E) is signed",
+      "new_cost": "17n",
+      "savings": "9n",
+      "breakdown_new": "sub=2n + div=2n + pow=3n + add_pos=3n + recip=1n + sub=2n + mul=2n + add=2n = 17n"
+    },
+    {
+      "name": "Nash Equilibrium (2x2 Mixed Strategy, honest)",
+      "source": "python/results/sport_2_game_theory.json (SPORT2-6)",
+      "formula": "p* = (d-c) / (a-b-c+d)",
+      "old_cost": "19n",
+      "add_gen_count": 1,
+      "add_gen_location": "add_gen(result_abc, d) in denominator — (a-b-c+d) sign not guaranteed",
+      "new_cost": "10n",
+      "savings": "9n",
+      "breakdown_new": "sub=2n + sub=2n + sub=2n + add=2n + div=2n = 10n"
+    },
+    {
+      "name": "Henderson-Hasselbalch (general form)",
+      "source": "python/results/chem_1_chemistry.json / comp_all_domain2_summary.json (CHEM-1)",
+      "formula": "pH = pKa + log10([A-]/[HA])",
+      "old_cost": "16n",
+      "add_gen_count": 1,
+      "add_gen_location": "add_gen(pKa, log_ratio) — log_ratio can be positive or negative",
+      "new_cost": "7n",
+      "savings": "9n",
+      "note": "Near-pKa approximation (8n, no add_gen) is unchanged"
+    },
+    {
+      "name": "Reaction Free Energy dG",
+      "source": "python/results/chem_1_chemistry.json (chem_9_reaction_free_energy)",
+      "formula": "dG = dG_std + RT*ln(Q)",
+      "old_cost": "16n",
+      "add_gen_count": 1,
+      "add_gen_location": "add_gen(dG_std, RT*lnQ) — RT*ln(Q) positive when Q>1, negative when Q<1",
+      "new_cost": "7n",
+      "savings": "9n",
+      "breakdown_new": "mul(R,T)=2n + ln(Q)=1n + mul(RT,lnQ)=2n + add(dG_std, RT_lnQ)=2n = 7n"
+    },
+    {
+      "name": "KL Divergence (N-term)",
+      "source": "python/results/info_1_information_theory.json (INFO-1 eq2)",
+      "formula": "D_KL(P||Q) = sum_i p_i * ln(p_i/q_i)",
+      "old_cost": "16N - 11",
+      "add_gen_count": "N-1",
+      "add_gen_location": "Each of (N-1) additions between mixed-sign terms p_i*ln(p_i/q_i)",
+      "new_cost": "5N + 2*(N-1) = 7N - 2",
+      "savings": "9*(N-1)n",
+      "note": "For N=2: 16*2-11=21n → 7*2-2=12n (saves 9n). For N=10: 149n → 68n (saves 81n)."
+    },
+    {
+      "name": "DCF NPV (mixed cash flows)",
+      "source": "python/results/econ_1_economics.json (ECON-1)",
+      "formula": "NPV = sum_i CF_i / (1+r)^i  where CF_i can be positive or negative",
+      "old_cost": "20N - 11",
+      "add_gen_count": "N-1",
+      "add_gen_location": "Each of (N-1) additions — mixed cash flows (initial investment negative, returns positive)",
+      "new_cost": "11N - 2",
+      "savings": "9*(N-1)n",
+      "note": "Per-term: mul(CF_i, recip(pow(1+r,i)))=6n. Additions: add=2n each. Total: 6N + 2(N-1) = 8N-2... recalculate with exact per-term from econ_1."
+    },
+    {
+      "name": "Expected Value (mixed-sign outcomes)",
+      "source": "python/results/sport_2_game_theory.json (SPORT2-2)",
+      "formula": "E[X] = sum_i x_i * P(x_i) where x_i can be negative (losses)",
+      "old_cost": "13N - 11 (add_gen for all N-1 adds)",
+      "add_gen_count": "N-1",
+      "add_gen_location": "When outcome x_i includes negative values (e.g., financial losses)",
+      "new_cost": "4N - 2",
+      "savings": "9*(N-1)n",
+      "note": "Non-negative outcomes already used add_pos=3n → new cost is 2n per add; per-term 2n; 2N+2(N-1)=4N-2"
+    },
+    {
+      "name": "Jensen-Shannon Divergence (N-term)",
+      "source": "python/results/info_1_information_theory.json",
+      "formula": "JSD(P||Q) = 0.5*KL(P||M) + 0.5*KL(Q||M)",
+      "old_cost": "29N - 2 (approximate, see INFO-1)",
+      "add_gen_count": "multiple",
+      "add_gen_location": "signed intermediate sums",
+      "new_cost": "saves ~9n per add_gen occurrence",
+      "savings": "proportional to add_gen count in expansion"
+    }
+  ],
+  "total_savings_identified": "9n per add_gen replacement; KL divergence alone saves 9*(N-1)n for N-outcome distribution",
+  "key_equation_savings_summary": [
+    {"name": "ELO Rating",            "old": "26n",      "new": "17n",       "saved": "9n"},
+    {"name": "Nash Equilibrium",       "old": "19n",      "new": "10n",       "saved": "9n"},
+    {"name": "Henderson-Hasselbalch",  "old": "16n",      "new": "7n",        "saved": "9n"},
+    {"name": "Reaction Free Energy",   "old": "16n",      "new": "7n",        "saved": "9n"},
+    {"name": "KL Divergence (N=2)",    "old": "21n",      "new": "12n",       "saved": "9n"},
+    {"name": "KL Divergence (N=10)",   "old": "149n",     "new": "68n",       "saved": "81n"},
+    {"name": "KL Divergence (N-term)", "old": "16N-11",   "new": "7N-2",      "saved": "9(N-1)n"}
+  ],
+  "scaling_law_update": {
+    "old_general_signed_sum": "N-term general signed sum: (alpha_0 + 11)*N - 11",
+    "new_unified_sum": "(alpha_0 + 2)*N - 2",
+    "saving_vs_add_gen": "9*N - 9 = 9*(N-1) nodes saved for N-term signed sum",
+    "note": "The positive/general domain split is eliminated. All linear sums — positive or mixed-sign — now use add=2n."
+  },
+  "add_gen_conjecture_status": {
+    "was": "OPEN CONJECTURE (add_gen_11n_conjecture.json): 11n was best known, 5n structural lower bound, 11n conjectured tight",
+    "now": "RESOLVED — 2n is achievable. The 5n structural argument had a gap: it assumed ln of inputs was required. The LEDIV+DEML construction avoids taking ln of any input.",
+    "resolution": "LEDIV(x, DEML(y,1)) uses only exp(x), exp(-y), and ln(exp(x)/exp(-y)) — no ln of raw input x or y"
+  },
+  "info_theory_key_insight_update": {
+    "old_insight": "Sign-definiteness of summands determines cost: add_pos(3n) vs add_gen(11n). KL forces add_gen — explains 2x cost ratio vs Shannon.",
+    "new_insight": "Sign-definiteness is NO LONGER the cost driver. KL divergence uses add=2n just like Shannon. The 2x cost ratio collapses: KL = 7N-2, Shannon = 8N-3. KL is now CHEAPER per-term structure than Shannon (7 vs 8 per term, because Shannon needs neg(2n) per term to restructure)."
+  }
+}

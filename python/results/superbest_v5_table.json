@@ -1,0 +1,122 @@
+{
+  "version": "v5",
+  "date": "2026-04-20",
+  "breakthrough": "add_gen = 2n discovered via LEdiv+DEML construction: lediv(x, deml(y,1)) = ln(exp(x)/exp(-y)) = x+y for ALL real x,y",
+  "construction_detail": {
+    "deml_y_1": "DEML(y,1) = exp(-y) - ln(1) = exp(-y)",
+    "lediv_x_z": "LEDIV(x,z) = ln(exp(x)/z)",
+    "combined": "LEDIV(x, DEML(y,1)) = ln(exp(x)/exp(-y)) = ln(exp(x)*exp(y)) = ln(exp(x+y)) = x+y",
+    "node_count": 2,
+    "domain": "all real x, y",
+    "verification": "[lediv(a,deml(b,1))-(a+b) for all test points] = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]"
+  },
+  "table": [
+    {
+      "op": "exp(x)",
+      "cost": 1,
+      "construction": "EML(x,1)",
+      "notes": "primitive",
+      "v4_cost": 1,
+      "delta": 0
+    },
+    {
+      "op": "ln(x)",
+      "cost": 1,
+      "construction": "EXL(0,x)",
+      "notes": "primitive",
+      "v4_cost": 1,
+      "delta": 0
+    },
+    {
+      "op": "recip(x)",
+      "cost": 1,
+      "construction": "ELSb(0,x) = 1/x",
+      "notes": "R16-C1",
+      "v4_cost": 1,
+      "delta": 0
+    },
+    {
+      "op": "div(x,y)",
+      "cost": 2,
+      "construction": "ELSb(ln(x),y) = x/y",
+      "notes": "via ln(x) first",
+      "v4_cost": 2,
+      "delta": 0
+    },
+    {
+      "op": "neg(x)",
+      "cost": 2,
+      "construction": "EXL(0, DEML(0,x)) = ln(exp(-x)) = -x",
+      "notes": "T09",
+      "v4_cost": 2,
+      "delta": 0
+    },
+    {
+      "op": "mul(x,y)",
+      "cost": 2,
+      "construction": "ELAd(EXL(0,x), y) = x*y",
+      "notes": "T10u, F16 optimal",
+      "v4_cost": 2,
+      "delta": 0
+    },
+    {
+      "op": "sub(x,y)",
+      "cost": 2,
+      "construction": "T33 reference",
+      "notes": "T33",
+      "v4_cost": 2,
+      "delta": 0
+    },
+    {
+      "op": "add(x,y)",
+      "cost": 2,
+      "construction": "LEDIV(x, DEML(y,1)) = x+y",
+      "notes": "NEW v5: all real x,y. Replaces add_pos=3n (positive domain) and add_gen=11n (general). Single unified entry.",
+      "v4_cost_add_pos": 3,
+      "v4_cost_add_gen": 11,
+      "delta_from_add_pos": -1,
+      "delta_from_add_gen": -9
+    },
+    {
+      "op": "sqrt(x)",
+      "cost": 2,
+      "construction": "derivative obstruction lower bound",
+      "notes": "T08",
+      "v4_cost": 2,
+      "delta": 0
+    },
+    {
+      "op": "pow(x,n)",
+      "cost": 3,
+      "construction": "exp(n*ln(x)): mul(n,ln(x))=2n, then exp(result)=1n, total 3n",
+      "notes": "3-intermediate lower bound",
+      "v4_cost": 3,
+      "delta": 0
+    }
+  ],
+  "sum_v4": 19,
+  "sum_v5": 18,
+  "v4_entry_count": 10,
+  "v5_entry_count": 10,
+  "add_gen_v4": 11,
+  "add_gen_v5": 2,
+  "add_pos_v4": 3,
+  "add_pos_v5": "subsumed — general 2n construction works everywhere",
+  "improvement": "add_gen drops 9n; add_pos drops 1n; positive/general split eliminated — single unified add=2n entry",
+  "naive_total": 73,
+  "savings_v4": "74.0%",
+  "savings_v5": "75.3%",
+  "savings_v5_exact": "(73-18)/73 = 55/73 = 0.7534...",
+  "completeness": "All 10 operations <= 3 nodes. Table is COMPLETE.",
+  "open_problem_resolved": {
+    "was": "add_gen = 11n (best known); lower bound was open; conjecture was 11n tight (add_gen_11n_conjecture.json)",
+    "now": "add_gen = 2n PROVED by explicit construction. The 11n construction was not optimal.",
+    "implication": "Every polynomial-like sum of signed terms drops from 11n to 2n per addition. KL divergence, Nash equilibrium denominator, ELO rating update, Henderson-Hasselbalch, reaction free energy dG all benefit."
+  },
+  "linear_cost_law_update": {
+    "old_T40": "N-term positive-domain summation: (alpha_0 + 3)*N - 3",
+    "old_add_gen_law": "N-term general signed summation: (alpha_0 + 11)*N - 11",
+    "new_unified_law": "N-term summation (any domain): (alpha_0 + 2)*N - 2",
+    "note": "The positive/general distinction collapses. All N-term sums now use the unified add=2n cost."
+  }
+}

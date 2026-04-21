@@ -14,14 +14,14 @@ const C = {
   green:   "#5ec47a",
 };
 
-// SuperBEST v4 FINAL (2026-04-20): neg=2n, mul=2n(T10u), sub=2n(T33), div=2n(corrected), recip=1n(R16-C1), add=3n
+// SuperBEST v5 FINAL (2026-04-20): neg=2n, mul=2n(T10u), sub=2n(T33), div=2n(corrected), recip=1n(R16-C1), add=2n(all reals)
 const BENCH = [
   { op: "sin(x)  8-term Taylor", best: 63,  eml: 245, pct: 74 },
   { op: "mul(x,y)",              best: 2,   eml: 13,  pct: 85 },
   { op: "pow(x, n)",             best: 3,   eml: 15,  pct: 80 },
   { op: "div(x, y)",             best: 2,   eml: 15,  pct: 87 },
   { op: "neg(x)",                best: 2,   eml: 6,   pct: 67 },
-  { op: "add(x,y) x>0",         best: 3,   eml: 11,  pct: 73 },
+  { op: "add(x,y)",              best: 2,   eml: 11,  pct: 82 },
   { op: "ln(x)",                 best: 1,   eml: 3,   pct: 67 },
 ];
 
@@ -175,7 +175,7 @@ export default function LandingPage({ onEnter }) {
           {[
             {
               label: "BEST hybrid routing",
-              body: "Routes each primitive to its cheapest operator — EXL for ln/pow, EDL for div/mul, EML for add/sub. Cuts total tree size by up to 74% vs pure EML.",
+              body: "Routes each primitive to its cheapest operator — EXL for ln/pow, EDL for div/mul, EML for add/sub. Cuts total tree size by up to 75.3% vs pure EML.",
             },
             {
               label: "Phantom attractor phase transition",
@@ -319,8 +319,8 @@ export default function LandingPage({ onEnter }) {
               display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8,
             }}>
               <span>
-                SuperBEST v4: <strong style={{ color: C.green }}>19n / 74% savings</strong> across 9 standard ops.
-                All entries structurally proved optimal (T08).
+                SuperBEST v5: <strong style={{ color: C.green }}>18n / 75.3% savings</strong> across 9 standard ops.
+                All entries structurally proved optimal (T08, ADD-T1).
               </span>
               <button
                 onClick={() => onEnter("benchmarks")}

@@ -107,7 +107,7 @@ The recip sub-tree was contributing 2n; it now contributes 1n.
 - Partition function $Z = \mathrm{Tr}[e^{-\beta H}]$: no recip.
 - Density matrix $\rho = e^{-\beta H}/Z$: the $1/Z$ is a division by a scalar matrix — handled by EDL, already 1 node.
 - Free energy $F = -\ln Z / \beta$: no recip.
-- 157-equation catalog: the few equations using explicit $1/x$ drop 1 node each; the catalog total decreases by an estimated $\leq 5$ nodes across all 157 equations.
+- 295+-equation catalog: the few equations using explicit $1/x$ drop 1 node each; the catalog total decreases by an estimated $\leq 10$ nodes across all 295+ equations.
 
 ---
 

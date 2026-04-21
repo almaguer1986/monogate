@@ -203,6 +203,8 @@ What the nine sessions established:
 - The universe uses five or six canonical templates — exponential decay, exponential growth, log ratio, Hill function — across every domain of science and engineering.
 - GF(2) bitwise arithmetic is outside EML. The boundary is real and important.
 
+*Domain-2 expansion (FIN, INFO, QM, THERMO, CHEM, BIO, ECON sessions) extended the catalog beyond these nine sessions to 295+ equations across 12+ domains. The floor and ceiling are unchanged; the cross-domain isomorphism count grew from 8 to 12+ families. See [295+ Equations →](/blog/157-equations).*
+
 SuperBEST cost theory does not tell you what an equation *means*. It tells you how many irreducible operations it requires. Sometimes that number surprises you. The NFL passer rating surprised us. The Reed-Solomon syndrome count did not — we just had not measured it before.
 
 The cost of everything is countable. We are counting.
@@ -212,3 +214,5 @@ The cost of everything is countable. We are counting.
 *Almaguer, A.R. (2026). "The SuperBEST Cost of Everything." monogate research blog. https://monogate.org/blog/cost-of-everything*
 
 *Sessions: TECH-1 through TECH-5, SPORT-1 through SPORT-2, NAT-1 through NAT-2. SuperBEST v4 routing table (div=2n, recip=1n). All results exact and reproducible.*
+
+> **Update — 2026-04-20 (SuperBEST v5):** General-domain addition drops from 11n to 2n via `lediv(x, deml(y,1))`. The two-tier table (add_pos=3n / add_gen=11n) collapses to a single entry: add=2n for all reals. New total: 18n, savings 75.3%. The table is complete. Equations that previously used add_gen=11n (ELO, Nash equilibrium, quaternion rotation, Henderson-Hasselbalch) benefit proportionally — e.g. quaternion rotation (general) drops from 235n substantially. See [General Addition in 2 Nodes →](/blog/add-gen-2n).
