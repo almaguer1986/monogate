@@ -1,0 +1,168 @@
+{
+  "session": "X8",
+  "audit_date": "2026-04-20",
+  "methodology": "Tested every SuperBEST v5 operation using its EXACT construction. Grid: xs=[-10,-3,-1,-0.5,-0.1,0.1,0.5,1,3,10], ys same. Positive-domain ops tested on positive subgrid. Tolerance: relative error < 1e-6.",
+  "results": {
+    "exp": {
+      "cost_claimed": "1n",
+      "construction": "eml(x, 1)",
+      "claimed_domain": "all x",
+      "total_tested": 10,
+      "pass_count": 10,
+      "failures": [],
+      "domain_errors": [],
+      "verdict": "PASS",
+      "actual_domain": "all x"
+    },
+    "ln": {
+      "cost_claimed": "1n",
+      "construction": "exl(0, x)",
+      "claimed_domain": "x > 0",
+      "total_tested": 7,
+      "pass_count": 7,
+      "failures": [],
+      "domain_errors": [],
+      "negative_input_behavior": "domain_error",
+      "verdict": "PASS",
+      "actual_domain": "x > 0"
+    },
+    "recip": {
+      "cost_claimed": "1n",
+      "construction": "elsb(0, x)",
+      "claimed_domain": "x != 0",
+      "total_tested": 10,
+      "pass_count": 10,
+      "failures": [],
+      "domain_errors": [],
+      "verdict": "PASS",
+      "actual_domain": "x != 0 (correctly handles negatives)"
+    },
+    "neg": {
+      "cost_claimed": "2n",
+      "construction": "exl(0, deml(x, 1))",
+      "claimed_domain": "all x",
+      "total_tested": 10,
+      "pass_count": 10,
+      "failures": [],
+      "domain_errors": [],
+      "verdict": "PASS",
+      "actual_domain": "all x"
+    },
+    "add": {
+      "cost_claimed": "2n",
+      "construction": "lediv(x, deml(y, 1))",
+      "claimed_domain": "all x, y",
+      "total_tested": 100,
+      "pass_count": 100,
+      "failures": [],
+      "domain_errors": [],
+      "verdict": "PASS",
+      "actual_domain": "all x, y",
+      "note": "ADD-T1: key v5 breakthrough claim"
+    },
+    "sub": {
+      "cost_claimed": "2n",
+      "construction": "lediv(x, eml(y, 1))",
+      "claimed_domain": "all x, y",
+      "total_tested": 100,
+      "pass_count": 100,
+      "failures": [],
+      "domain_errors": [],
+      "verdict": "PASS",
+      "actual_domain": "all x, y"
+    },
+    "mul": {
+      "cost_claimed": "2n",
+      "construction": "elad(exl(0,x), y)",
+      "claimed_domain": "x > 0",
+      "total_tested": 70,
+      "pass_count": 70,
+      "failures": [],
+      "domain_errors": [],
+      "negative_x_behavior": "domain_error",
+      "negative_x_detail": [
+        "(-1.0,2.0): DOMAIN ERROR \u2014 expected a positive input, got -1.0",
+        "(-1.0,0.5): DOMAIN ERROR \u2014 expected a positive input, got -1.0",
+        "(-3.0,2.0): DOMAIN ERROR \u2014 expected a positive input, got -3.0"
+      ],
+      "verdict": "PASS",
+      "actual_domain": "x > 0 (ln(x) requires positive x)",
+      "table_correction_needed": true,
+      "correction_note": "superbest_v5_table.json says 'all real x,y' for mul cost but domain is x > 0"
+    },
+    "div": {
+      "cost_claimed": "2n",
+      "construction": "elsb(exl(0,x), y)",
+      "claimed_domain": "x, y > 0",
+      "total_tested": 49,
+      "pass_count": 49,
+      "failures": [],
+      "domain_errors": [],
+      "negative_x_behavior": "domain_error",
+      "negative_y_behavior": "unexpected_pass",
+      "negative_y_detail": [],
+      "verdict": "PASS",
+      "actual_domain": "x > 0 (hard), y != 0 (negative y works)",
+      "table_correction_needed": true,
+      "correction_note": "Claimed 'x, y > 0' but y < 0 also works"
+    },
+    "sqrt": {
+      "cost_claimed": "2n",
+      "construction": "eml(0.5*exl(0,x), 1)",
+      "claimed_domain": "x > 0",
+      "total_tested": 7,
+      "pass_count": 7,
+      "failures": [],
+      "domain_errors": [],
+      "negative_x_behavior": "domain_error",
+      "verdict": "PASS",
+      "actual_domain": "x > 0"
+    },
+    "pow": {
+      "cost_claimed": "3n",
+      "construction": "eml(exl(ln(n),x), 1)",
+      "claimed_domain": "x > 0, n > 0",
+      "total_tested": 20,
+      "pass_count": 20,
+      "failures": [],
+      "domain_errors": [],
+      "negative_x_behavior": "domain_error",
+      "negative_n_behavior": "domain_error",
+      "verdict": "PASS",
+      "actual_domain": "x > 0, n > 0",
+      "note": "Negative exponents n < 0 also fail (ln(n) undefined); integer negative exponents need recip(pow(x,-n))"
+    }
+  },
+  "table_corrections_needed": [
+    {
+      "op": "mul",
+      "issue": "superbest_v5_table.json says 'all real x,y' for mul cost but domain is x > 0",
+      "claimed": "x > 0",
+      "actual": "x > 0 (ln(x) requires positive x)"
+    },
+    {
+      "op": "div",
+      "issue": "Claimed 'x, y > 0' but y < 0 also works",
+      "claimed": "x, y > 0",
+      "actual": "x > 0 (hard), y != 0 (negative y works)"
+    }
+  ],
+  "conclusion": "All SuperBEST v5 constructions compute the correct value within their claimed domain. CRITICAL FINDING: mul(x,y) and div(x,y) require x > 0 because exl(0,x)=ln(x) is only defined for x > 0. superbest.py correctly marks domain as 'x > 0' but the v5_table.json notes and summary text claim 'all real x,y' for mul \u2014 this is an inconsistency. The construction itself is correct within x > 0. div(x,y): elsb allows y < 0 (no ln of y), so actual domain is x > 0, y != 0, which is strictly larger than the claimed 'x, y > 0'. add(x,y) = lediv(x, deml(y,1)): deml(y,1)=exp(-y)>0 always, so lediv is always valid. ADD-T1 claim CONFIRMED: works for ALL real x, y. sub(x,y) = lediv(x, eml(y,1)): eml(y,1)=exp(y)>0 always, so lediv is always valid. Works for ALL real x, y. neg(x) = exl(0, deml(x,1)): deml(x,1)=exp(-x)>0 always, so exl is always valid. Works for ALL real x. recip(x) = elsb(0,x): works for x != 0, including negative x. superbest.py says 'x != 0' which is correct. pow(x,n): requires x > 0 AND n > 0 for the given construction eml(exl(ln(n),x),1). Negative exponents need recip(pow(x,-n)).",
+  "ops_fully_confirmed": [
+    "exp",
+    "ln",
+    "recip",
+    "neg",
+    "add",
+    "sub",
+    "sqrt",
+    "pow"
+  ],
+  "ops_with_domain_notes": [
+    "mul",
+    "div"
+  ],
+  "add_t1_verified": true,
+  "sub_all_reals_verified": true,
+  "neg_all_reals_verified": true
+}

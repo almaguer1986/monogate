@@ -1,0 +1,165 @@
+{
+  "session": "X14",
+  "title": "ML Loss Functions: ELC Classification and Cost Analysis",
+  "superBEST_v5": {
+    "add": "2n",
+    "sub": "2n",
+    "mul": "2n",
+    "div": "1n",
+    "pow": "3n",
+    "ln": "1n",
+    "exp": "1n"
+  },
+  "ELC_definition": "ELC(R) = analytic, non-oscillatory. Piecewise functions with kinks (non-analytic) are OUTSIDE real ELC.",
+  "losses": [
+    {
+      "name": "MSE (Mean Squared Error)",
+      "formula": "L = (y - y_hat)^2",
+      "cost_per_example": {
+        "breakdown": "sub=2n, pow(,2)=3n",
+        "total": "5n"
+      },
+      "cost_N_examples": {
+        "formula": "5N + (2N-2) = 7N-2",
+        "note": "sum of N terms requires 2N-2 additions at 2n each"
+      },
+      "elc_status": "INSIDE",
+      "reason": "Polynomial — analytic everywhere",
+      "domain": "all reals"
+    },
+    {
+      "name": "Binary Cross-Entropy",
+      "formula": "L = -(y*ln(y_hat) + (1-y)*ln(1-y_hat))",
+      "cost_per_example": {
+        "breakdown": "ln(y_hat)=1n, mul(y)=2n, sub(1-y_hat)=2n, ln(1-y_hat)=1n, mul(1-y)=2n, add=2n, neg=2n",
+        "total": "12n"
+      },
+      "cost_N_examples": {
+        "formula": "12N + (2N-2) = 14N-2"
+      },
+      "elc_status": "INSIDE",
+      "reason": "Analytic for y_hat in (0,1); smooth log composition",
+      "domain": "y_hat in (0,1)"
+    },
+    {
+      "name": "KL Divergence",
+      "formula": "L = sum_i p_i * ln(p_i / q_i)",
+      "cost_per_example": {
+        "breakdown": "div=1n, ln=1n, mul=2n → 4n per term",
+        "total": "4n per term"
+      },
+      "cost_N_examples": {
+        "formula": "7N-2",
+        "note": "Same structure as Shannon entropy; N terms summed"
+      },
+      "elc_status": "INSIDE",
+      "reason": "Analytic for p,q > 0; smooth log and product composition",
+      "domain": "p, q > 0"
+    },
+    {
+      "name": "Hinge Loss",
+      "formula": "L = max(0, 1 - y*y_hat)",
+      "cost_per_example": null,
+      "cost_N_examples": null,
+      "elc_status": "OUTSIDE",
+      "reason": "max() is piecewise — non-analytic kink at 1-y*y_hat=0",
+      "smooth_approximation": {
+        "name": "Softplus hinge",
+        "formula": "ln(1 + exp(1 - y*y_hat))",
+        "cost_per_example": {
+          "breakdown": "mul(y,y_hat)=2n, sub=2n, exp=1n, add=2n, ln=1n",
+          "total": "8n"
+        },
+        "elc_status": "INSIDE",
+        "note": "Smooth approximation; converges to hinge as temperature -> 0"
+      }
+    },
+    {
+      "name": "Huber Loss",
+      "formula": "L = 0.5*(y-y_hat)^2 if |error|<delta, else delta*(|error|-0.5*delta)",
+      "elc_status": "OUTSIDE",
+      "reason": "Piecewise-defined — quadratic and linear branches joined at |error|=delta; non-analytic at boundary",
+      "smooth_approximation": {
+        "available": false,
+        "note": "No exact smooth version; pseudo-Huber (sqrt(1+x^2)-1) is a common smooth substitute"
+      }
+    },
+    {
+      "name": "Focal Loss",
+      "formula": "FL = -(1-p)^gamma * ln(p)",
+      "cost_per_example": {
+        "breakdown": "sub(1-p)=2n, pow(,gamma)=3n, ln(p)=1n, mul=2n, neg=2n",
+        "total": "10n"
+      },
+      "cost_N_examples": {
+        "formula": "10N + (2N-2) = 12N-2"
+      },
+      "elc_status": "INSIDE",
+      "reason": "Analytic for p > 0; smooth power and log composition",
+      "domain": "p > 0"
+    },
+    {
+      "name": "Wasserstein-1 (Earth Mover's Distance)",
+      "formula": "W1 = sup_{||f||_L <= 1} E_p[f] - E_q[f]",
+      "elc_status": "OUTSIDE",
+      "reason": "Requires solving a linear program (optimal transport); supremum over function class — not expressible as a closed-form analytic composition",
+      "note": "WGAN approximates via neural network critic; the critic network output is inside ELC, but the true W1 distance is not"
+    },
+    {
+      "name": "Contrastive Loss",
+      "formula": "L = y*d^2 + (1-y)*max(0, m-d)^2",
+      "elc_status": "OUTSIDE",
+      "reason": "The max(0, m-d) term is piecewise — non-analytic at d=m",
+      "partial": {
+        "positive_pair_only": {
+          "formula": "L = d^2",
+          "cost": "pow=3n",
+          "elc_status": "INSIDE"
+        }
+      }
+    },
+    {
+      "name": "InfoNCE (used in CLIP, SimCLR)",
+      "formula": "L = -log(exp(sim(q,k+)) / sum_i exp(sim(q,k_i)))",
+      "cost_per_example": {
+        "breakdown": "softmax over N keys: N exp evaluations (1n each) + N-1 additions (2n each) + 1 div (1n) + 1 ln (1n)",
+        "total_structure": "cross-entropy over softmax output",
+        "simplified": "~(5N-2) + dot product overhead"
+      },
+      "elc_status": "INSIDE",
+      "reason": "Composition of exp, sum, div, and log — all analytic; equivalent to cross-entropy applied to softmax similarities",
+      "domain": "all reals (similarity scores)"
+    },
+    {
+      "name": "Cosine Similarity Loss",
+      "formula": "L = 1 - (a dot b) / (||a|| * ||b||)",
+      "cost_per_example": {
+        "breakdown": "dot product (n-dim): n muls (2n each) + (n-1) adds; norms: n muls + adds + sqrt; final div=1n",
+        "note": "sqrt = pow(,0.5) = 3n"
+      },
+      "elc_status": "INSIDE",
+      "reason": "Analytic for ||a||, ||b|| > 0; smooth composition of polynomial and sqrt",
+      "domain": "non-zero vectors"
+    }
+  ],
+  "key_finding": {
+    "title": "ELC boundary coincides with smooth/non-smooth optimization landscape boundary",
+    "inside_elc": ["MSE", "Binary Cross-Entropy", "KL Divergence", "Focal Loss", "InfoNCE", "Cosine Similarity Loss"],
+    "outside_elc": ["Hinge Loss", "Huber Loss", "Contrastive Loss (with max term)", "Wasserstein-1"],
+    "insight": "Smooth loss functions (analytic compositions) are INSIDE ELC(R). Piecewise losses with non-analytic kinks are OUTSIDE real ELC. This boundary in ML exactly separates differentiable from non-differentiable training objectives — ELC membership predicts whether a loss has a smooth gradient landscape suitable for gradient-based optimization everywhere.",
+    "implication": "ELC(R) provides a theoretical foundation for the practical preference for smooth losses in deep learning: inside-ELC losses guarantee analytic gradients, no subgradient ambiguity, and well-defined Hessians everywhere in their domain."
+  },
+  "summary_table": [
+    {"loss": "MSE",              "cost_N": "7N-2",  "elc": "INSIDE"},
+    {"loss": "Binary Cross-Entropy", "cost_N": "14N-2", "elc": "INSIDE"},
+    {"loss": "KL Divergence",    "cost_N": "7N-2",  "elc": "INSIDE"},
+    {"loss": "Focal Loss",       "cost_N": "12N-2", "elc": "INSIDE"},
+    {"loss": "InfoNCE",          "cost_N": "~5N-2 + sim overhead", "elc": "INSIDE"},
+    {"loss": "Cosine Similarity","cost_N": "O(d*N)", "elc": "INSIDE"},
+    {"loss": "Hinge Loss",       "cost_N": "N/A",   "elc": "OUTSIDE"},
+    {"loss": "Softplus Hinge (approx)", "cost_N": "8N + (2N-2) = 10N-2", "elc": "INSIDE (approx)"},
+    {"loss": "Huber Loss",       "cost_N": "N/A",   "elc": "OUTSIDE"},
+    {"loss": "Wasserstein-1",    "cost_N": "N/A",   "elc": "OUTSIDE"},
+    {"loss": "Contrastive Loss", "cost_N": "N/A",   "elc": "OUTSIDE"}
+  ]
+}

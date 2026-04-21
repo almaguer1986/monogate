@@ -1,0 +1,287 @@
+{
+  "session": "X3",
+  "title": "ELC Costs for Fluid Dynamics Equations",
+  "superBEST_v5_costs": {
+    "add": "2n", "sub": "2n", "mul": "2n (positive inputs)",
+    "div": "1n", "recip": "1n", "neg": "2n",
+    "pow": "3n", "exp": "1n", "ln": "1n", "sqrt": "2n"
+  },
+  "note_ELC": "ELC(R) = exp-log closure over the reals. sin/cos have infinitely many zeros so are OUTSIDE real ELC (T01).",
+
+  "equations": [
+
+    {
+      "id": 1,
+      "name": "Reynolds number",
+      "formula": "Re = rho * v * L / mu",
+      "steps": [
+        {"op": "mul", "desc": "rho * v",       "cost": 2},
+        {"op": "mul", "desc": "(rho*v) * L",   "cost": 2},
+        {"op": "div", "desc": "/ mu",           "cost": 1}
+      ],
+      "total_cost": 5,
+      "unit": "n",
+      "inside_ELC": true,
+      "domain_notes": "All quantities strictly positive in physical flow; mul cost 2n applies.",
+      "trig_required": false
+    },
+
+    {
+      "id": 2,
+      "name": "Bernoulli equation",
+      "formula": "P + (1/2)*rho*v^2 + rho*g*h",
+      "breakdown": {
+        "term1_P": {
+          "desc": "Static pressure — no arithmetic ops (raw variable)",
+          "cost": 0
+        },
+        "term2_dynamic": {
+          "desc": "(1/2)*rho*v^2",
+          "steps": [
+            {"op": "pow",  "desc": "v^2",             "cost": 3},
+            {"op": "mul",  "desc": "rho * v^2",        "cost": 2},
+            {"op": "mul",  "desc": "(1/2) * (rho*v^2)","cost": 2}
+          ],
+          "subtotal": 7
+        },
+        "term3_hydrostatic": {
+          "desc": "rho*g*h",
+          "steps": [
+            {"op": "mul",  "desc": "rho * g",    "cost": 2},
+            {"op": "mul",  "desc": "(rho*g) * h","cost": 2}
+          ],
+          "subtotal": 4
+        },
+        "summation": {
+          "steps": [
+            {"op": "add", "desc": "P + (dynamic)",        "cost": 2},
+            {"op": "add", "desc": "(P+dynamic) + (hydrostatic)", "cost": 2}
+          ],
+          "subtotal": 4
+        }
+      },
+      "total_cost": 15,
+      "unit": "n",
+      "inside_ELC": true,
+      "domain_notes": "rho, v, g, h all positive in typical flow; P is positive gauge pressure.",
+      "trig_required": false
+    },
+
+    {
+      "id": 3,
+      "name": "Navier-Stokes (incompressible 2D, one velocity component u)",
+      "formula": "du/dt = -(u*du/dx + v*du/dy) - (1/rho)*dp/dx + nu*Laplacian(u)",
+      "note": "Spatial derivatives treated as known inputs (evaluated elsewhere). Cost is purely algebraic combination.",
+      "breakdown": {
+        "convective_term": {
+          "desc": "u*(du/dx) + v*(du/dy)",
+          "steps": [
+            {"op": "mul", "desc": "u * (du/dx)",  "cost": 2},
+            {"op": "mul", "desc": "v * (du/dy)",  "cost": 2},
+            {"op": "add", "desc": "sum",           "cost": 2}
+          ],
+          "subtotal": 6
+        },
+        "pressure_term": {
+          "desc": "-(1/rho) * dp/dx",
+          "steps": [
+            {"op": "recip", "desc": "1/rho",          "cost": 1},
+            {"op": "mul",   "desc": "(1/rho)*(dp/dx)","cost": 2},
+            {"op": "neg",   "desc": "negate result",  "cost": 2}
+          ],
+          "subtotal": 5
+        },
+        "viscous_term": {
+          "desc": "nu * (d2u/dx2 + d2u/dy2)",
+          "steps": [
+            {"op": "add", "desc": "Laplacian: d2u/dx2 + d2u/dy2", "cost": 2},
+            {"op": "mul", "desc": "nu * Laplacian",               "cost": 2}
+          ],
+          "subtotal": 4
+        },
+        "combining_three_terms": {
+          "steps": [
+            {"op": "add", "desc": "convective + pressure",       "cost": 2},
+            {"op": "add", "desc": "(conv+press) + viscous",      "cost": 2}
+          ],
+          "subtotal": 4
+        }
+      },
+      "total_cost": 19,
+      "unit": "n",
+      "inside_ELC": true,
+      "domain_notes": "rho, nu strictly positive. du/dt RHS is a real-valued combination; no trig involved in this algebraic form.",
+      "trig_required": false
+    },
+
+    {
+      "id": 4,
+      "name": "Drag equation",
+      "formula": "F_D = (1/2) * rho * v^2 * C_D * A",
+      "steps": [
+        {"op": "pow", "desc": "v^2",                 "cost": 3},
+        {"op": "mul", "desc": "(1/2) * rho",          "cost": 2},
+        {"op": "mul", "desc": "... * v^2",            "cost": 2},
+        {"op": "mul", "desc": "... * C_D",            "cost": 2},
+        {"op": "mul", "desc": "... * A",              "cost": 2}
+      ],
+      "total_cost": 11,
+      "unit": "n",
+      "inside_ELC": true,
+      "domain_notes": "All quantities positive (speed magnitude, density, area, drag coefficient).",
+      "trig_required": false
+    },
+
+    {
+      "id": 5,
+      "name": "Poiseuille flow (volumetric flow rate)",
+      "formula": "Q = pi * r^4 * DeltaP / (8 * mu * L)",
+      "note_pow4": "pow(r,4) taken as a single pow at 3n cost (SuperBEST v5 pow is constant-cost per call, not degree-dependent). Alternative: pow(r,2) then pow(r^2,2) costs 6n — direct pow cheaper.",
+      "steps": [
+        {"op": "pow", "desc": "r^4 (direct pow call)",        "cost": 3},
+        {"op": "mul", "desc": "pi * r^4 (pi is constant)",    "cost": 2},
+        {"op": "mul", "desc": "... * DeltaP",                 "cost": 2},
+        {"op": "mul", "desc": "8 * mu (8 is constant)",       "cost": 2},
+        {"op": "mul", "desc": "... * L",                      "cost": 2},
+        {"op": "div", "desc": "numerator / denominator",      "cost": 1}
+      ],
+      "total_cost": 12,
+      "unit": "n",
+      "inside_ELC": true,
+      "domain_notes": "r, mu, L strictly positive; DeltaP positive (pressure drop driving flow).",
+      "trig_required": false
+    },
+
+    {
+      "id": 6,
+      "name": "Stokes drag",
+      "formula": "F = 6 * pi * mu * r * v",
+      "note": "6*pi is a known numeric constant, folded into first mul.",
+      "steps": [
+        {"op": "mul", "desc": "(6*pi) * mu",  "cost": 2},
+        {"op": "mul", "desc": "... * r",       "cost": 2},
+        {"op": "mul", "desc": "... * v",       "cost": 2}
+      ],
+      "total_cost": 6,
+      "unit": "n",
+      "inside_ELC": true,
+      "domain_notes": "Pure multiplication chain; all quantities positive (viscosity, radius, speed).",
+      "trig_required": false
+    },
+
+    {
+      "id": 7,
+      "name": "Turbulent kinetic energy",
+      "formula": "k = (1/2) * (u'^2 + v'^2 + w'^2)",
+      "steps": [
+        {"op": "pow", "desc": "u'^2",                   "cost": 3},
+        {"op": "pow", "desc": "v'^2",                   "cost": 3},
+        {"op": "pow", "desc": "w'^2",                   "cost": 3},
+        {"op": "add", "desc": "u'^2 + v'^2",            "cost": 2},
+        {"op": "add", "desc": "... + w'^2",             "cost": 2},
+        {"op": "mul", "desc": "(1/2) * sum",            "cost": 2}
+      ],
+      "total_cost": 15,
+      "unit": "n",
+      "inside_ELC": true,
+      "domain_notes": "Fluctuation components can be negative — however squaring makes them positive before summation. No domain restriction violation.",
+      "trig_required": false
+    },
+
+    {
+      "id": 8,
+      "name": "Kolmogorov length scale",
+      "formula": "eta = (nu^3 / epsilon)^(1/4)",
+      "steps": [
+        {"op": "pow", "desc": "nu^3",               "cost": 3},
+        {"op": "div", "desc": "nu^3 / epsilon",     "cost": 1},
+        {"op": "pow", "desc": "(...)^(1/4)",         "cost": 3}
+      ],
+      "total_cost": 7,
+      "unit": "n",
+      "inside_ELC": true,
+      "domain_notes": "nu (kinematic viscosity) and epsilon (dissipation rate) strictly positive. (1/4) power is a valid positive-real pow.",
+      "trig_required": false
+    },
+
+    {
+      "id": 9,
+      "name": "Strouhal number",
+      "formula": "St = f * D / v",
+      "steps": [
+        {"op": "mul", "desc": "f * D",  "cost": 2},
+        {"op": "div", "desc": "/ v",    "cost": 1}
+      ],
+      "total_cost": 3,
+      "unit": "n",
+      "inside_ELC": true,
+      "domain_notes": "f (frequency), D (diameter), v (velocity) all positive. Dimensionless ratio. No trig.",
+      "trig_required": false,
+      "trig_note": "Strouhal number itself is trig-free and cleanly inside ELC."
+    },
+
+    {
+      "id": 10,
+      "name": "Vortex shedding frequency via Strouhal",
+      "formula_frequency": "f = St * v / D",
+      "formula_position": "theta(t) = integral of omega(t) dt  [requires sin/cos for x(t), y(t)]",
+      "frequency_computation": {
+        "steps": [
+          {"op": "mul", "desc": "St * v",  "cost": 2},
+          {"op": "div", "desc": "/ D",     "cost": 1}
+        ],
+        "subtotal": 3,
+        "inside_ELC": true
+      },
+      "vortex_position": {
+        "inside_ELC": false,
+        "reason": "Vortex position in 2D requires x(t) = r*cos(theta(t)), y(t) = r*sin(theta(t)). Both sin and cos are OUTSIDE real ELC because they have infinitely many zeros on R (T01 criterion). Any formula tracking the angular position or transverse oscillation of a shed vortex necessarily involves trig.",
+        "ELC_flag": "OUTSIDE_ELC"
+      },
+      "total_cost_frequency_only": 3,
+      "unit": "n",
+      "inside_ELC_frequency": true,
+      "inside_ELC_position": false,
+      "trig_required": true,
+      "trig_note": "The scalar shedding frequency f is inside ELC; the full vortex trajectory is outside real ELC."
+    }
+
+  ],
+
+  "summary_table": [
+    {"id": 1, "name": "Reynolds number",          "cost_n": 5,  "inside_ELC": true,  "trig": false},
+    {"id": 2, "name": "Bernoulli equation",        "cost_n": 15, "inside_ELC": true,  "trig": false},
+    {"id": 3, "name": "Navier-Stokes (1 component)","cost_n": 19, "inside_ELC": true,  "trig": false},
+    {"id": 4, "name": "Drag equation",             "cost_n": 11, "inside_ELC": true,  "trig": false},
+    {"id": 5, "name": "Poiseuille flow",           "cost_n": 12, "inside_ELC": true,  "trig": false},
+    {"id": 6, "name": "Stokes drag",               "cost_n": 6,  "inside_ELC": true,  "trig": false},
+    {"id": 7, "name": "Turbulent kinetic energy",  "cost_n": 15, "inside_ELC": true,  "trig": false},
+    {"id": 8, "name": "Kolmogorov length scale",   "cost_n": 7,  "inside_ELC": true,  "trig": false},
+    {"id": 9, "name": "Strouhal number",           "cost_n": 3,  "inside_ELC": true,  "trig": false},
+    {"id": 10,"name": "Vortex shedding (frequency)","cost_n": 3,  "inside_ELC": true,  "trig": false,
+               "caveat": "vortex POSITION (x(t),y(t)) requires sin/cos → OUTSIDE ELC"}
+  ],
+
+  "geometric_wave_boundary": {
+    "observation": "Fluid dynamics splits cleanly along the geometric/viscous vs. rotational/wave boundary.",
+    "inside_ELC": [
+      "Reynolds number (viscous/inertial balance)",
+      "Bernoulli equation (pressure-velocity-height tradeoff)",
+      "Navier-Stokes algebraic form (convection + pressure + diffusion)",
+      "Drag and lift (quadratic in velocity)",
+      "Poiseuille flow (pipe flow, radial geometry via pow)",
+      "Stokes drag (creeping flow, linear)",
+      "Turbulent kinetic energy (sum of squared fluctuations)",
+      "Kolmogorov scale (power-law of viscosity and dissipation)",
+      "Strouhal number (dimensionless frequency ratio)"
+    ],
+    "outside_ELC": [
+      "Vortex position x(t) = r*cos(omega*t), y(t) = r*sin(omega*t)",
+      "Wave propagation: u = A*sin(kx - omega*t)",
+      "Acoustic pressure: p = p0*cos(kx - omega*t)",
+      "Rotating frame transformations (sin/cos of rotation angle)",
+      "Streamlines in potential flow with circulation: psi involves atan2"
+    ],
+    "principle": "Equations involving only magnitudes, ratios, power-laws, and linear combinations of physical scalars are inside ELC(R). Equations tracking angular position, wave phase, or spatial oscillation require sin/cos and are outside real ELC. This boundary aligns with: geometric/viscous phenomena (ELC-amenable) vs. rotational/wave/acoustic phenomena (trig-essential)."
+  }
+}

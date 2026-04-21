@@ -1,0 +1,569 @@
+% F17_Question.tex
+% Title: The F17 Question: Could a 17th Operator Improve Any SuperBEST Entry?
+% Author: Arturo R. Almaguer
+% Date: April 2026
+% Session: X20
+% Status: THEORETICAL ESSAY — open question and analysis
+% Companion to: SuperBEST_v5_Structural_Audit.tex, F16_Characterization.tex
+
+\documentclass[12pt,a4paper]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{hyperref}
+\geometry{margin=2.5cm}
+
+%% ── Theorem environments ──────────────────────────────────────────────────────
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\theoremstyle{remark}
+\newtheorem{openq}[theorem]{Open Question}
+
+%% ── Operator macros ───────────────────────────────────────────────────────────
+\newcommand{\EML}{\operatorname{EML}}
+\newcommand{\EXL}{\operatorname{EXL}}
+\newcommand{\EAL}{\operatorname{EAL}}
+\newcommand{\DEML}{\operatorname{DEML}}
+\newcommand{\ELAd}{\operatorname{ELAd}}
+\newcommand{\ELSb}{\operatorname{ELSb}}
+\newcommand{\ELMl}{\operatorname{ELMl}}
+\newcommand{\LEAd}{\operatorname{LEAd}}
+\newcommand{\LEdiv}{\operatorname{LEdiv}}
+
+%% ── Function macros ───────────────────────────────────────────────────────────
+\newcommand{\recip}{\operatorname{recip}}
+\newcommand{\divop}{\operatorname{div}}
+\newcommand{\mulop}{\operatorname{mul}}
+\newcommand{\subop}{\operatorname{sub}}
+\newcommand{\addop}{\operatorname{add}}
+\newcommand{\negop}{\operatorname{neg}}
+\newcommand{\powop}{\operatorname{pow}}
+\newcommand{\sqrtop}{\operatorname{sqrt}}
+\newcommand{\SQR}{\operatorname{SQR}}
+\newcommand{\SMUL}{\operatorname{SMUL}}
+\newcommand{\SIN}{\operatorname{SIN}}
+\newcommand{\SB}{\mathrm{SB}}
+\newcommand{\F}{\mathcal{F}_{16}}
+\newcommand{\Fs}{\mathcal{F}_{17}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\ELC}{\mathrm{ELC}(\mathbb{R})}
+\newcommand{\ELfin}{\mathrm{EL}_{\mathrm{fin}}}
+
+%% =============================================================================
+\title{The F17 Question:\\[4pt]
+       Could a 17th Operator Improve Any SuperBEST Entry?}
+\author{Arturo R.\ Almaguer\\
+  \small monogate research\quad\texttt{almaguer1986@gmail.com}}
+\date{April 2026 (Session X20)}
+%% =============================================================================
+
+\begin{document}
+\maketitle
+
+%% ── Abstract ──────────────────────────────────────────────────────────────────
+\begin{abstract}
+The SuperBEST v5 table records the minimum $\mathcal{F}_{16}$-node counts
+for ten standard arithmetic operations, totalling exactly 18 nodes.
+All ten entries are proved optimal: no improvement is possible within $\F$.
+We ask whether there is a \emph{natural} 17th operator that, when added to
+$\F$, would reduce any entry.
+
+The answer is yes, in three ways.
+First, \textbf{SQR} (square root as a 1-input primitive) reduces
+$\SB(\sqrtop)$ from $2$ to $1$, by the same structural argument that
+reduced $\SB(\recip)$ from $2$ to $1$ via $\ELSb$ in the R16 sprint.
+Second, if $\ELMl(x,y) = e^{x\ln y} = y^x$ (the Class~I exponentiation
+operator listed in the 16-operator census) is admitted as an active
+operator, then $\SB(\powop) = 1$ --- a collapse from the current
+3-node result.
+Third, a ternary multiply $\mathrm{TMUL}(x,y,z)=xyz$ reduces
+triple-product computations from $3n$ to $1n$ in the catalog,
+though it leaves the core table unchanged.
+
+None of these extensions enlarges $\ELC$: they are all already within the
+exp-log closure.  The only extension that strictly enlarges $\ELC$ is adding
+$\sin$ as a primitive (the Richardson-elementary extension), which changes the
+research problem entirely.
+
+An \textbf{internal consistency question} emerges: if $\ELMl$ is
+listed among the 16 operators in the census but $\SB(\powop)=3$ in
+SuperBEST~v5, then either (a)~$\ELMl$ is not in the $\F$ subset used
+by v5, or (b)~the $\powop$ entry has an error.
+Resolution is the highest-priority open question identified in this session.
+\end{abstract}
+
+\tableofcontents
+
+%% =============================================================================
+\section{Setup: What Does the SuperBEST v5 Table Actually Say?}
+\label{sec:setup}
+%% =============================================================================
+
+\subsection{The Table}
+
+SuperBEST v5 \cite{SBv5} proves that ten core operations require exactly
+the following numbers of $\F$-nodes:
+
+\begin{table}[h]
+\centering
+\caption{SuperBEST v5 (all entries proved optimal)}
+\label{tab:v5}
+\begin{tabular}{@{}lccl@{}}
+\toprule
+\textbf{Operation} & \textbf{Cost} & \textbf{Naive} & \textbf{Lower Bound Method} \\
+\midrule
+$\exp(x)$        & 1 &  1 & Leaf scan \\
+$\ln(x)$         & 1 &  3 & Leaf scan \\
+$\recip(x)$      & 1 &  5 & Derivative ($-1/x^2$) \\
+$\divop(x,y)$    & 2 & 15 & Derivative obstruction \\
+$\negop(x)$      & 2 &  9 & Slope barrier ($-1$) \\
+$\mulop(x,y)$    & 2 & 13 & Derivative obstruction (T32) \\
+$\subop(x,y)$    & 2 &  5 & Derivative obstruction (T33) \\
+$\addop(x,y)$    & 2 & 11 & Slope barrier ($+1$, ADD-T1) \\
+$\sqrtop(x)$     & 2 &  8 & Derivative ($1/(2\sqrt{x})$) \\
+$\powop(x,n)$    & 3 & 15 & 2-node enumeration \\
+\midrule
+\textbf{Total}   & \textbf{18} & \textbf{73} & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{All Entries Are Tight}
+
+\begin{theorem}[SuperBEST v5 Optimality, \cite{SBv5}]
+Every entry in Table~\ref{tab:v5} is exact: $\SB(f) = k$ iff the
+construction achieves $k$ nodes and the lower-bound argument rules out $k-1$.
+No entry can be improved within $\F$.
+\end{theorem}
+
+Consequently, there are no ``gaps'': the question is not ``which entry has
+the largest gap?'' but rather ``which entry is most \emph{vulnerable} to
+a natural operator extension?''
+
+The answer by inspection is $\powop = 3$, the only 3-node entry.  Every
+other entry costs $\le 2$ nodes.  Any F17 that reduces $\powop$ saves
+2 nodes and brings the table total to 16.  Any F17 that reduces $\sqrtop$
+saves 1 node and brings the total to 17.
+
+%% =============================================================================
+\section{The Multiplication Barrier and Signed Inputs}
+\label{sec:mul-barrier}
+%% =============================================================================
+
+The mul entry $\SB(\mulop) = 2$ is proved with the domain restriction $x > 0$.
+The 2-node construction $\ELAd(\EXL(0,x),\,y) = e^{\ln x}\cdot y = xy$
+requires $\ln x$, which is undefined for $x \le 0$.
+
+For general signed multiplication, the F16 route requires a negation detour:
+\begin{align*}
+  xy &= -\bigl((-x)\cdot y\bigr) \quad\text{for } x < 0 \\
+  &= -\bigl(\ELAd(\EXL(0,-x),\,y)\bigr) \\
+  &= \negop\!\bigl(\ELAd(\EXL(0,\negop(x)),\,y)\bigr),
+\end{align*}
+costing $2 + 2 = 4$ additional nodes for the negation steps.
+
+\begin{proposition}[F17a: Signed Multiply Primitive]
+\label{prop:smul}
+If a primitive $\SMUL(x,y) = xy$ for all $x,y\in\R$ is added to $\F$,
+then $\SB_{\Fs}(\mulop_{\mathrm{gen}}) = 1$.
+However, $\SMUL$ is not a composition of $e^{\pm x}$ and $\ln y$ via any
+arithmetic operation.  It would constitute a genuinely new computational
+primitive, architecturally alien to $\F$.
+\end{proposition}
+
+\begin{proof}
+The first claim is immediate: $\SMUL(x,y) = xy$ is the desired function,
+computed in 1 node by definition.
+
+The second claim follows by inspection of the $\F$ construction:
+every $\F$ operator has the form $h(e^{\varepsilon u}, \ln v)$ or
+$h(e^{\varepsilon u}, v)$ for $h\in\{+,-,\times,\div\}$.
+None of these equals $u\cdot v$ for all $u,v\in\R$: the closest,
+$\ELAd(u,v) = e^u\cdot v$, differs by the exponential factor $e^u \ne u$.
+\end{proof}
+
+\textbf{Conclusion:} F17a = SMUL is possible but breaks the structural
+homogeneity of $\F$ (every $\F$ operator wraps arithmetic in exp or ln).
+It is not a natural extension.
+
+%% =============================================================================
+\section{The Absolute Value Barrier}
+\label{sec:abs}
+%% =============================================================================
+
+\begin{theorem}[\cite{F16Char}]
+$|x|\notin\ELfin$.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+Every $\F$ tree computes a real-analytic function on its natural domain.
+The function $|x|$ is not differentiable at $x=0$.  Hence no finite $\F$
+tree computes $|x|$.
+\end{proof}
+
+\noindent Adding $|x|$ as a primitive would extend $\ELfin$ beyond $\ELC$ ---
+the set of representable functions would include non-analytic functions.
+This is a fundamentally different extension from those discussed elsewhere.
+
+%% =============================================================================
+\section{F17b: Square Root as a Primitive}
+\label{sec:sqrt-primitive}
+%% =============================================================================
+
+\begin{definition}[F17b]
+$\mathcal{F}_{17b} = \F \cup \{\SQR\}$, where $\SQR(x) = \sqrt{x}$ for $x>0$.
+\end{definition}
+
+\begin{theorem}[SQR reduces $\sqrtop$ to 1 node]
+\label{thm:sqr}
+$\SB_{\mathcal{F}_{17b}}(\sqrtop) = 1$.
+All other SuperBEST v5 entries are unchanged.
+The new table total is $\mathbf{17}$ nodes.
+\end{theorem}
+
+\begin{proof}
+\textbf{Upper bound:} $T = \SQR(x)$ computes $\sqrt{x}$ in 1 node.
+
+\textbf{Lower bound (unchanged):} The lower bound $\SB(\sqrtop)\ge 2$
+in~\cite{SBv5} applies specifically within $\F$.  Once $\SQR\in\Fs$,
+the 1-node construction achieves $\SB_{\Fs}(\sqrtop) = 1$.
+
+\textbf{Other entries unchanged:} No other entry uses $\SQR$ as an
+intermediate.  The lower bounds for the other 9 entries are proved by
+derivative or slope arguments that are independent of whether $\SQR$ is
+in the operator library.
+\end{proof}
+
+\subsection{Structural Motivation}
+
+This extension has a clear historical precedent within the monogate project.
+In the R16 sprint \cite{R16}, the operator $\ELSb(x,y) = e^x/y$ was
+recognized as encoding $\recip(x) = 1/x$ in 1 node (via $\ELSb(0,x)$),
+reducing $\SB(\recip)$ from $2$ (in $\mathcal{F}_6$) to $1$ (in $\mathcal{F}_{16}$).
+The argument was: $\recip$ is already in $\ELC$; $\ELSb$ is the exp-ln
+composition that computes it; admitting $\ELSb$ as a primitive reduces the cost.
+
+The same argument applies to $\SQR$:
+
+\begin{itemize}
+  \item $\sqrt{x}\in\ELC$ (it equals $e^{(1/2)\ln x}$).
+  \item The 2-node $\F$ route $\EML\!\bigl(\tfrac{1}{2}\EXL(0,x),\,1\bigr)$
+    computes $\sqrt{x}$.
+  \item If $\SQR$ is added as a primitive, the cost drops to 1.
+  \item $\SQR$ is analytic for $x>0$, preserving the analyticity of $\Fs$.
+  \item $\ELfin = \ELC$ remains valid: $\SQR(x) = e^{(1/2)\ln x}\in\ELC$,
+    so $\Fs$ still computes only $\ELC$ functions.
+\end{itemize}
+
+\begin{remark}[SQR vs.\ ELSb analogy]
+$\SQR(x) = e^{(1/2)\ln x}$ is to $\ELSb(0,x) = e^{0-\ln x} = 1/x$ as
+half-power is to negative-one-power.  Both are specializations of
+$e^{c\ln x} = x^c$ for rational $c$.  The pattern suggests a more general
+extension: admitting $x^c$ for any fixed rational $c$ as a 1-node primitive.
+This is the ``rational power'' extension, which would make all entries of the
+form $x^{p/q}$ cost 1 node.
+\end{remark}
+
+%% =============================================================================
+\section{F17d: The ELMl Question and the Pow Inconsistency}
+\label{sec:elml}
+%% =============================================================================
+
+\subsection{ELMl in the 16-Operator Census}
+
+The \emph{Sixteen Operator Census} \cite{Census} lists $\ELMl(x,y) = e^{x\ln y} = y^x$
+as one of the 16 Class~I operators (with $h = \hat{}\,$ representing
+exponentiation).
+
+\begin{definition}[$\ELMl$]
+$\ELMl(x,y) = \exp\!\bigl(x\cdot\ln y\bigr) = y^x$, defined for $y > 0$.
+\end{definition}
+
+Applied to the leaves $n$ and $x$ (with $x > 0$):
+\[
+  \ELMl(n,\,x) = x^n.
+\]
+This is a 1-node computation of $\powop(x,n)$.
+
+\subsection{The Inconsistency}
+
+SuperBEST v5 \cite{SBv5} states $\SB(\powop) = 3$, with construction:
+\[
+  v_1 = \EXL(0,n) = \ln n, \quad
+  v_2 = \EXL(v_1,\,x) = n\ln x, \quad
+  v_3 = \EML(v_2,\,1) = e^{n\ln x} = x^n.
+\]
+
+If $\ELMl\in\F$, then $\ELMl(n,x) = x^n$ in 1 node, contradicting $\SB(\powop) = 3$.
+
+\begin{proposition}[Resolution]
+\label{prop:elml-resolution}
+The most likely resolution is that SuperBEST v5 uses a restricted
+8-operator subset of the 16-operator census:
+\[
+  \F_{\mathrm{v5}} = \{\EML, \DEML, \EXL, \EAL, \LEAd, \ELAd, \ELSb, \LEdiv\},
+\]
+which does \emph{not} include $\ELMl$.
+Under this restricted definition, $\SB(\powop) = 3$ is correct.
+If $\ELMl$ were admitted, $\SB(\powop) = 1$.
+\end{proposition}
+
+\begin{remark}[Why exclude ELMl?]
+$\ELMl(x,y) = y^x$ requires both inputs to participate in a product inside
+the exponential: $e^{x\ln y}$.  This is qualitatively different from the
+other operators, which have one exp-or-ln outer function applied to an
+arithmetic combination.  The combining operation for $\ELMl$ is
+$x\mapsto x\cdot\ln y$ (scaling by a log), rather than $h(e^{\sigma x}, \ln y)$
+for a fixed $h$.  In other words, $\ELMl$ is ``two logs deep'' in some sense ---
+it is the composition of multiplication with two log-type operations.
+The authors of v5 may have excluded $\ELMl$ precisely because admitting it
+would trivialize $\powop$ to 1 node and collapse an interesting structural question.
+\end{remark}
+
+\begin{openq}
+Is $\ELMl$ in $\mathcal{F}_{16}$ as used by SuperBEST v5?
+If yes, should the pow entry be revised to $\SB(\powop) = 1$?
+If no, what is the precise structural criterion that excludes $\ELMl$
+from the active 16-operator set, and how many of the 16 census operators
+are actually used in the SuperBEST routing?
+\end{openq}
+
+\subsection{F17d Proposal}
+
+\begin{definition}[F17d]
+$\mathcal{F}_{17d} = \F \cup \{\ELMl\}$ (adding $\ELMl$ to the v5 active set).
+\end{definition}
+
+\begin{theorem}
+$\SB_{\mathcal{F}_{17d}}(\powop) = 1$.
+The SuperBEST table total under $\mathcal{F}_{17d}$ is $\mathbf{16}$ nodes.
+\end{theorem}
+
+\begin{proof}
+$\ELMl(n,x) = x^n$ computes $\powop$ in 1 node.
+The lower bound $\SB(\powop)\ge 2$ proved in~\cite{SBv5} applies only within
+$\F$ (not $\mathcal{F}_{17d}$): specifically, it checks all 2-node trees over
+$\F$-operators and finds none computing $x^n$.  Once $\ELMl$ is admitted,
+the 1-node tree $\ELMl(n,x)$ is available.
+The remaining 9 entries are unchanged (their lower bounds do not depend on
+whether $\ELMl$ is in the library).
+\end{proof}
+
+%% =============================================================================
+\section{F17c: Ternary Multiplication}
+\label{sec:ternary}
+%% =============================================================================
+
+\begin{definition}[F17c]
+$\mathrm{TMUL}(x,y,z) = x\cdot y\cdot z$ (a ternary operator).
+\end{definition}
+
+Within $\F$ (binary operators), computing $xyz$ requires two binary
+multiplications:
+\[
+  xyz = \mulop\!\bigl(\mulop(x,y),\,z\bigr).
+\]
+By SuperBEST v5, $\mulop = 2$ nodes and the outer $\mulop$ uses the
+intermediate $\mulop(x,y)$ as input, costing $2+2 = 4$ nodes total
+(the intermediate $\ln(\mulop(x,y))$ is another node).
+
+More precisely, the F16 route for $xyz$:
+\begin{align*}
+  v_1 &= \EXL(0,x) = \ln x, \\
+  v_2 &= \ELAd(v_1,\,y) = xy, \\
+  v_3 &= \EXL(0,v_2) = \ln(xy) = \ln x + \ln y, \\
+  v_4 &= \ELAd(v_3,\,z) = (xy)\cdot z = xyz.
+\end{align*}
+Total: 4 nodes.
+
+With $\mathrm{TMUL}$: 1 node.  Savings: 3 nodes per triple product.
+
+\begin{remark}[Catalog impact]
+Many physical laws are three-factor products:
+Lorentz force $F = qvB\sin\theta$ (4 factors, 3 muls in F16 = 6 nodes;
+with TMUL = 2 nodes),
+work $W = Fd\cos\theta$ (3 factors = 3 nodes in F16; with TMUL = 1 node),
+thermal expansion $\Delta L = \alpha L\,\Delta T$ (3 factors).
+The catalog savings depend on the frequency of triple products in physics equations.
+This is a catalog-level improvement, not a SuperBEST table improvement
+(since TMUL leaves the core 10-entry table unchanged).
+\end{remark}
+
+%% =============================================================================
+\section{F17e: Adding Sin --- The Richardson Extension}
+\label{sec:sin}
+%% =============================================================================
+
+\begin{definition}[F17e]
+$\mathcal{F}_{17e} = \F \cup \{\SIN\}$, where $\SIN(x) = \sin(x)$.
+\end{definition}
+
+\begin{theorem}[\cite{F16Char}]
+$\sin(x)\notin\ELC$ and hence $\sin(x)\notin\ELfin$.
+\end{theorem}
+
+Adding $\SIN$ to $\F$ strictly extends the representable class:
+$\ELfin(\mathcal{F}_{17e}) \supsetneq \ELC$.
+This is the \emph{Richardson-elementary extension}, studied by
+Richardson~\cite{Richardson1968}.
+
+\begin{remark}[Why F17e defeats the purpose]
+The value of $\F$ lies in the characterization $\ELfin = \ELC$.
+SuperBEST v5 is meaningful because it quantifies complexity within this
+clean class.  Adding $\SIN$ replaces one classification problem (``what
+is the minimal $\F$-cost of each $\ELC$ function?'') with a harder one
+(``what is the minimal $\mathcal{F}_{17e}$-cost of each Richardson-elementary
+function?'').  The latter is open and much harder.
+F17e is not an improvement to the $\F$ framework; it is a different framework.
+\end{remark}
+
+%% =============================================================================
+\section{Summary and Recommendations}
+\label{sec:summary}
+%% =============================================================================
+
+\begin{table}[h]
+\centering
+\caption{F17 candidates evaluated}
+\label{tab:candidates}
+\begin{tabular}{@{}p{3cm}p{2.8cm}ccp{3.5cm}@{}}
+\toprule
+\textbf{Candidate} & \textbf{Operator} & \textbf{Extends ELC?} &
+  \textbf{Table Savings} & \textbf{Verdict} \\
+\midrule
+F17b & $\SQR(x) = \sqrt{x}$ & No & $-1\,\text{n}$ (total: 17) &
+  Natural, analytic, clean analogy to ELSb$\to$recip \\[4pt]
+F17d & $\ELMl(x,y) = y^x$ & No & $-2\,\text{n}$ (total: 16) &
+  Most impactful; contingent on ELMl status in F16 \\[4pt]
+F17a & $\SMUL(x,y) = xy$ (signed) & No & $0$ &
+  Architecturally alien; not exp-ln \\[4pt]
+F17c & $\mathrm{TMUL}(x,y,z) = xyz$ & No & $0$ &
+  Catalog improvement; breaks binary-operator model \\[4pt]
+F17e & $\SIN(x)$ & \textbf{Yes} & varies &
+  Changes research problem; not recommended \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Main Findings}
+
+\begin{enumerate}
+  \item \textbf{SuperBEST v5 is optimal within $\F$ as defined.}  All 10 entries
+    are proved exact.  No improvement is possible without extending $\F$.
+
+  \item \textbf{The most natural F17 is $\SQR$.}  Adding $\SQR(x) = \sqrt{x}$
+    as a primitive reduces $\SB(\sqrtop) = 2 \to 1$, bringing the table total
+    to 17 nodes.  The extension is analytic, within $\ELC$, and follows the
+    same pattern as the R16 sprint (ELSb $\to$ recip $= 1$~n).
+
+  \item \textbf{The highest-impact F17 is $\ELMl$}, reducing pow from 3 to
+    1 and the table total from 18 to 16.  But whether $\ELMl$ is already in
+    $\F$ (and therefore the pow entry has an error) or is genuinely excluded
+    (in which case F17d is a meaningful extension) is the key open question.
+
+  \item \textbf{No natural F17 extension enlarges $\ELC$.}  All candidates
+    within the analytic, exp-ln spirit of $\F$ are already in $\ELC$.
+    The $\mathcal{F}_{17}$ extensions change cost bounds, not representable classes.
+
+  \item \textbf{F16 is the natural complete family for $\ELC$.}  The
+    characterization $\ELfin = \ELC$ \cite{F16Char} is the correct boundary.
+    F17 extensions within $\ELC$ are refinements of the cost theory, not
+    extensions of the representable class.
+\end{enumerate}
+
+\subsection{Recommended Follow-up}
+
+\begin{openq}[Priority 1]
+Is $\ELMl(x,y) = y^x$ in $\mathcal{F}_{16}$ as used by SuperBEST v5?
+Run the 2-node search for pow(x,n) against the v5 operator set.
+If $\ELMl$ is admitted, pow $= 1$~n and the table total is 16.
+\end{openq}
+
+\begin{openq}[Priority 2]
+How many equations in the 315+ catalog contain $\sqrt{x}$?
+What is the total catalog node savings if F17b (SQR as primitive) is adopted?
+\end{openq}
+
+\begin{openq}[Priority 3]
+Define formally the ``rational-power extension'' $\mathcal{F}_{17p}$:
+add $x^c$ for every fixed $c\in\Q$ as a primitive.
+How does this change the SuperBEST table and the catalog?
+\end{openq}
+
+%% =============================================================================
+\section*{Conclusion}
+%% =============================================================================
+
+The SuperBEST v5 table is complete within $\mathcal{F}_{16}$.
+Any improvement requires extending the operator family.
+The most natural and architecturally coherent extensions are:
+
+\begin{itemize}
+  \item \textbf{F17b} (SQR primitive): reduces $\sqrtop$ from $2$ to $1$,
+    following the same R16 pattern that reduced recip.
+    New table total: 17 nodes.
+  \item \textbf{F17d} (ELMl primitive): if ELMl is not already in $\F$,
+    adding it reduces pow from $3$ to $1$.
+    New table total: 16 nodes.
+\end{itemize}
+
+Both lie within $\ELC$: they do not extend the representable class.
+The characterization $\ELfin = \ELC$ remains valid after either extension.
+
+\bigskip
+\noindent\textit{Almaguer, A.R.\ (2026).
+The F17 Question: Could a 17th Operator Improve Any SuperBEST Entry?
+monogate research (Session X20).\ \url{https://monogate.org}}
+
+%% =============================================================================
+\begin{thebibliography}{9}
+%% =============================================================================
+
+\bibitem{SBv5}
+Almaguer, A.R.\ (2026).
+\textit{SuperBEST v5: Complete Structural Proof of Optimality for All Ten
+Core Arithmetic Operations}.
+monogate research.
+\texttt{python/paper/theorems/SuperBEST\_v5\_Structural\_Audit.tex}.
+
+\bibitem{F16Char}
+Almaguer, A.R.\ (2026).
+\textit{The F16 Characterization Theorem: Which Functions Are Exactly
+Computable by Finite F16 Trees?}
+monogate research.
+\texttt{python/paper/theorems/F16\_Characterization.tex}.
+
+\bibitem{Census}
+Almaguer, A.R.\ (2026).
+\textit{The 16-Operator Census: Completeness Classification of the
+Exponential-Logarithmic Binary Operator Family}.
+monogate research.
+\texttt{python/paper/theorems/Sixteen\_Operator\_Census.tex}.
+
+\bibitem{ADDT1}
+Almaguer, A.R.\ (2026).
+\textit{General Addition in Two Nodes: Closing the Last Gap in SuperBEST v4}.
+monogate research.
+\texttt{python/paper/theorems/ADD\_T1\_General\_Addition\_2n.tex}.
+
+\bibitem{R16}
+Almaguer, A.R.\ (2026).
+\textit{R16: recip $= 1$ node in $\mathcal{F}_{16}$}.
+monogate research.
+\texttt{python/paper/theorems/recip\_One\_Node.tex}.
+
+\bibitem{Richardson1968}
+Richardson, D.\ (1968).
+Some unsolvable problems involving elementary functions of a real variable.
+\textit{Journal of Symbolic Logic} \textbf{33}(4), 514--520.
+
+\end{thebibliography}
+
+\end{document}

@@ -1,0 +1,208 @@
+{
+  "session": "X11",
+  "title": "ELC(ℝ) Classification of Probability Distribution PDFs",
+  "date": "2026-04-20",
+  "framework": {
+    "ELC_definition": "exp-log closure of rationals over ℝ",
+    "inside_ELC": "functions expressible using only: +, -, *, /, exp, log, rational constants, integer powers",
+    "outside_ELC": "functions requiring Gamma (non-elementary), sin/cos (infinitely many zeros, oscillatory), or other transcendentals",
+    "operator_cost_unit": "n = one primitive ELC operation"
+  },
+  "distributions": [
+    {
+      "name": "Normal",
+      "pdf": "f(x) = exp(−x²/2) / √(2π)",
+      "classification": "INSIDE ELC (x > 0 domain); DOMAIN FLAG (all ℝ)",
+      "elc_status": "INSIDE",
+      "domain_note": "x² = mul(x,x) requires one mul. For x < 0 no new non-ELC function is added (x² is symmetric), but the domain convention for half-normal contexts from X7/X8 applies: ELC is cleanest on x > 0. Full real line: still ELC, just note symmetry.",
+      "operator_breakdown": {
+        "neg": 1,
+        "mul_x_x": 1,
+        "div_by_2": 1,
+        "exp": 1,
+        "sqrt_2pi": "constant (pre-computed rational approximation or exact ELC expression sqrt = pow(,1/2))",
+        "final_div": 1
+      },
+      "operator_count_n": 5,
+      "notes": "√(2π) = exp(½·log(2π)) — itself ELC. No Γ involved. Connects to X7/X8: real-line domain analysis."
+    },
+    {
+      "name": "Exponential",
+      "pdf": "f(x) = λ · exp(−λx),  x ≥ 0",
+      "classification": "INSIDE ELC",
+      "elc_status": "INSIDE",
+      "domain_note": "x ≥ 0; λ > 0",
+      "operator_breakdown": {
+        "mul_lambda_x": 1,
+        "neg": 1,
+        "exp": 1,
+        "mul_lambda_front": 1
+      },
+      "operator_count_n": 4,
+      "notes": "Purely exponential family member. Minimal cost. Canonical ELC distribution."
+    },
+    {
+      "name": "Log-normal",
+      "pdf": "f(x) = exp(−(ln(x)−μ)² / (2σ²)) / (x · σ · √(2π)),  x > 0",
+      "classification": "INSIDE ELC",
+      "elc_status": "INSIDE",
+      "domain_note": "x > 0 required (ln(x) defined)",
+      "operator_breakdown": {
+        "log_x": 1,
+        "sub_mu": 1,
+        "pow_2": 1,
+        "mul_2sigma2": 1,
+        "neg": 1,
+        "div_exponent": 1,
+        "exp": 1,
+        "mul_x_sigma": 1,
+        "mul_sqrt2pi": 1,
+        "div_denominator": 1,
+        "sqrt_2pi_constant": "ELC constant"
+      },
+      "operator_count_n": 10,
+      "notes": "All operations are log, pow, exp, mul, div — pure ELC. x > 0 domain is natural. No Γ."
+    },
+    {
+      "name": "Poisson",
+      "pdf": "P(k) = e^(−λ) · λ^k / k!,  k ∈ ℕ₀",
+      "classification": "INSIDE ELC (integer k); OUTSIDE ELC (continuous k via Γ(k+1))",
+      "elc_status": "CONDITIONAL",
+      "domain_note": "k must be a non-negative integer for ELC membership",
+      "operator_breakdown": {
+        "neg_lambda": 1,
+        "exp_neg_lambda": 1,
+        "pow_lambda_k": 3,
+        "k_factorial_integer": "constant at each integer k (lookup / accumulation, not a function)",
+        "div": 1
+      },
+      "operator_count_n": 6,
+      "notes": "Integer k: k! is a finite product of rationals — ELC. Continuous extension k → Γ(k+1) exits ELC. Structural bifurcation: discrete PMF is INSIDE, continuous interpolation OUTSIDE.",
+      "outside_condition": "Requires Γ(k+1) for non-integer k"
+    },
+    {
+      "name": "Chi-squared",
+      "pdf": "f(x) = x^(k/2−1) · exp(−x/2) / (2^(k/2) · Γ(k/2)),  x > 0",
+      "classification": "OUTSIDE ELC",
+      "elc_status": "OUTSIDE",
+      "domain_note": "x > 0",
+      "outside_reason": "Γ(k/2) in normalisation constant — Gamma function is non-elementary",
+      "operator_count_n": null,
+      "notes": "Even if k is an even integer (making Γ(k/2) a rational multiple of an integer factorial), the general parametric form requires Γ. For specific even k, becomes INSIDE at that fixed k."
+    },
+    {
+      "name": "Beta",
+      "pdf": "f(x) = x^(α−1) · (1−x)^(β−1) / B(α,β),  0 < x < 1",
+      "classification": "OUTSIDE ELC",
+      "elc_status": "OUTSIDE",
+      "domain_note": "0 < x < 1; α, β > 0",
+      "outside_reason": "B(α,β) = Γ(α)·Γ(β)/Γ(α+β) — normalisation requires Gamma function",
+      "operator_count_n": null,
+      "notes": "Numerator x^(α−1)·(1−x)^(β−1) is ELC (pow, sub, mul). Denominator Beta function exits ELC. For integer α, β the Beta function reduces to rationals — INSIDE at those fixed integer parameters."
+    },
+    {
+      "name": "Gamma distribution",
+      "pdf": "f(x) = x^(α−1) · exp(−x/β) / (β^α · Γ(α)),  x > 0",
+      "classification": "OUTSIDE ELC",
+      "elc_status": "OUTSIDE",
+      "domain_note": "x > 0; α, β > 0",
+      "outside_reason": "Γ(α) in normalisation — directly the Gamma function",
+      "operator_count_n": null,
+      "notes": "Archetype of Γ-dependent distributions. For integer α (Erlang distribution), Γ(α) = (α−1)! is rational → INSIDE at those parameters."
+    },
+    {
+      "name": "Weibull",
+      "pdf": "f(x) = (k/λ) · (x/λ)^(k−1) · exp(−(x/λ)^k),  x ≥ 0",
+      "classification": "INSIDE ELC",
+      "elc_status": "INSIDE",
+      "domain_note": "x ≥ 0; k, λ > 0",
+      "operator_breakdown": {
+        "div_x_lambda": 1,
+        "pow_k_minus_1": 3,
+        "mul_k_over_lambda": 1,
+        "mul_result": 1,
+        "pow_k_inner": 3,
+        "neg": 1,
+        "exp": 1,
+        "final_mul": 1
+      },
+      "operator_count_n": 12,
+      "notes": "Pure exponential-family structure. pow(x/λ, k) via exp(k·log(x/λ)) = 3 ops each. No Γ anywhere. Generalises exponential (k=1) and Rayleigh (k=2)."
+    },
+    {
+      "name": "Pareto",
+      "pdf": "f(x) = α · x_m^α / x^(α+1),  x ≥ x_m",
+      "classification": "INSIDE ELC",
+      "elc_status": "INSIDE",
+      "domain_note": "x ≥ x_m > 0; α > 0",
+      "operator_breakdown": {
+        "pow_xm_alpha": 3,
+        "mul_alpha": 1,
+        "pow_x_alpha_plus_1": 3,
+        "div": 1
+      },
+      "operator_count_n": 8,
+      "notes": "Power-law distribution. Both pow operations via exp-log. All operations elementary. No Γ."
+    },
+    {
+      "name": "Cauchy",
+      "pdf": "f(x) = 1 / (π · (1 + ((x−x₀)/γ)²))",
+      "classification": "INSIDE ELC",
+      "elc_status": "INSIDE",
+      "domain_note": "x ∈ ℝ; γ > 0",
+      "operator_breakdown": {
+        "sub_x_x0": 1,
+        "div_gamma": 1,
+        "pow_2": 1,
+        "add_1": 1,
+        "mul_pi": 1,
+        "recip": 1
+      },
+      "operator_count_n": 6,
+      "notes": "π appears as a constant (ELC: π = 4·arctan(1), but can also be treated as a known constant ∈ closure). No Γ, no oscillatory functions. Clean ELC despite heavy tails. Normalisation uses π directly — not Γ."
+    }
+  ],
+  "summary_table": {
+    "INSIDE_ELC": [
+      "Normal (full ℝ, with domain note)",
+      "Exponential",
+      "Log-normal",
+      "Poisson (integer k only)",
+      "Weibull",
+      "Pareto",
+      "Cauchy"
+    ],
+    "OUTSIDE_ELC": [
+      "Chi-squared (general k)",
+      "Beta (general α, β)",
+      "Gamma distribution (general α)",
+      "Poisson (continuous k interpolation via Γ)"
+    ],
+    "CONDITIONAL_INSIDE": [
+      "Poisson at integer k",
+      "Chi-squared at even integer k",
+      "Beta at integer α, β",
+      "Gamma distribution at integer α (= Erlang)"
+    ]
+  },
+  "operator_cost_ranking": [
+    {"distribution": "Exponential",    "n": 4},
+    {"distribution": "Cauchy",         "n": 6},
+    {"distribution": "Poisson (int k)","n": 6},
+    {"distribution": "Pareto",         "n": 8},
+    {"distribution": "Normal",         "n": 5},
+    {"distribution": "Log-normal",     "n": 10},
+    {"distribution": "Weibull",        "n": 12}
+  ],
+  "key_finding": {
+    "structural_split": "The ELC boundary in statistics separates the exponential family from the Γ-dependent distributions.",
+    "exponential_family_inside": "Normal, Exponential, Log-normal, Weibull, Pareto, Cauchy — all have PDFs expressible purely in ELC(ℝ).",
+    "gamma_dependent_outside": "Chi-squared, Beta, and Gamma distribution all require Γ in their normalisation constant, placing them outside ELC(ℝ).",
+    "mechanism": "Γ arises as the normalisation constant for distributions whose support or shape parameters generalise beyond integer values. Where integer constraints hold, Γ(n) = (n−1)! reduces to a rational, pulling the distribution back inside ELC.",
+    "discrete_vs_continuous": "Poisson is an edge case: its PMF is INSIDE ELC for integer k (k! is rational), but the continuous interpolation via Γ(k+1) exits ELC.",
+    "pi_vs_gamma": "Cauchy uses π as a normalisation constant — π is treatable as an ELC constant. This contrasts with Γ, which is a genuinely non-elementary function. π ∈ ELC; Γ ∉ ELC.",
+    "connection_to_prior_sessions": "X7/X8 established domain boundary behaviour for ELC functions on ℝ. The Normal distribution's full-line domain is consistent with ELC — the split was a pedagogical note, not a true exclusion.",
+    "elc_boundary_conjecture": "A distribution's PDF is in ELC(ℝ) if and only if its normalisation constant can be expressed without the Gamma function (or equivalently: without Γ evaluated at non-integer arguments)."
+  },
+  "pow_operator_cost_note": "pow(a, b) = exp(b · log(a)): costs exp(1) + log(1) + mul(1) = 3n when b is a non-rational real parameter. When b is a fixed rational, pow can be cheaper (e.g., pow(x,2) = mul(x,x) = 1n)."
+}

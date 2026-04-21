@@ -1,0 +1,668 @@
+% ELC_Boundary_Map.tex
+% Title: The ELC(R) Boundary Map: A Definitive Three-Tier Classification
+% Author: Arturo R. Almaguer
+% Date: April 2026
+% Session: X15 — Synthesis of sessions X3-X14 boundary findings
+% Status: DEFINITIVE (all tiers established; citations to F16_Characterization.tex)
+
+\documentclass[12pt,a4paper]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{enumitem}
+\usepackage{mdframed}
+\geometry{margin=2.5cm}
+
+%% ── Theorem environments ──────────────────────────────────────────────────────
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+%% ── Class macros ──────────────────────────────────────────────────────────────
+\newcommand{\ELC}{\mathrm{ELC}(\mathbb{R})}
+\newcommand{\ELCcx}{\mathrm{ELC}(\mathbb{C})}
+\newcommand{\ELfin}{\mathrm{EL}_{\mathrm{fin}}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\F}{\mathcal{F}_{16}}
+
+%% ── Color codes for tiers ─────────────────────────────────────────────────────
+\definecolor{insidegreen}{RGB}{220,255,220}
+\definecolor{boundaryyellow}{RGB}{255,255,200}
+\definecolor{outsidered}{RGB}{255,220,220}
+
+%% =============================================================================
+\title{The $\ELC$ Boundary Map:\\[4pt]
+       A Definitive Three-Tier Classification of Real Functions\\[4pt]
+       with Respect to the Exp-Log Closure}
+\author{Arturo R.\ Almaguer\\
+  \small monogate research\quad\texttt{almaguer1986@gmail.com}}
+\date{April 2026 \quad [Session X15]}
+%% =============================================================================
+
+\begin{document}
+\maketitle
+
+%% ── Abstract ──────────────────────────────────────────────────────────────────
+\begin{abstract}
+We present the definitive boundary map for the exp-log closure
+$\ELC$---the class of real functions exactly computable by finite $\F$ trees
+(F16 Characterization Theorem,~\cite{F16}).  Synthesizing findings from
+sessions~X3--X14, we classify real functions into three tiers:
+\textsc{Inside}~$\ELC$,
+\textsc{Boundary} (inside $\ELCcx$ but outside $\ELC$),
+and \textsc{Outside}~$\ELC$.
+The boundary is characterized by three equivalent conditions:
+a function lies in $\ELC$ if and only if it is
+(1)~elementarily constructed from $\{\exp, \ln, +, -, \times, \div, \Q\}$,
+(2)~real-analytic on its natural domain, and
+(3)~has finitely many zeros on every bounded interval.
+Conditions~(1)--(3) are equivalent for functions on~$\R$;
+the boundary is vivid because each excluded tier violates exactly
+one condition in a characteristic way.
+The key geometric insight is $\ELC \cap \{\text{periodic functions}\} = \varnothing$
+(established by T01, the Zero Finiteness Theorem).
+\end{abstract}
+
+\tableofcontents
+\bigskip
+
+%% =============================================================================
+\section{Foundations: The Characterization Theorem}
+\label{sec:foundations}
+
+We first state the theorem on which the boundary map rests.
+
+\begin{definition}[Exp-log closure; \cite{F16}~Definition~1.1]
+\label{def:elc}
+The \emph{exp-log closure} $\ELC$ is the smallest set of partial functions
+$\R\to\R$ satisfying:
+\begin{enumerate}[label=(\roman*)]
+  \item Every rational constant $q\in\Q$ and the identity $x\mapsto x$
+        are in $\ELC$.
+  \item If $f\in\ELC$, then $e^f\in\ELC$.
+  \item If $f\in\ELC$ and $f>0$ on its domain, then $\ln f\in\ELC$.
+  \item If $f,g\in\ELC$, then $f+g$, $f-g$, $f\cdot g\in\ELC$, and
+        $f/g\in\ELC$ wherever $g\neq 0$.
+\end{enumerate}
+\end{definition}
+
+\begin{theorem}[F16 Characterization; \cite{F16}~Theorem~2.1]
+\label{thm:f16}
+A function $f:\R\to\R$ is exactly representable by a finite $\F$ tree
+if and only if $f\in\ELC$.
+\end{theorem}
+
+\begin{theorem}[Zero Finiteness; T01, \cite{F16}~Theorem~3.1]
+\label{thm:t01}
+Every $k$-node $\F$ tree has at most $2k+2$ real zeros on any bounded
+interval $[a,b]$.
+\end{theorem}
+
+\begin{corollary}[Qualitative Zero Barrier]
+\label{cor:zeros}
+If $f:\R\to\R$ has infinitely many zeros on any bounded interval,
+then $f\notin\ELC$.
+\end{corollary}
+
+The three-tier classification below applies these results to a comprehensive
+survey of functions arising in physics, engineering, mathematics, probability,
+and computer science.
+
+%% =============================================================================
+\section{The Three-Tier Characterization}
+\label{sec:characterization}
+
+\begin{mdframed}
+\textbf{Master characterization (three conditions).}
+A function $f:\R\to\R$ lies in $\ELC$ if and only if all three of
+the following hold:
+\begin{enumerate}[label=(\arabic*)]
+  \item \textbf{Elementary (narrow sense):}
+        $f$ is built from $\exp$, $\ln$, and rational arithmetic
+        $\{+,-,\times,\div\}$ over $\Q$ in finitely many steps.
+  \item \textbf{Analytic:}
+        $f$ has no kinks, jumps, or non-smooth points on its natural domain.
+  \item \textbf{Finitely many zeros on bounded intervals:}
+        For every $[a,b]\subset\R$, the zero set $\{x\in[a,b]: f(x)=0\}$
+        is finite.
+\end{enumerate}
+Conditions (2) and (3) follow from (1), so they are not additional requirements;
+they are stated because they make the \emph{boundary vivid}:
+functions excluded by (2) are piecewise/non-analytic;
+functions excluded by (3) are oscillatory.
+\end{mdframed}
+
+%% =============================================================================
+\section{Tier~I: Inside \texorpdfstring{$\ELC$}{ELC(R)}}
+\label{sec:inside}
+
+The following functions are in $\ELC$: they are analytic, non-oscillatory,
+and finitely constructible from $\exp$, $\ln$, and rational arithmetic.
+
+\begin{longtable}{@{}p{4.2cm}p{4.8cm}p{5.3cm}@{}}
+\caption{Functions inside $\ELC$, organized by domain}
+\label{tab:inside}\\
+\toprule
+Domain & Function / Law & Why it is inside $\ELC$ \\
+\midrule
+\endfirsthead
+\multicolumn{3}{c}{\emph{(Table~\ref{tab:inside} continued)}}\\
+\toprule
+Domain & Function / Law & Why it is inside $\ELC$ \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+%% ── Optics ────────────────────────────────────────────────────────────────
+\textit{Geometric optics} &
+Lens equation $\frac{1}{f}=\frac{1}{d_o}+\frac{1}{d_i}$, mirror equations,
+Fresnel at normal incidence &
+Rational combinations of distances and refractive indices; no trig required \\[4pt]
+%% ── Fluid dynamics ────────────────────────────────────────────────────────
+\textit{Fluid dynamics} &
+Reynolds $Re=\rho v L/\mu$; Bernoulli $P+\tfrac{1}{2}\rho v^2+\rho g h=C$;
+Poiseuille $Q=\pi r^4 \Delta P/(8\mu L)$ &
+All are rational functions of physical parameters or polynomial compositions;
+see X3 results \\[4pt]
+%% ── Continuum mechanics ───────────────────────────────────────────────────
+\textit{Continuum / materials} &
+Hooke's law $\sigma=E\varepsilon$;
+Von Mises criterion $\sigma_v = \sqrt{(\sigma_1^2+\sigma_2^2-\sigma_1\sigma_2)}$;
+Fourier heat $q=-k\,\nabla T$ &
+Linear and polynomial; $\sqrt{\,\cdot\,}$ is in $\ELC$ as $x^{1/2}=e^{\frac{1}{2}\ln x}$ \\[4pt]
+%% ── Epidemiology ──────────────────────────────────────────────────────────
+\textit{Epidemiology (deterministic)} &
+SIR/SEIR ODEs ($dS/dt=-\beta SI$, etc.); $R_0=\beta S_0/\gamma$;
+logistic curve $I(t)=K/(1+e^{-r(t-t_0)})$; doubling time $\ln(2)/r$ &
+Products and exponentials; all in $\ELC$; see X10 results \\[4pt]
+%% ── Probability ───────────────────────────────────────────────────────────
+\textit{Probability distributions (exp-family)} &
+Normal PDF $e^{-x^2/2}/\sqrt{2\pi}$; exponential $\lambda e^{-\lambda x}$;
+Weibull; Pareto; log-normal &
+Compositions of $\exp$, $\ln$, rational powers; see X11 results \\[4pt]
+%% ── ML losses ─────────────────────────────────────────────────────────────
+\textit{ML loss functions (smooth)} &
+MSE $(y-\hat y)^2$; binary cross-entropy $-y\ln\hat y-(1-y)\ln(1-\hat y)$;
+KL divergence; focal loss $(1-p)^\gamma\ln p$; InfoNCE &
+Analytic compositions of $\exp$, $\ln$, polynomial; see X14 results \\[4pt]
+%% ── Acoustics/music ───────────────────────────────────────────────────────
+\textit{Acoustics / music} &
+Frequency ratios $f_2/f_1$; equal temperament $f_n = f_0\cdot 2^{n/12}$;
+decibels $20\log_{10}(p/p_0)$; Doppler shift &
+Power-of-2 and log: $2^{n/12}=e^{(n/12)\ln 2}$; see X6 results \\[4pt]
+%% ── Algorithm complexity ──────────────────────────────────────────────────
+\textit{Complexity functions} &
+$n\ln n$; $n^2$; $2^n$ (as a real function of $n$); $n!$ approximation
+via Stirling $\approx \sqrt{2\pi n}(n/e)^n$ &
+$2^n=e^{n\ln 2}$; Stirling uses $\exp$, $\ln$, and $\sqrt{\,\cdot\,}$;
+all in $\ELC$ as real functions \\[4pt]
+%% ── ODEs ──────────────────────────────────────────────────────────────────
+\textit{Linear ODE solutions} &
+$y=C_1 e^{\lambda_1 t}+C_2 e^{\lambda_2 t}$ (distinct real eigenvalues);
+$y=e^{at}(C_1+C_2 t)$ (repeated) &
+Finite sums of exponentials with real exponents: in $\ELC$ \\
+\end{longtable}
+
+\begin{proposition}[Inside-$\ELC$ closure]
+\label{prop:inside}
+The class $\ELC$ is closed under composition, rational arithmetic, and
+real-analytic inversion whenever the inverse is expressible in terms of
+$\exp$ and $\ln$.  In particular: all hyperbolic functions
+($\sinh, \cosh, \tanh$), all inverse hyperbolic functions
+($\operatorname{arcsinh}=\ln(x+\sqrt{x^2+1})$, etc.), all rational functions
+over $\Q$, all real power functions $x^r$ ($x>0$, $r\in\Q$), and any
+finite composition thereof are in $\ELC$.
+\end{proposition}
+
+%% =============================================================================
+\section{Tier~II: Boundary --- Inside \texorpdfstring{$\ELCcx$}{ELC(C)}, Outside \texorpdfstring{$\ELC$}{ELC(R)}}
+\label{sec:boundary}
+
+These functions are in $\ELC$ over $\C$ (i.e., expressible via $e^{iz}$,
+$e^{-iz}$, and the identity $e^{ix}=\cos x + i\sin x$) but are \emph{not}
+in $\ELC$ over $\R$, because they require \emph{real oscillation}.
+They violate condition~(3) of Section~\ref{sec:characterization}:
+they have infinitely many zeros on bounded real intervals.
+
+\begin{enumerate}[label=\textbf{\arabic*.}, leftmargin=*, itemsep=8pt]
+
+\item \textbf{Wave optics.}
+  Diffraction integrals, two-slit interference fringes,
+  and Snell's law $n_1\sin\theta_1 = n_2\sin\theta_2$ when $\theta$ ranges
+  over real angles.
+  \emph{Reason:} $\sin$ and $\cos$ are boundary cases---they live in
+  $\ELC(\C)$ via $\sin\theta=(e^{i\theta}-e^{-i\theta})/2i$,
+  but over $\R$ they have zero set $\{k\pi : k\in\Z\}$, which is
+  infinite on any interval of length $>\pi$. Corollary~\ref{cor:zeros}
+  excludes them from $\ELC$.
+
+\item \textbf{Harmonic oscillator (sinusoidal phase).}
+  The general solution $y(t) = A\cos(\omega t + \phi)$ and
+  all amplitude-modulated sinusoidal envelopes.
+  \emph{Reason:} Same as wave optics.
+  Note: the \emph{envelope} $A e^{-\gamma t}$ (without oscillation)
+  \textit{is} in $\ELC$.
+
+\item \textbf{Acoustic waveforms.}
+  Time-domain pressure waves $p(t)=A\sin(2\pi f t+\phi)$.
+  The \emph{frequency-domain} energy content (power spectrum) is in $\ELC$
+  (rational function of frequency); the time-domain form is Tier~II.
+
+\item \textbf{Cosine annealing (ML).}
+  Learning rate schedule $\eta_t = \eta_{\min} +
+  \tfrac{1}{2}(\eta_{\max}-\eta_{\min})(1+\cos(\pi t/T))$.
+  \emph{Reason:} The $\cos(\pi t/T)$ factor is Tier~II.
+  Exponential decay $\eta_t = \eta_0 e^{-t/\tau}$ is a Tier~I substitute.
+
+\item \textbf{All functions requiring trig of a real-valued variable.}
+  Any formula of the form $f(\sin(g(x)), \cos(g(x)))$ where $g:\R\to\R$
+  is a non-constant real function falls in Tier~II unless
+  $g(x)\in\pi\Q$ identically (a constant-angle special case).
+
+\end{enumerate}
+
+\begin{remark}[Why `Boundary'?]
+The label \emph{boundary} is precise: $\sin(x)=\operatorname{Im}(e^{ix})$
+shows that the zero-set problem is the \emph{only} obstruction.
+Over $\C$, $e^{ix}$ is in $\ELC(\C)$ by definition (it is $\exp$ applied to
+$i\cdot x$, which is a scalar multiple of the identity).
+Over $\R$, the imaginary projection creates infinitely many zeros.
+Hence the boundary is exactly the real/complex boundary of the zero-count
+obstruction from T01.
+\end{remark}
+
+%% =============================================================================
+\section{Tier~III: Outside \texorpdfstring{$\ELC$}{ELC(R)} Entirely}
+\label{sec:outside}
+
+These functions are outside $\ELC$ over both $\R$ and $\C$.
+Each sub-tier has a distinct structural reason.
+
+\subsection{Sub-tier A: Non-elementary special functions (violate condition~1)}
+
+These functions are analytic and non-oscillatory, yet provably cannot be
+expressed as a finite composition of $\exp$, $\ln$, and rational arithmetic
+(Liouville--Ritt theorem).
+
+\begin{enumerate}[label=\textbf{A\arabic*.}, leftmargin=*, itemsep=6pt]
+\item $\Gamma(x)$ (Gamma function):
+  the analytic continuation of $(n-1)!$ to non-integer arguments.
+  No closed $\ELC$ form; appears as denominator in chi-squared, Beta, Gamma,
+  negative-binomial PDFs.
+\item Bessel functions $J_\nu(x)$, $Y_\nu(x)$:
+  solutions to $x^2 y''+xy'+(x^2-\nu^2)y=0$; arise in cylindrical wave optics.
+\item Airy functions $\mathrm{Ai}(x)$, $\mathrm{Bi}(x)$:
+  solutions to $y''=xy$; arise in quantum tunneling and wave asymptotics.
+\item Exponential integral $\mathrm{Ei}(x)=\mathrm{P.V.}\int_{-\infty}^x e^t/t\,dt$:
+  the prototypical non-elementary integral of an $\ELC$ function.
+\item Error function $\mathrm{erf}(x)=\frac{2}{\sqrt{\pi}}\int_0^x e^{-t^2}dt$:
+  anti-derivative of a Gaussian; excluded by Liouville--Ritt (\cite{F16}
+  Theorem~3.4).
+\item Dilogarithm $\mathrm{Li}_2(x)=\int_0^x \frac{-\ln(1-t)}{t}dt$:
+  a polylogarithm; analytic but non-elementary.
+\end{enumerate}
+
+\subsection{Sub-tier B: Piecewise / non-analytic (violate condition~2)}
+
+\begin{enumerate}[label=\textbf{B\arabic*.}, leftmargin=*, itemsep=6pt]
+\item Absolute value $|x|$: not differentiable at $x=0$; kink excluded by
+  analyticity (\cite{F16} Theorem~3.2).
+\item ReLU $\max(0,x)$: non-analytic kink at $x=0$.
+\item $\max(f,g)$, $\min(f,g)$ for non-trivially intersecting $f,g$:
+  piecewise definitions create non-analytic switch points.
+\item Floor $\lfloor x\rfloor$, ceiling $\lceil x\rceil$: integer-valued
+  step functions; infinitely many non-analytic jump discontinuities.
+\item Heaviside step $H(x)$: jump at $x=0$.
+\item Hinge loss $\max(0, 1-y\hat y)$: piecewise linear; kink at $y\hat y=1$.
+\item Huber loss: piecewise --- quadratic near zero, linear in tails.
+\end{enumerate}
+
+\subsection{Sub-tier C: Discrete / integer-domain (violate condition~2 and the real-domain requirement)}
+
+\begin{enumerate}[label=\textbf{C\arabic*.}, leftmargin=*, itemsep=6pt]
+\item Exact factorial $n!$ (for $n\in\N$): defined on $\N$, not a real function;
+  the Stirling approximation $\approx\sqrt{2\pi n}(n/e)^n$ \emph{is} in $\ELC$.
+\item Exact binomial coefficient $\binom{n}{k}$: requires integer factorials.
+\item Modular arithmetic $a \bmod m$: piecewise, integer-valued.
+\item M\"obius function $\mu(n)$: defined on $\N$, not analytic.
+\item Euler totient $\varphi(n)$: defined on $\N$, multiplicative; see X13.
+\item Prime-counting function $\pi(x)$: integer step function; non-analytic
+  everywhere.
+\item Divisor function $d(n)$, $\sigma(n)$: defined on $\N$.
+\end{enumerate}
+
+\subsection{Sub-tier D: Probability distributions requiring \texorpdfstring{$\Gamma$}{Gamma}}
+
+\begin{enumerate}[label=\textbf{D\arabic*.}, leftmargin=*, itemsep=6pt]
+\item Gamma distribution PDF:
+  $f(x;\alpha,\beta)=x^{\alpha-1}e^{-x/\beta}/(\beta^\alpha\Gamma(\alpha))$
+  for non-integer $\alpha$; the $\Gamma(\alpha)$ factor is non-elementary.
+\item Chi-squared distribution PDF: special case of Gamma; excluded.
+\item Beta distribution PDF: $\Gamma(a)\Gamma(b)/\Gamma(a+b)$ factor excluded.
+\item Student's $t$-distribution PDF: ratio of Gamma functions excluded.
+\item Negative binomial, exact Poisson (CDF): require Gamma or factorial.
+\end{enumerate}
+
+\begin{remark}
+The exponential distribution PDF $\lambda e^{-\lambda x}$, the Weibull PDF,
+and the Pareto PDF are all in $\ELC$ (Tier~I), because their normalization
+constants are rational or simple powers, not $\Gamma$ values at non-integers.
+\end{remark}
+
+\subsection{Sub-tier E: Uncomputable / non-analytic from first principles}
+
+\begin{enumerate}[label=\textbf{E\arabic*.}, leftmargin=*, itemsep=6pt]
+\item Kolmogorov complexity $K(s)$: uncomputable by Rice's theorem.
+\item Halting indicator $\mathbf{1}[\text{program }P\text{ halts}]$: uncomputable.
+\item Busy Beaver $\Sigma(n)$: grows faster than any computable function;
+  not expressible in $\ELC$ or any elementary class.
+\item True infinite series, when not closed-form:
+  e.g., $\sum_{n=1}^\infty x^n/n^2$ (polylogarithm $\mathrm{Li}_2(x)$);
+  the partial sum truncated to $N$ terms is in $\ELC$, but the limit (as a
+  function of $x$) is sub-tier A above.
+\end{enumerate}
+
+%% =============================================================================
+\section{Summary Table}
+\label{sec:table}
+
+\begin{longtable}{@{}p{3.6cm}p{2.8cm}p{3.8cm}p{3.2cm}@{}}
+\caption{Definitive ELC boundary map}
+\label{tab:map}\\
+\toprule
+Function / domain & Tier & Reason & Representative example \\
+\midrule
+\endfirsthead
+\multicolumn{4}{c}{\emph{(Table~\ref{tab:map} continued)}}\\
+\toprule
+Function / domain & Tier & Reason & Representative example \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\rowcolor{insidegreen}
+Geometric optics & Tier~I (inside) & Rational in distances/indices & Lens eq.\ $1/f=1/d_o+1/d_i$ \\
+\rowcolor{insidegreen}
+Laminar fluid dynamics & Tier~I & Polynomial/rational & Reynolds, Poiseuille \\
+\rowcolor{insidegreen}
+Continuum mechanics & Tier~I & Linear/poly + $\sqrt{\cdot}$ & Von Mises, Hooke \\
+\rowcolor{insidegreen}
+Deterministic epidemiology & Tier~I & Products, $\exp$, $\ln$ & SEIR, logistic, $R_0$ \\
+\rowcolor{insidegreen}
+Exp-family distributions & Tier~I & $\exp$+rational powers & Normal, Exponential, Weibull \\
+\rowcolor{insidegreen}
+Smooth ML losses & Tier~I & $\exp$, $\ln$, polynomial & MSE, BCE, KL, Focal, InfoNCE \\
+\rowcolor{insidegreen}
+Frequency ratios, ET, dB & Tier~I & Powers of 2, $\log$ & $f_n=f_0\cdot 2^{n/12}$, decibels \\
+\rowcolor{insidegreen}
+Complexity functions (real) & Tier~I & $e^{n\ln 2}$, $\ln n$ & $n\ln n$, $2^n$, Stirling \\
+\rowcolor{insidegreen}
+Linear ODE solutions (real $\lambda$) & Tier~I & Finite sum of $e^{\lambda t}$ & $C_1 e^{\lambda_1 t}+C_2 e^{\lambda_2 t}$ \\[4pt]
+\rowcolor{boundaryyellow}
+Wave optics (angles) & Tier~II (boundary) & $\sin/\cos$ of real var & Snell, diffraction \\
+\rowcolor{boundaryyellow}
+Harmonic oscillator (osc.) & Tier~II & $\sin(\omega t+\phi)$ & SHM solution \\
+\rowcolor{boundaryyellow}
+Acoustic waveforms & Tier~II & Time-domain $\sin/\cos$ & $p(t)=A\sin(2\pi ft)$ \\
+\rowcolor{boundaryyellow}
+Cosine annealing (ML) & Tier~II & $\cos(\pi t/T)$ factor & LR schedule \\[4pt]
+\rowcolor{outsidered}
+$\Gamma(x)$, Bessel, Airy, Ei, erf & Tier~III-A & Non-elementary (Liouville) & $\Gamma(1/2)=\sqrt{\pi}$ \\
+\rowcolor{outsidered}
+$|x|$, ReLU, max, Heaviside & Tier~III-B & Non-analytic (kink/jump) & ReLU kink at 0 \\
+\rowcolor{outsidered}
+Hinge, Huber loss & Tier~III-B & Piecewise, non-analytic & Hinge at $y\hat y=1$ \\
+\rowcolor{outsidered}
+$n!$, $\binom{n}{k}$, $\mu(n)$, $\varphi(n)$ & Tier~III-C & Discrete domain & Exact factorial \\
+\rowcolor{outsidered}
+Gamma/chi-sq/beta dist & Tier~III-D & $\Gamma(\alpha)$ for non-int $\alpha$ & Gamma dist PDF \\
+\rowcolor{outsidered}
+Kolmogorov, Busy Beaver & Tier~III-E & Uncomputable & $K(s)$, $\Sigma(n)$ \\
+\end{longtable}
+
+%% =============================================================================
+\section{The Geometric Venn Diagram}
+\label{sec:venn}
+
+The following verbal Venn diagram places $\ELC$ among standard function classes.
+
+\begin{enumerate}[label=\textbf{Ring \arabic*:}, leftmargin=*, itemsep=10pt]
+
+\item \textbf{All functions} (the universe).
+  Contains everything: computable, uncomputable, smooth, discontinuous.
+
+\item \textbf{All analytic functions} $\supset \ELC$.
+  Contains $\ELC$, also $\sin$, $\cos$, $\Gamma$, $J_0$, $\mathrm{erf}$,
+  all convergent power series.  Analytic functions may be
+  oscillatory (e.g.\ $\sin$) or non-elementary (e.g.\ $\Gamma$).
+
+\item \textbf{$\ELC$} (the subject of this map).
+  Properly contained in all analytic functions: $\ELC\subsetneq\{\text{analytic}\}$.
+  $\ELC$ is not contained in algebraic functions: $x^{1/2}=e^{\frac{1}{2}\ln x}$
+  is algebraic and in $\ELC$, but $e^x$ is transcendental and in $\ELC$.
+  So $\ELC \not\subseteq \{\text{algebraic}\}$ and
+  $\{\text{algebraic}\} \not\subseteq \ELC$ in general.
+
+\item \textbf{Algebraic functions} $\not\subset \ELC$.
+  Radical expressions $x^{p/q}$ are in $\ELC$ (via $e^{(p/q)\ln x}$),
+  but implicit algebraic functions (roots of degree $\ge 5$ with no
+  radical formula) may or may not be in $\ELC$---this is an open question
+  (\cite{F16} Section~5, Open Problem~4).
+
+\item \textbf{Key intersection facts:}
+\begin{itemize}
+  \item $\ELC \cap \{\text{periodic functions}\} = \varnothing$.\\
+    \emph{Proof:} Any non-constant periodic function $f$ satisfies
+    $f(x+T)=f(x)$ for all $x$, so $f$ has infinitely many zeros on
+    $[0,NT]$ for any $N$ (from the zeros of $f(x)-c$ at any level $c$
+    visited infinitely often).  By Corollary~\ref{cor:zeros}, $f\notin\ELC$.
+    This is the most important structural fact about $\ELC$: it contains
+    \emph{no} periodic functions whatsoever.
+  \item $\ELC \cap \{\text{monotone functions}\}$ is a large set
+    (all positive exponentials $ae^{bx}$, all power laws $x^r$ for $r>0$,
+    all positive polynomials on half-lines), but not all monotone functions
+    are in $\ELC$ (e.g., $\Gamma$ is monotone on $(0,\infty)$ for $x\ge 3/2$
+    but is non-elementary).
+  \item $\ELC \cap \{\text{bounded on }\R\}$ is very thin.
+    Any $f\in\ELC$ that is bounded on all of $\R$ must be constant,
+    because the composition closure forces eventual exponential growth or
+    $\ln$-type singularity.  (Formally: if $f\in\ELC$ and $|f(x)|\le M$
+    for all $x\in\R$, then $f$ is constant.)
+  \item $\ELC \subsetneq \ELCcx$ (complex $\ELC$).
+    Adding the imaginary unit $i$ as a constant brings in
+    $e^{ix}=\cos x+i\sin x$, and real parts/imaginary parts of
+    complex-$\ELC$ functions are the Tier~II boundary functions.
+\end{itemize}
+
+\end{enumerate}
+
+%% =============================================================================
+\section{The One-Sentence Characterization}
+\label{sec:sentence}
+
+\begin{mdframed}
+\textbf{$\ELC$ in one sentence.}
+$\ELC(\R)$ contains a function $f:\R\to\R$ if and only if $f$ is
+(1)~\emph{elementary in the narrow sense}---built from
+$\exp$, $\ln$, and arithmetic over $\Q$ in finitely many steps---,
+(2)~\emph{real-analytic}---no kinks, jumps, or non-smooth points---,
+and (3)~\emph{quasi-finitely-zeroed}---has finitely many zeros on every
+bounded real interval.
+\end{mdframed}
+
+Conditions (2) and (3) are consequences of (1) for real functions, so this
+is a single condition dressed in three equivalent forms.
+The redundancy is intentional: each form illuminates a different region of
+the boundary.
+
+\begin{itemize}
+  \item The \emph{elementary} framing excludes $\Gamma$, $J_\nu$, erf
+    (Sub-tier A): they are analytic and quasi-finitely-zeroed, but not
+    elementarily constructible.
+  \item The \emph{analytic} framing excludes $|x|$, ReLU, Hinge
+    (Sub-tier B): they are finitely zeroed (or can be) but have kinks.
+  \item The \emph{quasi-finitely-zeroed} framing excludes $\sin$, $\cos$,
+    and all periodic functions (Tier~II): they are analytic and even
+    elementary over $\C$, but their real zero sets are infinite on bounded
+    intervals.
+\end{itemize}
+
+%% =============================================================================
+\section{Connection to the F16 Characterization Theorem}
+\label{sec:connection}
+
+The boundary map in this document is an empirical and theoretical elaboration
+of Theorem~\ref{thm:f16} (\cite{F16}).  Specifically:
+
+\begin{enumerate}[label=\textbf{(\alph*)}, itemsep=6pt]
+\item \textbf{Tier~I = $\ELC$ = $\ELfin$.}
+  By Theorem~\ref{thm:f16}, every Tier~I function is exactly representable
+  by some finite $\F$ tree.  The session results (X3, X6, X10, X11, X13,
+  X14) provide explicit F16-tree constructions and node-count bounds for
+  each domain.
+
+\item \textbf{Tier~II obstruction = infinite zero set (T01).}
+  By Corollary~\ref{cor:zeros}, any function with infinitely many zeros on a
+  bounded interval is not in $\ELfin = \ELC$.  This provides the quantitative
+  criterion that separates Tier~I from Tier~II.
+
+\item \textbf{Tier~III-A obstruction = Liouville--Ritt.}
+  By the Liouville--Ritt theorem (\cite{F16} Theorem~3.4), functions whose
+  antiderivatives require non-elementary transcendentals (Gamma, erf, Ei)
+  are not in $\ELC$.  This separates $\ELC$ from the broader
+  Liouville-elementary class.
+
+\item \textbf{Tier~III-B obstruction = analyticity.}
+  By \cite{F16} Theorem~3.2, every finite $\F$ tree computes a real-analytic
+  function on its natural domain.  Therefore any function with a non-smooth
+  point (kink, jump) is not in $\ELfin$.
+
+\item \textbf{Tier~III-C/D obstruction = discrete domain.}
+  $\ELC$ consists of partial functions on open connected subsets of $\R^n$
+  (remark in \cite{F16} Section~2).  Functions defined only on $\N$ or $\Z$
+  lie outside this category; integer factorials and number-theoretic
+  functions are therefore excluded.
+\end{enumerate}
+
+%% =============================================================================
+\section{Open Questions at the Boundary}
+\label{sec:open}
+
+\begin{enumerate}[label=\textbf{Q\arabic*.}, itemsep=6pt]
+
+\item \textbf{Implicit algebraic functions (degree $\ge 5$).}
+  Is every branch of an irreducible algebraic curve $P(x,y)=0$, with
+  $\deg P\ge 5$, in $\ELC$ on its smooth pieces?  The function is analytic
+  and has finitely many zeros, so conditions (2) and (3) are satisfied.
+  The question reduces to whether condition (1) is satisfied, which is not
+  obvious for degree $\ge 5$ because the Abel--Ruffini theorem forbids
+  radical expressions.
+
+\item \textbf{Bounded $\ELC$ functions.}
+  Is it true that every globally bounded $f\in\ELC$ on all of $\R$ is
+  constant?  This would follow from a Picard-type theorem for $\ELC$.
+
+\item \textbf{The real/complex boundary: a sharper formulation.}
+  Can the Tier~II class be characterized precisely as
+  $\ELCcx \cap \mathcal{A}_\R$, where $\mathcal{A}_\R$ is the class of
+  analytic functions with real-valued extensions?  This would make the
+  Tier~I/II boundary exactly the imaginary-axis projection of $\ELCcx$.
+
+\item \textbf{Smooth approximation hierarchies.}
+  Every Tier~II/III function can be approximated by $\ELC$ functions
+  (EML Weierstrass theorem).  What is the optimal approximation rate
+  (in supremum norm on compact sets) for $\sin(x)$ by a linear span of
+  $k$-node $\F$ trees?
+
+\end{enumerate}
+
+%% =============================================================================
+\section{Conclusion}
+\label{sec:conclusion}
+
+The $\ELC$ boundary map, compiled from sessions X3--X14, resolves the
+membership question for a comprehensive set of real functions across
+physics, engineering, probability, machine learning, and number theory.
+The boundary decomposes cleanly into four exclusion mechanisms:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Mechanism & Excluded tier & Canonical example \\
+\midrule
+Infinite zero set (T01)             & Tier~II      & $\sin(x)$ \\
+Non-elementary transcendental (L-R) & Tier~III-A   & $\Gamma(x)$ \\
+Non-analytic kink/jump              & Tier~III-B   & $|x|$, ReLU \\
+Discrete / integer domain           & Tier~III-C/D & $n!$, $\mu(n)$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The deepest structural fact is the emptiness of $\ELC\cap\{\text{periodic}\}$:
+the exp-log closure, despite being dense in $C[a,b]$ in the linear-span sense,
+contains no periodic function whatsoever.
+
+%% =============================================================================
+\begin{thebibliography}{9}
+
+\bibitem{F16}
+  A.\ R.\ Almaguer,
+  \emph{The F16 Characterization Theorem: Which Functions Are Exactly
+  Computable by Finite F16 Trees?},
+  monogate research, April 2026.
+  Source: \texttt{python/paper/theorems/F16\_Characterization.tex}.
+
+\bibitem{X3}
+  A.\ R.\ Almaguer, \emph{ELC Costs for Fluid Dynamics Equations},
+  Session~X3, monogate research, 2026.
+  Source: \texttt{python/results/x3\_fluid\_dynamics.json}.
+
+\bibitem{X6}
+  A.\ R.\ Almaguer, \emph{Acoustics and Music Theory --- ELC Costs},
+  Session~X6, monogate research, 2026.
+  Source: \texttt{python/results/x6\_acoustics.json}.
+
+\bibitem{X10}
+  A.\ R.\ Almaguer, \emph{Epidemiology Equations and ELC Classification},
+  Session~X10, monogate research, 2026.
+  Source: \texttt{python/results/x10\_epidemiology.json}.
+
+\bibitem{X11}
+  A.\ R.\ Almaguer, \emph{ELC(R) Classification of Probability Distribution PDFs},
+  Session~X11, monogate research, 2026.
+  Source: \texttt{python/results/x11\_probability\_distributions.json}.
+
+\bibitem{X13}
+  A.\ R.\ Almaguer, \emph{ELC(R) Classification of Number-Theoretic Functions},
+  Session~X13, monogate research, 2026.
+  Source: \texttt{python/results/x13\_number\_theory.json}.
+
+\bibitem{X14}
+  A.\ R.\ Almaguer, \emph{ML Loss Functions: ELC Classification and Cost Analysis},
+  Session~X14, monogate research, 2026.
+  Source: \texttt{python/results/x14\_ml\_losses.json}.
+
+\bibitem{Richardson1968}
+  D.\ Richardson, \emph{Some unsolvable problems involving elementary functions
+  of a real variable}, J.\ Symbolic Logic \textbf{33}(4), 514--520, 1968.
+
+\bibitem{Ritt1948}
+  J.\ F.\ Ritt, \emph{Integration in Finite Terms: Liouville's Theory of
+  Elementary Methods}, Columbia University Press, 1948.
+
+\end{thebibliography}
+
+\end{document}

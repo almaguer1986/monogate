@@ -1,0 +1,158 @@
+{
+  "session": "X12",
+  "title": "Classification of ODE Solutions by ELC(R) Membership",
+  "date": "2026-04-20",
+  "summary": "Linear constant-coefficient ODEs produce solutions in ELC(R). Linear variable-coefficient ODEs and nonlinear ODEs often require special functions (Bessel, Airy, hypergeometric) that lie outside ELC(R).",
+  "boundary_theorem": {
+    "statement": "Solutions of linear constant-coefficient ODEs are in ELC(R). Solutions requiring special functions (Bessel, Airy, hypergeometric) are outside ELC(R).",
+    "inside_class": "Exp-polynomial: finite sums of terms c_i * x^{k_i} * exp(lambda_i * x), lambda_i in C. Real ELC excludes oscillatory (sin/cos) terms; complex ELC includes them.",
+    "outside_class": "Bessel functions J_n(x), Y_n(x); Airy functions Ai(x), Bi(x); hypergeometric functions 2F1; Mathieu functions; Lame functions; any function not expressible via finite composition of exp, log, arithmetic."
+  },
+  "classifications": [
+    {
+      "id": 1,
+      "ode_type": "First-order linear",
+      "canonical_form": "y' + p(x)y = q(x)",
+      "solution_form": "y = exp(-∫p dx) * [∫q*exp(∫p dx) dx + C]",
+      "membership": "INSIDE ELC(R)",
+      "condition": "p, q must themselves be ELC-computable",
+      "example": "y' = -ky  →  y = C * exp(-kx)",
+      "example_cost_n": 3,
+      "example_cost_breakdown": "exp (1n) + negation (1n) + scalar multiply (1n) = 3n",
+      "notes": "Integrating factor is exp of an integral; if p is ELC-computable the result stays in ELC."
+    },
+    {
+      "id": 2,
+      "ode_type": "Exponential growth/decay",
+      "canonical_form": "y' = r*y",
+      "solution_form": "y = y0 * exp(r*t)",
+      "membership": "INSIDE ELC(R)",
+      "condition": "r constant",
+      "example": "y = y0 * exp(r*t)",
+      "example_cost_n": 3,
+      "example_cost_breakdown": "exp (1n) + scalar multiply by r (1n) + scalar multiply by y0 (1n) = 3n",
+      "notes": "Simplest ELC member; canonical benchmark for cost-1 base."
+    },
+    {
+      "id": 3,
+      "ode_type": "Logistic equation",
+      "canonical_form": "y' = r*y*(1 - y/K)",
+      "solution_form": "y = K / (1 + exp(-r*t + ln((K-y0)/y0)))",
+      "membership": "INSIDE ELC(R)",
+      "condition": "r, K constants; y0 in (0,K)",
+      "example": "sigmoid = K / (1 + exp(-rt))",
+      "example_cost_n": 7,
+      "example_cost_breakdown": "neg (1n) + mul (1n) + exp (1n) + add-1 (1n) + reciprocal (1n) + mul-K (1n) + shift constant (1n) = 7n",
+      "notes": "Nonlinear ODE but exactly solvable via separation; solution is a sigmoid, cost 7n."
+    },
+    {
+      "id": 4,
+      "ode_type": "Harmonic oscillator",
+      "canonical_form": "y'' + omega^2 * y = 0",
+      "solution_form": "y = A*cos(omega*t) + B*sin(omega*t)",
+      "membership": "OUTSIDE real ELC(R)  |  INSIDE complex ELC(C)",
+      "condition": "omega real and nonzero",
+      "notes": "sin and cos are outside ELC(R) (T01 classification). Via Euler: exp(i*omega*t) is in ELC(C), so solutions lie in ELC(C) but require imaginary exponents. Real ELC cannot represent periodic oscillations."
+    },
+    {
+      "id": 5,
+      "ode_type": "Damped harmonic oscillator",
+      "canonical_form": "y'' + 2*alpha*y' + (alpha^2 + omega^2)*y = 0",
+      "solution_form": "y = exp(-alpha*t) * (A*cos(omega*t) + B*sin(omega*t))",
+      "membership": "MIXED — envelope INSIDE ELC(R), oscillatory factor OUTSIDE real ELC(R)",
+      "condition": "alpha, omega > 0 (underdamped)",
+      "cost_envelope_n": 3,
+      "cost_envelope_breakdown": "exp(-alpha*t): neg (1n) + mul (1n) + exp (1n) = 3n",
+      "notes": "The decay envelope exp(-alpha*t) is ELC-computable. Multiplying by sin/cos produces a function outside real ELC. Critically damped case (omega=0): y = (A+Bt)*exp(-alpha*t) — fully INSIDE ELC(R), cost ~5n."
+    },
+    {
+      "id": 6,
+      "ode_type": "1D steady-state heat equation",
+      "canonical_form": "-d/dx(k * dT/dx) = 0  with convective BC",
+      "solution_form": "T(x) = A*exp(-x/L) + T_inf",
+      "membership": "INSIDE ELC(R)",
+      "condition": "k, L constants",
+      "example": "T(x) = A*exp(-x/L) + T_inf",
+      "example_cost_n": 5,
+      "example_cost_breakdown": "neg (1n) + div (1n) + exp (1n) + scalar mul A (1n) + add T_inf (1n) = 5n",
+      "notes": "Exponential decay to ambient temperature; direct ELC member."
+    },
+    {
+      "id": 7,
+      "ode_type": "Bessel equation",
+      "canonical_form": "x^2*y'' + x*y' + (x^2 - n^2)*y = 0",
+      "solution_form": "y = c1*J_n(x) + c2*Y_n(x)",
+      "membership": "OUTSIDE ELC(R)",
+      "condition": "n integer or half-integer",
+      "notes": "Bessel functions are defined by infinite series or integral representations with no finite exp-log closed form. Half-integer orders (n=1/2) reduce to sin/cos/sqrt combinations — still outside real ELC(R) due to trig. Not expressible as finite composition of exp, log, arithmetic."
+    },
+    {
+      "id": 8,
+      "ode_type": "Airy equation",
+      "canonical_form": "y'' - x*y = 0",
+      "solution_form": "y = c1*Ai(x) + c2*Bi(x)",
+      "membership": "OUTSIDE ELC(R)",
+      "condition": "unconditional",
+      "notes": "Airy functions arise from the Bessel equation of order 1/3; they have integral representations (contour integrals of exp) but no finite exp-log formula. The variable coefficient x in the ODE drives the solution outside ELC."
+    },
+    {
+      "id": 9,
+      "ode_type": "Riccati equation",
+      "canonical_form": "y' = P(x) + Q(x)*y + R(x)*y^2",
+      "solution_form": "case-dependent",
+      "membership": "CASE-DEPENDENT",
+      "cases": [
+        {
+          "case": "Constant coefficients P, Q, R",
+          "membership": "INSIDE ELC(R)",
+          "example": "y' = 1 + y^2  →  y = tan(x)  — OUTSIDE real ELC(R) (trig); but y' = -y^2 + 1  →  y = tanh(x) — INSIDE ELC(R), cost ~7n"
+        },
+        {
+          "case": "Reduces to Bessel equation via substitution",
+          "membership": "OUTSIDE ELC(R)",
+          "example": "General Riccati with variable coefficients often transforms to a second-order linear ODE whose solutions are Bessel functions."
+        }
+      ],
+      "notes": "The Riccati equation is solvable in closed form only when a particular solution is known. With constant coefficients and real characteristic roots, solutions are tanh or coth — INSIDE ELC(R)."
+    },
+    {
+      "id": 10,
+      "ode_type": "Bernoulli equation",
+      "canonical_form": "y' + p(x)*y = q(x)*y^n",
+      "solution_form": "Reduces to linear via substitution v = y^(1-n)",
+      "membership": "INSIDE ELC(R)",
+      "condition": "p, q ELC-computable; n != 0, 1",
+      "notes": "The substitution v = y^(1-n) linearizes the equation to v' + (1-n)*p(x)*v = (1-n)*q(x), which is a first-order linear ODE solvable by integrating factor. The solution inherits the ELC membership of the linear case."
+    }
+  ],
+  "structural_observations": {
+    "constant_coefficient_boundary": {
+      "rule": "Linear ODEs with constant coefficients have characteristic equations with algebraic roots. Solutions are exp-polynomial (sum of x^k * exp(lambda*x) terms). All such solutions are in ELC(R) when eigenvalues are real, or ELC(C) when complex.",
+      "rationale": "The characteristic polynomial factoring produces only exp-type basis functions. No new transcendentals are introduced."
+    },
+    "variable_coefficient_boundary": {
+      "rule": "Linear ODEs with non-constant (variable) coefficients typically require special functions (Bessel, Airy, Whittaker, hypergeometric, Mathieu). These are outside ELC(R) because they cannot be expressed as finite compositions of exp and log.",
+      "exceptions": "Euler-Cauchy equation x^2*y'' + ax*y' + by = 0 reduces via substitution x = e^t to a constant-coefficient ODE — solutions are x^lambda (power functions), which ARE in ELC(R)."
+    },
+    "nonlinear_boundary": {
+      "rule": "Nonlinear ODEs: solvable by separation or exact methods sometimes yield ELC solutions (logistic, Bernoulli). Nonlinear ODEs lacking closed-form solutions (Lorenz, Navier-Stokes) are outside ELC by definition.",
+      "notes": "Tanh and sigmoid appear as exact solutions to simple nonlinear ODEs and are both in ELC(R)."
+    }
+  },
+  "elc_cost_summary": [
+    {"ode_type": "Exponential decay y' = -ky", "solution": "C*exp(-kx)", "cost_n": 3},
+    {"ode_type": "First-order linear (constant p, q=0)", "solution": "exp-integrating factor", "cost_n": 3},
+    {"ode_type": "Logistic", "solution": "sigmoid", "cost_n": 7},
+    {"ode_type": "Steady heat / Robin BC", "solution": "A*exp(-x/L) + T_inf", "cost_n": 5},
+    {"ode_type": "Critically damped oscillator", "solution": "(A+Bt)*exp(-alpha*t)", "cost_n": 5},
+    {"ode_type": "Bernoulli (after linearization)", "solution": "via exp-integrating factor", "cost_n": 4}
+  ],
+  "outside_elc_summary": [
+    "Bessel functions J_n(x), Y_n(x) — Bessel equation",
+    "Airy functions Ai(x), Bi(x) — Airy equation",
+    "Hypergeometric 2F1(a,b;c;x) — Gauss hypergeometric equation",
+    "Mathieu functions — Mathieu equation (periodic potential)",
+    "Sine and cosine — harmonic oscillator (real ELC only)",
+    "Riccati with variable coefficients reducing to Bessel"
+  ]
+}

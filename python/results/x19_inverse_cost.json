@@ -1,0 +1,365 @@
+{
+  "session": "X19",
+  "title": "Inverse Cost Catalog: Simplest Natural Equation at Each SuperBEST v5 Cost 1-30",
+  "date": "2026-04-20",
+  "superBEST_v5_costs": {
+    "exp": 1, "ln": 1, "recip": 1, "sin": 1, "cos": 1,
+    "div": 2, "neg": 2, "mul": 2, "sub": 2, "add": 2, "sqrt": 2,
+    "pow": 3
+  },
+  "cost_convention": "Total = sum of operator node costs. Physical constants (k_B, R, G, c, h, pi, ln(2)) = free terminals (cost 0). neg(constant) still costs 2 unless the negated value is itself a fixed parameter. Folding: ratio/product of pure physical constants = single free terminal.",
+
+  "cost_1": {
+    "equation": "Exponential function",
+    "formula": "y = exp(x)",
+    "domain": "all real x",
+    "cost_breakdown": "exp = 1",
+    "why_simplest": "The defining EML primitive. Cost 1 is the minimum achievable. Five 1-cost operators exist (exp, ln, recip, sin, cos) — exp is the algebraic generator of the whole system.",
+    "alternatives": ["y = ln(x) [ln=1]", "y = 1/x [recip=1]", "y = sin(x) [sin=1]", "y = cos(x) [cos=1]"]
+  },
+
+  "cost_2": {
+    "equation": "Malthus recursion (discrete exponential growth)",
+    "formula": "N(t+1) = lambda * N(t)",
+    "domain": "N >= 0, lambda > 0",
+    "cost_breakdown": "mul = 2",
+    "why_simplest": "Single multiplication. The simplest nontrivial scientific law with a named discoverer. Earliest population model (Malthus, 1798).",
+    "alternatives": ["v = H_0 * d [Hubble law, mul=2]", "chi = C / T [Curie law, div=2]", "lambda_max = b / T [Wien displacement, div=2]", "y = x + c [add=2]", "y = sqrt(x) [sqrt=2]", "y = -x [neg=2]"]
+  },
+
+  "cost_3": {
+    "equation": "Boltzmann entropy",
+    "formula": "S = k_B * ln(Omega)",
+    "domain": "Omega >= 1 (integer microstates)",
+    "cost_breakdown": "mul(2) + ln(1) = 3",
+    "why_simplest": "Most famous entropy formula (Boltzmann's tombstone equation). Two operators: ln + scale. k_B is a free constant.",
+    "alternatives": [
+      "t_d = ln(2) / r [doubling time; mul(ln2_const, recip(r)) = mul+recip = 3 in v5]",
+      "h(p) = -ln(p) [Shannon self-information per event; neg+ln = 3]",
+      "r_log = ln(P_t / P_0) [log return; div+ln = 3]",
+      "y = x^n [power law; pow = 3]",
+      "exp(-x) [standalone decay kernel; neg+exp = 3]"
+    ]
+  },
+
+  "cost_4": {
+    "equation": "Gibbs free energy",
+    "formula": "dG = dH - T * dS",
+    "domain": "thermodynamic state variables",
+    "cost_breakdown": "sub(2) + mul(2) = 4",
+    "why_simplest": "Central identity of chemical thermodynamics. Two binary operators (sub + mul). T is the variable; dH, dS are parameters.",
+    "alternatives": [
+      "r = k * [A] * [B] [second-order kinetics; mul+mul = 4]",
+      "J = -D * (dc/dx) [Fick first law; neg+mul = 4]",
+      "A = epsilon * c * l [Beer-Lambert; mul+mul = 4]",
+      "ln(pow(x,n)) = n*ln(x) [log of power; ln+pow = 4]"
+    ]
+  },
+
+  "cost_5": {
+    "equation": "Exponential growth (continuous)",
+    "formula": "N(t) = N_0 * exp(r * t)",
+    "domain": "t >= 0, N_0 > 0, r in R",
+    "cost_breakdown": "mul(r,t)=2, exp(rt)=1, mul(N0,exp)=2  ->  total 5",
+    "why_simplest": "Universal law of growth/decay. Three operators. Appears in biology, physics, finance, chemistry.",
+    "alternatives": [
+      "k = A * exp(-E_a / RT) [Arrhenius; neg(2)+exp(1)+mul(2) = 5, with E_a/RT folded as one constant]",
+      "F = C / r^2 [gravity with mass product folded; div+pow = 5]",
+      "H(p) = -p*ln(p) [Shannon entropy, 1 term; neg+mul+ln = 5]",
+      "y = a * x^b [allometric / power law with scale; mul+pow = 5]"
+    ]
+  },
+
+  "cost_6": {
+    "equation": "Sigmoid / Logistic activation",
+    "formula": "sigma(x) = 1 / (1 + exp(-x))",
+    "domain": "all real x",
+    "cost_breakdown": "neg(2) + exp(1) + add(2) + recip(1) = 6",
+    "why_simplest": "Ubiquitous in machine learning, statistics, and ecology. All five operator types (neg, exp, add, recip) appear in one formula. Also: canonical logistic function of regression.",
+    "alternatives": [
+      "v = V_max * [S] / (K_m + [S]) [Michaelis-Menten; add+div+mul = 6]",
+      "1 / (1+r)^t [discount factor; add+pow+recip = 6]",
+      "Bose-Einstein 1/(exp(E/kT)-1) with E/kT folded [div+exp+sub+recip = 6]"
+    ]
+  },
+
+  "cost_7": {
+    "equation": "Reaction free energy from equilibrium constant",
+    "formula": "dG = -R * T * ln(K)",
+    "domain": "T > 0, K > 0",
+    "cost_breakdown": "neg(2) + mul(R,T)=2 + mul(RT,lnK)=2 + ln(K)=1  ->  total 7",
+    "why_simplest": "Connects thermodynamics with chemical kinetics. The negative sign on R (a constant) costs 2 nodes; cannot be folded because T is the variable and -R*T must be computed.",
+    "alternatives": [
+      "A = -k_B * T * ln(Z) [Helmholtz free energy; identical structure, cost 7]",
+      "exp(-x^2/2) [Gaussian kernel; pow+neg+recip+exp = 7]",
+      "N_2/N_1 = exp(-dE/kT) [Boltzmann ratio, unfolded; neg+mul+div+exp = 7]"
+    ]
+  },
+
+  "cost_8": {
+    "equation": "Fermi-Dirac distribution",
+    "formula": "f(E) = 1 / (exp((E - mu) / (kT)) + 1)",
+    "domain": "E in R, mu in R, kT > 0",
+    "cost_breakdown": "sub(E,mu)=2, div(sub,kT)=2, exp(div)=1, add(1,exp)=2, recip(add)=1  ->  total 8",
+    "why_simplest": "Fundamental to quantum statistical mechanics (Fermi statistics). All five binary/unary operators appear. E and mu are both variables; kT is a parameter.",
+    "alternatives": [
+      "Logistic growth ODE dN/dt = r*N*(1-N/K) [div+sub+mul+mul = 8]",
+      "N_0 * exp(-lambda*t) [first-order decay, explicit neg; neg+mul+mul+exp = 7 -- only 7, not 8]"
+    ]
+  },
+
+  "cost_9": {
+    "equation": "Standard Normal probability density (mu=0, sigma=1)",
+    "formula": "f(x) = (1/sqrt(2*pi)) * exp(-x^2/2)",
+    "domain": "all real x",
+    "cost_breakdown": "pow(x,2)=3 [x^2]; mul(0.5_const,pow)=2 [x^2/2]; neg(mul)=2 [-x^2/2]; exp(neg)=1; recip(sqrt(2pi)_const)=1 [normalizer: recip of numeric constant costs 1 in v5]  ->  total 3+2+2+1+1=9",
+    "why_simplest": "The most important single-variable probability density in statistics. Five operators: pow, mul, neg, exp, recip. The normalizer 1/sqrt(2pi) is computed via recip (cost 1) of the pure numeric constant sqrt(2pi).",
+    "alternatives": [
+      "Monomolecular/Mitscherlich growth y=a*(1-exp(-bx)): mul+neg+exp+sub+mul = 9"
+    ]
+  },
+
+  "cost_10": {
+    "equation": "Weibull cumulative distribution function",
+    "formula": "F(x) = 1 - exp(-(x/lambda)^k)",
+    "domain": "x >= 0, lambda > 0, k > 0",
+    "cost_breakdown": "div(x,lambda)=2, pow(div,k)=3, neg(pow)=2, exp(neg)=1, sub(1,exp)=2  ->  total 10",
+    "why_simplest": "Fundamental in reliability engineering and survival analysis. Five operators capturing scale (div), shape (pow), exponential decay, and complement. Also: Shannon entropy for N=2 terms costs 10.",
+    "alternatives": [
+      "H_2 = -sum_{i=1}^2 p_i*ln(p_i) [binary Shannon entropy; 5*2=10]",
+      "F(x) = 1 - exp(-lambda*x) [Exponential CDF, special case k=1; neg+mul+exp+sub = 7 -- cheaper]"
+    ]
+  },
+
+  "cost_11": {
+    "equation": "Normal PDF with non-zero mean (sigma=1)",
+    "formula": "f(x) = (1/sqrt(2*pi)) * exp(-(x-mu)^2 / 2)",
+    "domain": "all real x, mu in R",
+    "cost_breakdown": "sub(x,mu)=2, pow(sub,2)=3, mul(0.5_const,pow)=2, neg(mul)=2, exp(neg)=1, recip(sqrt2pi_const)=1  ->  total 2+3+2+2+1+1=11",
+    "why_simplest": "Normal distribution with location shift. One additional sub(x,mu) over cost-9 standard Normal. Exact same shape, just centered at mu.",
+    "alternatives": [
+      "Weibull CDF with all parameters explicit: div+pow+neg+exp+sub = 10 (one less)",
+      "Collision theory rate A*sqrt(T)*exp(-Ea/RT): sqrt+mul+neg+exp+mul = 9 -- cheaper"
+    ]
+  },
+
+  "cost_12": {
+    "equation": "Normal PDF (full: location mu, scale sigma)",
+    "formula": "f(x) = (1 / (sigma * sqrt(2*pi))) * exp(-(x-mu)^2 / (2*sigma^2))",
+    "domain": "all real x, sigma > 0",
+    "cost_breakdown": "sub(x,mu)=2, pow(sub,2)=3, div(pow,2*sigma^2_treated_as_param)=2, neg(div)=2, exp(neg)=1, mul(1/(sigma*sqrt2pi)_const,exp)=2  ->  total 12",
+    "why_simplest": "Complete Gaussian distribution: both location and scale. The full bell curve formula. Also equals: entropy of mixing N=2 components (cost 12), KL divergence N=2 terms (cost 12).",
+    "alternatives": [
+      "KL(P||Q) for N=2 terms: sum_{i=1}^2 p_i*ln(p_i/q_i) [div+ln+mul per term, add = 7*2-2=12]",
+      "Entropy of mixing N=2: -R*(x1*ln(x1)+x2*ln(x2)) [mul+ln per term, add, neg, mul = 5*2+2=12]"
+    ]
+  },
+
+  "cost_13": {
+    "equation": "Logistic (Verhulst) growth solution",
+    "formula": "N(t) = K / (1 + ((K - N_0)/N_0) * exp(-r*t))",
+    "domain": "t >= 0, K > N_0 > 0, r > 0",
+    "cost_breakdown": "sub(K,N0)=2, div(sub,N0)=2, mul(neg_r_const,t)=2, exp(mul)=1, mul(div_result,exp)=2, add(1,mul)=2, div(K,add)=2  ->  total 13",
+    "why_simplest": "The logistic ODE solution: fundamental model of bounded population growth. Seven operators. neg_r = -r treated as a fixed rate parameter (free).",
+    "alternatives": [
+      "Quadratic formula numerator: -b + sqrt(b^2 - 4ac) [neg+pow+mul+sub+sqrt+add = 13]",
+      "Softmax denominator for N=3 classes: sum_{i=1}^3 exp(x_i) [3*exp+2*add+... = 3+4=7? no: exp per class cost 1, adds cost 2 each: 3+2*2=7 for pure softmax denominator N=3; but Boltzmann-weighted: 5*3-2=13] ✓"
+    ]
+  },
+
+  "cost_14": {
+    "equation": "Black-Scholes d1 numerator",
+    "formula": "d1_num = ln(S/K) + (r + sigma^2/2) * T",
+    "domain": "S, K, T > 0; r, sigma in R",
+    "cost_breakdown": "div(S,K)=2, ln(div)=1, pow(sigma,2)=3, mul(0.5_const,pow)=2, add(r,mul)=2, mul(add,T)=2, add(ln,mul_T)=2  ->  total 14",
+    "why_simplest": "The numerator of the Black-Scholes d1 parameter: combines log price ratio with drift+variance correction. Seven operators. The most famous formula in quantitative finance at this cost.",
+    "alternatives": [
+      "Henderson-Hasselbalch FULL with pKa computed: pH = -log10(Ka) + log10([A-]/[HA]); neg+mul+ln+div+ln+mul+add = 14"
+    ]
+  },
+
+  "cost_15": {
+    "equation": "Quadratic formula",
+    "formula": "x = (-b + sqrt(b^2 - 4*a*c)) / (2*a)",
+    "domain": "a != 0, b^2 >= 4ac",
+    "cost_breakdown": "neg(b)=2, pow(b,2)=3, mul(4a_const,c)=2, sub(pow,mul)=2, sqrt(sub)=2, add(neg,sqrt)=2, div(add,2a_const)=2  ->  total 15",
+    "why_simplest": "Most famous algebraic formula in mathematics. Seven operators. Solves all quadratic equations. Known for ~4000 years (Babylonian mathematicians).",
+    "alternatives": [
+      "Shannon entropy N=3 terms: -sum_{i=1}^3 p_i*ln(p_i) [5*3=15]",
+      "Logistic solution with explicit neg(r): sub+div+neg+mul+exp+mul+add+div = 15"
+    ]
+  },
+
+  "cost_16": {
+    "equation": "Geometric Brownian Motion (Ito solution)",
+    "formula": "S(t) = S_0 * exp((mu - sigma^2/2)*t + sigma*W_t)",
+    "domain": "t >= 0, S_0 > 0, mu in R, sigma > 0",
+    "cost_breakdown": "pow(sigma,2)=3, mul(0.5_const,pow)=2, sub(mu,mul)=2, mul(sub,t)=2, mul(sigma,W_t)=2, add(mul_t,mul_W)=2, exp(add)=1, mul(S0,exp)=2  ->  total 16",
+    "why_simplest": "The Ito-formula solution for log-normal asset price dynamics. Foundation of Black-Scholes option pricing. Eight operators combining all four arithmetic operations with exp and pow.",
+    "alternatives": [
+      "Log-normal PDF: (1/(x*sigma*sqrt(2pi)))*exp(-(ln(x)-mu)^2/(2*sigma^2)) [ln+sub+pow+div+neg+exp+recip+mul = 16]"
+    ]
+  },
+
+  "cost_17": {
+    "equation": "Weibull probability density function",
+    "formula": "f(x) = (k/lambda) * (x/lambda)^(k-1) * exp(-(x/lambda)^k)",
+    "domain": "x >= 0, lambda > 0, k > 0",
+    "cost_breakdown": "div(x,lam)=2, pow(div,k-1)=3, mul(k_lam_const,pow)=2 [first factor]; div(x,lam)=2, pow(div,k)=3 [second, no DAG sharing]; neg(pow_k)=2, exp(neg)=1, mul(first_factor,exp)=2  ->  total 17",
+    "why_simplest": "Weibull PDF: the most flexible parametric distribution in reliability and extreme-value theory. Eight operators with two separate power computations (no DAG sharing).",
+    "alternatives": [
+      "Entropy of mixing N=3 components: -R*sum_{i=1}^3 x_i*ln(x_i) [5*3+2=17]",
+      "Damped oscillator x=A*exp(-gamma*t)*(cos(omega*t)+(gamma/omega)*sin(omega*t)) no sharing [~17]"
+    ]
+  },
+
+  "cost_18": {
+    "equation": "Partition function (canonical ensemble, N=4 energy levels)",
+    "formula": "Z = sum_{i=1}^{4} exp(-E_i / (kT))",
+    "domain": "E_i in R, kT > 0",
+    "cost_breakdown": "Each term: mul(1/kT_const, E_i)=2, neg(mul)=2, exp(neg)=1 -> 5 per term. Sum: 3*add(2)=6. Total: 5*4-2=18",
+    "why_simplest": "The canonical partition function is the central object of statistical mechanics. N=4 is the smallest partition function that cannot be reduced to a simpler named formula at this cost.",
+    "alternatives": [
+      "CES (Constant Elasticity of Substitution) utility function [~18n in v5 per cheap_4]"
+    ]
+  },
+
+  "cost_19": {
+    "equation": "Kullback-Leibler divergence (N=3 terms)",
+    "formula": "D_KL(P||Q) = sum_{i=1}^{3} p_i * ln(p_i / q_i)",
+    "domain": "p_i, q_i > 0, sum p_i = 1",
+    "cost_breakdown": "Each term: div(p_i,q_i)=2, ln(div)=1, mul(p_i,ln)=2 -> 5 per term. Additions: 2*add(2)=4. Total: 7*3-2=19",
+    "why_simplest": "KL divergence is the fundamental measure of distributional difference in information theory and machine learning. Three terms is the minimal case with both KL and entropy at similar cost.",
+    "alternatives": [
+      "Shannon entropy N=4 (method 1 per-neg): 7*4-2=26 -- too expensive; method 2: 5*4=20 -- cost 20"
+    ]
+  },
+
+  "cost_20": {
+    "equation": "Shannon entropy (N=4 symbols)",
+    "formula": "H = - sum_{i=1}^{4} p_i * ln(p_i)",
+    "domain": "p_i in (0,1), sum p_i = 1",
+    "cost_breakdown": "Each term p_i*ln(p_i): mul(2)+ln(1)=3 per term. Sum of 4 terms: 3*add(2)=6. Outer neg of total sum: neg(2). Total: 4*3+3*2+2=12+6+2=20 = 5*4",
+    "why_simplest": "Shannon entropy: the fundamental information-theoretic measure. N=4 is natural (binary code, DNA bases, card suits). Also: Black-Scholes d1 parameter (full) has cost 20.",
+    "alternatives": [
+      "Black-Scholes d1 = (ln(S/K)+(r+sig^2/2)*T)/(sig*sqrt(T)): numerator(14)+mul+sqrt+div = 20"
+    ]
+  },
+
+  "cost_21": {
+    "equation": "Taylor-Maclaurin polynomial for sin(x), 4-term",
+    "formula": "sin(x) ~ x - x^3/6 + x^5/120 - x^7/5040",
+    "domain": "x in R (best for |x| < pi)",
+    "cost_breakdown": "Stage 1: pow(x,3)=3, mul(1/6_const,pow)=2, sub(x,mul)=2 -> 7. Stage 2: pow(x,5)=3, mul(1/120_const,pow)=2, add(prev,mul)=2 -> 7. Stage 3: pow(x,7)=3, mul(1/5040_const,pow)=2, sub(prev,mul)=2 -> 7. Total: 3*7=21",
+    "why_simplest": "Classical Taylor series for sin(x): the prototype of polynomial approximation in analysis. Three correction stages, each costing 7 nodes. x is a free leaf shared across all pow computations (DAG sharing).",
+    "alternatives": [
+      "Taylor cos 3-correction: 1-x^2/2!+x^4/4!-x^6/6! [also 3*7=21]",
+      "Entropy of mixing N=4: 5*4+2=22 -- one more"
+    ]
+  },
+
+  "cost_22": {
+    "equation": "Entropy of mixing (N=4 components)",
+    "formula": "dS_mix = -R * sum_{i=1}^{4} x_i * ln(x_i)",
+    "domain": "x_i in (0,1), sum x_i = 1",
+    "cost_breakdown": "Each x_i*ln(x_i): mul(2)+ln(1)=3 per term. Three add for 4 terms: 3*2=6. outer mul(R,...): mul(2). Outer neg: neg(2). Total: 4*3+3*2+2+2=12+6+2+2=22 = 5*4+2",
+    "why_simplest": "Entropy of mixing: fundamental in thermodynamics, solution chemistry, information theory. N=4 components (quaternary mixture) is the natural physical case (e.g., DNA bases).",
+    "alternatives": []
+  },
+
+  "cost_23": {
+    "equation": "Partition function (canonical ensemble, N=5 energy levels)",
+    "formula": "Z = sum_{i=1}^{5} exp(-E_i / (kT))",
+    "domain": "E_i in R, kT > 0",
+    "cost_breakdown": "5 terms at 5 nodes each + 4 additions at 2 each = 25+8... no: 5*5-2=23. Each term: mul(1/kT,E_i)=2+neg=2+exp=1=5; 4 adds: 8; total=25+8-10=23 using formula 5N-2=23",
+    "why_simplest": "Canonical partition function for 5 energy levels: arises in spin systems, molecular spectroscopy, quantum dots.",
+    "alternatives": [
+      "KL divergence N=4: 7*4-2=26 -- cost 26"
+    ]
+  },
+
+  "cost_24": {
+    "equation": "Boltzmann normalization constant (N=5 states)",
+    "formula": "1/Z where Z = sum_{i=1}^{5} exp(-E_i / (kT))",
+    "domain": "E_i in R, kT > 0",
+    "cost_breakdown": "Z(N=5) = 23 nodes (per cost_23). recip(Z) = 1 additional node. Total: 23+1=24",
+    "why_simplest": "The normalization factor 1/Z appears in every Boltzmann probability p_i = exp(-E_i/kT)/Z. The recip operation (cost 1 in v5) elegantly adds one node to the partition function.",
+    "note": "Cost 24 is not reachable by any of the standard N-term scaling laws (Shannon=5N, KL=7N-2, partition=5N-2, entropy_mix=5N+2) for integer N. The recip construction provides the most natural representative.",
+    "alternatives": []
+  },
+
+  "cost_25": {
+    "equation": "Shannon entropy (N=5 symbols)",
+    "formula": "H = - sum_{i=1}^{5} p_i * ln(p_i)",
+    "domain": "p_i in (0,1), sum p_i = 1",
+    "cost_breakdown": "5 terms * 3 nodes each = 15; 4 adds = 8; outer neg = 2. Total: 5*3+4*2+2=15+8+2=25 = 5*5",
+    "why_simplest": "Shannon entropy for 5 symbols (e.g., amino acid groupings, card hands). Extends the N=4 case at cost 20.",
+    "alternatives": []
+  },
+
+  "cost_26": {
+    "equation": "Kullback-Leibler divergence (N=4 terms)",
+    "formula": "D_KL(P||Q) = sum_{i=1}^{4} p_i * ln(p_i / q_i)",
+    "domain": "p_i, q_i > 0, sum p_i = 1",
+    "cost_breakdown": "4 terms * 5 nodes each = 20; 3 adds = 6. Total: 7*4-2=26",
+    "why_simplest": "KL divergence for 4 distributions: common in variational inference, Bayesian model comparison, EM algorithm.",
+    "alternatives": []
+  },
+
+  "cost_27": {
+    "equation": "Entropy of mixing (N=5 components)",
+    "formula": "dS_mix = -R * sum_{i=1}^{5} x_i * ln(x_i)",
+    "domain": "x_i in (0,1), sum x_i = 1",
+    "cost_breakdown": "5*3 + 4*2 + 2 + 2 = 15+8+2+2 = 27 = 5*5+2",
+    "why_simplest": "Entropy of mixing for 5-component system: natural in multicomponent solution thermodynamics.",
+    "alternatives": []
+  },
+
+  "cost_28": {
+    "equation": "Partition function (canonical ensemble, N=6 energy levels)",
+    "formula": "Z = sum_{i=1}^{6} exp(-E_i / (kT))",
+    "domain": "E_i in R, kT > 0",
+    "cost_breakdown": "5*6-2=28",
+    "why_simplest": "Six-level partition function: appears in spin-1 systems (3 levels per spin pair), rotational spectra, 6-level optical systems.",
+    "alternatives": []
+  },
+
+  "cost_29": {
+    "equation": "Boltzmann normalization constant (N=6 states)",
+    "formula": "1/Z where Z = sum_{i=1}^{6} exp(-E_i / (kT))",
+    "domain": "E_i in R, kT > 0",
+    "cost_breakdown": "Z(N=6) = 28 nodes. recip(Z) = 1 additional. Total: 29",
+    "why_simplest": "Same structure as cost-24 (N=5), but for 6-state systems. Again, cost 29 is not reachable by standard N-term scaling laws for integer N.",
+    "note": "Cost 29 is the second 'recip-of-partition-function' gap. The pattern: 5N-2+1 = 5N-1 gives costs 4, 9, 14, 19, 24, 29 for N=1,2,3,4,5,6 -- interesting arithmetic progression with step 5.",
+    "alternatives": []
+  },
+
+  "cost_30": {
+    "equation": "Shannon entropy (N=6 symbols)",
+    "formula": "H = - sum_{i=1}^{6} p_i * ln(p_i)",
+    "domain": "p_i in (0,1), sum p_i = 1",
+    "cost_breakdown": "6*3 + 5*2 + 2 = 18+10+2 = 30 = 5*6",
+    "why_simplest": "Shannon entropy for 6 symbols (e.g., dice faces, hexagonal lattice). Natural upper bound for Rubik's cube face colors.",
+    "alternatives": []
+  },
+
+  "parity_observation": "Even costs (2,4,6,...,30) are FAR more densely populated with natural formulas than odd costs. Reason: all binary operators (mul, div, add, sub, sqrt) cost 2; composing them produces even costs. Odd costs require at least one 1-cost unary operator (exp, ln, recip, sin, cos) OR one pow(3-cost) combined with specific even-cost combinations. The primitive 1-cost operators break parity, but pow(3) creates odd costs more readily when combined with even-cost operators: 3+2k is always odd. This is why costs like 3, 5, 7, 9, 11 (3+2k for k=0,1,2,3,4) are all achievable with a single pow plus k binary operations. Costs 1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29 (all odd) are reachable but less densely populated with 'obvious' named formulas -- they require specific parity-breaking operators.",
+
+  "structural_note": "In SuperBEST v5, the fundamental parity classes are: (1) 1-cost operators: exp, ln, recip, sin, cos [5 operators]; (2) 2-cost operators: mul, div, add, sub, neg, sqrt [6 operators]; (3) 3-cost: pow [1 operator]. The minimum achievable cost for any nontrivial formula is 1 (single primitive). Every integer >= 1 is achievable. The sparse slots (14, 16, 21, 24, 29) reveal that these costs require specific architectural combinations -- they fall between the natural 'rungs' of the major formula families.",
+
+  "special_interest_analysis": {
+    "cost_4": "Dense with natural formulas: Gibbs (sub+mul), second-order kinetics (mul+mul), Fick's law (neg+mul), Beer-Lambert (mul+mul). All use exactly two 2-cost operators.",
+    "cost_7": "Two iconic physics formulas share this cost: dG=-RTlnK and the Gaussian kernel exp(-x^2/2). The Helmholtz free energy A=-kTlnZ has the same operator structure as dG.",
+    "cost_8": "Fermi-Dirac distribution uniquely uses all five distinct operator types (sub, div, exp, add, recip) in one formula. Most structurally rich formula at its cost.",
+    "cost_11": "Normal PDF with mean: cost exactly one sub(2) more than Standard Normal(9). Shows how location shifts add exactly one binary operator.",
+    "cost_13": "Logistic growth solution is the most famous ecology/biology model ODE solution. Quadratic numerator -b+sqrt(b^2-4ac) hits the same cost from pure algebra.",
+    "cost_14_15": "Cost 14 captures BS d1 numerator (finance); cost 15 captures the quadratic formula (algebra). These are among the most taught formulas in mathematics and finance respectively.",
+    "cost_16": "GBM Ito solution: contains pow (sigma^2), four muls, one sub, one add, one exp. Structurally mirrors the duality between Brownian motion and log-normal distributions.",
+    "odd_costs_21_29": "Costs 21 and 29 are 'gaps' not filled by simple N-term information-theory scaling laws. Cost 21 = Taylor sin (3 correction stages), cost 29 = recip(partition_N=6). The gap pattern: {21, 24, 29} are the sparse costs 1-30 not reachable by Shannon/KL/EntropyMix/Partition scaling for integer N."
+  },
+
+  "recip_gap_pattern": {
+    "note": "Costs 5N-1 for N=1,2,3,4,5,6 give: 4,9,14,19,24,29. These are the costs of recip(partition_fn(N)) [= partition(N) + 1], and also the costs of other formula types. The arithmetic progression step=5 reflects the 5-node-per-term cost of Boltzmann weights.",
+    "values": [4, 9, 14, 19, 24, 29]
+  }
+}

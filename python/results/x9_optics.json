@@ -1,0 +1,481 @@
+{
+  "session": "X9",
+  "title": "Optics Equations — SuperBEST v5 Cost Analysis & Geometric/Wave ELC Boundary",
+  "date": "2026-04-20",
+  "superBEST_v5_costs": {
+    "add": 2,
+    "sub": 2,
+    "mul": 2,
+    "div": 1,
+    "recip": 1,
+    "pow_integer": 3,
+    "sqrt": 2,
+    "exp": 1,
+    "ln": 1,
+    "sin": "non_elementary (OUTSIDE real ELC)",
+    "cos": "non_elementary (OUTSIDE real ELC)",
+    "terminal_constant": 0,
+    "terminal_parameter": 0,
+    "non_elementary": "infinity"
+  },
+  "central_finding": {
+    "title": "Geometric Optics = INSIDE ELC(R); Wave Optics = OUTSIDE real ELC(R)",
+    "statement": "The historical boundary between ray optics and wave optics corresponds exactly to the ELC boundary over the reals. Every equation in geometric optics (lenses, mirrors, refraction expressed in terms of indices and distances) is computable using only rational/algebraic operations and lies INSIDE ELC(R). Every equation requiring sin or cos (diffraction, interference, polarization) lies OUTSIDE real ELC(R) but INSIDE complex ELC(C) via Euler's formula.",
+    "geometric_optics_inside_real_ELC": [
+      "Thin lens equation: 1/f = 1/d_o + 1/d_i",
+      "Mirror equation: 1/f = 1/d_o + 1/d_i",
+      "Magnification: m = -d_i/d_o",
+      "Fresnel reflectance (normal incidence): R = ((n1-n2)/(n1+n2))^2",
+      "Gaussian beam waist: w(z) = w0 * sqrt(1 + (z/z_R)^2)",
+      "Optical path length: OPL = sum(n_i * d_i)",
+      "Rayleigh criterion angle formula: theta = 1.22*lambda/D"
+    ],
+    "wave_optics_outside_real_ELC": [
+      "Snell's law: n1*sin(theta1) = n2*sin(theta2) — sin OUTSIDE ELC(R)",
+      "Malus's law: I = I0*cos^2(theta) — cos OUTSIDE ELC(R)",
+      "Diffraction grating: d*sin(theta) = m*lambda — sin OUTSIDE ELC(R)"
+    ],
+    "complex_ELC_rescue": "sin(theta) = (e^(i*theta) - e^(-i*theta))/(2i) — exp is cost 1 in ELC(C), so wave optics equations become INSIDE ELC(C). This is the algebraic signature of the wave/ray boundary.",
+    "physical_interpretation": "Ray optics approximates light as straight-line paths describable by ratios and products of real numbers (distances, refractive indices). Wave optics requires the oscillatory nature of light, which demands transcendental functions (sin/cos). ELC captures this distinction exactly — geometric optics is polynomial/rational in its core variables; wave optics requires true transcendentals."
+  },
+  "equations": [
+    {
+      "id": 1,
+      "name": "Snell's law",
+      "domain": "Wave optics / Refraction",
+      "formula": "n1 * sin(theta1) = n2 * sin(theta2)",
+      "ELC_real": "OUTSIDE",
+      "ELC_complex": "INSIDE",
+      "reason_real_outside": "sin is non-elementary over R; no finite combination of add/sub/mul/div/pow/sqrt/exp/ln produces sin(x) for all real x",
+      "complex_ELC_form": "sin(theta) = (exp(i*theta) - exp(-i*theta)) / (2i); cost: exp=1, sub=2, div=1, mul_by_i=2 per sin call",
+      "unfolded": {
+        "tree": [
+          "LHS: mul(n1, sin(theta1))  — sin is non-elementary, cost = infinity over R",
+          "RHS: mul(n2, sin(theta2))  — same"
+        ],
+        "total_real": "infinity (sin is non-elementary)",
+        "total_complex": {
+          "sin_theta1_complex": "exp(i*theta1)=1, neg(exp(-i*theta1))=1+2, sub=2, div(by 2i)=1 → ~6n per sin",
+          "sin_theta2_complex": "~6n",
+          "mul(n1, sin_theta1)": 2,
+          "mul(n2, sin_theta2)": 2,
+          "sub(LHS, RHS)_equation": 2,
+          "total_approx": "~18n in ELC(C)"
+        }
+      },
+      "notes": "The most fundamental optics equation. Over R it is OUTSIDE ELC; over C it becomes INSIDE ELC via Euler's formula. This is the archetype of the wave/ray ELC boundary."
+    },
+    {
+      "id": 2,
+      "name": "Thin lens equation",
+      "domain": "Geometric optics",
+      "formula": "1/f = 1/d_o + 1/d_i",
+      "ELC_real": "INSIDE",
+      "ELC_complex": "INSIDE",
+      "unfolded": {
+        "tree": [
+          "add(recip(d_o), recip(d_i)) = recip(f)",
+          "  recip(f)    → cost 1",
+          "  recip(d_o)  → cost 1",
+          "  recip(d_i)  → cost 1",
+          "  add(recip(d_o), recip(d_i))  → cost 2"
+        ],
+        "node_costs": {
+          "recip(f)": 1,
+          "recip(d_o)": 1,
+          "recip(d_i)": 1,
+          "add(recip_do, recip_di)": 2
+        },
+        "total": 5,
+        "breakdown": "1 + 1 + 1 + 2 = 5n"
+      },
+      "folded": {
+        "strategy": "No meaningful folding; all three of f, d_o, d_i are free variables in the general case",
+        "total": 5,
+        "breakdown": "5n (same as unfolded)"
+      },
+      "dominant_op": "add (cost 2, combines the two reciprocals)",
+      "notes": "Pure rational arithmetic. Three recip nodes + one add = 5n. This is the canonical INSIDE ELC geometric optics equation. The lensmaker's form (1/f = (n-1)(1/R1 - 1/R2)) adds two more recips + sub + mul: cost = 5 + 2 + 1 + 2 + 2 = 12n but remains INSIDE ELC."
+    },
+    {
+      "id": 3,
+      "name": "Magnification",
+      "domain": "Geometric optics",
+      "formula": "m = -d_i / d_o",
+      "ELC_real": "INSIDE",
+      "ELC_complex": "INSIDE",
+      "unfolded": {
+        "tree": [
+          "neg(div(d_i, d_o))",
+          "  div(d_i, d_o)   → cost 1",
+          "  neg(div)        → cost 2"
+        ],
+        "node_costs": {
+          "div(d_i, d_o)": 1,
+          "neg": 2
+        },
+        "total": 3,
+        "breakdown": "1 + 2 = 3n"
+      },
+      "folded": {
+        "strategy": "No folding; d_i and d_o are free variables",
+        "total": 3,
+        "breakdown": "3n"
+      },
+      "dominant_op": "neg (cost 2, more expensive than div=1 in v5)",
+      "notes": "Minimal geometric optics equation. In SuperBEST v5, neg=sub with one zero input, so neg costs 2. The sign flip costs as much as the ratio itself."
+    },
+    {
+      "id": 4,
+      "name": "Mirror equation",
+      "domain": "Geometric optics",
+      "formula": "1/f = 1/d_o + 1/d_i",
+      "ELC_real": "INSIDE",
+      "ELC_complex": "INSIDE",
+      "unfolded": {
+        "tree": [
+          "Structurally identical to thin lens equation",
+          "  recip(f)    → cost 1",
+          "  recip(d_o)  → cost 1",
+          "  recip(d_i)  → cost 1",
+          "  add(recip_do, recip_di)  → cost 2"
+        ],
+        "node_costs": {
+          "recip(f)": 1,
+          "recip(d_o)": 1,
+          "recip(d_i)": 1,
+          "add": 2
+        },
+        "total": 5,
+        "breakdown": "1 + 1 + 1 + 2 = 5n"
+      },
+      "folded": {
+        "strategy": "Same as thin lens; no folding for free-variable case",
+        "total": 5,
+        "breakdown": "5n"
+      },
+      "dominant_op": "add",
+      "notes": "Mathematically identical to the thin lens equation. The mirror equation and thin lens equation having the same ELC cost is not a coincidence — both express focal-length geometry as a sum of reciprocals, reflecting the same underlying algebraic structure (the projective harmonic mean)."
+    },
+    {
+      "id": 5,
+      "name": "Fresnel reflectance (normal incidence)",
+      "domain": "Geometric/Wave optics boundary — computed in terms of refractive indices only",
+      "formula": "R = ((n1 - n2) / (n1 + n2))^2",
+      "ELC_real": "INSIDE",
+      "ELC_complex": "INSIDE",
+      "unfolded": {
+        "tree": [
+          "pow(div(sub(n1, n2), add(n1, n2)), 2)",
+          "  sub(n1, n2)         → cost 2",
+          "  add(n1, n2)         → cost 2",
+          "  div(sub, add)       → cost 1",
+          "  pow(div_result, 2)  → cost 3"
+        ],
+        "node_costs": {
+          "sub(n1, n2)": 2,
+          "add(n1, n2)": 2,
+          "div": 1,
+          "pow(ratio, 2)": 3
+        },
+        "total": 8,
+        "breakdown": "2 + 2 + 1 + 3 = 8n"
+      },
+      "folded": {
+        "strategy": "No folding; n1 and n2 are free variables representing different media",
+        "total": 8,
+        "breakdown": "8n"
+      },
+      "dominant_op": "pow (cost 3, single most expensive node)",
+      "notes": "Normal-incidence Fresnel uses only refractive indices — no angles, no trig — so it is INSIDE ELC(R) despite being a reflectance formula. The full Fresnel equations at oblique incidence require cos(theta) and are OUTSIDE real ELC. This is a key example of a wave-optics quantity (reflectance) that is geometrically computable at normal incidence."
+    },
+    {
+      "id": 6,
+      "name": "Gaussian beam waist",
+      "domain": "Geometric/Wave optics (paraxial regime)",
+      "formula": "w(z) = w0 * sqrt(1 + (z / z_R)^2)",
+      "ELC_real": "INSIDE",
+      "ELC_complex": "INSIDE",
+      "unfolded": {
+        "tree": [
+          "mul(w0, sqrt(add(1, pow(div(z, z_R), 2))))",
+          "  div(z, z_R)                  → cost 1",
+          "  pow(div_result, 2)            → cost 3",
+          "  add(1, pow_result)            → cost 2",
+          "  sqrt(add_result)              → cost 2",
+          "  mul(w0, sqrt_result)          → cost 2"
+        ],
+        "node_costs": {
+          "div(z, z_R)": 1,
+          "pow(ratio, 2)": 3,
+          "add(1, ratio2)": 2,
+          "sqrt(sum)": 2,
+          "mul(w0, sqrt)": 2
+        },
+        "total": 10,
+        "breakdown": "1 + 3 + 2 + 2 + 2 = 10n"
+      },
+      "folded": {
+        "strategy": "If z_R (Rayleigh range) is fixed for a given beam setup, fold recip(z_R) as const: saves div→recip→mul pattern",
+        "tree_partial": [
+          "mul(w0, sqrt(add(1, pow(mul(z, const_recip_zR), 2))))",
+          "  const_recip_zR              → cost 0",
+          "  mul(z, const_recip_zR)      → cost 2",
+          "  pow(mul_result, 2)          → cost 3",
+          "  add(1, pow_result)          → cost 2",
+          "  sqrt(add_result)            → cost 2",
+          "  mul(w0, sqrt_result)        → cost 2"
+        ],
+        "total_partial": 11,
+        "note_on_fold": "Replacing div with recip-constant + mul does not save here (11n vs 10n). Best fold: treat (1/z_R^2) as a constant so pow(div,2) → mul(z^2, const): pow(z,2)=3, mul(z2,const)=2, total inner=5 vs original 1+3=4. No improvement from that angle either.",
+        "total": 10,
+        "breakdown": "10n (unfolded is optimal for general z, z_R)"
+      },
+      "dominant_op": "pow (cost 3, the (z/z_R)^2 node)",
+      "notes": "The Gaussian beam profile is INSIDE ELC(R) because it uses only algebraic operations — the paraxial approximation replaces the full wave equation with a polynomial/sqrt structure. In the full wave treatment, the field includes exp(i*kz)*Gaussian which crosses into OUTSIDE real ELC."
+    },
+    {
+      "id": 7,
+      "name": "Optical path length",
+      "domain": "Geometric optics",
+      "formula": "OPL = sum_{i=1}^{N} n_i * d_i",
+      "ELC_real": "INSIDE",
+      "ELC_complex": "INSIDE",
+      "unfolded": {
+        "tree": [
+          "For N media layers:",
+          "  N mul nodes: mul(n_i, d_i)  → each costs 2",
+          "  N-1 add nodes               → each costs 2",
+          "Total: 2N + 2(N-1) = 4N - 2"
+        ],
+        "parametric_cost": "4N - 2",
+        "examples": {
+          "N=1": "2n (single medium: just mul(n,d))",
+          "N=2": "6n (2 muls + 1 add = 4+2 = 6n)",
+          "N=3": "10n",
+          "N=4": "14n"
+        },
+        "note": "Linear growth in N; each additional medium adds exactly 4n (one mul + one add)"
+      },
+      "folded": {
+        "strategy": "If any n_i are known constants (e.g., vacuum n=1 layers), those mul(1, d_i) = d_i fold for free",
+        "total": "4N - 2 (general); reduces if any n_i = 1 or n_i are fixed constants",
+        "breakdown": "Linear in N"
+      },
+      "dominant_op": "mul (N nodes) and add (N-1 nodes) contribute equally per layer",
+      "notes": "OPL is the most structurally transparent optics equation in ELC terms — a pure weighted sum, entirely inside ELC(R). It is the geometric backbone of Fermat's principle."
+    },
+    {
+      "id": 8,
+      "name": "Malus's law",
+      "domain": "Wave optics / Polarization",
+      "formula": "I = I0 * cos^2(theta)",
+      "ELC_real": "OUTSIDE",
+      "ELC_complex": "INSIDE",
+      "reason_real_outside": "cos is non-elementary over R",
+      "complex_ELC_form": "cos(theta) = (exp(i*theta) + exp(-i*theta)) / 2; cos^2(theta) = (1 + cos(2*theta)) / 2 (double-angle identity)",
+      "unfolded": {
+        "tree": [
+          "mul(I0, pow(cos(theta), 2))",
+          "  cos(theta)            → OUTSIDE real ELC (non-elementary)",
+          "  pow(cos_theta, 2)     → cost 3 (once cos is available)",
+          "  mul(I0, cos2)         → cost 2",
+          "Total over R: infinity"
+        ],
+        "total_real": "infinity",
+        "complex_cost": {
+          "exp(i*theta)": 1,
+          "exp(-i*theta)": 1,
+          "add(exp_pos, exp_neg)": 2,
+          "div(sum, 2)": 1,
+          "pow(cos_theta, 2)": 3,
+          "mul(I0, cos2)": 2,
+          "total_approx": "~10n in ELC(C)"
+        }
+      },
+      "notes": "Malus's law is the prototypical polarization equation. It is OUTSIDE real ELC because it requires cos. In ELC(C), it costs ~10n. The double-angle form I = I0*(1+cos(2*theta))/2 has the same complex ELC cost but makes the oscillatory structure explicit."
+    },
+    {
+      "id": 9,
+      "name": "Diffraction grating equation",
+      "domain": "Wave optics",
+      "formula": "d * sin(theta) = m * lambda",
+      "ELC_real": "OUTSIDE",
+      "ELC_complex": "INSIDE",
+      "reason_real_outside": "sin is non-elementary over R",
+      "complex_ELC_form": "sin(theta) = (exp(i*theta) - exp(-i*theta)) / (2i)",
+      "unfolded": {
+        "tree": [
+          "sub(mul(d, sin(theta)), mul(m, lambda)) = 0",
+          "  sin(theta)              → OUTSIDE real ELC",
+          "  mul(d, sin_theta)       → cost 2",
+          "  mul(m, lambda)          → cost 2",
+          "  sub(LHS, RHS)           → cost 2",
+          "Total over R: infinity"
+        ],
+        "total_real": "infinity",
+        "complex_cost_approx": "~12n in ELC(C) (sin expansion + mul terms + sub)"
+      },
+      "notes": "The grating equation encodes wave interference — which maxima directions satisfy constructive interference. The sin is physically essential (it encodes the projection of wave directions). There is no rational approximation valid for all theta. This is OUTSIDE ELC(R) and remains so even for small-angle approximation (sin(theta) ≈ theta) which replaces sin with identity but changes the equation's validity domain."
+    },
+    {
+      "id": 10,
+      "name": "Rayleigh criterion (angular resolution)",
+      "domain": "Wave optics — angular resolution limit",
+      "formula": "theta_min = 1.22 * lambda / D",
+      "ELC_real": "INSIDE",
+      "ELC_complex": "INSIDE",
+      "note": "This formula gives the angle (in radians) directly; the 1.22 factor comes from the first zero of J1 (a Bessel function), but once evaluated numerically it becomes a plain constant. The formula itself — as used in practice — is a pure division.",
+      "unfolded": {
+        "tree": [
+          "mul(1.22, div(lambda, D))",
+          "  div(lambda, D)        → cost 1",
+          "  mul(1.22, div_result) → cost 2"
+        ],
+        "node_costs": {
+          "div(lambda, D)": 1,
+          "mul(1.22, ratio)": 2
+        },
+        "total": 3,
+        "breakdown": "1 + 2 = 3n"
+      },
+      "folded": {
+        "strategy": "Fold 1.22 into const (cost 0); becomes just div(lambda, D) scaled",
+        "tree": [
+          "mul(const_1.22, div(lambda, D))",
+          "  const_1.22 → cost 0",
+          "  div(lambda, D) → cost 1",
+          "  mul(const, ratio) → cost 2"
+        ],
+        "total": 3,
+        "breakdown": "0 + 1 + 2 = 3n (same; 1.22 was already treated as terminal constant)"
+      },
+      "dominant_op": "mul",
+      "notes": "Paradoxically, the Rayleigh criterion — a wave-optics result (diffraction limit) — is INSIDE ELC(R) as a formula because 1.22 is a precomputed constant. The Bessel function derivation is OUTSIDE ELC(R), but the resulting angle formula is purely rational. This demonstrates that the ELC boundary is about the formula's algebraic structure, not its physical origin."
+    }
+  ],
+  "summary_table": [
+    {
+      "id": 1,
+      "equation": "Snell's law: n1*sin(θ1) = n2*sin(θ2)",
+      "domain": "Wave optics",
+      "ELC_real": "OUTSIDE",
+      "ELC_complex": "INSIDE",
+      "cost_real": "infinity",
+      "cost_complex_approx": "~18n",
+      "reason": "sin is non-elementary over R"
+    },
+    {
+      "id": 2,
+      "equation": "Thin lens equation: 1/f = 1/d_o + 1/d_i",
+      "domain": "Geometric optics",
+      "ELC_real": "INSIDE",
+      "ELC_complex": "INSIDE",
+      "cost_real": 5,
+      "breakdown": "recip(f) + recip(d_o) + recip(d_i) + add = 1+1+1+2 = 5n"
+    },
+    {
+      "id": 3,
+      "equation": "Magnification: m = -d_i/d_o",
+      "domain": "Geometric optics",
+      "ELC_real": "INSIDE",
+      "ELC_complex": "INSIDE",
+      "cost_real": 3,
+      "breakdown": "div + neg = 1+2 = 3n"
+    },
+    {
+      "id": 4,
+      "equation": "Mirror equation: 1/f = 1/d_o + 1/d_i",
+      "domain": "Geometric optics",
+      "ELC_real": "INSIDE",
+      "ELC_complex": "INSIDE",
+      "cost_real": 5,
+      "breakdown": "identical structure to thin lens = 5n"
+    },
+    {
+      "id": 5,
+      "equation": "Fresnel reflectance (normal): R = ((n1-n2)/(n1+n2))^2",
+      "domain": "Geometric optics (normal incidence only)",
+      "ELC_real": "INSIDE",
+      "ELC_complex": "INSIDE",
+      "cost_real": 8,
+      "breakdown": "sub + add + div + pow = 2+2+1+3 = 8n"
+    },
+    {
+      "id": 6,
+      "equation": "Gaussian beam waist: w(z) = w0*sqrt(1+(z/z_R)^2)",
+      "domain": "Paraxial wave optics",
+      "ELC_real": "INSIDE",
+      "ELC_complex": "INSIDE",
+      "cost_real": 10,
+      "breakdown": "div + pow + add + sqrt + mul = 1+3+2+2+2 = 10n"
+    },
+    {
+      "id": 7,
+      "equation": "Optical path length: OPL = Σ n_i*d_i (N terms)",
+      "domain": "Geometric optics",
+      "ELC_real": "INSIDE",
+      "ELC_complex": "INSIDE",
+      "cost_real": "4N - 2",
+      "breakdown": "N muls (2N) + (N-1) adds (2N-2) = 4N-2n"
+    },
+    {
+      "id": 8,
+      "equation": "Malus's law: I = I0*cos^2(θ)",
+      "domain": "Wave optics / Polarization",
+      "ELC_real": "OUTSIDE",
+      "ELC_complex": "INSIDE",
+      "cost_real": "infinity",
+      "cost_complex_approx": "~10n",
+      "reason": "cos is non-elementary over R"
+    },
+    {
+      "id": 9,
+      "equation": "Diffraction grating: d*sin(θ) = mλ",
+      "domain": "Wave optics",
+      "ELC_real": "OUTSIDE",
+      "ELC_complex": "INSIDE",
+      "cost_real": "infinity",
+      "cost_complex_approx": "~12n",
+      "reason": "sin is non-elementary over R"
+    },
+    {
+      "id": 10,
+      "equation": "Rayleigh criterion: θ = 1.22*λ/D",
+      "domain": "Wave optics (result), formula is algebraic",
+      "ELC_real": "INSIDE",
+      "ELC_complex": "INSIDE",
+      "cost_real": 3,
+      "breakdown": "div + mul = 1+2 = 3n",
+      "note": "Wave-physics origin but algebraic formula — ELC boundary is structural, not physical"
+    }
+  ],
+  "ELC_boundary_analysis": {
+    "inside_real_ELC": {
+      "equations": [2, 3, 4, 5, 6, 7, 10],
+      "count": 7,
+      "common_structure": "All use only {recip, add, sub, mul, div, pow, sqrt} — the algebraic/rational/algebraic-radical operations. These are exactly the operations of geometric optics: lengths, ratios, curvatures, distances.",
+      "cost_range": "3n (magnification) to 10n (Gaussian beam waist), parametric 4N-2 for OPL"
+    },
+    "outside_real_ELC": {
+      "equations": [1, 8, 9],
+      "count": 3,
+      "common_structure": "All require sin or cos — transcendental functions over R. These are the wave optics equations: interference, diffraction, polarization.",
+      "rescued_by_complex_ELC": true,
+      "complex_ELC_cost_range": "~10n to ~18n (via Euler: e^(i*theta) has cost 1)"
+    },
+    "boundary_sharpness": "The boundary is exact and clean. No geometric-optics equation requires sin/cos in its fundamental form (Snell's law is the interface: it describes refraction but requires sin because it tracks wave direction angles). No wave-optics equation (when expressed at full generality for arbitrary angles) can avoid sin/cos.",
+    "historical_note": "Newton's corpuscular theory (ray optics) worked inside ELC(R). Huygens/Young/Fresnel's wave theory required sin/cos, crossing into OUTSIDE ELC(R). The wave/particle debate in 18th-19th century optics is, in ELC terms, a debate about which complexity class suffices to describe light.",
+    "small_angle_caveat": "Under the small-angle approximation (sin(theta) ≈ theta, cos(theta) ≈ 1), wave-optics equations collapse into algebraic forms INSIDE ELC(R). This approximation is physically justified for paraxial rays. The Gaussian beam waist (equation 6) is precisely the paraxial-approximation result — it replaces the full-wave transcendental structure with an algebraic one, and its INSIDE ELC(R) status reflects exactly this.",
+    "fresnel_at_oblique_angles": "The full Fresnel equations at oblique incidence (Rs = (n1*cos_theta_i - n2*cos_theta_t)^2 / ...) require cos of both incident and transmitted angles — both OUTSIDE real ELC. The normal-incidence special case eliminates the angles entirely, landing INSIDE ELC(R). This is the most striking special-case collapse in the dataset."
+  },
+  "aggregate": {
+    "equations_inside_real_ELC": 7,
+    "equations_outside_real_ELC": 3,
+    "all_outside_rescued_by_complex_ELC": true,
+    "cheapest_inside_ELC": {"id": 3, "name": "Magnification", "cost": 3},
+    "most_expensive_inside_ELC": {"id": 6, "name": "Gaussian beam waist", "cost": 10},
+    "parametric_equation": {"id": 7, "name": "Optical path length", "cost_formula": "4N - 2"},
+    "key_insight": "The Rayleigh criterion (id=10) is a wave-physics result (diffraction-limited resolution) with an INSIDE ELC(R) formula (3n), because the Bessel-function zero 1.22 is a precomputed numeric constant. This shows the ELC boundary is syntactic/structural, not about physical domain."
+  }
+}

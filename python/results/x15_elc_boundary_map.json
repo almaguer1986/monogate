@@ -1,0 +1,189 @@
+{
+  "session": "X15",
+  "title": "ELC(R) Boundary Map — Definitive Three-Tier Classification",
+  "date": "2026-04-20",
+  "status": "DEFINITIVE — synthesizes sessions X3-X14",
+  "source_tex": "python/paper/theorems/ELC_Boundary_Map.tex",
+  "anchor_theorem": "F16 Characterization Theorem (F16_Characterization.tex, Theorem 2.1): EL_fin = ELC(R)",
+  "zero_finiteness": "T01 (F16 Theorem 3.1): every k-node F16 tree has at most 2k+2 zeros on any bounded interval",
+
+  "master_characterization": {
+    "statement": "f is in ELC(R) iff (1) it is elementary in the narrow sense — built from exp, ln, and arithmetic over Q in finitely many steps — (2) it is real-analytic — no kinks, jumps, or non-smooth points — and (3) it has finitely many zeros on every bounded real interval.",
+    "note": "Conditions (2) and (3) follow from (1); all three are stated because each illuminates a different region of the boundary."
+  },
+
+  "inside": [
+    {
+      "domain": "Geometric optics",
+      "examples": ["lens equation 1/f = 1/d_o + 1/d_i", "mirror equations", "Fresnel equations at normal incidence"],
+      "reason": "Rational combinations of distances and refractive indices; no trigonometry required",
+      "session": "X3"
+    },
+    {
+      "domain": "Viscous / laminar fluid dynamics",
+      "examples": ["Reynolds number Re = rho*v*L/mu", "Bernoulli equation P + 0.5*rho*v^2 + rho*g*h = const", "Poiseuille Q = pi*r^4*dP/(8*mu*L)"],
+      "reason": "Polynomial and rational functions of physical parameters",
+      "session": "X3"
+    },
+    {
+      "domain": "Continuum / materials mechanics",
+      "examples": ["Hooke's law sigma = E*epsilon", "Von Mises criterion sqrt(sigma1^2 + sigma2^2 - sigma1*sigma2)", "Fourier heat conduction q = -k*gradT"],
+      "reason": "Linear, polynomial, or sqrt (= e^(0.5*ln x)) — all in ELC",
+      "session": "X3"
+    },
+    {
+      "domain": "Deterministic epidemiology",
+      "examples": ["SEIR ODE dS/dt = -beta*S*I (6n)", "R0 = beta*S0/gamma (3n)", "logistic curve I(t) = K/(1 + exp(-r*(t-t0))) (10n)", "doubling time ln(2)/r (2n)"],
+      "reason": "Exponential, logarithm, and polynomial — fully closed-form; no special functions",
+      "session": "X10"
+    },
+    {
+      "domain": "Exponential-family probability distributions",
+      "examples": ["Normal PDF exp(-x^2/2)/sqrt(2*pi)", "Exponential PDF lambda*exp(-lambda*x)", "Weibull PDF", "Pareto PDF", "Log-normal PDF"],
+      "reason": "Compositions of exp, ln, and rational powers; normalization constants are rational or simple radicals, not Gamma values",
+      "session": "X11"
+    },
+    {
+      "domain": "Smooth ML loss functions",
+      "examples": ["MSE (7N-2 nodes)", "Binary cross-entropy (14N-2 nodes)", "KL divergence (7N-2 nodes)", "Focal loss (12N-2 nodes)", "InfoNCE (~5N-2 + sim overhead)", "Cosine similarity loss"],
+      "reason": "Analytic compositions of exp, ln, polynomial; smooth gradient landscape everywhere in domain",
+      "session": "X14"
+    },
+    {
+      "domain": "Acoustics and music theory (frequency domain)",
+      "examples": ["Frequency ratio f2/f1 (1n)", "Equal temperament f_n = f0 * 2^(n/12) = f0 * exp((n/12)*ln2)", "Decibels 20*log10(p/p0)", "Doppler shift f' = f*(v+v_o)/(v-v_s)"],
+      "reason": "Powers of 2 via exp/ln, logarithm for dB; no trig of real variables required",
+      "session": "X6"
+    },
+    {
+      "domain": "Algorithm complexity functions (as real functions)",
+      "examples": ["n*ln(n)", "n^2", "2^n = exp(n*ln2)", "Stirling approximation sqrt(2*pi*n)*(n/e)^n"],
+      "reason": "2^n = e^(n*ln2); Stirling uses exp, ln, sqrt; all in ELC as real functions of a real argument",
+      "note": "Exact n! for integer n is Tier III-C; Stirling is Tier I"
+    },
+    {
+      "domain": "Linear constant-coefficient ODE solutions (real eigenvalues)",
+      "examples": ["C1*exp(lambda1*t) + C2*exp(lambda2*t)", "exp(a*t)*(C1 + C2*t) (repeated root)", "e^(-gamma*t)*cosh(omega*t) (hyperbolic envelope)"],
+      "reason": "Finite sums of exponentials with real exponents; no trig needed when eigenvalues are real"
+    }
+  ],
+
+  "boundary_complex": [
+    {
+      "domain": "Wave optics",
+      "examples": ["diffraction integrals", "two-slit interference", "Snell's law n1*sin(theta1) = n2*sin(theta2) for real theta"],
+      "reason": "Requires sin/cos of real-valued variables; sin(x) = Im(e^(ix)) is in ELC(C) but not ELC(R); infinite zeros on bounded intervals by T01"
+    },
+    {
+      "domain": "Harmonic oscillator (sinusoidal envelope)",
+      "examples": ["y(t) = A*cos(omega*t + phi)", "general SHM solution"],
+      "reason": "cos(omega*t) has zero set {(pi/2 + k*pi)/omega : k in Z}, infinite on any interval of length > pi/omega; excluded by T01 Corollary",
+      "note": "The ENVELOPE A*exp(-gamma*t) is Tier I — only the oscillatory factor is excluded"
+    },
+    {
+      "domain": "Acoustic waveforms (time domain)",
+      "examples": ["p(t) = A*sin(2*pi*f*t + phi)"],
+      "reason": "Time-domain form uses sin/cos; frequency-domain power |P(f)|^2 is Tier I (rational in f)",
+      "note": "Frequency-domain energy content is ELC; time-domain waveform is boundary"
+    },
+    {
+      "domain": "Cosine annealing (ML learning rate schedule)",
+      "examples": ["eta_t = eta_min + 0.5*(eta_max - eta_min)*(1 + cos(pi*t/T))"],
+      "reason": "cos(pi*t/T) factor is oscillatory over real t; exponential decay eta_t = eta_0*exp(-t/tau) is a Tier I substitute"
+    },
+    {
+      "domain": "ODE solutions (complex-conjugate eigenvalues)",
+      "examples": ["y(t) = exp(alpha*t)*(C1*cos(beta*t) + C2*sin(beta*t))"],
+      "reason": "The sin/cos factor with real argument places these in Tier II; the exponential envelope exp(alpha*t) is Tier I"
+    }
+  ],
+
+  "outside": [
+    {
+      "subtier": "A — Non-elementary special functions (violate elementarity; Liouville-Ritt theorem)",
+      "entries": [
+        {"function": "Gamma(x)", "reason": "Non-elementary; antiderivative of an ELC integrand cannot be expressed as finite exp-log composition for non-integer arguments"},
+        {"function": "Bessel J_nu(x)", "reason": "Solution to Bessel ODE; no closed exp-log form"},
+        {"function": "Airy Ai(x), Bi(x)", "reason": "Solutions to y'' = x*y; no closed exp-log form"},
+        {"function": "Exponential integral Ei(x)", "reason": "Non-elementary integral of e^t/t"},
+        {"function": "Error function erf(x)", "reason": "Antiderivative of Gaussian; excluded by Liouville-Ritt (F16 Theorem 3.4)"},
+        {"function": "Dilogarithm Li_2(x)", "reason": "Polylogarithm; analytic but non-elementary"}
+      ]
+    },
+    {
+      "subtier": "B — Piecewise / non-analytic (violate analyticity; F16 Theorem 3.2)",
+      "entries": [
+        {"function": "|x| (absolute value)", "reason": "Non-differentiable kink at x=0; F16 Theorem 3.2 excludes all non-analytic functions"},
+        {"function": "ReLU = max(0,x)", "reason": "Non-analytic kink at x=0"},
+        {"function": "max(f,g), min(f,g)", "reason": "Piecewise switch creates non-analytic join at intersection"},
+        {"function": "floor(x), ceil(x)", "reason": "Step functions with jump discontinuities at every integer"},
+        {"function": "Heaviside H(x)", "reason": "Jump discontinuity at x=0"},
+        {"function": "Hinge loss max(0, 1-y*y_hat)", "reason": "Piecewise linear; kink at y*y_hat = 1"},
+        {"function": "Huber loss", "reason": "Piecewise: quadratic near zero, linear in tails; non-analytic at boundary"}
+      ]
+    },
+    {
+      "subtier": "C — Discrete / integer-domain (violate real-function requirement)",
+      "entries": [
+        {"function": "Exact factorial n!", "reason": "Defined on N, not on R; Stirling approximation IS in ELC (Tier I)"},
+        {"function": "Exact binomial C(n,k)", "reason": "Requires integer factorials"},
+        {"function": "Modular arithmetic a mod m", "reason": "Piecewise on integers; no real-analytic extension"},
+        {"function": "Mobius function mu(n)", "reason": "Defined on N; takes values in {-1, 0, 1}; not analytic"},
+        {"function": "Euler totient phi(n)", "reason": "Multiplicative function on N; integer-valued, not real-domain analytic"},
+        {"function": "Prime-counting pi(x)", "reason": "Integer step function; non-analytic everywhere"},
+        {"function": "Divisor functions d(n), sigma(n)", "reason": "Defined on N; integer-valued"}
+      ]
+    },
+    {
+      "subtier": "D — Distributions requiring Gamma at non-integer arguments",
+      "entries": [
+        {"function": "Gamma distribution PDF f(x; alpha, beta)", "reason": "Normalization factor Gamma(alpha) is non-elementary for non-integer alpha"},
+        {"function": "Chi-squared PDF", "reason": "Special case of Gamma distribution; Gamma(k/2) normalization excluded"},
+        {"function": "Beta distribution PDF", "reason": "Gamma(a)*Gamma(b)/Gamma(a+b) normalization excluded"},
+        {"function": "Student's t-distribution PDF", "reason": "Ratio of Gamma functions in normalization"},
+        {"function": "Negative binomial (exact CDF)", "reason": "Requires incomplete Beta function or factorials for non-integer parameters"}
+      ]
+    },
+    {
+      "subtier": "E — Uncomputable",
+      "entries": [
+        {"function": "Kolmogorov complexity K(s)", "reason": "Uncomputable by Rice's theorem"},
+        {"function": "Halting indicator 1[P halts]", "reason": "Undecidable"},
+        {"function": "Busy Beaver Sigma(n)", "reason": "Grows faster than any computable function; non-elementary by any criterion"},
+        {"function": "True infinite series (non-closed-form limit)", "reason": "Partial sums truncated to N terms are in ELC; the limit as a function of x is typically Tier III-A (polylogarithm, etc.)"}
+      ]
+    }
+  ],
+
+  "key_insight": "ELC(R) is the unique class of real functions that are simultaneously elementary (built from exp, ln, arithmetic over Q), analytic (no kinks or jumps), and quasi-finitely-zeroed (finitely many zeros on bounded intervals) — and these three conditions are equivalent, with the boundary vivified by three distinct exclusion mechanisms: infinite zero sets (periodic/oscillatory functions, Tier II), Liouville-inexpressibility (special functions, Tier III-A), non-analyticity (piecewise functions, Tier III-B), and discrete domain (number-theoretic functions, Tier III-C).",
+
+  "geometric_venn": {
+    "ring_1": "All functions (universe)",
+    "ring_2": "Analytic functions ⊃ ELC(R) — contains ELC, also sin, cos, Gamma, Bessel, erf",
+    "ring_3": "ELC(R) — properly contained in analytic: ELC ⊊ {analytic}",
+    "ring_4": "Algebraic functions — partially overlaps ELC: x^(p/q) is in both; e^x is in ELC but not algebraic",
+    "key_facts": [
+      "ELC ∩ {periodic functions} = ∅  (no periodic function is in ELC — key structural fact, by T01)",
+      "ELC ∩ {monotone functions} is large but not all monotone functions are ELC (Gamma is monotone for x >= 3/2 but non-elementary)",
+      "ELC ∩ {bounded on all of R} = {constants} (any globally bounded ELC function must be constant)",
+      "ELC ⊊ ELC(C): adding i as a constant brings in e^(ix) = cos(x) + i*sin(x), whose real/imaginary parts are Tier II"
+    ]
+  },
+
+  "session_sources": {
+    "X3": "Fluid dynamics — all inside ELC",
+    "X6": "Acoustics/music — frequency domain inside, time-domain waveforms boundary",
+    "X10": "Epidemiology — deterministic models inside; gamma distribution boundary",
+    "X11": "Probability distributions — exp-family inside, Gamma-dependent outside",
+    "X13": "Number theory — all discrete functions outside",
+    "X14": "ML losses — smooth losses inside, piecewise losses outside"
+  },
+
+  "exclusion_summary": [
+    {"mechanism": "Infinite zero set (T01 corollary)", "tier": "Tier II", "canonical": "sin(x)"},
+    {"mechanism": "Non-elementary transcendental (Liouville-Ritt)", "tier": "Tier III-A", "canonical": "Gamma(x)"},
+    {"mechanism": "Non-analytic kink or jump", "tier": "Tier III-B", "canonical": "|x|, ReLU"},
+    {"mechanism": "Discrete or integer domain", "tier": "Tier III-C/D", "canonical": "n!, mu(n)"},
+    {"mechanism": "Uncomputable", "tier": "Tier III-E", "canonical": "K(s), Sigma(n)"}
+  ]
+}

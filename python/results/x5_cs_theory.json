@@ -1,0 +1,483 @@
+{
+  "session": "X5",
+  "title": "CS Theory Equations — ELC Boundaries, Complexity Functions, Information Theory, Neural Networks",
+  "date": "2026-04-20",
+  "superBEST_v5_costs": {
+    "add": "2n  (universal — ADD-T1: sign-definiteness no longer drives cost)",
+    "sub": "2n",
+    "mul": "2n  (positive inputs; same in v5 for general inputs)",
+    "div": "1n",
+    "recip": "1n",
+    "neg": "2n",
+    "pow": "3n  (constant per call, degree-independent)",
+    "exp": "1n",
+    "ln":  "1n",
+    "sqrt": "2n",
+    "constants_and_parameters": "0n"
+  },
+  "ELC_definition": {
+    "formal": "ELC(R) = exp-log closure over the reals = smallest set containing R closed under exp and ln and the four arithmetic operations",
+    "characterization": "Analytic functions — smooth, no jumps, no discontinuities, no integer-valued output for real-valued input",
+    "key_property": "Every function in ELC(R) is analytic (infinitely differentiable, equals its Taylor series locally). Discontinuous or integer-valued functions are outside ELC(R) by this criterion.",
+    "outside_types": {
+      "type_A": "Computable but not ELC — e.g., cos(x) (infinitely many zeros on R, T01 criterion), ceil(x), floor(x), x mod p. These can be computed by finite algorithms but lie outside ELC(R).",
+      "type_B": "Uncomputable entirely — e.g., Kolmogorov complexity K(x). These are outside ALL computable functions, not merely outside ELC. A strictly stronger form of 'outside'."
+    }
+  },
+
+  "section_1_complexity_functions": {
+    "title": "Complexity Functions (the functions inside Big-O notation)",
+    "note": "These are functions of n used to express algorithm complexity. The question is whether f(n), as a real-valued function, lies inside ELC(R).",
+    "functions": [
+      {
+        "id": "CF1",
+        "name": "n * ln(n)",
+        "formula": "f(n) = n * ln(n)",
+        "steps": [
+          {"op": "ln(n)",      "cost": 1, "note": "1n — ln is a primitive ELC operation"},
+          {"op": "mul(n, ln_n)", "cost": 2, "note": "2n — product of two positive reals for n > 0"}
+        ],
+        "total_cost": 3,
+        "unit": "n",
+        "inside_ELC": true,
+        "justification": "ln(n) is the canonical ELC primitive (1n). Multiplication by n adds 2n. Product of analytic functions is analytic. Appears in merge sort, heap sort, FFT complexity.",
+        "domain": "n > 0 (algorithms have positive input size)"
+      },
+      {
+        "id": "CF2",
+        "name": "n^2",
+        "formula": "f(n) = n^2 = pow(n, 2)",
+        "steps": [
+          {"op": "pow(n, 2)", "cost": 3, "note": "3n — pow is a single call, degree-independent in v5"}
+        ],
+        "total_cost": 3,
+        "unit": "n",
+        "inside_ELC": true,
+        "justification": "n^2 = exp(2*ln(n)) for n > 0. SuperBEST v5 pow costs 3n regardless of exponent. Polynomial functions are ELC-native. Appears in bubble sort, insertion sort, matrix multiplication (naive).",
+        "domain": "n > 0",
+        "alt_decomposition": "exp(2*ln(n)) = ln(1n) + mul(2n) + exp(1n) = 4n via explicit ELC path; but pow(n,2) at 3n is cheaper per v5 rules"
+      },
+      {
+        "id": "CF3",
+        "name": "2^n",
+        "formula": "f(n) = 2^n = pow(2, n)",
+        "steps": [
+          {"op": "pow(2, n)", "cost": 3, "note": "3n — pow is constant-cost per call in v5; here base is constant 2"}
+        ],
+        "total_cost": 3,
+        "unit": "n",
+        "inside_ELC": true,
+        "justification": "2^n = exp(n * ln(2)) for all real n. ln(2) is a numeric constant (free). So: mul(n, ln2) = 2n + exp(1n) = 3n via explicit ELC path — same as direct pow. Exponential growth is the defining ELC pattern. Appears in subset enumeration, brute-force search.",
+        "domain": "all real n (but algorithm complexity: n >= 0)",
+        "alt_decomposition": "exp(n * ln(2)): ln(2) is constant (0n), mul(n, ln2) = 2n, exp = 1n → total 3n (matches pow cost)"
+      },
+      {
+        "id": "CF4",
+        "name": "n! (factorial)",
+        "formula": "f(n) = n! = Gamma(n+1)",
+        "exact_status": {
+          "inside_ELC": false,
+          "reason": "n! for integer n requires the Gamma function: n! = Gamma(n+1). The Gamma function Gamma(z) has poles at z = 0, -1, -2, ... (negative integers). While Gamma is meromorphic on C and analytic on R⁺, it is NOT in ELC(R) because it cannot be expressed as a finite composition of exp, ln, and arithmetic — it requires an improper integral definition. The exact integer factorial is also a discrete function when restricted to N.",
+          "flag": "OUTSIDE ELC(R) exactly. The Gamma function is a transcendental function beyond ELC."
+        },
+        "stirling_approximation": {
+          "formula": "n! ≈ sqrt(2*pi*n) * (n/e)^n  =  sqrt(2*pi*n) * exp(n*ln(n) - n)",
+          "inside_ELC": true,
+          "flag": "THIS IS AN APPROXIMATION. Valid asymptotically (n → ∞) but not exact for any finite n.",
+          "cost_breakdown": {
+            "step_1_sqrt_2pi_n": {
+              "desc": "sqrt(2*pi*n): 2*pi is a constant, so this is sqrt(const * n) = sqrt(n) * sqrt(2*pi)",
+              "ops": [
+                {"op": "mul(2pi, n)",     "cost": 2, "note": "2n — constant * n; 2*pi treated as numeric constant"},
+                {"op": "sqrt(result)",    "cost": 2, "note": "2n — sqrt is a 2n primitive in v5"}
+              ],
+              "subtotal": 4
+            },
+            "step_2_exp_part": {
+              "desc": "exp(n*ln(n) - n) = (n/e)^n",
+              "ops": [
+                {"op": "ln(n)",          "cost": 1, "note": "1n"},
+                {"op": "mul(n, ln_n)",   "cost": 2, "note": "2n — gives n*ln(n)"},
+                {"op": "sub(result, n)", "cost": 2, "note": "2n — n*ln(n) - n"},
+                {"op": "exp(result)",    "cost": 1, "note": "1n — exp(n*ln(n)-n) = (n/e)^n"}
+              ],
+              "subtotal": 6
+            },
+            "step_3_mul_parts": {
+              "op": "mul(sqrt_part, exp_part)",
+              "cost": 2,
+              "note": "2n — combine the two factors"
+            }
+          },
+          "total_stirling_cost": 12,
+          "unit": "n",
+          "accuracy": "Relative error O(1/n) — Stirling's approximation improves as n grows. For n=10: 3628800 exact vs 3598696 Stirling (0.83% error). For n=100: error < 0.08%."
+        },
+        "summary": "Exact n! is OUTSIDE ELC(R). Stirling approximation of n! is INSIDE ELC(R) at 12n total cost, but is an approximation. These are fundamentally different: one is a mathematical identity, the other is an asymptotic approximation.",
+        "use_cases": "n! appears in permutations, combinatorics, brute-force TSP. Stirling is used in statistical mechanics, asymptotic analysis, information theory (log n!)."
+      }
+    ]
+  },
+
+  "section_2_discrete_outside_ELC": {
+    "title": "Discrete Functions — OUTSIDE ELC(R)",
+    "central_reason": "ELC(R) consists exclusively of analytic functions: functions that are smooth (infinitely differentiable), have no jumps, no integer-valued outputs for real inputs, and equal their local Taylor series. Any function that is discontinuous, piecewise-constant, or integer-valued on a real domain violates analyticity and is therefore outside ELC(R).",
+    "functions": [
+      {
+        "id": "D1",
+        "name": "Ceiling function",
+        "formula": "ceil(x) = ⌈x⌉ = smallest integer >= x",
+        "inside_ELC": false,
+        "reason": "ceil(x) is piecewise constant with jump discontinuities at every integer. It has a derivative of 0 almost everywhere but is not differentiable at integers (left limit ≠ right limit). Analytic functions cannot have jump discontinuities. Any analytic function equal to ceil(x) on an interval would have to be a polynomial — but no polynomial matches ceil(x).",
+        "formal": "For any n in Z: lim_{x→n⁻} ceil(x) = n-1, but lim_{x→n⁺} ceil(x) = n. Jump of 1 at every integer. Not differentiable, hence not analytic.",
+        "ELC_flag": "OUTSIDE_ELC — discontinuous at all integers"
+      },
+      {
+        "id": "D2",
+        "name": "Floor function",
+        "formula": "floor(x) = ⌊x⌋ = largest integer <= x",
+        "inside_ELC": false,
+        "reason": "Same argument as ceil. floor(x) = ceil(x) - 1 (shifted by 1), so shares all discontinuities. Additionally, floor is the integer part function — it maps reals to integers, which is structurally incompatible with analytic real-to-real functions.",
+        "formal": "For any n in Z: lim_{x→n⁻} floor(x) = n-1, lim_{x→n⁺} floor(x) = n. Jump of 1 at every integer downward.",
+        "ELC_flag": "OUTSIDE_ELC — discontinuous at all integers"
+      },
+      {
+        "id": "D3",
+        "name": "Modular arithmetic",
+        "formula": "x mod p = x - p * floor(x/p)",
+        "inside_ELC": false,
+        "reason": "x mod p is a sawtooth function — periodic with period p, rising linearly then dropping discontinuously to 0 at each multiple of p. The discontinuous drops make it non-analytic. Also: x mod p involves floor(x/p) which is itself outside ELC (D2 above). Even without floor, the sawtooth shape has countably many discontinuities.",
+        "formal": "At x = k*p for integer k: lim_{x→(kp)⁻} (x mod p) = p, but (kp mod p) = 0. Jump of p at every multiple of p.",
+        "applications": "Cryptography, hash functions, cyclic groups, modular exponentiation — all involve mod and are therefore outside real ELC.",
+        "ELC_flag": "OUTSIDE_ELC — sawtooth discontinuities at all multiples of p"
+      },
+      {
+        "id": "D4",
+        "name": "Kronecker delta",
+        "formula": "delta(i,j) = 1 if i=j, else 0",
+        "inside_ELC": false,
+        "reason": "The Kronecker delta is a discrete, integer-valued function of discrete indices — it is not even a function of real variables in the standard sense. When extended to real arguments (as a piecewise function: 1 if x=y, 0 otherwise), it is discontinuous everywhere off the diagonal. No analytic function can equal 1 at all points x=y and 0 at all x≠y simultaneously.",
+        "distinction_from_dirac": "The Dirac delta δ(x) is a distribution, not a function — also outside ELC(R) for different reasons (it is not a proper function at all). The Kronecker delta is discrete; neither is in ELC(R).",
+        "ELC_flag": "OUTSIDE_ELC — discrete-valued, discontinuous, defined on discrete domain"
+      }
+    ],
+    "characterization_insight": {
+      "title": "THE KEY INSIGHT: ELC(R) = continuous mathematics; discrete math is largely outside",
+      "statement": "ELC(R) is the domain of smooth, analytic, non-oscillatory, non-discrete real-valued functions. The boundary between inside and outside ELC(R) tracks the boundary between continuous mathematics and discrete mathematics.",
+      "inside": [
+        "Polynomials (n^k via pow or exp/ln/mul)",
+        "Exponentials (e^x, a^x via exp)",
+        "Logarithms (ln(x), log_a(x))",
+        "Rational functions (quotients of polynomials, via div)",
+        "Products and compositions of the above",
+        "Physical rate laws, growth models, decay models",
+        "Sigmoid, softplus, and other smooth neural network activations"
+      ],
+      "outside": [
+        "All integer-valued functions of real arguments (floor, ceil, round, sign when defined piecewise)",
+        "Modular arithmetic (sawtooth shape)",
+        "Combinatorial functions: n!, C(n,k), etc. (exact, for integer n)",
+        "Discrete probability mass functions (Kronecker delta, indicator functions)",
+        "Trigonometric functions on R (infinitely many zeros — T01 criterion)",
+        "Piecewise-defined functions with finitely many pieces: max(0,x) = ReLU, abs(x)",
+        "Kolmogorov complexity K(x) — uncomputable entirely (Type B outside)"
+      ],
+      "nuance": "Some functions appear discrete but have ELC-amenable approximations: Stirling for n!, softplus for ReLU. The approximation is inside ELC; the exact function is outside. This distinction matters for algorithmic analysis."
+    }
+  },
+
+  "section_3_information_theory": {
+    "title": "Information Theory — SuperBEST v5 Update",
+    "note": "v5 key change: add=2n universally (ADD-T1). The add_gen vs add_pos distinction from v4 is eliminated. Shannon and KL divergence now have the same per-term structure (7N-2 for the neg-first strategy; 5N for the optimal direct-sum strategy in Shannon).",
+    "v4_to_v5_summary": "In v4, sign-definiteness drove costs: add_pos=3n (non-negative terms), add_gen=11n (mixed-sign terms). In v5, add=2n for ALL real x,y. This collapses the gap: KL divergence dropped from 16N-11 to 7N-2, matching Shannon entropy.",
+    "functions": [
+      {
+        "id": "IT1",
+        "name": "Shannon Entropy",
+        "formula": "H(X) = -sum_i p_i * ln(p_i)  =  sum_i p_i * (-ln(p_i))",
+        "inside_ELC": true,
+        "cost_formula_v5": "7N - 2  (neg-first strategy, as analyzed in INFO-1)",
+        "cost_formula_v5_optimal": "5N  (direct-sum strategy: compute p_i*ln(p_i) for each i, sum, then negate — optimal for N >= 3)",
+        "cost_formula_v4": "8N - 3",
+        "per_term_breakdown": {
+          "neg_first_strategy": [
+            {"op": "ln(p_i)",             "cost": 1},
+            {"op": "neg(ln_pi)",          "cost": 2},
+            {"op": "mul(p_i, neg_ln_pi)", "cost": 2}
+          ],
+          "per_term_total": "5n",
+          "additions": "(N-1) * 2n = 2N-2",
+          "grand_total": "5N + 2N-2 = 7N-2"
+        },
+        "direct_sum_strategy": {
+          "per_term": [{"op": "mul(p_i, ln(p_i))", "cost": "1+2=3n"}],
+          "per_term_total": "3n (= ln(1n) + mul(2n))",
+          "additions": "(N-1) * 2n = 2N-2",
+          "outer_neg": "2n",
+          "grand_total": "3N + 2N-2 + 2 = 5N",
+          "note": "Direct-sum is optimal in v5 for N >= 3 because the outer neg(2n) is paid once vs neg(2n) per-term in the neg-first strategy."
+        },
+        "spot_checks_v5": {
+          "N=2_binary":  "5*2 = 10n (direct-sum) / 7*2-2 = 12n (neg-first)",
+          "N=256_byte":  "5*256 = 1280n (direct-sum) / 7*256-2 = 1790n (neg-first)",
+          "v4_N=256":    "8*256-3 = 2045n"
+        },
+        "domain": "p_i in (0,1], sum(p_i) = 1. ln(p_i) in (-inf, 0].",
+        "ELC_flag": "INSIDE_ELC"
+      },
+      {
+        "id": "IT2",
+        "name": "Cross-Entropy Loss",
+        "formula": "H(P,Q) = -sum_i p_i * ln(q_i)",
+        "inside_ELC": true,
+        "cost_formula_v5": "7N - 2  (neg-first) / 5N (direct-sum, optimal for N >= 3)",
+        "cost_formula_v4": "8N - 3",
+        "note": "Identical structure to Shannon entropy — substitute q_i for p_i inside the ln. Zero ELC cost difference from Shannon. This is the standard ML training loss (cross-entropy loss for classification).",
+        "structural_isomorphism": "H(P,Q) and H(P,P) = H(P) have identical EML cost. The ML loss function IS the information-theoretic cross-entropy, same formula, same cost.",
+        "ELC_flag": "INSIDE_ELC"
+      },
+      {
+        "id": "IT3",
+        "name": "KL Divergence",
+        "formula": "D_KL(P||Q) = sum_i p_i * ln(p_i / q_i)",
+        "inside_ELC": true,
+        "cost_formula_v5": "7N - 2",
+        "cost_formula_v4": "16N - 11",
+        "per_term_breakdown": [
+          {"op": "div(p_i, q_i)",     "cost": 1, "note": "1n — ratio p_i/q_i > 0; div=1n in v5"},
+          {"op": "ln(div_result)",    "cost": 1, "note": "1n — ln of positive ratio"},
+          {"op": "mul(p_i, ln_ratio)","cost": 2, "note": "2n — term can be positive or negative"}
+        ],
+        "per_term_total": "4n",
+        "note_v5_parity": "v5 PARITY FINDING: KL divergence now costs the SAME as Shannon entropy (7N-2). In v4, KL was 16N-11 (2.3x Shannon) because mixed-sign terms required add_gen=11n. In v5, add=2n for all, so KL and Shannon are structurally equivalent. The entire v4 cost gap was an artifact of sign-definiteness accounting.",
+        "additions": "(N-1) * 2n = 2N-2",
+        "grand_total": "4N + 2N-2 = 6N-2... CORRECTION: per_term = div(1)+ln(1)+mul(2) = 4n, so 4N + 2(N-1) = 6N-2. But cross-checking with INFO-1 session: div in INFO-1 was counted at 2n. See note.",
+        "div_cost_note": "In SuperBEST v5: div=1n per the task specification. In INFO-1 file, div was listed as 2n in the operator table. Using task-specified v5: div=1n. Per-term cost: div(1n)+ln(1n)+mul(2n) = 4n. Total: 4N + 2(N-1) = 6N-2.",
+        "cost_formula_v5_with_1n_div": "6N - 2",
+        "ELC_flag": "INSIDE_ELC"
+      }
+    ],
+    "v5_parity_summary": "All three core information-theoretic loss functions (Shannon, cross-entropy, KL divergence) are now within the same order of cost in v5. The v4 KL penalty is gone. This is a structural consequence of ADD-T1: sign-definiteness no longer drives cost differences."
+  },
+
+  "section_4_neural_network_operations": {
+    "title": "Neural Network Operations — ELC Status and Costs",
+    "functions": [
+      {
+        "id": "NN1",
+        "name": "Sigmoid activation",
+        "formula": "sigma(x) = 1 / (1 + exp(-x))",
+        "inside_ELC": true,
+        "steps": [
+          {"op": "neg(x)",             "cost": 2, "note": "2n — compute -x"},
+          {"op": "exp(neg_x)",         "cost": 1, "note": "1n — exp(-x)"},
+          {"op": "add(1, exp_neg_x)",  "cost": 2, "note": "2n — 1 + exp(-x); both terms positive; add=2n v5"},
+          {"op": "recip(sum)",         "cost": 1, "note": "1n — 1/(1+exp(-x)); argument > 1 so always positive"}
+        ],
+        "total_cost": 6,
+        "unit": "n",
+        "note_from_task": "Task specifies 7n. Recount: neg(2) + exp(1) + add(2) + recip(1) = 6n. The discrepancy may come from whether div(1/(1+exp(-x))) is counted as div(1n) or recip(1n) + whether neg is included. Using recip=1n and neg=2n: total = 6n. Using div instead of recip: neg(2)+exp(1)+add(2)+div(1) = 6n. Either way: 6n.",
+        "clarification": "If 1 in the numerator is written as a literal (not a variable), it is a constant (0n). If it is treated as the constant function f=1 that must be evaluated: 0n anyway. Total: 2+1+2+1 = 6n.",
+        "ELC_justification": "sigma(x) = 1/(1+e^{-x}) is a composition of neg, exp, add, and recip — all ELC operations. sigma is smooth (infinitely differentiable), monotone, asymptotes to 0 and 1, no discontinuities. Classic ELC function.",
+        "ELC_flag": "INSIDE_ELC"
+      },
+      {
+        "id": "NN2",
+        "name": "Softmax with temperature scaling",
+        "formula": "softmax(x/T)_i = exp(x_i/T) / sum_j exp(x_j/T)",
+        "inside_ELC": true,
+        "temperature_preprocessing": {
+          "op": "div(x_i, T) for each i",
+          "cost_per_element": 1,
+          "note": "div=1n in v5; T is a positive constant parameter"
+        },
+        "softmax_body_per_element": [
+          {"op": "exp(x_i/T)",                    "cost": 1, "note": "1n per element"},
+          {"op": "sum_j exp(x_j/T)",              "cost": "2*(N-1) total for N elements", "note": "add=2n per addition"},
+          {"op": "div(exp_i, sum)",               "cost": 1, "note": "1n — output probability"}
+        ],
+        "total_cost_N_elements": {
+          "temperature_div": "N * 1n = N",
+          "exp_terms": "N * 1n = N",
+          "sum_additions": "2*(N-1)",
+          "output_divs": "N * 1n = N",
+          "grand_total": "N + N + 2(N-1) + N = 4N - 2"
+        },
+        "ELC_justification": "Softmax is a composition of div, exp, add, and div — all ELC operations. The temperature parameter T > 0 is a free parameter (0 cost). Output is a probability simplex; function is smooth everywhere.",
+        "ELC_flag": "INSIDE_ELC"
+      },
+      {
+        "id": "NN3",
+        "name": "ReLU activation",
+        "formula": "ReLU(x) = max(0, x)",
+        "inside_ELC": false,
+        "reason": "ReLU is piecewise linear with a kink at x=0: it equals 0 for x < 0 and x for x > 0. At x=0, the left derivative is 0 and the right derivative is 1 — so ReLU is not differentiable at x=0. A function must be infinitely differentiable (analytic) to be in ELC(R). ReLU fails this at x=0.",
+        "ELC_flag": "OUTSIDE_ELC — not differentiable at x=0, hence not analytic",
+        "smooth_approximation": {
+          "name": "Softplus",
+          "formula": "softplus(x) = ln(1 + exp(x))",
+          "inside_ELC": true,
+          "steps": [
+            {"op": "exp(x)",            "cost": 1, "note": "1n — exp(x) > 0 for all x"},
+            {"op": "add(1, exp_x)",     "cost": 2, "note": "2n — 1 + exp(x) > 1; add=2n v5"},
+            {"op": "ln(sum)",           "cost": 1, "note": "1n — ln of positive argument"}
+          ],
+          "total_cost": 4,
+          "unit": "n",
+          "note": "Softplus converges to ReLU as the scale parameter increases: softplus(x/beta)/beta → ReLU(x) as beta→0. It is a smooth, differentiable approximation INSIDE ELC(R) at 4n total cost.",
+          "ELC_flag": "INSIDE_ELC"
+        }
+      },
+      {
+        "id": "NN4",
+        "name": "Learning rate schedule — Constant",
+        "formula": "lr(t) = lr_0",
+        "inside_ELC": true,
+        "total_cost": 0,
+        "unit": "n",
+        "note": "lr_0 is a constant parameter. Zero computational nodes needed. Trivially inside ELC (constants are ELC).",
+        "ELC_flag": "INSIDE_ELC"
+      },
+      {
+        "id": "NN5",
+        "name": "Learning rate schedule — Exponential decay",
+        "formula": "lr(t) = lr_0 * exp(-alpha * t)",
+        "inside_ELC": true,
+        "steps": [
+          {"op": "mul(alpha, t)",      "cost": 2, "note": "2n — alpha is a constant parameter, t is the time variable"},
+          {"op": "neg(result)",        "cost": 2, "note": "2n — negate for decay: -alpha*t"},
+          {"op": "exp(neg_result)",    "cost": 1, "note": "1n — exp(-alpha*t) in (0,1)"},
+          {"op": "mul(lr_0, exp_val)", "cost": 2, "note": "2n — scale by initial learning rate (lr_0 is constant)"}
+        ],
+        "total_cost": 7,
+        "unit": "n",
+        "note_from_task": "Task gives 1+2+2=5n decomposition. Recount with full breakdown: mul(2n) + neg(2n) + exp(1n) + mul(2n) = 7n. If alpha*t treats alpha as a free constant (0n) and t as the variable, then: neg(alpha*t) requires treating alpha*t as a subexpression. If we fold alpha into a constant multiplier: neg(t) takes 2n, then mul(alpha, neg_t) = 2n, then exp = 1n, then mul(lr0, exp) = 2n → 7n. Alternatively if neg is skipped by absorbing the sign into -alpha: mul(-alpha, t) = 2n (with -alpha as constant) + exp(1n) + mul(lr0, exp) = 2n → 5n. The 5n reading from the task is likely using this constant-absorption strategy.",
+        "task_decomposition_5n": {
+          "reading": "mul(-alpha, t) where -alpha is a single precomputed constant (0n)",
+          "steps": [
+            {"op": "mul(neg_alpha_const, t)", "cost": 2, "note": "2n — -alpha*t; -alpha folded into constant"},
+            {"op": "exp(result)",             "cost": 1, "note": "1n — exp(-alpha*t)"},
+            {"op": "mul(lr_0, exp_val)",      "cost": 2, "note": "2n — lr_0 * exp(-alpha*t)"}
+          ],
+          "total": 5,
+          "note": "5n is correct if -alpha is treated as a single free constant (0n cost). Both 5n and 7n are valid depending on whether neg is counted as a separate node."
+        },
+        "ELC_justification": "Exponential decay is a composition of linear scaling, negation, exp, and scaling — all ELC operations. Output is smooth, positive, monotone decreasing. Classic ELC function.",
+        "ELC_flag": "INSIDE_ELC"
+      },
+      {
+        "id": "NN6",
+        "name": "Learning rate schedule — Cosine annealing",
+        "formula": "lr(t) = lr_min + 0.5 * (lr_max - lr_min) * (1 + cos(pi * t / T_max))",
+        "inside_ELC": false,
+        "reason": "Cosine annealing requires cos(pi * t / T_max). The cosine function is OUTSIDE real ELC(R) by the T01 criterion: cos(x) has infinitely many zeros on R (at x = pi/2 + k*pi for all integers k). An ELC(R) function has at most finitely many zeros. Therefore cos is outside ELC(R), and any formula requiring cos is outside ELC(R).",
+        "ELC_flag": "OUTSIDE_ELC — cos is outside real ELC (T01: infinitely many zeros)",
+        "flag": "COSINE ANNEALING IS OUTSIDE ELC(R). Flag this when using it in ELC-constrained contexts.",
+        "ELC_alternative": "Use exponential decay (NN5, 5n) as an ELC-amenable alternative to cosine annealing for smooth learning rate reduction."
+      }
+    ]
+  },
+
+  "section_5_two_types_of_outside": {
+    "title": "The Two Types of 'Outside ELC'",
+    "type_A": {
+      "label": "Computable but not ELC",
+      "description": "Functions that can be computed by finite algorithms (Turing machines, programs) but cannot be expressed as a finite composition of exp, ln, and arithmetic operations. They are 'outside ELC' in the complexity-theoretic sense but remain within the computability-theoretic boundary.",
+      "examples": [
+        {"function": "cos(x)", "reason": "Infinitely many zeros on R (T01 criterion). Can be computed by Taylor series or CORDIC algorithm. Computable but not ELC."},
+        {"function": "sin(x)", "reason": "Same as cos. Computable, not ELC."},
+        {"function": "ceil(x), floor(x)", "reason": "Computable by finite comparison and rounding. Discontinuous, not analytic, not ELC."},
+        {"function": "x mod p", "reason": "Computable by division and subtraction. Sawtooth discontinuities, not ELC."},
+        {"function": "n! exact", "reason": "Computable for integer n by multiplication loop. Requires Gamma function in general real setting. Not ELC."},
+        {"function": "Kronecker delta delta(i,j)", "reason": "Computable by comparison. Discrete-valued, not ELC."},
+        {"function": "ReLU(x) = max(0,x)", "reason": "Computable by if-then. Not differentiable at 0, not analytic, not ELC."}
+      ]
+    },
+    "type_B": {
+      "label": "Uncomputable entirely — outside all computable functions",
+      "description": "Functions that CANNOT be computed by any algorithm — they are not just outside ELC but outside the entire class of computable functions. This is a fundamentally stronger form of 'outside'. Kolmogorov complexity is the canonical example in CS theory.",
+      "examples": [
+        {
+          "function": "Kolmogorov complexity K(x)",
+          "definition": "K(x) = length of shortest program that outputs x on a fixed universal Turing machine",
+          "uncomputable": true,
+          "proof_sketch": "If K were computable, one could solve the halting problem: enumerate all strings by K-value, which would require deciding if programs halt. By reduction from the halting problem, K is uncomputable.",
+          "type": "Type B — outside ALL computable functions, not merely outside ELC",
+          "importance": "K(x) is a mathematically well-defined function but no algorithm can compute it. The set of values {K(x) : x in Sigma*} is computably enumerable (c.e.) but not decidable.",
+          "approximation": "K(x) can be APPROXIMATED from above: compress x with various compressors and take the best result. But the true K(x) is incomputable."
+        },
+        {
+          "function": "Halting problem H(p, x)",
+          "definition": "H(p,x) = 1 if program p halts on input x, else 0",
+          "uncomputable": true,
+          "type": "Type B — foundational uncomputable function (Turing 1936)"
+        },
+        {
+          "function": "Busy Beaver Sigma(n)",
+          "definition": "Sigma(n) = maximum number of 1s written by any halting n-state Turing machine",
+          "uncomputable": true,
+          "type": "Type B — grows faster than any computable function"
+        }
+      ],
+      "key_point": "Type B functions are OUTSIDE ELC for a completely different reason than Type A. Type A functions fail the analyticity/closure criterion. Type B functions fail computability itself — no amount of exp/ln/arithmetic would help because no finite algorithm of any kind can compute them."
+    },
+    "hierarchy": {
+      "title": "Hierarchy of Outside-ness",
+      "levels": [
+        {"level": 1, "class": "Inside ELC(R)",     "examples": ["exp(x)", "ln(x)", "n*ln(n)", "sigmoid", "softmax", "exponential decay LR"]},
+        {"level": 2, "class": "Computable, not ELC", "examples": ["cos(x)", "sin(x)", "floor(x)", "ceil(x)", "x mod p", "ReLU(x)", "n! exact"]},
+        {"level": 3, "class": "Uncomputable (Type B)", "examples": ["K(x) — Kolmogorov complexity", "H(p,x) — Halting problem", "Busy Beaver Sigma(n)"]}
+      ],
+      "containment": "ELC(R) ⊂ Computable ⊂ Total functions ⊂ Partial functions. Kolmogorov complexity K is not even a total computable function (no Turing machine computes it for all inputs)."
+    }
+  },
+
+  "summary_table": {
+    "title": "X5 — Master Summary",
+    "columns": ["id", "name", "formula", "cost_n", "inside_ELC", "flag"],
+    "rows": [
+      {"id": "CF1", "name": "n*ln(n)",               "formula": "n*ln(n)",                         "cost": "3n",    "inside_ELC": true,  "flag": ""},
+      {"id": "CF2", "name": "n^2",                   "formula": "pow(n,2)",                        "cost": "3n",    "inside_ELC": true,  "flag": ""},
+      {"id": "CF3", "name": "2^n",                   "formula": "pow(2,n) or exp(n*ln2)",          "cost": "3n",    "inside_ELC": true,  "flag": ""},
+      {"id": "CF4a","name": "n! exact",               "formula": "Gamma(n+1)",                      "cost": "N/A",   "inside_ELC": false, "flag": "OUTSIDE — Gamma function not ELC"},
+      {"id": "CF4b","name": "n! Stirling approx",     "formula": "sqrt(2*pi*n)*(n/e)^n",           "cost": "12n",   "inside_ELC": true,  "flag": "APPROXIMATION ONLY"},
+      {"id": "D1",  "name": "ceil(x)",               "formula": "ceil(x)",                         "cost": "N/A",   "inside_ELC": false, "flag": "OUTSIDE — jump discontinuities at integers"},
+      {"id": "D2",  "name": "floor(x)",              "formula": "floor(x)",                        "cost": "N/A",   "inside_ELC": false, "flag": "OUTSIDE — jump discontinuities at integers"},
+      {"id": "D3",  "name": "x mod p",               "formula": "x - p*floor(x/p)",               "cost": "N/A",   "inside_ELC": false, "flag": "OUTSIDE — sawtooth discontinuities"},
+      {"id": "D4",  "name": "Kronecker delta",       "formula": "delta(i,j)",                      "cost": "N/A",   "inside_ELC": false, "flag": "OUTSIDE — discrete domain, not analytic"},
+      {"id": "IT1", "name": "Shannon entropy",       "formula": "H = -sum p_i*ln(p_i)",            "cost": "5N (direct-sum, optimal)", "inside_ELC": true,  "flag": "v5: add=2n; optimal strategy shifts to direct-sum"},
+      {"id": "IT2", "name": "Cross-entropy loss",    "formula": "H(P,Q) = -sum p_i*ln(q_i)",       "cost": "5N (direct-sum, optimal)", "inside_ELC": true,  "flag": "Identical structure to Shannon"},
+      {"id": "IT3", "name": "KL divergence",         "formula": "D_KL = sum p_i*ln(p_i/q_i)",     "cost": "6N-2 (with div=1n)", "inside_ELC": true,  "flag": "v5 PARITY: now equals Shannon cost order"},
+      {"id": "NN1", "name": "Sigmoid",               "formula": "1/(1+exp(-x))",                   "cost": "6n",    "inside_ELC": true,  "flag": ""},
+      {"id": "NN2", "name": "Softmax(x/T)",          "formula": "exp(x_i/T)/sum exp(x_j/T)",      "cost": "4N-2n", "inside_ELC": true,  "flag": "T is free parameter (0n)"},
+      {"id": "NN3a","name": "ReLU",                  "formula": "max(0,x)",                        "cost": "N/A",   "inside_ELC": false, "flag": "OUTSIDE — not differentiable at x=0"},
+      {"id": "NN3b","name": "Softplus (ReLU approx)","formula": "ln(1+exp(x))",                   "cost": "4n",    "inside_ELC": true,  "flag": "Smooth ELC approximation to ReLU"},
+      {"id": "NN4", "name": "Constant LR",           "formula": "lr(t) = lr_0",                    "cost": "0n",    "inside_ELC": true,  "flag": ""},
+      {"id": "NN5", "name": "Exponential decay LR",  "formula": "lr_0*exp(-alpha*t)",              "cost": "5n",    "inside_ELC": true,  "flag": ""},
+      {"id": "NN6", "name": "Cosine annealing LR",   "formula": "lr_min + c*(1+cos(pi*t/T))",     "cost": "N/A",   "inside_ELC": false, "flag": "OUTSIDE — cos is outside real ELC (T01)"},
+      {"id": "KB1", "name": "Kolmogorov complexity", "formula": "K(x)",                            "cost": "N/A",   "inside_ELC": false, "flag": "TYPE B OUTSIDE — UNCOMPUTABLE ENTIRELY"}
+    ]
+  },
+
+  "discrete_continuous_boundary": {
+    "title": "The ELC Boundary: Continuous vs Discrete Mathematics",
+    "insight": "ELC(R) draws a precise line between continuous and discrete mathematics. This is not a coincidence — it reflects the definition: ELC(R) is closed under operations (exp, ln, +, -, *, /) that preserve analyticity. Analyticity requires smoothness everywhere, which rules out all discrete constructs.",
+    "continuous_mathematics_inside_ELC": {
+      "description": "Real analysis, calculus, smooth dynamics, exponential/power/logarithmic growth, probability densities (continuous), information theory on continuous distributions",
+      "examples": ["exp(x)", "ln(x)", "x^alpha", "x*ln(x)", "sigmoid", "Gaussian density (exp(-x^2/2)*const)", "Boltzmann weights"]
+    },
+    "discrete_mathematics_outside_ELC": {
+      "description": "Combinatorics, number theory, modular arithmetic, integer sequences, discrete probability, graph theory functions, cryptographic primitives",
+      "examples": ["n! exact", "C(n,k)", "x mod p", "GCD(a,b)", "floor/ceil", "Kronecker delta", "Dirichlet characters"]
+    },
+    "hybrid_territory": {
+      "description": "Functions with both continuous and discrete aspects. Often the continuous part is inside ELC; the discrete part is outside.",
+      "examples": [
+        "Stirling approximation: inside ELC (continuous approximation of discrete n!)",
+        "Softplus: inside ELC (continuous approximation of discrete-feeling ReLU)",
+        "Gamma function: outside ELC (continuous extension of n! — transcendental)",
+        "Poisson distribution PMF: p^k*e^{-lambda}/k! — the k! factor puts exact form outside ELC for integer k; the continuous envelope (replacing k! with Gamma) is also outside"
+      ]
+    }
+  }
+}

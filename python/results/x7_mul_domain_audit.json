@@ -1,0 +1,113 @@
+{
+  "session": "X7",
+  "title": "abs(x) Puzzle and mul Domain Audit",
+  "date": "2026-04-20",
+  "mul_2n_domain": "positive x only (x > 0); fails for x <= 0",
+  "mul_fails_at": [
+    {
+      "x": -3,
+      "y": 5,
+      "stage": "EXL(0,x)",
+      "error": "expected a positive input"
+    },
+    {
+      "x": -3,
+      "y": -5,
+      "stage": "EXL(0,x)",
+      "error": "expected a positive input"
+    },
+    {
+      "x": -0.5,
+      "y": 4,
+      "stage": "EXL(0,x)",
+      "error": "expected a positive input, got -0.5"
+    },
+    {
+      "x": 0,
+      "y": 5,
+      "stage": "EXL(0,x)",
+      "error": "expected a positive input"
+    }
+  ],
+  "mul_explanation": "ELAd(EXL(0,x), y) = exp(ln(x)) * y = x*y, but EXL(0,x) = ln(x) is undefined for x <= 0 in real arithmetic. There is NO single analytic real-ELC tree computing x*y for all reals. A branching strategy (6n + conditional) exists but is not a valid F16 tree.",
+  "abs_x_status": "outside real ELC",
+  "abs_x_explanation": "Two barriers: (1) mul(x,x) fails for x<0 in real ELC; (2) abs(x) has a non-differentiable corner at x=0, but every real ELC tree is C^inf analytic \u2014 so abs cannot be any real ELC tree regardless of cost. In complex ELC, abs(x) IS computable via sqrt(exp(2*ln(x))) using complex branch cuts.",
+  "general_mul_cost": "not achievable as a single real ELC tree for all reals",
+  "general_mul_cost_with_branch": "6n + conditional (3 sub-trees: neg, mul_pos, neg)",
+  "superbest_table_correction": "annotation needed",
+  "correction_detail": "superbest_v5_table.json entry for mul has notes='T10u, F16 optimal' but no domain annotation. Should add: domain='x > 0'. superbest.py ALREADY correctly annotates domain='x > 0' for mul. The JSON table (superbest_v5_table.json) is inconsistent \u2014 it omits the domain restriction.",
+  "operations_audit": {
+    "add": {
+      "domain": "all reals",
+      "test_passed": 20,
+      "test_failed": 0,
+      "verified": true,
+      "note": "All tested inputs passed"
+    },
+    "sub": {
+      "domain": "all reals",
+      "test_passed": 20,
+      "test_failed": 0,
+      "verified": true,
+      "note": "All tested inputs passed"
+    },
+    "mul": {
+      "domain": "x > 0 only",
+      "test_passed": 8,
+      "test_failed": 12,
+      "verified": true,
+      "note": "Correctly fails at x<=0: ['(-3,-3)', '(-3,-0.5)', '(-3,0.5)', '(-3,3)', '(-0.5,-3)']"
+    },
+    "div": {
+      "domain": "x > 0, y != 0",
+      "test_passed": 8,
+      "test_failed": 12,
+      "verified": true,
+      "note": "Correctly fails at x<=0: ['(-3,-3)', '(-3,-0.5)', '(-3,0.5)', '(-3,3)', '(-0.5,-3)']"
+    },
+    "neg": {
+      "domain": "all reals",
+      "test_passed": 5,
+      "test_failed": 0,
+      "verified": true,
+      "note": "All tested inputs passed"
+    },
+    "recip": {
+      "domain": "x != 0",
+      "test_passed": 4,
+      "test_failed": 0,
+      "verified": true,
+      "note": "All tested inputs passed"
+    },
+    "pow": {
+      "domain": "unknown",
+      "test_passed": 2,
+      "test_failed": 3,
+      "verified": false,
+      "note": "Correctly fails at x<=0: ['(-3,2)', '(-0.5,2)', '(0,2)']"
+    },
+    "sqrt": {
+      "domain": "x > 0 only",
+      "test_passed": 2,
+      "test_failed": 3,
+      "verified": true,
+      "note": "Correctly fails at x<=0: [-3, -0.5, 0]"
+    }
+  },
+  "key_findings": [
+    "mul = 2n is CORRECT but domain-restricted: x > 0 only",
+    "div = 2n is domain-restricted: x > 0 and y != 0",
+    "add = 2n holds for ALL reals (via LEDIV+DEML, proven in ADD-T1)",
+    "sub = 2n holds for ALL reals (via LEDIV+EML)",
+    "neg = 2n holds for ALL reals (DEML(x,1)=exp(-x)>0 always)",
+    "exp = 1n holds for ALL reals",
+    "recip = 1n holds for all x != 0",
+    "ln = 1n requires x > 0",
+    "sqrt = 2n requires x > 0",
+    "pow = 3n requires x > 0",
+    "abs(x) is OUTSIDE real ELC (non-differentiable at 0; analytic barrier)",
+    "abs(x) IS computable in complex ELC via sqrt(exp(2*clog(x)))"
+  ],
+  "implications_for_physics": "Most physics quantities (mass, length, energy, temperature) are positive-definite, so mul=2n applies directly. Mixed-sign quantities (sub results, signed charges, displacements) cannot use mul=2n directly \u2014 they need explicit sign handling or complex ELC. The ADD-T1 breakthrough (add=2n for all reals) is unaffected; DEML(y,1)=exp(-y)>0 always, so LEDIV is always safe.",
+  "superbest_v5_completeness_note": "The SuperBEST v5 table is correct in its node counts. The add=2n result is genuine and domain-universal. The mul=2n result is genuine but domain-restricted. The table entry for mul should be annotated 'x > 0' to prevent misapplication."
+}

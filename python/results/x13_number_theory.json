@@ -1,0 +1,175 @@
+{
+  "session": "X13",
+  "title": "ELC(ℝ) Classification of Number-Theoretic Functions",
+  "date": "2026-04-20",
+  "framework": {
+    "ELC_definition": "exp-log closure of rationals over ℝ",
+    "inside_ELC": "functions expressible using only: +, -, *, /, exp, log, rational constants, integer powers — analytic, non-oscillatory, defined on a real domain",
+    "outside_ELC": "functions that are integer-valued, discrete, require infinite series/products, require non-elementary transcendentals (Ei, Γ), or are defined only on ℕ",
+    "operator_cost_unit": "n = one primitive ELC operation",
+    "key_exclusion_criteria": [
+      "Discontinuous or integer-valued on its natural domain",
+      "Defined via an infinite (non-terminating) series or product",
+      "Requires non-elementary special functions (Ei, Γ, erf, …)",
+      "Defined only on discrete sets (ℤ, ℕ, primes)"
+    ]
+  },
+  "functions": [
+    {
+      "name": "Prime counting approximation",
+      "formula": "f(x) = x / ln(x)",
+      "classification": "INSIDE ELC",
+      "elc_status": "INSIDE",
+      "domain_note": "x > 1 (ln(x) > 0); continuous real function",
+      "role": "Leading term of the Prime Number Theorem; approximates π(x) from inside ELC",
+      "operator_breakdown": {
+        "log_x": 1,
+        "div_x_logx": 1
+      },
+      "operator_count_n": 2,
+      "notes": "Minimal ELC cost. div(x, ln(x)): ln = 1n, div = 1n → total 2n. Purely rational combination of x and log(x). No special functions. Benchmark for what 'continuous approximation of a discrete function' looks like inside ELC."
+    },
+    {
+      "name": "Logarithmic integral Li(x)",
+      "formula": "Li(x) = ∫₂ˣ dt / ln(t)",
+      "classification": "OUTSIDE ELC",
+      "elc_status": "OUTSIDE",
+      "domain_note": "x > 1",
+      "outside_reason": "Antiderivative is li(x) = Ei(ln(x)), where Ei (exponential integral) is a non-elementary function — not expressible in finite ELC terms",
+      "operator_count_n": null,
+      "notes": "The integrand 1/ln(t) is ELC (2n per the x/ln(x) pattern), but no finite ELC closed form for the definite integral exists. li(x) = Ei(ln(x)) and Ei is not in the Liouville elementary functions. Contrast with x/ln(x), which IS inside ELC. Li(x) is a better approximation to π(x) but at the cost of exiting ELC. Border case: partial ELC approximations (e.g., truncating the asymptotic series) are inside ELC for each fixed truncation."
+    },
+    {
+      "name": "Riemann zeta function ζ(s) — exact",
+      "formula": "ζ(s) = Σ_{n=1}^{∞} n^(−s)",
+      "classification": "OUTSIDE ELC (exact); INSIDE ELC (partial sums)",
+      "elc_status": "OUTSIDE",
+      "domain_note": "s ∈ ℂ with Re(s) > 1 for absolute convergence; s ∈ ℝ, s > 1 for real analysis",
+      "outside_reason": "Infinite series — no finite ELC tree can compute the exact value. Each term n^(−s) = exp(−s·log(n)) costs 3n, but the series has infinitely many terms.",
+      "operator_count_n": null,
+      "notes": "Each term: pow(n, −s) = exp(neg(mul(s, log(n)))) = 3n per term (log + mul + exp). Partial sum Σ_{n=1}^{N} n^(−s) IS inside ELC for any fixed N — it is a finite ELC expression of cost 3N·n + (N−1) additions. The exact ζ(s) requires N → ∞, so no finite ELC tree exists. Partial sums are valid ELC approximations."
+    },
+    {
+      "name": "Euler product for ζ(s)",
+      "formula": "ζ(s) = Π_{p prime} 1 / (1 − p^(−s))",
+      "classification": "OUTSIDE ELC",
+      "elc_status": "OUTSIDE",
+      "domain_note": "Re(s) > 1",
+      "outside_reason": "Infinite product over all primes. No finite ELC tree. Equivalent to the Dirichlet series representation — same obstruction.",
+      "operator_count_n": null,
+      "notes": "Each factor 1/(1 − p^(−s)) is ELC for any fixed prime p. The product over infinitely many primes cannot be reduced to a finite ELC expression. Finite truncations to the first K primes are inside ELC."
+    },
+    {
+      "name": "Möbius function μ(n)",
+      "formula": "μ(n) = 0 if n has a squared prime factor; (−1)^k if n is product of k distinct primes; 1 if n = 1",
+      "classification": "OUTSIDE ELC",
+      "elc_status": "OUTSIDE",
+      "domain_note": "n ∈ ℕ",
+      "outside_reason": "Integer-valued, defined on ℕ, discontinuous everywhere on ℝ. Requires knowing the prime factorisation of n — a discrete combinatorial property with no analytic ELC expression.",
+      "operator_count_n": null,
+      "notes": "Canonical example of a multiplicative number-theoretic function. Takes only values in {−1, 0, 1}. No continuous ELC function can interpolate μ between integers meaningfully. Appears in inclusion-exclusion and Möbius inversion — both discrete combinatorial operations, outside ELC."
+    },
+    {
+      "name": "Euler totient φ(n)",
+      "formula": "φ(n) = n · Π_{p | n} (1 − 1/p)",
+      "classification": "OUTSIDE ELC",
+      "elc_status": "OUTSIDE",
+      "domain_note": "n ∈ ℕ",
+      "outside_reason": "Integer-valued, defined on ℕ, requires knowing the prime factorisation of n. The finite product formula is elegant but depends on the discrete set of prime divisors of n, which is not an ELC-computable function of n.",
+      "operator_count_n": null,
+      "notes": "For any fixed n with known factorisation, the product Π(1 − 1/p) is a finite rational — INSIDE ELC at that point. But φ as a function of n is discontinuous on ℝ and has no analytic continuation. The primality-detecting step (which primes divide n) is outside ELC."
+    },
+    {
+      "name": "Fermat's little theorem a^(p−1) ≡ 1 (mod p)",
+      "formula": "a^(p−1) mod p = 1  for prime p, gcd(a,p)=1",
+      "classification": "OUTSIDE ELC",
+      "elc_status": "OUTSIDE",
+      "domain_note": "a ∈ ℤ, p prime",
+      "outside_reason": "Modular arithmetic is intrinsically discrete — the mod operation is a sawtooth function, discontinuous on ℝ. Fermat's little theorem is a statement in ℤ/pℤ, not a statement about an analytic function.",
+      "operator_count_n": null,
+      "notes": "a^(p−1) as a real power IS inside ELC (exp((p−1)·log(a)) for a > 0). But the ≡ 1 (mod p) assertion uses integer modular reduction — outside ELC. The theorem is a number-theoretic identity, not an ELC identity."
+    },
+    {
+      "name": "Von Mangoldt function Λ(n)",
+      "formula": "Λ(n) = ln(p) if n = p^k for prime p and k ≥ 1; 0 otherwise",
+      "classification": "OUTSIDE ELC",
+      "elc_status": "OUTSIDE",
+      "domain_note": "n ∈ ℕ",
+      "outside_reason": "Discrete function on ℕ. Although its nonzero values are ln(p) — an ELC-evaluatable number — the function itself is zero except on prime powers, making it discontinuous everywhere on ℝ.",
+      "operator_count_n": null,
+      "notes": "Λ(n) appears in the explicit formula for π(x) via ψ(x) = Σ_{n ≤ x} Λ(n). Despite outputting logarithms (ELC values), the indicator logic 'is n a prime power?' is not ELC-computable as a continuous function. The Chebyshev ψ function (below) is the summatory form."
+    },
+    {
+      "name": "Chebyshev theta function θ(x)",
+      "formula": "θ(x) = Σ_{p ≤ x} ln(p)",
+      "classification": "OUTSIDE ELC",
+      "elc_status": "OUTSIDE",
+      "domain_note": "x > 0, sum over primes p ≤ x",
+      "outside_reason": "Discrete sum over primes — a step function in x, jumping at each prime. Not analytic, not continuous. The summation range depends on prime-counting, which is outside ELC.",
+      "operator_count_n": null,
+      "notes": "θ(x) ~ x (Prime Number Theorem). Despite the asymptote being ELC, θ(x) itself is a staircase function. Each jump is log(p) — an ELC value — but the sum 'up to the largest prime ≤ x' uses the discrete primes, placing θ firmly outside ELC. The continuous analogue θ(x) ≈ x is inside ELC (trivially, cost 0)."
+    },
+    {
+      "name": "Harmonic numbers H_n",
+      "formula": "H_n = Σ_{k=1}^{n} 1/k  for integer n",
+      "classification": "INSIDE ELC (fixed integer n); OUTSIDE ELC (as function of n ∈ ℕ)",
+      "elc_status": "CONDITIONAL",
+      "domain_note": "n ∈ ℕ",
+      "outside_reason": "As a function of varying n, H_n is discrete and defined only on ℕ. No ELC expression produces H_n for general integer n.",
+      "operator_count_n": null,
+      "notes": "For any FIXED integer n, H_n = 1 + 1/2 + 1/3 + … + 1/n is a rational number — trivially inside ELC (a rational constant). For varying n: H_n ≈ ln(n) + γ (Euler–Mascheroni constant γ ≈ 0.5772). The approximation ln(n) + γ IS inside ELC (cost: log + add = 2n). γ itself is conjectured irrational but treated as a constant; however, γ is not known to be expressible in ELC. The harmonic series H_n as a function of discrete n is outside ELC; its continuous approximation ln(x) + γ is inside ELC (borderline: γ status).",
+      "conditional_note": "Fixed n: INSIDE (rational value). Varying n as a discrete function: OUTSIDE. Continuous approximation ln(x) + γ: INSIDE ELC (treating γ as a constant)."
+    }
+  ],
+  "summary_table": {
+    "INSIDE_ELC": [
+      "Prime counting approximation x/ln(x)  [2n]",
+      "Harmonic numbers H_n at any fixed integer n (rational value)"
+    ],
+    "OUTSIDE_ELC": [
+      "Logarithmic integral Li(x)  — antiderivative requires Ei (non-elementary)",
+      "Riemann zeta function ζ(s) exact  — infinite series",
+      "Euler product for ζ(s)  — infinite product over primes",
+      "Möbius function μ(n)  — discrete, integer-valued",
+      "Euler totient φ(n)  — discrete, integer-valued",
+      "Fermat's little theorem a^(p−1) ≡ 1 (mod p)  — modular arithmetic",
+      "Von Mangoldt function Λ(n)  — discrete, defined on prime powers only",
+      "Chebyshev theta θ(x)  — step function, prime-indexed sum"
+    ],
+    "CONDITIONAL_INSIDE": [
+      "ζ(s) partial sums to fixed N  — finite ELC tree, cost 3Nn + (N−1) additions",
+      "Euler product truncated to first K primes  — finite ELC",
+      "H_n for fixed integer n  — rational constant",
+      "Harmonic continuous approximation ln(x) + γ  — inside ELC treating γ as constant"
+    ]
+  },
+  "operator_cost_ranking": [
+    {"function": "x/ln(x)",                "n": 2,    "status": "INSIDE"},
+    {"function": "ln(x) + γ (H_n approx)", "n": 2,    "status": "INSIDE (approximation)"},
+    {"function": "1/n^s (single zeta term)","n": 3,    "status": "INSIDE (one term only)"},
+    {"function": "Li(x)",                   "n": null, "status": "OUTSIDE"},
+    {"function": "ζ(s) exact",              "n": null, "status": "OUTSIDE (infinite series)"}
+  ],
+  "key_finding": {
+    "structural_split": "Number-theoretic functions divide sharply into: (1) continuous approximations — inside ELC; (2) discrete/integer functions — outside ELC. This split IS the content of the Prime Number Theorem: π(x) is discrete (outside ELC) while its approximation x/ln(x) is the simplest possible ELC function (cost 2n).",
+    "continuous_approximation_boundary": {
+      "description": "The ELC-inside side of analytic number theory consists entirely of continuous approximations to discrete quantities.",
+      "examples": [
+        "π(x) ≈ x/ln(x)  [inside ELC, 2n]",
+        "π(x) ≈ Li(x)     [outside ELC — better approximation but non-elementary antiderivative]",
+        "H_n ≈ ln(n) + γ  [inside ELC — continuous interpolation of discrete harmonic sum]",
+        "ψ(x) ≈ x         [inside ELC — trivial, 0n]"
+      ],
+      "pattern": "Better approximations to discrete number-theoretic functions tend to exit ELC: x/ln(x) ∈ ELC, Li(x) ∉ ELC. The ELC approximation is always the coarser one."
+    },
+    "infinite_series_obstruction": "ζ(s), its Euler product, and all Dirichlet series are outside ELC because they are defined by infinite operations. No finite ELC tree can compute an infinite sum. Finite truncations are always inside ELC.",
+    "discreteness_obstruction": "μ(n), φ(n), Λ(n), θ(x) are outside ELC because they are defined on ℕ or depend on the discrete distribution of primes. Even when their values are ELC-computable numbers (e.g., Λ(p) = ln(p)), the selection logic (is n prime? is n a prime power?) is not an analytic ELC function.",
+    "pnt_connection": "The Prime Number Theorem π(x) ~ x/ln(x) bridges ELC and number theory: π(x) ∉ ELC (discrete), x/ln(x) ∈ ELC (2n cost). The theorem says the ratio → 1. ELC contains the asymptotic shadow of the discrete prime world.",
+    "elc_boundary_in_number_theory": "A number-theoretic quantity is inside ELC if and only if it is: (a) defined on a real domain (not just ℕ or primes), (b) analytic and non-oscillatory, and (c) expressible via a finite composition of +, −, ×, ÷, exp, log with rational constants. The main obstruction mechanisms are: infinite series/products, discrete domain, and non-elementary special functions (Ei, Γ)."
+  },
+  "connection_to_prior_sessions": {
+    "X11": "Probability distributions: the ELC/non-ELC split there was Γ in the normalisation constant. Here the split is discrete domain vs. continuous approximation — a different obstruction mechanism.",
+    "S93-S99": "Structural bounds and depth collapse work. Number-theoretic functions with infinite series (ζ) have infinite depth — they sit outside the bounded-depth ELC hierarchy entirely.",
+    "operator_counting": "x/ln(x) at 2n is one of the cheapest non-trivial ELC expressions identified across all sessions — cheaper than any probability PDF classified in X11."
+  }
+}

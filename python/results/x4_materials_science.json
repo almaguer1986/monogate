@@ -1,0 +1,470 @@
+{
+  "session": "X4",
+  "title": "Materials Science and Solid Mechanics — SuperBEST v5 ELC Cost Analysis",
+  "date": "2026-04-20",
+  "superBEST_v5_costs": {
+    "add": "2n",
+    "sub": "2n",
+    "mul": "2n",
+    "div": "1n",
+    "recip": "1n",
+    "neg": "2n",
+    "pow": "3n",
+    "exp": "1n",
+    "ln": "1n",
+    "sqrt": "2n",
+    "terminal_constant": 0,
+    "terminal_parameter": 0,
+    "note": "sqrt is a native op in v5 (cost 2n), cheaper than pow (cost 3n)"
+  },
+  "equations": [
+    {
+      "id": 1,
+      "name": "Hooke's law",
+      "formula": "σ = Eε",
+      "unfolded": {
+        "tree": [
+          "mul(E, ε)",
+          "  E (material parameter)  → cost 0",
+          "  ε (variable)            → cost 0",
+          "  mul(E, ε)               → cost 2"
+        ],
+        "node_costs": {
+          "mul(E,epsilon)": 2
+        },
+        "total": 2,
+        "breakdown": "2"
+      },
+      "folded": {
+        "strategy": "No folding possible; E is a free material parameter, ε is a free variable",
+        "total": 2,
+        "breakdown": "2 (same as unfolded)"
+      },
+      "dominant_op": "mul (the only operator)",
+      "notes": "Linear law — same structure as Hubble's law (v = H₀d) and Fick's first law. Minimal cost for a two-terminal product."
+    },
+    {
+      "id": 2,
+      "name": "Young's modulus",
+      "formula": "E = σ/ε",
+      "given": "σ and ε measured directly",
+      "unfolded": {
+        "tree": [
+          "div(σ, ε)",
+          "  σ (variable)  → cost 0",
+          "  ε (variable)  → cost 0",
+          "  div(σ, ε)     → cost 1"
+        ],
+        "node_costs": {
+          "div(sigma,epsilon)": 1
+        },
+        "total": 1,
+        "breakdown": "1"
+      },
+      "folded": {
+        "strategy": "No folding; both σ and ε are free variables",
+        "total": 1,
+        "breakdown": "1 (same as unfolded)"
+      },
+      "dominant_op": "div (the only operator)",
+      "notes": "Ratio form — minimal cost (1n). div is cheaper than mul in SuperBEST v5. Same cost as Wien's law (b/T)."
+    },
+    {
+      "id": 3,
+      "name": "Poisson's ratio",
+      "formula": "ν = −ε_t / ε_a",
+      "unfolded": {
+        "tree": [
+          "neg(div(ε_t, ε_a))",
+          "  div(ε_t, ε_a)  → cost 1",
+          "  neg(·)         → cost 2"
+        ],
+        "node_costs": {
+          "div(eps_t, eps_a)": 1,
+          "neg": 2
+        },
+        "total": 3,
+        "breakdown": "1 + 2 = 3"
+      },
+      "folded": {
+        "strategy": "No folding; both strain components are free variables. neg is unavoidable.",
+        "total": 3,
+        "breakdown": "3 (same as unfolded)"
+      },
+      "dominant_op": "neg (cost 2 > div cost 1)",
+      "notes": "The negative sign is definitional (Poisson's ratio is positive for most materials). neg is the dominant cost despite div being the structural op."
+    },
+    {
+      "id": 4,
+      "name": "Von Mises stress",
+      "formula": "σ_vm = √(σ₁² + σ₂² + σ₃² − σ₁σ₂ − σ₂σ₃ − σ₁σ₃)",
+      "unfolded": {
+        "tree": [
+          "sqrt(add(add(sub(sub(sub(add(pow(σ₁,2), pow(σ₂,2)), pow(σ₃,2)), ...))))",
+          "Step-by-step node count:",
+          "  pow(σ₁, 2)       → cost 3",
+          "  pow(σ₂, 2)       → cost 3",
+          "  pow(σ₃, 2)       → cost 3",
+          "  add(σ₁²,σ₂²)    → cost 2",
+          "  add(·,σ₃²)      → cost 2",
+          "  mul(σ₁,σ₂)      → cost 2",
+          "  mul(σ₂,σ₃)      → cost 2",
+          "  mul(σ₁,σ₃)      → cost 2",
+          "  sub(·,σ₁σ₂)     → cost 2",
+          "  sub(·,σ₂σ₃)     → cost 2",
+          "  sub(·,σ₁σ₃)     → cost 2",
+          "  sqrt(·)          → cost 2"
+        ],
+        "node_costs": {
+          "pow(sigma1,2)": 3,
+          "pow(sigma2,2)": 3,
+          "pow(sigma3,2)": 3,
+          "add(s1sq,s2sq)": 2,
+          "add(prev,s3sq)": 2,
+          "mul(sigma1,sigma2)": 2,
+          "mul(sigma2,sigma3)": 2,
+          "mul(sigma1,sigma3)": 2,
+          "sub(sum,s1s2)": 2,
+          "sub(prev,s2s3)": 2,
+          "sub(prev,s1s3)": 2,
+          "sqrt": 2
+        },
+        "total": 27,
+        "breakdown": "3 pows×3 + 2 adds×2 + 3 muls×2 + 3 subs×2 + 1 sqrt×2 = 9 + 4 + 6 + 6 + 2 = 27"
+      },
+      "folded": {
+        "strategy": "No constant folding possible — all six terms involve free variables σ₁,σ₂,σ₃. Structure is irreducible.",
+        "total": 27,
+        "breakdown": "27 (same as unfolded; no constants to absorb)"
+      },
+      "dominant_op": "pow (contributes 9 of 27n = 33%)",
+      "notes": "Von Mises is the most expensive equation in this set (27n). The three quadratic terms (pow×3=9n) and three cross-product multiplications (mul×3=6n) together account for 15n of 27n. sqrt in v5 costs 2n (native op), saving 1n vs. pow cost of 3n. Important for structural FEM solvers."
+    },
+    {
+      "id": 5,
+      "name": "Thermal expansion",
+      "formula": "ΔL = α·L·ΔT",
+      "unfolded": {
+        "tree": [
+          "mul(α, mul(L, ΔT))",
+          "  mul(L, ΔT)      → cost 2",
+          "  mul(α, mul(L,ΔT)) → cost 2"
+        ],
+        "node_costs": {
+          "mul(L,deltaT)": 2,
+          "mul(alpha,LdeltaT)": 2
+        },
+        "total": 4,
+        "breakdown": "2 + 2 = 4"
+      },
+      "folded": {
+        "strategy": "α is a material constant (cost 0); no further folding since L and ΔT are both free variables",
+        "total": 4,
+        "breakdown": "4 (same as unfolded; α already at cost 0 as terminal)"
+      },
+      "dominant_op": "mul chain (two mul nodes)",
+      "notes": "Two-multiplication chain. α is a material-specific terminal constant (cost 0). Same tree structure as any three-variable linear product."
+    },
+    {
+      "id": 6,
+      "name": "Creep rate (Norton-Arrhenius)",
+      "formula": "ε̇ = A·σⁿ·exp(−Q / RT)",
+      "unfolded": {
+        "tree": [
+          "mul(A, mul(pow(σ,n), exp(neg(div(Q, mul(R,T))))))",
+          "Power law term:",
+          "  pow(σ, n)              → cost 3",
+          "Arrhenius term:",
+          "  mul(R, T)              → cost 2",
+          "  div(Q, mul(R,T))       → cost 1",
+          "  neg(div(...))          → cost 2",
+          "  exp(neg(div(...)))     → cost 1",
+          "Assembly:",
+          "  mul(pow(σ,n), exp(...)) → cost 2",
+          "  mul(A, ·)               → cost 2"
+        ],
+        "node_costs": {
+          "pow(sigma,n)": 3,
+          "mul(R,T)": 2,
+          "div(Q,RT)": 1,
+          "neg(Q_over_RT)": 2,
+          "exp(neg_Q_RT)": 1,
+          "mul(pow,exp)": 2,
+          "mul(A,product)": 2
+        },
+        "total": 13,
+        "breakdown": "pow(3) + mul(2) + div(1) + neg(2) + exp(1) + mul(2) + mul(2) = 13"
+      },
+      "folded": {
+        "strategy": "A, R, Q are material/physical constants (cost 0). No structural fold possible since σ and T are free variables.",
+        "total": 13,
+        "breakdown": "13 (same as unfolded; A, R, Q already at cost 0 as terminals)"
+      },
+      "dominant_op": "pow (3n, single most expensive node); mul chain contributes 6n total",
+      "notes": "Compound structure: power law × Arrhenius. The Arrhenius branch (mul+div+neg+exp = 6n) and the power law branch (pow = 3n) are largely independent subtrees joined by mul. This is the most structurally complex equation in the set (two distinct physical mechanisms composed multiplicatively)."
+    },
+    {
+      "id": 7,
+      "name": "Fracture toughness (stress intensity factor)",
+      "formula": "K = σ·√(π·a)",
+      "unfolded": {
+        "tree": [
+          "mul(σ, sqrt(mul(π, a)))",
+          "  mul(π, a)          → cost 2",
+          "  sqrt(mul(π,a))     → cost 2",
+          "  mul(σ, sqrt(...))  → cost 2"
+        ],
+        "node_costs": {
+          "mul(pi,a)": 2,
+          "sqrt(pi_a)": 2,
+          "mul(sigma,sqrt)": 2
+        },
+        "total": 6,
+        "breakdown": "2 + 2 + 2 = 6"
+      },
+      "folded": {
+        "strategy": "π is a numeric constant (cost 0). If a (crack half-length) is fixed, fold √(πa) as a constant → only mul(σ, const) = 2n. Otherwise no fold.",
+        "tree_standard": [
+          "√π as const (π is terminal, cost 0); a is free",
+          "mul(σ, mul(sqrt_pi, sqrt(a)))  — alternative factoring",
+          "  sqrt_pi (= const √π, cost 0) → cost 0",
+          "  sqrt(a)                       → cost 2",
+          "  mul(sqrt_pi, sqrt(a))         → cost 2",
+          "  mul(σ, ·)                     → cost 2"
+        ],
+        "total_sqrt_pi_fold": 6,
+        "breakdown_sqrt_pi_fold": "Note: √(πa) ≠ √π·√a structurally in ELC unless explicitly split. Primary form: mul(π,a) then sqrt, total 6n.",
+        "total_a_fixed": 2,
+        "breakdown_a_fixed": "If a is a fixed geometric constant, fold √(πa) → 2n (just mul(σ,const))"
+      },
+      "dominant_op": "mul chain (three mul/sqrt nodes at equal cost 2n each)",
+      "notes": "sqrt costs 2n in SuperBEST v5 (native op). mul(π,a) = 2n because π is terminal (cost 0) but a is a free variable. Three equal-cost nodes at 2n each."
+    },
+    {
+      "id": 8,
+      "name": "Fatigue life (Basquin's law)",
+      "formula": "N_f = C·(Δσ)^b",
+      "unfolded": {
+        "tree": [
+          "mul(C, pow(Δσ, b))",
+          "  pow(Δσ, b)      → cost 3",
+          "  mul(C, pow(...)) → cost 2"
+        ],
+        "node_costs": {
+          "pow(delta_sigma,b)": 3,
+          "mul(C,pow)": 2
+        },
+        "total": 5,
+        "breakdown": "3 + 2 = 5"
+      },
+      "folded": {
+        "strategy": "C is a material constant (cost 0). b is a material exponent (cost 0 as terminal). No structural folding possible.",
+        "total": 5,
+        "breakdown": "5 (same as unfolded; C already terminal)"
+      },
+      "dominant_op": "pow (cost 3 of 5 total = 60%)",
+      "notes": "Power law form — same tree shape as A·xⁿ. b is the Basquin exponent (typically −0.05 to −0.12 for metals). pow dominates."
+    },
+    {
+      "id": 9,
+      "name": "Fourier heat conduction (and Fick's diffusion isomorphism)",
+      "formula": "q = −k·(dT/dx)   [isomorphic to: J = −D·(dC/dx)]",
+      "unfolded": {
+        "tree": [
+          "neg(mul(k, dT_dx))",
+          "  dT_dx (given as terminal gradient)  → cost 0",
+          "  mul(k, dT_dx)                       → cost 2",
+          "  neg(mul(...))                        → cost 2"
+        ],
+        "node_costs": {
+          "mul(k,dT_dx)": 2,
+          "neg": 2
+        },
+        "total": 4,
+        "breakdown": "2 + 2 = 4"
+      },
+      "folded": {
+        "strategy": "k (thermal conductivity) is a material constant (cost 0). dT/dx is a single input terminal (given). No folding possible.",
+        "total": 4,
+        "breakdown": "4 (same as unfolded)"
+      },
+      "dominant_op": "mul and neg at equal cost (2n each)",
+      "isomorphism": {
+        "partner_equation": "Fick's first law: J = −D·(dC/dx)",
+        "shared_tree": "neg(mul(material_constant, gradient_terminal))",
+        "cost_partner": 4,
+        "explanation": "Fourier and Fick share the identical ELC tree structure. Both are linear flux laws: flux = −(transport_coefficient)·(driving_gradient). Same cost (4n), same depth, same operator sequence. This is a cross-domain structural isomorphism."
+      },
+      "notes": "neg is unavoidable (the minus sign is physically meaningful — flux opposes gradient). If orientation is absorbed into sign of k/D by convention, cost drops to 2n (just mul). Reported as 4n (sign explicit)."
+    },
+    {
+      "id": 10,
+      "name": "Clausius-Mossotti relation",
+      "formula": "(ε−1) / (ε+2) = Nα / (3ε₀)",
+      "unfolded": {
+        "LHS": {
+          "tree": [
+            "div(sub(ε,1), add(ε,2))",
+            "  sub(ε, 1)           → cost 2",
+            "  add(ε, 2)           → cost 2",
+            "  div(sub, add)       → cost 1"
+          ],
+          "node_costs": {
+            "sub(epsilon,1)": 2,
+            "add(epsilon,2)": 2,
+            "div(sub,add)": 1
+          },
+          "total": 5,
+          "breakdown": "2 + 2 + 1 = 5"
+        },
+        "RHS": {
+          "tree": [
+            "div(mul(N,α), mul(3,ε₀))",
+            "  mul(N, α)           → cost 2",
+            "  mul(3, ε₀)          → cost 2  [3 and ε₀ are terminals, cost 0 each]",
+            "  div(mul,mul)        → cost 1"
+          ],
+          "node_costs": {
+            "mul(N,alpha)": 2,
+            "mul(3,eps0)": 2,
+            "div(num,den)": 1
+          },
+          "total": 5,
+          "breakdown": "2 + 2 + 1 = 5"
+        },
+        "combined_total": 10,
+        "combined_breakdown": "LHS 5n + RHS 5n = 10n"
+      },
+      "folded": {
+        "strategy": "RHS: fold 3ε₀ as single constant C₀ (cost 0) → div(mul(N,α), C₀) = mul(N,α)·recip(C₀) or equivalently mul(N, mul(α, recip(C₀))). With recip: 2+1+2=5n. Alternative: fold 1/(3ε₀) as const → mul(N, mul(α, const)) = 2+2=4n. LHS cannot fold; ε is the free variable.",
+        "LHS_total": 5,
+        "RHS_folded_total": 4,
+        "combined_folded": 9,
+        "breakdown_folded": "LHS 5n + RHS folded 4n = 9n"
+      },
+      "dominant_op": "sub and add (equal cost 2n, structural symmetry on LHS)",
+      "notes": "Perfect cost symmetry: both sides evaluate to 5n unfolded. LHS is an affine transformation of ε; RHS is a ratio of products. RHS allows minor fold (3ε₀ as constant). The equation expresses a deep physical symmetry (polarizability ↔ dielectric response) and it is reflected in the ELC cost symmetry."
+    }
+  ],
+  "summary_table": [
+    {
+      "id": 1,
+      "equation": "Hooke's law: σ = Eε",
+      "nodes_unfolded": 2,
+      "nodes_folded": 2,
+      "dominant_op": "mul",
+      "notes": "Minimal linear law — same tree as Hubble's law"
+    },
+    {
+      "id": 2,
+      "equation": "Young's modulus: E = σ/ε",
+      "nodes_unfolded": 1,
+      "nodes_folded": 1,
+      "dominant_op": "div",
+      "notes": "Cheapest possible non-trivial expression (1n)"
+    },
+    {
+      "id": 3,
+      "equation": "Poisson's ratio: ν = −ε_t/ε_a",
+      "nodes_unfolded": 3,
+      "nodes_folded": 3,
+      "dominant_op": "neg",
+      "notes": "neg (2n) dominates over div (1n)"
+    },
+    {
+      "id": 4,
+      "equation": "Von Mises stress: σ_vm = √(σ₁²+σ₂²+σ₃²−σ₁σ₂−σ₂σ₃−σ₁σ₃)",
+      "nodes_unfolded": 27,
+      "nodes_folded": 27,
+      "dominant_op": "pow (9n of 27n)",
+      "notes": "Most expensive in set; no constants to fold; sqrt=2n in v5 (saves 1n vs pow)"
+    },
+    {
+      "id": 5,
+      "equation": "Thermal expansion: ΔL = αLΔT",
+      "nodes_unfolded": 4,
+      "nodes_folded": 4,
+      "dominant_op": "mul chain",
+      "notes": "Two-mul chain; α is terminal"
+    },
+    {
+      "id": 6,
+      "equation": "Creep rate: ε̇ = A·σⁿ·exp(−Q/RT)",
+      "nodes_unfolded": 13,
+      "nodes_folded": 13,
+      "dominant_op": "pow (3n) + mul chain (6n)",
+      "notes": "Compound: power law × Arrhenius; two independent mechanism subtrees"
+    },
+    {
+      "id": 7,
+      "equation": "Fracture toughness: K = σ√(πa)",
+      "nodes_unfolded": 6,
+      "nodes_folded": 6,
+      "dominant_op": "mul chain (three 2n nodes)",
+      "notes": "sqrt=2n (v5 native); mul(π,a) required since a is free"
+    },
+    {
+      "id": 8,
+      "equation": "Fatigue life (Basquin): N_f = C·(Δσ)^b",
+      "nodes_unfolded": 5,
+      "nodes_folded": 5,
+      "dominant_op": "pow (3n of 5n = 60%)",
+      "notes": "Power law form; pow dominates"
+    },
+    {
+      "id": 9,
+      "equation": "Fourier heat / Fick's diffusion: q = −k·∇T (J = −D·∇C)",
+      "nodes_unfolded": 4,
+      "nodes_folded": 4,
+      "dominant_op": "mul and neg (equal, 2n each)",
+      "notes": "Isomorphic trees — same ELC cost (4n); cross-domain structural identity"
+    },
+    {
+      "id": 10,
+      "equation": "Clausius-Mossotti: (ε−1)/(ε+2) = Nα/(3ε₀)",
+      "nodes_unfolded": 10,
+      "nodes_folded": 9,
+      "dominant_op": "sub/add (LHS), mul (RHS)",
+      "notes": "5n each side — perfect cost symmetry; RHS folds to 4n with 3ε₀ as constant"
+    }
+  ],
+  "aggregate": {
+    "total_nodes_unfolded": 75,
+    "total_nodes_folded": 74,
+    "most_expensive": {"id": 4, "equation": "Von Mises stress", "cost": 27},
+    "least_expensive": {"id": 2, "equation": "Young's modulus", "cost": 1},
+    "folding_note": "Almost no constants to fold in materials equations — variables dominate all expressions"
+  },
+  "key_findings": [
+    {
+      "finding": "Von Mises exact cost",
+      "value": "27n",
+      "detail": "Breakdown: 3 pow×3n + 2 add×2n + 3 mul×2n + 3 sub×2n + 1 sqrt×2n = 9+4+6+6+2 = 27n. No constant folding possible — all six input terms are free variables. Most expensive single equation in continuum mechanics surveyed so far."
+    },
+    {
+      "finding": "Fourier = Fick isomorphism",
+      "value": "Both cost 4n",
+      "detail": "Fourier heat conduction (q = −k·∇T) and Fick's first law (J = −D·∇C) share the identical ELC tree: neg(mul(transport_coefficient, gradient)). Same operator sequence, same depth, same cost. This is a genuine cross-domain structural isomorphism — the ELC tree is transport-law-agnostic."
+    },
+    {
+      "finding": "Creep = power law × Arrhenius (compound structure)",
+      "value": "13n (7 operator nodes)",
+      "detail": "The creep rate equation decomposes into two independent mechanism subtrees: power law branch (pow(σ,n) = 3n) and Arrhenius branch (mul+div+neg+exp = 6n), joined by a final mul chain (2+2 = 4n). Total 13n. No other equation in this set has this two-mechanism compound structure."
+    },
+    {
+      "finding": "All materials equations are inside ELC(ℝ)",
+      "value": "No trig required",
+      "detail": "All 10 equations from continuum mechanics and solid mechanics — including stress, strain, fracture, fatigue, thermal, creep, and polarization — are expressible using only {mul, div, pow, exp, ln, neg, add, sub, sqrt}. No trigonometric or inverse-trig functions appear. This confirms that classical continuum mechanics is fully contained within ELC(ℝ)."
+    },
+    {
+      "finding": "Clausius-Mossotti LHS/RHS cost symmetry",
+      "value": "5n each side",
+      "detail": "Both sides of the Clausius-Mossotti relation independently evaluate to 5n unfolded. This reflects the structural balance of the physical law: an affine transformation of ε (LHS) is matched against a polarizability-density ratio (RHS), both of identical operator complexity."
+    },
+    {
+      "finding": "sqrt cost in SuperBEST v5",
+      "value": "2n (native op, cheaper than pow at 3n)",
+      "detail": "In v5, sqrt is a primitive at cost 2n rather than derived from pow (which costs 3n). This affects Von Mises (saves 1n) and Fracture toughness (saves 1n) vs. a v3/v4 analysis."
+    }
+  ]
+}

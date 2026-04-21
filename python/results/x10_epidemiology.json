@@ -1,0 +1,208 @@
+{
+  "session": "X10",
+  "topic": "Epidemiology equations and ELC classification",
+  "superBEST_v5_costs": {
+    "add": "2n", "sub": "2n", "mul": "2n", "div": "1n",
+    "recip": "1n", "pow": "3n", "exp": "1n", "ln": "1n", "neg": "2n"
+  },
+  "ELC_definition": "ELC(R) = analytic, non-oscillatory, non-discrete functions",
+  "equations": [
+    {
+      "id": 1,
+      "name": "SEIR model — dS/dt",
+      "formula": "dS/dt = -beta * S * I",
+      "cost_breakdown": {
+        "mul(S, I)": "2n",
+        "mul(beta, SI)": "2n",
+        "neg": "2n"
+      },
+      "total_cost": "6n",
+      "ELC_status": "INSIDE",
+      "notes": "Pure multiplicative interaction; all operations elementary"
+    },
+    {
+      "id": 2,
+      "name": "SEIR model — dE/dt",
+      "formula": "dE/dt = beta*S*I - sigma*E",
+      "cost_breakdown": {
+        "beta_S_I (from dS/dt)": "6n",
+        "mul(sigma, E)": "2n",
+        "sub": "2n"
+      },
+      "total_cost": "10n",
+      "ELC_status": "INSIDE",
+      "notes": "Reuses βSI term; sigma*E adds 2n, subtraction adds 2n"
+    },
+    {
+      "id": 3,
+      "name": "SEIR model — dI/dt",
+      "formula": "dI/dt = sigma*E - gamma*I",
+      "cost_breakdown": {
+        "mul(sigma, E)": "2n",
+        "mul(gamma, I)": "2n",
+        "sub": "2n"
+      },
+      "total_cost": "6n",
+      "ELC_status": "INSIDE",
+      "notes": "Two linear decay/growth terms minus each other"
+    },
+    {
+      "id": 4,
+      "name": "SEIR model — dR/dt",
+      "formula": "dR/dt = gamma*I",
+      "cost_breakdown": {
+        "mul(gamma, I)": "2n"
+      },
+      "total_cost": "2n",
+      "ELC_status": "INSIDE",
+      "notes": "Single multiplication; simplest compartment equation"
+    },
+    {
+      "id": 5,
+      "name": "SEIR model — full per-step cost",
+      "formula": "dS/dt + dE/dt + dI/dt + dR/dt",
+      "cost_breakdown": {
+        "dS/dt": "6n",
+        "dE/dt": "10n",
+        "dI/dt": "6n",
+        "dR/dt": "2n"
+      },
+      "total_cost": "24n",
+      "ELC_status": "INSIDE",
+      "notes": "Full SEIR step cost; all four compartments evaluated simultaneously"
+    },
+    {
+      "id": 6,
+      "name": "Basic reproduction number",
+      "formula": "R0 = beta * S0 / gamma",
+      "cost_breakdown": {
+        "mul(beta, S0)": "2n",
+        "div(result, gamma)": "1n"
+      },
+      "total_cost": "3n",
+      "ELC_status": "INSIDE",
+      "notes": "Key threshold parameter; purely rational in model parameters"
+    },
+    {
+      "id": 7,
+      "name": "Herd immunity threshold",
+      "formula": "p* = 1 - 1/R0",
+      "cost_breakdown": {
+        "recip(R0)": "1n",
+        "sub(1, result)": "2n"
+      },
+      "total_cost": "3n",
+      "ELC_status": "INSIDE",
+      "notes": "Derived from R0; fraction of population needing immunity"
+    },
+    {
+      "id": 8,
+      "name": "Case fatality rate",
+      "formula": "CFR = deaths / cases",
+      "cost_breakdown": {
+        "div(deaths, cases)": "1n"
+      },
+      "total_cost": "1n",
+      "ELC_status": "INSIDE",
+      "notes": "Simplest epidemiological ratio; pure division"
+    },
+    {
+      "id": 9,
+      "name": "Doubling time",
+      "formula": "t2 = ln(2) / r",
+      "cost_breakdown": {
+        "ln(2)": "1n (constant, can be precomputed)",
+        "div(ln2, r)": "1n"
+      },
+      "total_cost": "2n",
+      "ELC_status": "INSIDE",
+      "notes": "ln(2) is a fixed constant; only the division is runtime cost"
+    },
+    {
+      "id": 10,
+      "name": "Logistic epidemic curve",
+      "formula": "I(t) = K / (1 + exp(-r*(t - t0)))",
+      "cost_breakdown": {
+        "sub(t, t0)": "2n",
+        "mul(r, result)": "2n",
+        "neg": "2n",
+        "exp(result)": "1n",
+        "add(1, result)": "2n",
+        "div(K, result)": "1n"
+      },
+      "total_cost": "10n",
+      "ELC_status": "INSIDE",
+      "notes": "Sigmoid growth; fully closed-form; no special functions required"
+    },
+    {
+      "id": 11,
+      "name": "Serial interval distribution (gamma distribution PDF)",
+      "formula": "f(t) = t^(alpha-1) * exp(-t/beta) / (beta^alpha * Gamma(alpha))",
+      "cost_breakdown": {
+        "sub(alpha, 1)": "2n",
+        "pow(t, alpha-1)": "3n",
+        "div(t, beta)": "1n",
+        "neg": "2n",
+        "exp(result)": "1n",
+        "mul(pow, exp)": "2n",
+        "pow(beta, alpha)": "3n",
+        "Gamma(alpha)": "NON-ELEMENTARY",
+        "mul(beta_pow, Gamma)": "2n",
+        "div(numerator, denominator)": "1n"
+      },
+      "total_cost": "17n + Gamma(alpha)",
+      "ELC_status": "BOUNDARY — PARTIALLY OUTSIDE",
+      "notes": "The Gamma function Gamma(alpha) for non-integer alpha is non-elementary (transcends ELC). All other operations are INSIDE ELC. The ELC boundary passes directly through this distribution: the exponential and power terms are fine, but Gamma is not."
+    },
+    {
+      "id": 12,
+      "name": "Vaccine efficacy",
+      "formula": "VE = 1 - (ARV / ARU)",
+      "cost_breakdown": {
+        "div(ARV, ARU)": "1n",
+        "sub(1, result)": "2n"
+      },
+      "total_cost": "3n",
+      "ELC_status": "INSIDE",
+      "notes": "ARV = attack rate vaccinated, ARU = attack rate unvaccinated"
+    },
+    {
+      "id": 13,
+      "name": "Force of infection",
+      "formula": "lambda = beta * I / N",
+      "cost_breakdown": {
+        "div(I, N)": "1n",
+        "mul(beta, result)": "2n"
+      },
+      "total_cost": "3n",
+      "ELC_status": "INSIDE",
+      "notes": "Per-capita infection pressure; rational combination of parameters"
+    },
+    {
+      "id": 14,
+      "name": "Effective reproduction number",
+      "formula": "Rt = R0 * S / N",
+      "cost_breakdown": {
+        "div(S, N)": "1n",
+        "mul(R0, result)": "2n"
+      },
+      "total_cost": "3n",
+      "ELC_status": "INSIDE",
+      "notes": "Time-varying version of R0; tracks epidemic trajectory in real time"
+    }
+  ],
+  "summary": {
+    "equations_analyzed": 14,
+    "inside_ELC": 13,
+    "outside_ELC": 0,
+    "boundary_cases": 1,
+    "cost_range": "1n (CFR) to 24n (full SEIR step)",
+    "boundary_case": "Serial interval gamma distribution PDF — Gamma(alpha) for non-integer alpha is non-elementary"
+  },
+  "key_finding": {
+    "title": "Deterministic/stochastic boundary in epidemiology",
+    "description": "Deterministic compartmental models (SIR, SEIR) and closed-form summary statistics (R0, Rt, herd immunity, VE, CFR, doubling time, logistic curve) are entirely INSIDE ELC. The ELC boundary appears precisely at stochastic/distributional models that require the Gamma function for non-integer shape parameters. The serial interval distribution is the canonical example: its exponential and power-law components are ELC-valid, but Gamma(alpha) for real non-integer alpha is non-elementary.",
+    "implication": "ELC separates deterministic epidemic dynamics from distributional epidemic statistics. Moment-based approximations (using integer-alpha Gamma, which reduces to factorials) would restore ELC membership.",
+    "ELC_outside_reason": "Gamma function is analytic but non-elementary — it cannot be expressed as a finite composition of SuperBEST v5 operators for general non-integer arguments"
+  }
+}

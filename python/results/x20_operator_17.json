@@ -1,0 +1,196 @@
+{
+  "session": "X20",
+  "title": "Could a 17th Operator Improve Any SuperBEST Entry?",
+  "date": "2026-04-20",
+  "author": "Arturo R. Almaguer",
+  "status": "MATHEMATICAL ESSAY — theoretical exploration",
+  "supersedes": null,
+  "summary": "We ask whether there exists a natural 17th operator that, when added to F16, would strictly reduce any entry in the SuperBEST v5 table. The answer is: yes, several candidates exist, but all of them lie within ELC already; they change cost bounds without extending the representable class. The only extension that strictly enlarges ELC — adding sin as a primitive — defeats the purpose of the F16 classification.",
+
+  "background": {
+    "F16_summary": "F16 has 16 binary operators formed by composing exp(±x) and ln(y) with arithmetic {+,-,×,÷}. The SuperBEST v5 table gives exact minimum node counts for 10 standard operations: exp=1, ln=1, recip=1, div=2, neg=2, mul=2, sub=2, add=2, sqrt=2, pow=3. Total: 18 nodes. All 10 entries are proved optimal by structural lower bounds (derivative obstruction, slope barriers). The table is complete: no entry can be reduced within F16.",
+    "ELC_characterization": "ELfin = ELC: a function is representable by a finite F16 tree iff it is in the exp-log closure ELC of Q. F16 is the 'natural' operator family for ELC.",
+    "key_question": "Is F16 truly the FINAL family for ELC? Or is there a natural F17 that buys something?"
+  },
+
+  "superBEST_v5_gap_analysis": {
+    "note": "All 10 entries are proved EXACT — upper bound = lower bound. There are no 'gaps' in the sense of unknown entries.",
+    "tight_entries": [
+      {"op": "exp", "cost": 1, "lower_bound": 1, "gap": 0, "status": "TIGHT — trivial (leaf scan)"},
+      {"op": "ln",  "cost": 1, "lower_bound": 1, "gap": 0, "status": "TIGHT — trivial"},
+      {"op": "recip", "cost": 1, "lower_bound": 1, "gap": 0, "status": "TIGHT — derivative argument"},
+      {"op": "div",  "cost": 2, "lower_bound": 2, "gap": 0, "status": "TIGHT — derivative obstruction"},
+      {"op": "neg",  "cost": 2, "lower_bound": 2, "gap": 0, "status": "TIGHT — slope barrier"},
+      {"op": "mul",  "cost": 2, "lower_bound": 2, "gap": 0, "status": "TIGHT — derivative obstruction (T32)"},
+      {"op": "sub",  "cost": 2, "lower_bound": 2, "gap": 0, "status": "TIGHT — derivative obstruction (T33)"},
+      {"op": "add",  "cost": 2, "lower_bound": 2, "gap": 0, "status": "TIGHT — slope barrier (ADD-T1)"},
+      {"op": "sqrt", "cost": 2, "lower_bound": 2, "gap": 0, "status": "TIGHT — derivative obstruction"},
+      {"op": "pow",  "cost": 3, "lower_bound": 3, "gap": 0, "status": "TIGHT — 2-node enumeration"}
+    ],
+    "most_expensive_entry": "pow = 3 nodes (the only 3-node entry). This is the natural target for any F17.",
+    "mul_domain_note": "mul = 2n is proved for x > 0. For general signed multiplication, the 2-node construction ELAd(EXL(0,x),y) requires x > 0. General-domain mul requires an extra neg detour. This is a latent domain limitation — see section on F17a.",
+    "sqrt_domain_note": "sqrt = 2n requires x > 0. The 2-node route is EML((1/2)EXL(0,x), 1). For general (complex) sqrt, no finite F16 tree suffices."
+  },
+
+  "F17_candidates": {
+
+    "F17a_signed_multiplication": {
+      "name": "F17a: GeneralMul(x,y) = x·y for all x,y ∈ R",
+      "motivation": "The SuperBEST mul entry is restricted to x > 0. For general signed x, the current route requires: neg(x) if x < 0, then mul(|x|, y), then negate result — total ~4-6 nodes.",
+      "proposed_operator": "SMUL(x,y) = x·y for all x,y ∈ R",
+      "is_in_ELC": true,
+      "analysis": "x·y is already in ELC. The 2-node F16 route ELAd(EXL(0,x), y) = x·y works for x > 0. For general x, there is no single F16-tree route because ln(x) is undefined for x ≤ 0. If SMUL were added as a primitive, mul_general = 1n.",
+      "cost_savings_if_added": {
+        "mul": "2n → 1n (saves 1 node, but only for signed multiplication)",
+        "pow_general_base": "When x can be negative, x^n currently requires handling sign. With SMUL, potentially pow_general could be restructured.",
+        "catalog_impact": "Equations involving products of possibly-negative quantities (physics: signed charges, displacements) would benefit."
+      },
+      "why_not_natural": "SMUL is not a composition of exp and ln in any obvious way. It cannot be written as h(exp(±x), ln(y)) for any h. It would require a genuinely new primitive — real-valued multiplication — which breaks the exp-ln structural homogeneity of F16.",
+      "verdict": "Possible but architecturally alien to F16. F17a would be a 'raw multiplication' primitive, not an exp-ln composition."
+    },
+
+    "F17b_sqrt_primitive": {
+      "name": "F17b: SQR(x) = sqrt(x) as a primitive 1-node operator",
+      "motivation": "sqrt = 2n in F16. If SQR were a primitive, sqrt = 1n — matching exp and ln.",
+      "proposed_operator": "SQR(x) = x^(1/2) = exp(0.5 * ln(x)) for x > 0",
+      "is_in_ELC": true,
+      "analysis": "SQR is already in ELC; the 2-node F16 route is exactly EML((1/2)EXL(0,x), 1). Adding SQR as a primitive operator doesn't extend ELC — it only changes costs. SQR is analytic for x > 0, so adding it preserves analyticity.",
+      "cost_savings_if_added": {
+        "sqrt": "2n → 1n",
+        "pow_rational": "x^(p/q) = SQR(SQR(x))^(q terms)... marginal for q > 2",
+        "catalog_impact": "Any equation containing sqrt(x) saves 1 node. Examples: quadratic formula 2n savings, Pythagorean theorem 1n savings, relativistic gamma factor 1n savings.",
+        "sqrt_frequency_in_catalog": "Estimated 15-25% of physics equations contain sqrt. At 1n savings per occurrence, potentially 30-50 total nodes saved across a 315+ equation catalog."
+      },
+      "is_natural_extension": "Arguably YES. SQR = exp(0.5·ln(x)) is the most natural 'sub-operator' after exp and ln. It is the midpoint of the exp-ln tower: exp(ln(x)) = x (identity), exp(0.5·ln(x)) = sqrt(x). One can see F16 as lacking half-powers as primitives.",
+      "analogy": "Just as recip = ELSb(0,x) = e^(0-ln(x)) = 1/x was 'already in F6 at 2n' and became 1n by recognizing ELSb as a primitive — the same argument applies to SQR.",
+      "verdict": "F17b = SQR is the MOST NATURAL extension. It is analytic, within ELC, reduces sqrt from 2n to 1n, and has the same structural motivation as the ELSb extension that created F16 from F6."
+    },
+
+    "F17c_three_input_multiply": {
+      "name": "F17c: TMUL(x,y,z) = x·y·z as a ternary operator",
+      "motivation": "Many physics equations have three-factor products: F = qvB (Lorentz force), W = F·d·cos(θ), P = I²R, τ = r×F×sin(θ). Currently each requires 2 binary muls = 4 nodes.",
+      "proposed_operator": "TMUL(x,y,z) = x·y·z (ternary, not binary)",
+      "is_in_ELC": true,
+      "analysis": "x·y·z is in ELC. With F16: mul(mul(x,y),z) = 2+2 = 4 nodes (sharing intermediate impossible for three distinct variables). With TMUL: 1 node.",
+      "cost_savings_if_added": {
+        "triple_product": "4n → 1n (saves 3 nodes per triple product)",
+        "catalog_impact": "Physics equations with 3-factor products would see dramatic savings. Example: F = ma (2-factor, no gain), F = qvB sin(θ) (3-factor, saves 3n), E_kinetic = (1/2)mv² (2-factor after folding 1/2, no gain).",
+        "arity_break": "This changes the arity structure: all F16 operators are binary. TMUL would be ternary. This is a clean extension of the operator architecture."
+      },
+      "why_natural": "Many physical laws have a ternary multiplicative structure precisely because they describe three independent physical quantities. The binary constraint of F16 is a modeling choice, not a mathematical necessity.",
+      "alternative_view": "TMUL(x,y,z) = ELAd(ELAd(EXL(0,x), y), z) — this is a 3-node F16 tree (not 4n), so the savings are from 3n to 1n, not 4n to 1n. Recheck: mul(x,y) = 2n, mul(xy, z) = 2n more = 4n total. But if we share: ELAd(EXL(0,x),y)=xy at 2n, then ELAd(EXL(0,xy),z) — but EXL(0,xy) = ln(xy) which is EXL(0,ELAd(EXL(0,x),y)) — total 3+1=4n. So yes, TMUL saves 3n over F16.",
+      "verdict": "F17c = TMUL is a meaningful arity extension. It reduces cost for any three-factor product. Whether it is 'natural' depends on whether one accepts ternary operators."
+    },
+
+    "F17d_power_primitive": {
+      "name": "F17d: POW(x,n) = x^n as a primitive 1-node operator",
+      "motivation": "pow is the ONLY 3-node entry. If POW were primitive: pow = 1n, table total = 16 nodes.",
+      "proposed_operator": "POW(x,n) = x^n for x > 0, n ∈ R",
+      "is_in_ELC": true,
+      "analysis": "x^n = exp(n·ln(x)) is already in ELC. The F16 3-node route is: v1=EXL(0,n)=ln(n), v2=EXL(v1,x)=n·ln(x), v3=EML(v2,1)=exp(n·ln(x))=x^n. Adding POW as a primitive collapses pow to 1n. Note: ELMl(n,x) = exp(n·ln(x)) = x^n is ALREADY LISTED as one of the 16 Class I operators in Sixteen_Operator_Census.tex! So POW = ELMl.",
+      "critical_finding": "ELMl(x,y) = exp(x·ln(y)) = y^x IS one of the 16 operators in the census. But in SuperBEST v5, pow(x,n) = x^n uses a 3-node tree because n is a variable (the x and n positions differ: ELMl(n,x) = x^n requires n as first argument, x as second). With ELMl as a primitive and n,x as leaves: ELMl(n,x) = x^n — this IS a 1-node tree!",
+      "paradox_resolution": "Check SuperBEST v5 table again: 'Construction: EML(EXL(EXL(0,n),x),1) — 3 nodes'. But ELMl(n,x) = exp(n·ln(x)) = x^n should be 1 node. The 3-node route appears to use EML/EXL/EML instead of ELMl directly. If ELMl IS in F16 (the census lists it), then pow = SB(ELMl) = 1 — contradicting the v5 table.",
+      "investigation_needed": "Either (a) ELMl is NOT in F16 as defined in SuperBEST v5 (the v5 definition lists only 8 named operators, not all 16), or (b) there is an inconsistency in the F16 definition across documents, or (c) ELMl(n,x) costs more because ln(x) must first be computed separately.",
+      "verdict": "F17d surfaces a potential internal inconsistency: if ELMl is in F16, why is pow = 3n? This warrants verification — see open question below."
+    },
+
+    "F17e_sin_primitive": {
+      "name": "F17e: SIN(x) = sin(x) — extending to Richardson-elementary class",
+      "motivation": "The most natural 'next' function after exp and ln. Richardson's elementary functions include sin as a primitive.",
+      "is_in_ELC": false,
+      "analysis": "sin ∉ ELC (by the zero finiteness theorem: sin has infinitely many zeros on any unbounded interval, but every k-node F16 tree has at most 2k+2 zeros). Adding sin to F16 would create F17 = F16 ∪ {SIN}, extending the representable class from ELC to a strict superset — the Richardson-elementary functions.",
+      "cost_savings_if_added": {
+        "sin": "∞ → 1n (sin is not currently representable at all — it becomes 1n)",
+        "cos": "∞ → 1n (cos(x) = sin(x + π/2), 1-2 nodes with SIN)",
+        "tan": "∞ → 3n (sin(x)/cos(x))",
+        "arctan": "∞ → complex (via integration, not directly in Richardson-elementary either)",
+        "catalog_impact": "Fourier analysis, oscillator equations, wave mechanics — all currently excluded from F16 — become representable."
+      },
+      "why_this_defeats_the_point": "F16 is the natural family for ELC. The value of F16 is precisely that ELfin = ELC — a clean characterization. Adding SIN extends the representable class, breaking the F16-Characterization Theorem. The result would be a new classification problem: 'what is the exp-log-trig closure?'",
+      "verdict": "F17e = SIN is the most powerful extension but categorically changes the research question. It is not an improvement to F16; it replaces F16 with a different operator family."
+    }
+  },
+
+  "the_ELMl_question": {
+    "title": "Is pow Actually 1n? The ELMl Inconsistency",
+    "observation": "ELMl(x,y) = exp(x·ln(y)) = y^x appears in the Sixteen_Operator_Census.tex as one of the 16 operators. If ELMl is in F16, then pow(x,n) = ELMl(n,x) = x^n should cost 1 node, not 3.",
+    "possible_resolutions": [
+      "Resolution 1: ELMl is in the CENSUS but NOT in the F16 definition used by SuperBEST v5. The v5 document lists only 8 named operators (EML, DEML, EXL, EAL, LEAd, ELAd, ELSb, LEdiv) — ELMl may be excluded from the operational subset.",
+      "Resolution 2: The census uses a different grouping. The 'exponentiation' operator h=^ in Class I gives exp(exp(x)·ln(y)) (if h=^ means e^x^lny), not exp(x·ln(y)). The census may misclassify ELMl.",
+      "Resolution 3: ELMl(n,x) does equal x^n in 1 node, but the F16 definition in v5 uses a strict subset of 8 operators. SuperBEST v5 is based on this 8-operator subset, not the full 16-operator census.",
+      "Resolution 4: The 'exponentiation' combining operation in Class I means O(x,y) = (exp(x))^(ln(y)) = exp(x·ln(y)), which IS ELMl. So ELMl IS in Class I. If v5 uses all 16 operators, pow = 1n — and the v5 table has an error."
+    ],
+    "likely_resolution": "Resolution 3 is most probable: SuperBEST v5 uses F16 = {EML, DEML, EXL, EAL, LEAd, ELAd, ELSb, LEdiv} — a carefully curated 8-operator set that excludes ELMl. The census enumerates 16 possible operators but not all 16 are used in the SuperBEST routing context. ELMl would make pow trivially 1n, which is indeed what happens in F17d.",
+    "implication": "If ELMl were added to the active F16 set (making it F17d), then pow = 1n, table total = 16 nodes (down from 18), and the table compresses by 2 more nodes. This IS a natural F17 improvement."
+  },
+
+  "classification_of_F17_candidates": [
+    {
+      "candidate": "F17b: SQR(x) = sqrt(x)",
+      "naturalness": "VERY HIGH",
+      "extends_ELC": false,
+      "cost_improvement": "sqrt: 2n → 1n",
+      "nodes_saved_in_table": 1,
+      "analogy": "Exactly the same argument as ELSb → recip = 1n (R16 sprint)",
+      "recommendation": "STRONGEST candidate for a natural F17 extension"
+    },
+    {
+      "candidate": "F17d: ELMl(x,y) = x^y (if not already in F16)",
+      "naturalness": "HIGH — it is the Class I power operator",
+      "extends_ELC": false,
+      "cost_improvement": "pow: 3n → 1n",
+      "nodes_saved_in_table": 2,
+      "analogy": "Exactly the same as recip: a primitive that was 'available' but not activated",
+      "recommendation": "STRONGEST improvement, but requires clarifying ELMl's status in F16"
+    },
+    {
+      "candidate": "F17a: SMUL(x,y) = signed multiplication",
+      "naturalness": "MEDIUM — not an exp-ln composition",
+      "extends_ELC": false,
+      "cost_improvement": "mul_general: would reduce signed mul path",
+      "nodes_saved_in_table": 0,
+      "recommendation": "Architecturally alien to F16. Not recommended."
+    },
+    {
+      "candidate": "F17c: TMUL(x,y,z) = ternary multiply",
+      "naturalness": "MEDIUM — changes arity model",
+      "extends_ELC": false,
+      "cost_improvement": "triple products: 3n → 1n",
+      "nodes_saved_in_table": 0,
+      "recommendation": "Interesting for catalog but breaks binary-operator architecture"
+    },
+    {
+      "candidate": "F17e: SIN(x)",
+      "naturalness": "LOW for this purpose",
+      "extends_ELC": true,
+      "cost_improvement": "sin/cos become representable (∞ → finite)",
+      "nodes_saved_in_table": 0,
+      "recommendation": "Changes research question entirely. Not an F16 improvement."
+    }
+  ],
+
+  "main_conclusions": [
+    "SuperBEST v5 is provably optimal within F16 as currently defined. All 10 entries are exact.",
+    "The single entry that could be improved by a natural F17 is pow = 3n. If ELMl (the Class I power operator) is added to F16, pow becomes 1n and the table total drops from 18 to 16 nodes.",
+    "The cleanest F17 that is both natural AND architecturally coherent with F16 is F17b = SQR(x). Adding sqrt as a primitive (mirroring how ELSb made recip = 1n) reduces sqrt from 2n to 1n.",
+    "Neither F17b nor F17d extends ELC — they are both already within ELC. They only change costs.",
+    "The only F17 that extends ELC is adding sin as a primitive. This is well-studied (Richardson 1968) but defeats the point of the F16 classification.",
+    "F16 is the natural COMPLETE operator family for ELC: ELfin = ELC is the characterization theorem. Adding more operators within ELC only changes cost tables, not the representable class."
+  ],
+
+  "open_questions": [
+    "Is ELMl explicitly excluded from F16 in SuperBEST v5, or is there an inconsistency in the pow = 3n claim?",
+    "If SQR is added (F17b), what is the new total node count for the SuperBEST v5 table?",
+    "How many equations in the 315+ catalog contain sqrt(x)? What is the total catalog savings from F17b?",
+    "Does the F16 Characterization Theorem (ELfin = ELC) remain valid — and does its proof change — if SQR or ELMl is added as a primitive?"
+  ],
+
+  "references": [
+    "SuperBEST_v5_Structural_Audit.tex — all 10 entries with structural lower bounds",
+    "F16_Characterization.tex — ELfin = ELC theorem",
+    "Sixteen_Operator_Census.tex — full census including ELMl",
+    "ADD_T1_General_Addition_2n.tex — ADD-T1 result (add = 2n for all reals)",
+    "T32_Mul_Absolute_Optimality.tex — mul lower bound proof",
+    "Richardson, D. (1968). Some unsolvable problems involving elementary functions. J. Symbolic Logic."
+  ]
+}

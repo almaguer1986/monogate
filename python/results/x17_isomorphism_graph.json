@@ -1,0 +1,2969 @@
+{
+  "metadata": {
+    "session": "X17",
+    "title": "Isomorphism Graph of Equations",
+    "date": "2026-04-20",
+    "method": "Canonical tree form = operator sequence ignoring variable names; edges = same canonical tree"
+  },
+  "nodes": 116,
+  "edges": 85,
+  "n_components": 75,
+  "n_isolated": 54,
+  "isomorphism_classes": [
+    {
+      "tree": "MUL",
+      "size": 7,
+      "members": [
+        {
+          "id": "B01",
+          "name": "Malthus recursion N(t+1)=lambda*N(t)",
+          "domain": "Biology"
+        },
+        {
+          "id": "B02",
+          "name": "Enzyme turnover v=k_cat*[E]",
+          "domain": "Biology"
+        },
+        {
+          "id": "B04",
+          "name": "Hooke's law sigma=E*epsilon",
+          "domain": "Materials Science"
+        },
+        {
+          "id": "B05",
+          "name": "Hubble's law v=H0*d",
+          "domain": "Astrophysics"
+        },
+        {
+          "id": "B06",
+          "name": "Ohm's law V=I*R",
+          "domain": "Electromagnetism"
+        },
+        {
+          "id": "B07",
+          "name": "Newton's second law F=m*a",
+          "domain": "Classical Mechanics"
+        },
+        {
+          "id": "B09",
+          "name": "SEIR dR/dt = gamma*I",
+          "domain": "Epidemiology"
+        }
+      ],
+      "domains": [
+        "Astrophysics",
+        "Biology",
+        "Classical Mechanics",
+        "Electromagnetism",
+        "Epidemiology",
+        "Materials Science"
+      ],
+      "cross_domain": true
+    },
+    {
+      "tree": "DIV",
+      "size": 7,
+      "members": [
+        {
+          "id": "D02",
+          "name": "Young's modulus E=sigma/eps",
+          "domain": "Materials Science"
+        },
+        {
+          "id": "D03",
+          "name": "Wien's displacement law lambda_max=b/T",
+          "domain": "Astrophysics"
+        },
+        {
+          "id": "D04",
+          "name": "Curie law chi=C/T",
+          "domain": "Electromagnetism"
+        },
+        {
+          "id": "D05",
+          "name": "Perpetuity PV=C/r",
+          "domain": "Economics"
+        },
+        {
+          "id": "D06",
+          "name": "Subduction velocity v=d/t",
+          "domain": "Geology"
+        },
+        {
+          "id": "D07",
+          "name": "Distribution coefficient Kd=Cs/Cw",
+          "domain": "Geology"
+        },
+        {
+          "id": "D08",
+          "name": "Case fatality rate CFR=deaths/cases",
+          "domain": "Epidemiology"
+        }
+      ],
+      "domains": [
+        "Astrophysics",
+        "Economics",
+        "Electromagnetism",
+        "Epidemiology",
+        "Geology",
+        "Materials Science"
+      ],
+      "cross_domain": true
+    },
+    {
+      "tree": "MUL_EXP_NEG_MUL",
+      "size": 5,
+      "members": [
+        {
+          "id": "A01",
+          "name": "Arrhenius rate constant",
+          "domain": "Chemistry"
+        },
+        {
+          "id": "A03",
+          "name": "Radioactive decay / first-order kinetics",
+          "domain": "Chemistry/Biology"
+        },
+        {
+          "id": "A05",
+          "name": "Exponential decay N0*exp(-lambda*t)",
+          "domain": "Biology"
+        },
+        {
+          "id": "A08",
+          "name": "One-compartment PK C(t)=C0*exp(-k*t)",
+          "domain": "Biology/Pharmacology"
+        },
+        {
+          "id": "A11",
+          "name": "Radioactive decay geochronology N(t)=N0*exp(-lambda*t)",
+          "domain": "Geology"
+        }
+      ],
+      "domains": [
+        "Biology",
+        "Biology/Pharmacology",
+        "Chemistry",
+        "Chemistry/Biology",
+        "Geology"
+      ],
+      "cross_domain": true
+    },
+    {
+      "tree": "MUL_LN_DIV",
+      "size": 4,
+      "members": [
+        {
+          "id": "L04",
+          "name": "KL divergence D_KL=sum p*ln(p/q)",
+          "domain": "Information Theory"
+        },
+        {
+          "id": "L08",
+          "name": "Nernst equation E=(RT/nF)*ln([ox]/[red])",
+          "domain": "Chemistry"
+        },
+        {
+          "id": "L14",
+          "name": "Decibel scale dB=20*ln(A/A0)/ln(10)",
+          "domain": "Acoustics"
+        },
+        {
+          "id": "U12",
+          "name": "Nernst (single-ion) E=(RT/F)*ln([ion]o/[ion]i)",
+          "domain": "Biology"
+        }
+      ],
+      "domains": [
+        "Acoustics",
+        "Biology",
+        "Chemistry",
+        "Information Theory"
+      ],
+      "cross_domain": true
+    },
+    {
+      "tree": "NEG_MUL",
+      "size": 3,
+      "members": [
+        {
+          "id": "B03",
+          "name": "Fick's first law J=-D*(dc/dx)",
+          "domain": "Biology/Physics"
+        },
+        {
+          "id": "B08",
+          "name": "Heat flow Fourier's law q=-k*(dT/dx)",
+          "domain": "Geology/Physics"
+        },
+        {
+          "id": "U13",
+          "name": "Fourier heat conduction q=-k*(dT/dx)",
+          "domain": "Physics"
+        }
+      ],
+      "domains": [
+        "Biology/Physics",
+        "Geology/Physics",
+        "Physics"
+      ],
+      "cross_domain": true
+    },
+    {
+      "tree": "DIV_LN",
+      "size": 3,
+      "members": [
+        {
+          "id": "L09",
+          "name": "Doubling time t_d=ln(2)/r",
+          "domain": "Biology/Epidemiology"
+        },
+        {
+          "id": "L10",
+          "name": "Half-life t_1/2=ln(2)/lambda",
+          "domain": "Biology/Physics"
+        },
+        {
+          "id": "L13",
+          "name": "Prime counting approx f(x)=x/ln(x)",
+          "domain": "Number Theory"
+        }
+      ],
+      "domains": [
+        "Biology/Epidemiology",
+        "Biology/Physics",
+        "Number Theory"
+      ],
+      "cross_domain": true
+    },
+    {
+      "tree": "MUL_POW",
+      "size": 3,
+      "members": [
+        {
+          "id": "P01",
+          "name": "Allometric scaling B=B0*M^alpha",
+          "domain": "Biology"
+        },
+        {
+          "id": "P02",
+          "name": "Basquin fatigue law sigma=C*N^(-b)",
+          "domain": "Materials Science"
+        },
+        {
+          "id": "P03",
+          "name": "Freundlich isotherm q=Kf*C^(1/n)",
+          "domain": "Geology"
+        }
+      ],
+      "domains": [
+        "Biology",
+        "Geology",
+        "Materials Science"
+      ],
+      "cross_domain": true
+    },
+    {
+      "tree": "SUB_MUL",
+      "size": 3,
+      "members": [
+        {
+          "id": "P05",
+          "name": "Gutenberg-Richter log10(N)=a-b*M",
+          "domain": "Geology"
+        },
+        {
+          "id": "Lin01",
+          "name": "Gibbs free energy dG=dH-T*dS",
+          "domain": "Chemistry"
+        },
+        {
+          "id": "Lin05",
+          "name": "SGD parameter update theta=theta-alpha*grad",
+          "domain": "Neuroscience/ML"
+        }
+      ],
+      "domains": [
+        "Chemistry",
+        "Geology",
+        "Neuroscience/ML"
+      ],
+      "cross_domain": true
+    },
+    {
+      "tree": "SQRT_DIV_MUL",
+      "size": 3,
+      "members": [
+        {
+          "id": "SQ01",
+          "name": "Orbital velocity v=sqrt(GM/r)",
+          "domain": "Astrophysics"
+        },
+        {
+          "id": "SQ02",
+          "name": "Escape velocity v_esc=sqrt(2GM/r)",
+          "domain": "Astrophysics"
+        },
+        {
+          "id": "SQ03",
+          "name": "Skin depth delta=sqrt(2*rho/(omega*mu))",
+          "domain": "Electromagnetism"
+        }
+      ],
+      "domains": [
+        "Astrophysics",
+        "Electromagnetism"
+      ],
+      "cross_domain": true
+    },
+    {
+      "tree": "EXP_NEG_MUL",
+      "size": 2,
+      "members": [
+        {
+          "id": "A02",
+          "name": "Boltzmann weight",
+          "domain": "Statistical Mechanics"
+        },
+        {
+          "id": "D01",
+          "name": "Boltzmann ratio N2/N1=exp(-dE/kT)",
+          "domain": "Chemistry"
+        }
+      ],
+      "domains": [
+        "Chemistry",
+        "Statistical Mechanics"
+      ],
+      "cross_domain": true
+    },
+    {
+      "tree": "MUL_EXP_MUL",
+      "size": 2,
+      "members": [
+        {
+          "id": "A04",
+          "name": "Exponential growth N0*exp(r*t)",
+          "domain": "Biology"
+        },
+        {
+          "id": "A06",
+          "name": "Continuous compounding A=P*exp(rt)",
+          "domain": "Economics"
+        }
+      ],
+      "domains": [
+        "Biology",
+        "Economics"
+      ],
+      "cross_domain": true
+    },
+    {
+      "tree": "MUL_MUL",
+      "size": 2,
+      "members": [
+        {
+          "id": "B10",
+          "name": "Beer-Lambert A=epsilon*c*l",
+          "domain": "Biology/Optics"
+        },
+        {
+          "id": "B11",
+          "name": "Second-order rate r=k[A][B]",
+          "domain": "Chemistry"
+        }
+      ],
+      "domains": [
+        "Biology/Optics",
+        "Chemistry"
+      ],
+      "cross_domain": true
+    },
+    {
+      "tree": "NEG_MUL_MUL_LN",
+      "size": 2,
+      "members": [
+        {
+          "id": "L06",
+          "name": "Helmholtz free energy A=-kT*ln(Z)",
+          "domain": "Chemistry"
+        },
+        {
+          "id": "L07",
+          "name": "dG=-RT*ln(K)",
+          "domain": "Chemistry"
+        }
+      ],
+      "domains": [
+        "Chemistry"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "DIV_ADD_EXP_NEG_MUL_SUB",
+      "size": 2,
+      "members": [
+        {
+          "id": "S03",
+          "name": "Logistic growth N(t)=K/(1+exp(-r*(t-t0)))",
+          "domain": "Biology"
+        },
+        {
+          "id": "S04",
+          "name": "Logistic epidemic curve I(t)=K/(1+exp(-r*(t-t0)))",
+          "domain": "Epidemiology"
+        }
+      ],
+      "domains": [
+        "Biology",
+        "Epidemiology"
+      ],
+      "cross_domain": true
+    },
+    {
+      "tree": "ADD_EXP_NEG_MUL",
+      "size": 2,
+      "members": [
+        {
+          "id": "S06",
+          "name": "Partition function denominator Z=sum_i exp(-E_i/kT)",
+          "domain": "Statistical Mechanics"
+        },
+        {
+          "id": "T03",
+          "name": "Partition function 2-level Z=1+exp(-dE/kT)",
+          "domain": "Chemistry"
+        }
+      ],
+      "domains": [
+        "Chemistry",
+        "Statistical Mechanics"
+      ],
+      "cross_domain": true
+    },
+    {
+      "tree": "MUL_DIV_ADD",
+      "size": 2,
+      "members": [
+        {
+          "id": "S08",
+          "name": "Michaelis-Menten v=Vmax*[S]/(Km+[S])",
+          "domain": "Biology/Chemistry"
+        },
+        {
+          "id": "H02",
+          "name": "Michaelis-Menten (equivalent)",
+          "domain": "Biology"
+        }
+      ],
+      "domains": [
+        "Biology",
+        "Biology/Chemistry"
+      ],
+      "cross_domain": true
+    },
+    {
+      "tree": "DIV_SUB",
+      "size": 2,
+      "members": [
+        {
+          "id": "Lin04",
+          "name": "Batch normalization x-hat=(x-mu)/sigma",
+          "domain": "Neuroscience/ML"
+        },
+        {
+          "id": "Lin06",
+          "name": "Sharpe ratio S=(Rp-Rf)/sigma_p",
+          "domain": "Economics"
+        }
+      ],
+      "domains": [
+        "Economics",
+        "Neuroscience/ML"
+      ],
+      "cross_domain": true
+    },
+    {
+      "tree": "NEG_MUL_SUB_RECIP_RECIP",
+      "size": 2,
+      "members": [
+        {
+          "id": "VT01",
+          "name": "Van't Hoff integrated ln(K2/K1)=-(dH/R)*(1/T2-1/T1)",
+          "domain": "Chemistry"
+        },
+        {
+          "id": "VT02",
+          "name": "Clausius-Clapeyron ln(P2/P1)=-(dHvap/R)*(1/T2-1/T1)",
+          "domain": "Chemistry"
+        }
+      ],
+      "domains": [
+        "Chemistry"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "DIV_POW_ADD",
+      "size": 2,
+      "members": [
+        {
+          "id": "CI02",
+          "name": "Present value PV=FV/(1+r)^n",
+          "domain": "Economics"
+        },
+        {
+          "id": "CI03",
+          "name": "Inflation adjustment Real=Nominal/(1+pi)^n",
+          "domain": "Economics"
+        }
+      ],
+      "domains": [
+        "Economics"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "DIV_MUL_MUL_POW",
+      "size": 2,
+      "members": [
+        {
+          "id": "C01",
+          "name": "Coulomb's law F=k*q1*q2/r^2",
+          "domain": "Electromagnetism"
+        },
+        {
+          "id": "C04",
+          "name": "Schwarzschild radius Rs=2GM/c^2",
+          "domain": "Astrophysics"
+        }
+      ],
+      "domains": [
+        "Astrophysics",
+        "Electromagnetism"
+      ],
+      "cross_domain": true
+    },
+    {
+      "tree": "MUL_MUL_POW",
+      "size": 2,
+      "members": [
+        {
+          "id": "E01",
+          "name": "Capacitor energy U=(1/2)*C*V^2",
+          "domain": "Electromagnetism"
+        },
+        {
+          "id": "E02",
+          "name": "Inductance energy U=(1/2)*L*I^2",
+          "domain": "Electromagnetism"
+        }
+      ],
+      "domains": [
+        "Electromagnetism"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "EXP_NEG_MUL_MUL",
+      "size": 1,
+      "members": [
+        {
+          "id": "A07",
+          "name": "Beer-Lambert transmittance T=exp(-epsilon*c*l)",
+          "domain": "Biology/Optics"
+        }
+      ],
+      "domains": [
+        "Biology/Optics"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "MUL_MUL_EXP_SUB_MUL",
+      "size": 1,
+      "members": [
+        {
+          "id": "A09",
+          "name": "Synaptic alpha function I(t)=gmax*(t/tau)*exp(1-t/tau)",
+          "domain": "Neuroscience"
+        }
+      ],
+      "domains": [
+        "Neuroscience"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "MUL_MUL_EXP_NEG_MUL_EXP_NEG_MUL",
+      "size": 1,
+      "members": [
+        {
+          "id": "A10",
+          "name": "Cable equation V(x,t)=V0*exp(-x/lambda)*exp(-t/tau)",
+          "domain": "Neuroscience"
+        }
+      ],
+      "domains": [
+        "Neuroscience"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "SUB_DIV",
+      "size": 1,
+      "members": [
+        {
+          "id": "D09",
+          "name": "Vaccine efficacy VE=1-ARV/ARU",
+          "domain": "Epidemiology"
+        }
+      ],
+      "domains": [
+        "Epidemiology"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "MUL_LN",
+      "size": 1,
+      "members": [
+        {
+          "id": "L01",
+          "name": "Boltzmann entropy S=k_B*ln(Omega)",
+          "domain": "Chemistry"
+        }
+      ],
+      "domains": [
+        "Chemistry"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "NEG_LN",
+      "size": 1,
+      "members": [
+        {
+          "id": "L02",
+          "name": "pH=-log10[H+]",
+          "domain": "Chemistry"
+        }
+      ],
+      "domains": [
+        "Chemistry"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "NEG_MUL_LN",
+      "size": 1,
+      "members": [
+        {
+          "id": "L03",
+          "name": "Shannon entropy H=-sum p*ln(p)",
+          "domain": "Information Theory"
+        }
+      ],
+      "domains": [
+        "Information Theory"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "NEG_ADD_MUL_LN_MUL_LN",
+      "size": 1,
+      "members": [
+        {
+          "id": "L05",
+          "name": "Binary cross-entropy L=-(y*ln(yhat)+(1-y)*ln(1-yhat))",
+          "domain": "ML"
+        }
+      ],
+      "domains": [
+        "ML"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "NEG_MUL_ADD_MUL_LN_MUL_LN",
+      "size": 1,
+      "members": [
+        {
+          "id": "L11",
+          "name": "Entropy of mixing dS=-R*(x1*ln(x1)+x2*ln(x2))",
+          "domain": "Chemistry"
+        }
+      ],
+      "domains": [
+        "Chemistry"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "LN_DIV",
+      "size": 1,
+      "members": [
+        {
+          "id": "L12",
+          "name": "Log return r_log=ln(Pt/Pt-1)",
+          "domain": "Economics/Finance"
+        }
+      ],
+      "domains": [
+        "Economics/Finance"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "RECIP_ADD_EXP_NEG",
+      "size": 1,
+      "members": [
+        {
+          "id": "S01",
+          "name": "Sigmoid activation sigma(x)=1/(1+exp(-x))",
+          "domain": "Neuroscience/ML"
+        }
+      ],
+      "domains": [
+        "Neuroscience/ML"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "RECIP_ADD_EXP_MUL_SUB",
+      "size": 1,
+      "members": [
+        {
+          "id": "S02",
+          "name": "Fermi-Dirac distribution f(E)=1/(exp((E-mu)/kT)+1)",
+          "domain": "Statistical Mechanics"
+        }
+      ],
+      "domains": [
+        "Statistical Mechanics"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "RECIP_SUB_EXP_MUL_SUB",
+      "size": 1,
+      "members": [
+        {
+          "id": "S05",
+          "name": "Bose-Einstein distribution n(E)=1/(exp((E-mu)/kT)-1)",
+          "domain": "Statistical Mechanics"
+        }
+      ],
+      "domains": [
+        "Statistical Mechanics"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "ADD_EXP",
+      "size": 1,
+      "members": [
+        {
+          "id": "S07",
+          "name": "Softmax denominator sum_i exp(z_i)",
+          "domain": "ML"
+        }
+      ],
+      "domains": [
+        "ML"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "DIV_ADD",
+      "size": 1,
+      "members": [
+        {
+          "id": "S09",
+          "name": "Hill fractional saturation theta=[L]/(Kd+[L])",
+          "domain": "Biology"
+        }
+      ],
+      "domains": [
+        "Biology"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "MUL_POW_DIV",
+      "size": 1,
+      "members": [
+        {
+          "id": "P04",
+          "name": "Scale factor a(t)=a0*(t/t0)^(2/3)",
+          "domain": "Astrophysics"
+        }
+      ],
+      "domains": [
+        "Astrophysics"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "MUL_MUL_MUL_POW_POW",
+      "size": 1,
+      "members": [
+        {
+          "id": "P06",
+          "name": "Stefan-Boltzmann L=4*pi*R^2*sigma*T^4",
+          "domain": "Astrophysics"
+        }
+      ],
+      "domains": [
+        "Astrophysics"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "MUL_MUL_POW_POW",
+      "size": 1,
+      "members": [
+        {
+          "id": "P07",
+          "name": "Manning's equation v=(1/n)*R^(2/3)*S^(1/2)",
+          "domain": "Geology"
+        }
+      ],
+      "domains": [
+        "Geology"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "MUL_EXP_MUL_DIV",
+      "size": 1,
+      "members": [
+        {
+          "id": "P08",
+          "name": "Equal temperament f(n)=f0*2^(n/12)",
+          "domain": "Acoustics"
+        }
+      ],
+      "domains": [
+        "Acoustics"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "DIV_EXP_NEG_POW",
+      "size": 1,
+      "members": [
+        {
+          "id": "G01",
+          "name": "Normal/Gaussian PDF f(x)=exp(-x^2/2)/sqrt(2pi)",
+          "domain": "Statistics"
+        }
+      ],
+      "domains": [
+        "Statistics"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "DIV_EXP_NEG_DIV_POW",
+      "size": 1,
+      "members": [
+        {
+          "id": "G02",
+          "name": "Heat equation fundamental solution u=exp(-x^2/4t)/sqrt(4pi*t)",
+          "domain": "Physics/PDE"
+        }
+      ],
+      "domains": [
+        "Physics/PDE"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "DIV_EXP_NEG_POW_SUB_LN",
+      "size": 1,
+      "members": [
+        {
+          "id": "G03",
+          "name": "Log-normal PDF f(x)=exp(-(ln(x)-mu)^2/(2*sigma^2))/(x*sigma*sqrt(2pi))",
+          "domain": "Statistics"
+        }
+      ],
+      "domains": [
+        "Statistics"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "MUL_DIV_EXP_NEG_POW_SUB_MUL",
+      "size": 1,
+      "members": [
+        {
+          "id": "G04",
+          "name": "Advection-dispersion Gaussian C(x,t)=exp(-(x-vt)^2/(4Dt))",
+          "domain": "Geology"
+        }
+      ],
+      "domains": [
+        "Geology"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "MUL_POW_EXP_NEG_MUL_POW",
+      "size": 1,
+      "members": [
+        {
+          "id": "G05",
+          "name": "Maxwell-Boltzmann distribution f(v)=v^2*exp(-mv^2/2kT)",
+          "domain": "Chemistry/Physics"
+        }
+      ],
+      "domains": [
+        "Chemistry/Physics"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "ADD_MUL_MUL_MUL_MUL",
+      "size": 1,
+      "members": [
+        {
+          "id": "G06",
+          "name": "GBM step dS=mu*S*dt+sigma*S*dW",
+          "domain": "Economics"
+        }
+      ],
+      "domains": [
+        "Economics"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "ADD_MUL_EXP_NEG_MUL_MUL_EXP_NEG_MUL",
+      "size": 1,
+      "members": [
+        {
+          "id": "T01",
+          "name": "Two-compartment PK C(t)=A*exp(-alpha*t)+B*exp(-beta*t)",
+          "domain": "Biology/Pharmacology"
+        }
+      ],
+      "domains": [
+        "Biology/Pharmacology"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "MUL_SUB_EXP_MUL_EXP_NEG_MUL",
+      "size": 1,
+      "members": [
+        {
+          "id": "T02",
+          "name": "Butler-Volmer j=j0*(exp(a*F*eta/RT)-exp(-(1-a)*F*eta/RT))",
+          "domain": "Chemistry"
+        }
+      ],
+      "domains": [
+        "Chemistry"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "MUL_SUB_EXP_NEG_MUL",
+      "size": 1,
+      "members": [
+        {
+          "id": "T04",
+          "name": "Thermal subsidence y(t)=E0*(1-exp(-t/tau))",
+          "domain": "Geology"
+        }
+      ],
+      "domains": [
+        "Geology"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "ADD_MUL_SUB",
+      "size": 1,
+      "members": [
+        {
+          "id": "Lin02",
+          "name": "CAPM E(Ri)=Rf+beta*(E(Rm)-Rf)",
+          "domain": "Economics"
+        }
+      ],
+      "domains": [
+        "Economics"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "SUB_MUL_SUB",
+      "size": 1,
+      "members": [
+        {
+          "id": "Lin03",
+          "name": "Phillips curve pi=pie-beta*(u-u*)",
+          "domain": "Economics"
+        }
+      ],
+      "domains": [
+        "Economics"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "MUL_DIV_ADD_MUL",
+      "size": 1,
+      "members": [
+        {
+          "id": "H01",
+          "name": "Langmuir adsorption q=qmax*KL*C/(1+KL*C)",
+          "domain": "Geology"
+        }
+      ],
+      "domains": [
+        "Geology"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "SUB_RECIP",
+      "size": 1,
+      "members": [
+        {
+          "id": "H03",
+          "name": "Herd immunity threshold p*=1-1/R0",
+          "domain": "Epidemiology"
+        }
+      ],
+      "domains": [
+        "Epidemiology"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "DIV_MUL",
+      "size": 1,
+      "members": [
+        {
+          "id": "H04",
+          "name": "R0 reproduction number R0=beta*S0/gamma",
+          "domain": "Epidemiology"
+        }
+      ],
+      "domains": [
+        "Epidemiology"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "MUL_POW_ADD",
+      "size": 1,
+      "members": [
+        {
+          "id": "CI01",
+          "name": "Compound interest A=P*(1+r)^n",
+          "domain": "Economics"
+        }
+      ],
+      "domains": [
+        "Economics"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "RECIP_SQRT_MUL",
+      "size": 1,
+      "members": [
+        {
+          "id": "SQ04",
+          "name": "Phase velocity vp=1/sqrt(mu*eps)",
+          "domain": "Electromagnetism"
+        }
+      ],
+      "domains": [
+        "Electromagnetism"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "SQRT_MUL",
+      "size": 1,
+      "members": [
+        {
+          "id": "SQ05",
+          "name": "[H+]=sqrt(Ka*Ca)",
+          "domain": "Chemistry"
+        }
+      ],
+      "domains": [
+        "Chemistry"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "MUL_SQRT_DIV_POW",
+      "size": 1,
+      "members": [
+        {
+          "id": "SQ06",
+          "name": "Orbital period T=2*pi*sqrt(a^3/(GM))",
+          "domain": "Astrophysics"
+        }
+      ],
+      "domains": [
+        "Astrophysics"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "DIV_MUL_POW",
+      "size": 1,
+      "members": [
+        {
+          "id": "C02",
+          "name": "Electric field E=k*q/r^2",
+          "domain": "Electromagnetism"
+        }
+      ],
+      "domains": [
+        "Electromagnetism"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "NEG_DIV_MUL_MUL",
+      "size": 1,
+      "members": [
+        {
+          "id": "C03",
+          "name": "Gravitational potential energy U=-GMm/r",
+          "domain": "Astrophysics"
+        }
+      ],
+      "domains": [
+        "Astrophysics"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "DIV_POW_ADD_POW_POW",
+      "size": 1,
+      "members": [
+        {
+          "id": "Hi01",
+          "name": "Hill equation general theta=[L]^n/(Kd^n+[L]^n)",
+          "domain": "Biology"
+        }
+      ],
+      "domains": [
+        "Biology"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "MUL_DIV_POW_ADD_POW_POW",
+      "size": 1,
+      "members": [
+        {
+          "id": "Hi02",
+          "name": "Hill dose-response E=Emax*[D]^n/(EC50^n+[D]^n)",
+          "domain": "Biology/Pharmacology"
+        }
+      ],
+      "domains": [
+        "Biology/Pharmacology"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "POW_SUB",
+      "size": 1,
+      "members": [
+        {
+          "id": "E03",
+          "name": "MSE loss L=(y-y_hat)^2",
+          "domain": "ML"
+        }
+      ],
+      "domains": [
+        "ML"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "DIV_POW_MUL",
+      "size": 1,
+      "members": [
+        {
+          "id": "E04",
+          "name": "Magnetic energy density u=B^2/(2*mu0)",
+          "domain": "Electromagnetism"
+        }
+      ],
+      "domains": [
+        "Electromagnetism"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "ADD_ADD_MUL_MUL_MUL_POW_SUB_MUL_MUL_POW_SUB_MUL_SUB",
+      "size": 1,
+      "members": [
+        {
+          "id": "U01",
+          "name": "Hodgkin-Huxley total current I=gNa*m^3*h*(V-ENa)+gK*n^4*(V-EK)+gL*(V-EL)",
+          "domain": "Neuroscience"
+        }
+      ],
+      "domains": [
+        "Neuroscience"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "MUL_EXP_NEG_MUL_EXP_NEG_MUL",
+      "size": 1,
+      "members": [
+        {
+          "id": "U02",
+          "name": "Gompertz growth N(t)=N0*exp(-a*exp(-b*t))",
+          "domain": "Biology"
+        }
+      ],
+      "domains": [
+        "Biology"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "DIV_ADD_LN_DIV_MUL_ADD_POW_MUL_SQRT",
+      "size": 1,
+      "members": [
+        {
+          "id": "U03",
+          "name": "Black-Scholes d1 formula",
+          "domain": "Economics"
+        }
+      ],
+      "domains": [
+        "Economics"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "MUL_LN_DIV_ADD_MUL_MUL_ADD_MUL_MUL",
+      "size": 1,
+      "members": [
+        {
+          "id": "U04",
+          "name": "Goldman-Hodgkin-Katz Vm (2-ion)",
+          "domain": "Neuroscience/Chemistry"
+        }
+      ],
+      "domains": [
+        "Neuroscience/Chemistry"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "NEG_MUL_MUL_SQRT",
+      "size": 1,
+      "members": [
+        {
+          "id": "U05",
+          "name": "Debye-Huckel ln(gamma)=-A*|z+z-|*sqrt(I)",
+          "domain": "Chemistry"
+        }
+      ],
+      "domains": [
+        "Chemistry"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "MUL_MUL_SQRT_EXP_NEG_MUL",
+      "size": 1,
+      "members": [
+        {
+          "id": "U06",
+          "name": "Collision theory rate k=A*T^(1/2)*exp(-Ea/RT)",
+          "domain": "Chemistry"
+        }
+      ],
+      "domains": [
+        "Chemistry"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "MUL_POW_EXP_NEG_MUL",
+      "size": 1,
+      "members": [
+        {
+          "id": "U07",
+          "name": "Saha equation n_e*n_i/n0=(2*pi*me*kT/h^2)^(3/2)*exp(-chi/kT)",
+          "domain": "Astrophysics"
+        }
+      ],
+      "domains": [
+        "Astrophysics"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "MUL_DIV_MUL_EXP_NEG_MUL",
+      "size": 1,
+      "members": [
+        {
+          "id": "U08",
+          "name": "Eyring transition state k=(kB*T/h)*exp(-dG/RT)",
+          "domain": "Chemistry"
+        }
+      ],
+      "domains": [
+        "Chemistry"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "ADD_LN_DIV",
+      "size": 1,
+      "members": [
+        {
+          "id": "U09",
+          "name": "Henderson-Hasselbalch pH=pKa+log([A-]/[HA])",
+          "domain": "Chemistry"
+        }
+      ],
+      "domains": [
+        "Chemistry"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "MUL_MUL_POW_POW_SUB",
+      "size": 1,
+      "members": [
+        {
+          "id": "U10",
+          "name": "Cobb-Douglas Y=A*K^alpha*L^(1-alpha)",
+          "domain": "Economics"
+        }
+      ],
+      "domains": [
+        "Economics"
+      ],
+      "cross_domain": false
+    },
+    {
+      "tree": "ADD_SUB_MUL_DIV_MUL_MUL",
+      "size": 1,
+      "members": [
+        {
+          "id": "U11",
+          "name": "Friedmann equation H^2=(8*pi*G/3)*rho-k*c^2/a^2+Lambda*c^2/3",
+          "domain": "Astrophysics"
+        }
+      ],
+      "domains": [
+        "Astrophysics"
+      ],
+      "cross_domain": false
+    }
+  ],
+  "components": [
+    {
+      "size": 7,
+      "equations": [
+        {
+          "id": "D02",
+          "name": "Young's modulus E=sigma/eps",
+          "domain": "Materials Science",
+          "tree": "DIV"
+        },
+        {
+          "id": "D03",
+          "name": "Wien's displacement law lambda_max=b/T",
+          "domain": "Astrophysics",
+          "tree": "DIV"
+        },
+        {
+          "id": "D04",
+          "name": "Curie law chi=C/T",
+          "domain": "Electromagnetism",
+          "tree": "DIV"
+        },
+        {
+          "id": "D05",
+          "name": "Perpetuity PV=C/r",
+          "domain": "Economics",
+          "tree": "DIV"
+        },
+        {
+          "id": "D06",
+          "name": "Subduction velocity v=d/t",
+          "domain": "Geology",
+          "tree": "DIV"
+        },
+        {
+          "id": "D07",
+          "name": "Distribution coefficient Kd=Cs/Cw",
+          "domain": "Geology",
+          "tree": "DIV"
+        },
+        {
+          "id": "D08",
+          "name": "Case fatality rate CFR=deaths/cases",
+          "domain": "Epidemiology",
+          "tree": "DIV"
+        }
+      ],
+      "domains": [
+        "Astrophysics",
+        "Economics",
+        "Electromagnetism",
+        "Epidemiology",
+        "Geology",
+        "Materials Science"
+      ],
+      "tree_classes": [
+        "DIV"
+      ]
+    },
+    {
+      "size": 7,
+      "equations": [
+        {
+          "id": "B01",
+          "name": "Malthus recursion N(t+1)=lambda*N(t)",
+          "domain": "Biology",
+          "tree": "MUL"
+        },
+        {
+          "id": "B02",
+          "name": "Enzyme turnover v=k_cat*[E]",
+          "domain": "Biology",
+          "tree": "MUL"
+        },
+        {
+          "id": "B04",
+          "name": "Hooke's law sigma=E*epsilon",
+          "domain": "Materials Science",
+          "tree": "MUL"
+        },
+        {
+          "id": "B05",
+          "name": "Hubble's law v=H0*d",
+          "domain": "Astrophysics",
+          "tree": "MUL"
+        },
+        {
+          "id": "B06",
+          "name": "Ohm's law V=I*R",
+          "domain": "Electromagnetism",
+          "tree": "MUL"
+        },
+        {
+          "id": "B07",
+          "name": "Newton's second law F=m*a",
+          "domain": "Classical Mechanics",
+          "tree": "MUL"
+        },
+        {
+          "id": "B09",
+          "name": "SEIR dR/dt = gamma*I",
+          "domain": "Epidemiology",
+          "tree": "MUL"
+        }
+      ],
+      "domains": [
+        "Astrophysics",
+        "Biology",
+        "Classical Mechanics",
+        "Electromagnetism",
+        "Epidemiology",
+        "Materials Science"
+      ],
+      "tree_classes": [
+        "MUL"
+      ]
+    },
+    {
+      "size": 5,
+      "equations": [
+        {
+          "id": "A01",
+          "name": "Arrhenius rate constant",
+          "domain": "Chemistry",
+          "tree": "MUL_EXP_NEG_MUL"
+        },
+        {
+          "id": "A03",
+          "name": "Radioactive decay / first-order kinetics",
+          "domain": "Chemistry/Biology",
+          "tree": "MUL_EXP_NEG_MUL"
+        },
+        {
+          "id": "A05",
+          "name": "Exponential decay N0*exp(-lambda*t)",
+          "domain": "Biology",
+          "tree": "MUL_EXP_NEG_MUL"
+        },
+        {
+          "id": "A08",
+          "name": "One-compartment PK C(t)=C0*exp(-k*t)",
+          "domain": "Biology/Pharmacology",
+          "tree": "MUL_EXP_NEG_MUL"
+        },
+        {
+          "id": "A11",
+          "name": "Radioactive decay geochronology N(t)=N0*exp(-lambda*t)",
+          "domain": "Geology",
+          "tree": "MUL_EXP_NEG_MUL"
+        }
+      ],
+      "domains": [
+        "Biology",
+        "Biology/Pharmacology",
+        "Chemistry",
+        "Chemistry/Biology",
+        "Geology"
+      ],
+      "tree_classes": [
+        "MUL_EXP_NEG_MUL"
+      ]
+    },
+    {
+      "size": 4,
+      "equations": [
+        {
+          "id": "L04",
+          "name": "KL divergence D_KL=sum p*ln(p/q)",
+          "domain": "Information Theory",
+          "tree": "MUL_LN_DIV"
+        },
+        {
+          "id": "L08",
+          "name": "Nernst equation E=(RT/nF)*ln([ox]/[red])",
+          "domain": "Chemistry",
+          "tree": "MUL_LN_DIV"
+        },
+        {
+          "id": "L14",
+          "name": "Decibel scale dB=20*ln(A/A0)/ln(10)",
+          "domain": "Acoustics",
+          "tree": "MUL_LN_DIV"
+        },
+        {
+          "id": "U12",
+          "name": "Nernst (single-ion) E=(RT/F)*ln([ion]o/[ion]i)",
+          "domain": "Biology",
+          "tree": "MUL_LN_DIV"
+        }
+      ],
+      "domains": [
+        "Acoustics",
+        "Biology",
+        "Chemistry",
+        "Information Theory"
+      ],
+      "tree_classes": [
+        "MUL_LN_DIV"
+      ]
+    },
+    {
+      "size": 3,
+      "equations": [
+        {
+          "id": "B03",
+          "name": "Fick's first law J=-D*(dc/dx)",
+          "domain": "Biology/Physics",
+          "tree": "NEG_MUL"
+        },
+        {
+          "id": "B08",
+          "name": "Heat flow Fourier's law q=-k*(dT/dx)",
+          "domain": "Geology/Physics",
+          "tree": "NEG_MUL"
+        },
+        {
+          "id": "U13",
+          "name": "Fourier heat conduction q=-k*(dT/dx)",
+          "domain": "Physics",
+          "tree": "NEG_MUL"
+        }
+      ],
+      "domains": [
+        "Biology/Physics",
+        "Geology/Physics",
+        "Physics"
+      ],
+      "tree_classes": [
+        "NEG_MUL"
+      ]
+    },
+    {
+      "size": 3,
+      "equations": [
+        {
+          "id": "Lin01",
+          "name": "Gibbs free energy dG=dH-T*dS",
+          "domain": "Chemistry",
+          "tree": "SUB_MUL"
+        },
+        {
+          "id": "Lin05",
+          "name": "SGD parameter update theta=theta-alpha*grad",
+          "domain": "Neuroscience/ML",
+          "tree": "SUB_MUL"
+        },
+        {
+          "id": "P05",
+          "name": "Gutenberg-Richter log10(N)=a-b*M",
+          "domain": "Geology",
+          "tree": "SUB_MUL"
+        }
+      ],
+      "domains": [
+        "Chemistry",
+        "Geology",
+        "Neuroscience/ML"
+      ],
+      "tree_classes": [
+        "SUB_MUL"
+      ]
+    },
+    {
+      "size": 3,
+      "equations": [
+        {
+          "id": "L09",
+          "name": "Doubling time t_d=ln(2)/r",
+          "domain": "Biology/Epidemiology",
+          "tree": "DIV_LN"
+        },
+        {
+          "id": "L10",
+          "name": "Half-life t_1/2=ln(2)/lambda",
+          "domain": "Biology/Physics",
+          "tree": "DIV_LN"
+        },
+        {
+          "id": "L13",
+          "name": "Prime counting approx f(x)=x/ln(x)",
+          "domain": "Number Theory",
+          "tree": "DIV_LN"
+        }
+      ],
+      "domains": [
+        "Biology/Epidemiology",
+        "Biology/Physics",
+        "Number Theory"
+      ],
+      "tree_classes": [
+        "DIV_LN"
+      ]
+    },
+    {
+      "size": 3,
+      "equations": [
+        {
+          "id": "P01",
+          "name": "Allometric scaling B=B0*M^alpha",
+          "domain": "Biology",
+          "tree": "MUL_POW"
+        },
+        {
+          "id": "P02",
+          "name": "Basquin fatigue law sigma=C*N^(-b)",
+          "domain": "Materials Science",
+          "tree": "MUL_POW"
+        },
+        {
+          "id": "P03",
+          "name": "Freundlich isotherm q=Kf*C^(1/n)",
+          "domain": "Geology",
+          "tree": "MUL_POW"
+        }
+      ],
+      "domains": [
+        "Biology",
+        "Geology",
+        "Materials Science"
+      ],
+      "tree_classes": [
+        "MUL_POW"
+      ]
+    },
+    {
+      "size": 3,
+      "equations": [
+        {
+          "id": "SQ01",
+          "name": "Orbital velocity v=sqrt(GM/r)",
+          "domain": "Astrophysics",
+          "tree": "SQRT_DIV_MUL"
+        },
+        {
+          "id": "SQ02",
+          "name": "Escape velocity v_esc=sqrt(2GM/r)",
+          "domain": "Astrophysics",
+          "tree": "SQRT_DIV_MUL"
+        },
+        {
+          "id": "SQ03",
+          "name": "Skin depth delta=sqrt(2*rho/(omega*mu))",
+          "domain": "Electromagnetism",
+          "tree": "SQRT_DIV_MUL"
+        }
+      ],
+      "domains": [
+        "Astrophysics",
+        "Electromagnetism"
+      ],
+      "tree_classes": [
+        "SQRT_DIV_MUL"
+      ]
+    },
+    {
+      "size": 2,
+      "equations": [
+        {
+          "id": "B10",
+          "name": "Beer-Lambert A=epsilon*c*l",
+          "domain": "Biology/Optics",
+          "tree": "MUL_MUL"
+        },
+        {
+          "id": "B11",
+          "name": "Second-order rate r=k[A][B]",
+          "domain": "Chemistry",
+          "tree": "MUL_MUL"
+        }
+      ],
+      "domains": [
+        "Biology/Optics",
+        "Chemistry"
+      ],
+      "tree_classes": [
+        "MUL_MUL"
+      ]
+    },
+    {
+      "size": 2,
+      "equations": [
+        {
+          "id": "S03",
+          "name": "Logistic growth N(t)=K/(1+exp(-r*(t-t0)))",
+          "domain": "Biology",
+          "tree": "DIV_ADD_EXP_NEG_MUL_SUB"
+        },
+        {
+          "id": "S04",
+          "name": "Logistic epidemic curve I(t)=K/(1+exp(-r*(t-t0)))",
+          "domain": "Epidemiology",
+          "tree": "DIV_ADD_EXP_NEG_MUL_SUB"
+        }
+      ],
+      "domains": [
+        "Biology",
+        "Epidemiology"
+      ],
+      "tree_classes": [
+        "DIV_ADD_EXP_NEG_MUL_SUB"
+      ]
+    },
+    {
+      "size": 2,
+      "equations": [
+        {
+          "id": "VT01",
+          "name": "Van't Hoff integrated ln(K2/K1)=-(dH/R)*(1/T2-1/T1)",
+          "domain": "Chemistry",
+          "tree": "NEG_MUL_SUB_RECIP_RECIP"
+        },
+        {
+          "id": "VT02",
+          "name": "Clausius-Clapeyron ln(P2/P1)=-(dHvap/R)*(1/T2-1/T1)",
+          "domain": "Chemistry",
+          "tree": "NEG_MUL_SUB_RECIP_RECIP"
+        }
+      ],
+      "domains": [
+        "Chemistry"
+      ],
+      "tree_classes": [
+        "NEG_MUL_SUB_RECIP_RECIP"
+      ]
+    },
+    {
+      "size": 2,
+      "equations": [
+        {
+          "id": "L06",
+          "name": "Helmholtz free energy A=-kT*ln(Z)",
+          "domain": "Chemistry",
+          "tree": "NEG_MUL_MUL_LN"
+        },
+        {
+          "id": "L07",
+          "name": "dG=-RT*ln(K)",
+          "domain": "Chemistry",
+          "tree": "NEG_MUL_MUL_LN"
+        }
+      ],
+      "domains": [
+        "Chemistry"
+      ],
+      "tree_classes": [
+        "NEG_MUL_MUL_LN"
+      ]
+    },
+    {
+      "size": 2,
+      "equations": [
+        {
+          "id": "CI02",
+          "name": "Present value PV=FV/(1+r)^n",
+          "domain": "Economics",
+          "tree": "DIV_POW_ADD"
+        },
+        {
+          "id": "CI03",
+          "name": "Inflation adjustment Real=Nominal/(1+pi)^n",
+          "domain": "Economics",
+          "tree": "DIV_POW_ADD"
+        }
+      ],
+      "domains": [
+        "Economics"
+      ],
+      "tree_classes": [
+        "DIV_POW_ADD"
+      ]
+    },
+    {
+      "size": 2,
+      "equations": [
+        {
+          "id": "Lin04",
+          "name": "Batch normalization x-hat=(x-mu)/sigma",
+          "domain": "Neuroscience/ML",
+          "tree": "DIV_SUB"
+        },
+        {
+          "id": "Lin06",
+          "name": "Sharpe ratio S=(Rp-Rf)/sigma_p",
+          "domain": "Economics",
+          "tree": "DIV_SUB"
+        }
+      ],
+      "domains": [
+        "Economics",
+        "Neuroscience/ML"
+      ],
+      "tree_classes": [
+        "DIV_SUB"
+      ]
+    },
+    {
+      "size": 2,
+      "equations": [
+        {
+          "id": "A02",
+          "name": "Boltzmann weight",
+          "domain": "Statistical Mechanics",
+          "tree": "EXP_NEG_MUL"
+        },
+        {
+          "id": "D01",
+          "name": "Boltzmann ratio N2/N1=exp(-dE/kT)",
+          "domain": "Chemistry",
+          "tree": "EXP_NEG_MUL"
+        }
+      ],
+      "domains": [
+        "Chemistry",
+        "Statistical Mechanics"
+      ],
+      "tree_classes": [
+        "EXP_NEG_MUL"
+      ]
+    },
+    {
+      "size": 2,
+      "equations": [
+        {
+          "id": "A04",
+          "name": "Exponential growth N0*exp(r*t)",
+          "domain": "Biology",
+          "tree": "MUL_EXP_MUL"
+        },
+        {
+          "id": "A06",
+          "name": "Continuous compounding A=P*exp(rt)",
+          "domain": "Economics",
+          "tree": "MUL_EXP_MUL"
+        }
+      ],
+      "domains": [
+        "Biology",
+        "Economics"
+      ],
+      "tree_classes": [
+        "MUL_EXP_MUL"
+      ]
+    },
+    {
+      "size": 2,
+      "equations": [
+        {
+          "id": "E01",
+          "name": "Capacitor energy U=(1/2)*C*V^2",
+          "domain": "Electromagnetism",
+          "tree": "MUL_MUL_POW"
+        },
+        {
+          "id": "E02",
+          "name": "Inductance energy U=(1/2)*L*I^2",
+          "domain": "Electromagnetism",
+          "tree": "MUL_MUL_POW"
+        }
+      ],
+      "domains": [
+        "Electromagnetism"
+      ],
+      "tree_classes": [
+        "MUL_MUL_POW"
+      ]
+    },
+    {
+      "size": 2,
+      "equations": [
+        {
+          "id": "C01",
+          "name": "Coulomb's law F=k*q1*q2/r^2",
+          "domain": "Electromagnetism",
+          "tree": "DIV_MUL_MUL_POW"
+        },
+        {
+          "id": "C04",
+          "name": "Schwarzschild radius Rs=2GM/c^2",
+          "domain": "Astrophysics",
+          "tree": "DIV_MUL_MUL_POW"
+        }
+      ],
+      "domains": [
+        "Astrophysics",
+        "Electromagnetism"
+      ],
+      "tree_classes": [
+        "DIV_MUL_MUL_POW"
+      ]
+    },
+    {
+      "size": 2,
+      "equations": [
+        {
+          "id": "S06",
+          "name": "Partition function denominator Z=sum_i exp(-E_i/kT)",
+          "domain": "Statistical Mechanics",
+          "tree": "ADD_EXP_NEG_MUL"
+        },
+        {
+          "id": "T03",
+          "name": "Partition function 2-level Z=1+exp(-dE/kT)",
+          "domain": "Chemistry",
+          "tree": "ADD_EXP_NEG_MUL"
+        }
+      ],
+      "domains": [
+        "Chemistry",
+        "Statistical Mechanics"
+      ],
+      "tree_classes": [
+        "ADD_EXP_NEG_MUL"
+      ]
+    }
+  ],
+  "largest_component": {
+    "size": 7,
+    "equations": [
+      {
+        "id": "D02",
+        "name": "Young's modulus E=sigma/eps",
+        "domain": "Materials Science",
+        "tree": "DIV"
+      },
+      {
+        "id": "D03",
+        "name": "Wien's displacement law lambda_max=b/T",
+        "domain": "Astrophysics",
+        "tree": "DIV"
+      },
+      {
+        "id": "D04",
+        "name": "Curie law chi=C/T",
+        "domain": "Electromagnetism",
+        "tree": "DIV"
+      },
+      {
+        "id": "D05",
+        "name": "Perpetuity PV=C/r",
+        "domain": "Economics",
+        "tree": "DIV"
+      },
+      {
+        "id": "D06",
+        "name": "Subduction velocity v=d/t",
+        "domain": "Geology",
+        "tree": "DIV"
+      },
+      {
+        "id": "D07",
+        "name": "Distribution coefficient Kd=Cs/Cw",
+        "domain": "Geology",
+        "tree": "DIV"
+      },
+      {
+        "id": "D08",
+        "name": "Case fatality rate CFR=deaths/cases",
+        "domain": "Epidemiology",
+        "tree": "DIV"
+      }
+    ],
+    "domains": [
+      "Astrophysics",
+      "Economics",
+      "Electromagnetism",
+      "Epidemiology",
+      "Geology",
+      "Materials Science"
+    ],
+    "tree_classes": [
+      "DIV"
+    ],
+    "insight": "One canonical tree 'DIV' unifies 7 equations across 6 domains: Electromagnetism, Geology, Astrophysics, Epidemiology, Materials Science. Representative equations: Young's modulus E=sigma/eps; Wien's displacement law lambda_max=b/T; Curie law chi=C/T. This is the most universal mathematical structure in the catalog."
+  },
+  "most_universal_structure": {
+    "tree": "MUL",
+    "count": 7,
+    "equations": [
+      {
+        "id": "B01",
+        "name": "Malthus recursion N(t+1)=lambda*N(t)",
+        "domain": "Biology"
+      },
+      {
+        "id": "B02",
+        "name": "Enzyme turnover v=k_cat*[E]",
+        "domain": "Biology"
+      },
+      {
+        "id": "B04",
+        "name": "Hooke's law sigma=E*epsilon",
+        "domain": "Materials Science"
+      },
+      {
+        "id": "B05",
+        "name": "Hubble's law v=H0*d",
+        "domain": "Astrophysics"
+      },
+      {
+        "id": "B06",
+        "name": "Ohm's law V=I*R",
+        "domain": "Electromagnetism"
+      },
+      {
+        "id": "B07",
+        "name": "Newton's second law F=m*a",
+        "domain": "Classical Mechanics"
+      },
+      {
+        "id": "B09",
+        "name": "SEIR dR/dt = gamma*I",
+        "domain": "Epidemiology"
+      }
+    ],
+    "cross_domain_insight": "The tree 'MUL' appears in 7 equations spanning domains: Astrophysics, Biology, Classical Mechanics, Electromagnetism, Epidemiology, Materials Science. This operator pattern is the most universal mathematical structure across scientific domains."
+  },
+  "most_connected_equations": [
+    {
+      "id": "B01",
+      "name": "Malthus recursion N(t+1)=lambda*N(t)",
+      "domain": "Biology",
+      "tree": "MUL",
+      "degree": 6,
+      "interpretation": "Has 6 isomorphic partners across multiple scientific domains"
+    },
+    {
+      "id": "B02",
+      "name": "Enzyme turnover v=k_cat*[E]",
+      "domain": "Biology",
+      "tree": "MUL",
+      "degree": 6,
+      "interpretation": "Has 6 isomorphic partners across multiple scientific domains"
+    },
+    {
+      "id": "B04",
+      "name": "Hooke's law sigma=E*epsilon",
+      "domain": "Materials Science",
+      "tree": "MUL",
+      "degree": 6,
+      "interpretation": "Has 6 isomorphic partners across multiple scientific domains"
+    },
+    {
+      "id": "B05",
+      "name": "Hubble's law v=H0*d",
+      "domain": "Astrophysics",
+      "tree": "MUL",
+      "degree": 6,
+      "interpretation": "Has 6 isomorphic partners across multiple scientific domains"
+    },
+    {
+      "id": "B06",
+      "name": "Ohm's law V=I*R",
+      "domain": "Electromagnetism",
+      "tree": "MUL",
+      "degree": 6,
+      "interpretation": "Has 6 isomorphic partners across multiple scientific domains"
+    },
+    {
+      "id": "B07",
+      "name": "Newton's second law F=m*a",
+      "domain": "Classical Mechanics",
+      "tree": "MUL",
+      "degree": 6,
+      "interpretation": "Has 6 isomorphic partners across multiple scientific domains"
+    },
+    {
+      "id": "B09",
+      "name": "SEIR dR/dt = gamma*I",
+      "domain": "Epidemiology",
+      "tree": "MUL",
+      "degree": 6,
+      "interpretation": "Has 6 isomorphic partners across multiple scientific domains"
+    },
+    {
+      "id": "D02",
+      "name": "Young's modulus E=sigma/eps",
+      "domain": "Materials Science",
+      "tree": "DIV",
+      "degree": 6,
+      "interpretation": "Has 6 isomorphic partners across multiple scientific domains"
+    },
+    {
+      "id": "D03",
+      "name": "Wien's displacement law lambda_max=b/T",
+      "domain": "Astrophysics",
+      "tree": "DIV",
+      "degree": 6,
+      "interpretation": "Has 6 isomorphic partners across multiple scientific domains"
+    },
+    {
+      "id": "D04",
+      "name": "Curie law chi=C/T",
+      "domain": "Electromagnetism",
+      "tree": "DIV",
+      "degree": 6,
+      "interpretation": "Has 6 isomorphic partners across multiple scientific domains"
+    }
+  ],
+  "isolated_equations": [
+    {
+      "id": "A07",
+      "name": "Beer-Lambert transmittance T=exp(-epsilon*c*l)",
+      "domain": "Biology/Optics",
+      "tree": "EXP_NEG_MUL_MUL"
+    },
+    {
+      "id": "A09",
+      "name": "Synaptic alpha function I(t)=gmax*(t/tau)*exp(1-t/tau)",
+      "domain": "Neuroscience",
+      "tree": "MUL_MUL_EXP_SUB_MUL"
+    },
+    {
+      "id": "A10",
+      "name": "Cable equation V(x,t)=V0*exp(-x/lambda)*exp(-t/tau)",
+      "domain": "Neuroscience",
+      "tree": "MUL_MUL_EXP_NEG_MUL_EXP_NEG_MUL"
+    },
+    {
+      "id": "D09",
+      "name": "Vaccine efficacy VE=1-ARV/ARU",
+      "domain": "Epidemiology",
+      "tree": "SUB_DIV"
+    },
+    {
+      "id": "L01",
+      "name": "Boltzmann entropy S=k_B*ln(Omega)",
+      "domain": "Chemistry",
+      "tree": "MUL_LN"
+    },
+    {
+      "id": "L02",
+      "name": "pH=-log10[H+]",
+      "domain": "Chemistry",
+      "tree": "NEG_LN"
+    },
+    {
+      "id": "L03",
+      "name": "Shannon entropy H=-sum p*ln(p)",
+      "domain": "Information Theory",
+      "tree": "NEG_MUL_LN"
+    },
+    {
+      "id": "L05",
+      "name": "Binary cross-entropy L=-(y*ln(yhat)+(1-y)*ln(1-yhat))",
+      "domain": "ML",
+      "tree": "NEG_ADD_MUL_LN_MUL_LN"
+    },
+    {
+      "id": "L11",
+      "name": "Entropy of mixing dS=-R*(x1*ln(x1)+x2*ln(x2))",
+      "domain": "Chemistry",
+      "tree": "NEG_MUL_ADD_MUL_LN_MUL_LN"
+    },
+    {
+      "id": "L12",
+      "name": "Log return r_log=ln(Pt/Pt-1)",
+      "domain": "Economics/Finance",
+      "tree": "LN_DIV"
+    },
+    {
+      "id": "S01",
+      "name": "Sigmoid activation sigma(x)=1/(1+exp(-x))",
+      "domain": "Neuroscience/ML",
+      "tree": "RECIP_ADD_EXP_NEG"
+    },
+    {
+      "id": "S02",
+      "name": "Fermi-Dirac distribution f(E)=1/(exp((E-mu)/kT)+1)",
+      "domain": "Statistical Mechanics",
+      "tree": "RECIP_ADD_EXP_MUL_SUB"
+    },
+    {
+      "id": "S05",
+      "name": "Bose-Einstein distribution n(E)=1/(exp((E-mu)/kT)-1)",
+      "domain": "Statistical Mechanics",
+      "tree": "RECIP_SUB_EXP_MUL_SUB"
+    },
+    {
+      "id": "S07",
+      "name": "Softmax denominator sum_i exp(z_i)",
+      "domain": "ML",
+      "tree": "ADD_EXP"
+    },
+    {
+      "id": "S09",
+      "name": "Hill fractional saturation theta=[L]/(Kd+[L])",
+      "domain": "Biology",
+      "tree": "DIV_ADD"
+    },
+    {
+      "id": "P04",
+      "name": "Scale factor a(t)=a0*(t/t0)^(2/3)",
+      "domain": "Astrophysics",
+      "tree": "MUL_POW_DIV"
+    },
+    {
+      "id": "P06",
+      "name": "Stefan-Boltzmann L=4*pi*R^2*sigma*T^4",
+      "domain": "Astrophysics",
+      "tree": "MUL_MUL_MUL_POW_POW"
+    },
+    {
+      "id": "P07",
+      "name": "Manning's equation v=(1/n)*R^(2/3)*S^(1/2)",
+      "domain": "Geology",
+      "tree": "MUL_MUL_POW_POW"
+    },
+    {
+      "id": "P08",
+      "name": "Equal temperament f(n)=f0*2^(n/12)",
+      "domain": "Acoustics",
+      "tree": "MUL_EXP_MUL_DIV"
+    },
+    {
+      "id": "G01",
+      "name": "Normal/Gaussian PDF f(x)=exp(-x^2/2)/sqrt(2pi)",
+      "domain": "Statistics",
+      "tree": "DIV_EXP_NEG_POW"
+    },
+    {
+      "id": "G02",
+      "name": "Heat equation fundamental solution u=exp(-x^2/4t)/sqrt(4pi*t)",
+      "domain": "Physics/PDE",
+      "tree": "DIV_EXP_NEG_DIV_POW"
+    },
+    {
+      "id": "G03",
+      "name": "Log-normal PDF f(x)=exp(-(ln(x)-mu)^2/(2*sigma^2))/(x*sigma*sqrt(2pi))",
+      "domain": "Statistics",
+      "tree": "DIV_EXP_NEG_POW_SUB_LN"
+    },
+    {
+      "id": "G04",
+      "name": "Advection-dispersion Gaussian C(x,t)=exp(-(x-vt)^2/(4Dt))",
+      "domain": "Geology",
+      "tree": "MUL_DIV_EXP_NEG_POW_SUB_MUL"
+    },
+    {
+      "id": "G05",
+      "name": "Maxwell-Boltzmann distribution f(v)=v^2*exp(-mv^2/2kT)",
+      "domain": "Chemistry/Physics",
+      "tree": "MUL_POW_EXP_NEG_MUL_POW"
+    },
+    {
+      "id": "G06",
+      "name": "GBM step dS=mu*S*dt+sigma*S*dW",
+      "domain": "Economics",
+      "tree": "ADD_MUL_MUL_MUL_MUL"
+    },
+    {
+      "id": "T01",
+      "name": "Two-compartment PK C(t)=A*exp(-alpha*t)+B*exp(-beta*t)",
+      "domain": "Biology/Pharmacology",
+      "tree": "ADD_MUL_EXP_NEG_MUL_MUL_EXP_NEG_MUL"
+    },
+    {
+      "id": "T02",
+      "name": "Butler-Volmer j=j0*(exp(a*F*eta/RT)-exp(-(1-a)*F*eta/RT))",
+      "domain": "Chemistry",
+      "tree": "MUL_SUB_EXP_MUL_EXP_NEG_MUL"
+    },
+    {
+      "id": "T04",
+      "name": "Thermal subsidence y(t)=E0*(1-exp(-t/tau))",
+      "domain": "Geology",
+      "tree": "MUL_SUB_EXP_NEG_MUL"
+    },
+    {
+      "id": "Lin02",
+      "name": "CAPM E(Ri)=Rf+beta*(E(Rm)-Rf)",
+      "domain": "Economics",
+      "tree": "ADD_MUL_SUB"
+    },
+    {
+      "id": "Lin03",
+      "name": "Phillips curve pi=pie-beta*(u-u*)",
+      "domain": "Economics",
+      "tree": "SUB_MUL_SUB"
+    },
+    {
+      "id": "H01",
+      "name": "Langmuir adsorption q=qmax*KL*C/(1+KL*C)",
+      "domain": "Geology",
+      "tree": "MUL_DIV_ADD_MUL"
+    },
+    {
+      "id": "H03",
+      "name": "Herd immunity threshold p*=1-1/R0",
+      "domain": "Epidemiology",
+      "tree": "SUB_RECIP"
+    },
+    {
+      "id": "H04",
+      "name": "R0 reproduction number R0=beta*S0/gamma",
+      "domain": "Epidemiology",
+      "tree": "DIV_MUL"
+    },
+    {
+      "id": "CI01",
+      "name": "Compound interest A=P*(1+r)^n",
+      "domain": "Economics",
+      "tree": "MUL_POW_ADD"
+    },
+    {
+      "id": "SQ04",
+      "name": "Phase velocity vp=1/sqrt(mu*eps)",
+      "domain": "Electromagnetism",
+      "tree": "RECIP_SQRT_MUL"
+    },
+    {
+      "id": "SQ05",
+      "name": "[H+]=sqrt(Ka*Ca)",
+      "domain": "Chemistry",
+      "tree": "SQRT_MUL"
+    },
+    {
+      "id": "SQ06",
+      "name": "Orbital period T=2*pi*sqrt(a^3/(GM))",
+      "domain": "Astrophysics",
+      "tree": "MUL_SQRT_DIV_POW"
+    },
+    {
+      "id": "C02",
+      "name": "Electric field E=k*q/r^2",
+      "domain": "Electromagnetism",
+      "tree": "DIV_MUL_POW"
+    },
+    {
+      "id": "C03",
+      "name": "Gravitational potential energy U=-GMm/r",
+      "domain": "Astrophysics",
+      "tree": "NEG_DIV_MUL_MUL"
+    },
+    {
+      "id": "Hi01",
+      "name": "Hill equation general theta=[L]^n/(Kd^n+[L]^n)",
+      "domain": "Biology",
+      "tree": "DIV_POW_ADD_POW_POW"
+    },
+    {
+      "id": "Hi02",
+      "name": "Hill dose-response E=Emax*[D]^n/(EC50^n+[D]^n)",
+      "domain": "Biology/Pharmacology",
+      "tree": "MUL_DIV_POW_ADD_POW_POW"
+    },
+    {
+      "id": "E03",
+      "name": "MSE loss L=(y-y_hat)^2",
+      "domain": "ML",
+      "tree": "POW_SUB"
+    },
+    {
+      "id": "E04",
+      "name": "Magnetic energy density u=B^2/(2*mu0)",
+      "domain": "Electromagnetism",
+      "tree": "DIV_POW_MUL"
+    },
+    {
+      "id": "U01",
+      "name": "Hodgkin-Huxley total current I=gNa*m^3*h*(V-ENa)+gK*n^4*(V-EK)+gL*(V-EL)",
+      "domain": "Neuroscience",
+      "tree": "ADD_ADD_MUL_MUL_MUL_POW_SUB_MUL_MUL_POW_SUB_MUL_SUB"
+    },
+    {
+      "id": "U02",
+      "name": "Gompertz growth N(t)=N0*exp(-a*exp(-b*t))",
+      "domain": "Biology",
+      "tree": "MUL_EXP_NEG_MUL_EXP_NEG_MUL"
+    },
+    {
+      "id": "U03",
+      "name": "Black-Scholes d1 formula",
+      "domain": "Economics",
+      "tree": "DIV_ADD_LN_DIV_MUL_ADD_POW_MUL_SQRT"
+    },
+    {
+      "id": "U04",
+      "name": "Goldman-Hodgkin-Katz Vm (2-ion)",
+      "domain": "Neuroscience/Chemistry",
+      "tree": "MUL_LN_DIV_ADD_MUL_MUL_ADD_MUL_MUL"
+    },
+    {
+      "id": "U05",
+      "name": "Debye-Huckel ln(gamma)=-A*|z+z-|*sqrt(I)",
+      "domain": "Chemistry",
+      "tree": "NEG_MUL_MUL_SQRT"
+    },
+    {
+      "id": "U06",
+      "name": "Collision theory rate k=A*T^(1/2)*exp(-Ea/RT)",
+      "domain": "Chemistry",
+      "tree": "MUL_MUL_SQRT_EXP_NEG_MUL"
+    },
+    {
+      "id": "U07",
+      "name": "Saha equation n_e*n_i/n0=(2*pi*me*kT/h^2)^(3/2)*exp(-chi/kT)",
+      "domain": "Astrophysics",
+      "tree": "MUL_POW_EXP_NEG_MUL"
+    },
+    {
+      "id": "U08",
+      "name": "Eyring transition state k=(kB*T/h)*exp(-dG/RT)",
+      "domain": "Chemistry",
+      "tree": "MUL_DIV_MUL_EXP_NEG_MUL"
+    },
+    {
+      "id": "U09",
+      "name": "Henderson-Hasselbalch pH=pKa+log([A-]/[HA])",
+      "domain": "Chemistry",
+      "tree": "ADD_LN_DIV"
+    },
+    {
+      "id": "U10",
+      "name": "Cobb-Douglas Y=A*K^alpha*L^(1-alpha)",
+      "domain": "Economics",
+      "tree": "MUL_MUL_POW_POW_SUB"
+    },
+    {
+      "id": "U11",
+      "name": "Friedmann equation H^2=(8*pi*G/3)*rho-k*c^2/a^2+Lambda*c^2/3",
+      "domain": "Astrophysics",
+      "tree": "ADD_SUB_MUL_DIV_MUL_MUL"
+    }
+  ],
+  "key_findings": [
+    "Total equations cataloged: 116",
+    "Total isomorphic pairs (edges): 85",
+    "Connected components: 75",
+    "Isolated nodes (no isomorphic partner): 54",
+    "Isomorphic pairs: 12",
+    "Largest component size: 7",
+    "Most universal tree: 'MUL' with Malthus recursion N(t+1)=lambda*N(t) as prototype",
+    "The MUL_EXP_NEG_MUL tree (Arrhenius/exponential-decay) unifies Chemistry, Biology, Geology, Economics, Pharmacology",
+    "The DIV tree (1n ratio) is the minimal universal structure: Wien, Curie, subduction speed, fatality rate",
+    "The RECIP_ADD_EXP_NEG (sigmoid) tree unifies statistical mechanics (Fermi-Dirac), neural networks (sigmoid), and ecology (logistic growth)",
+    "The MUL_POW (power law) tree unifies allometric scaling, fatigue, adsorption isotherms",
+    "Van't Hoff and Clausius-Clapeyron are perfectly isomorphic — thermodynamic universality",
+    "Doubling time, half-life, and prime counting approximation share the same DIV_LN tree"
+  ],
+  "edge_list": [
+    {
+      "node_a": "A01",
+      "node_b": "A03",
+      "tree": "MUL_EXP_NEG_MUL",
+      "name_a": "Arrhenius rate constant",
+      "name_b": "Radioactive decay / first-order kinetics",
+      "domain_a": "Chemistry",
+      "domain_b": "Chemistry/Biology"
+    },
+    {
+      "node_a": "A01",
+      "node_b": "A05",
+      "tree": "MUL_EXP_NEG_MUL",
+      "name_a": "Arrhenius rate constant",
+      "name_b": "Exponential decay N0*exp(-lambda*t)",
+      "domain_a": "Chemistry",
+      "domain_b": "Biology"
+    },
+    {
+      "node_a": "A01",
+      "node_b": "A08",
+      "tree": "MUL_EXP_NEG_MUL",
+      "name_a": "Arrhenius rate constant",
+      "name_b": "One-compartment PK C(t)=C0*exp(-k*t)",
+      "domain_a": "Chemistry",
+      "domain_b": "Biology/Pharmacology"
+    },
+    {
+      "node_a": "A01",
+      "node_b": "A11",
+      "tree": "MUL_EXP_NEG_MUL",
+      "name_a": "Arrhenius rate constant",
+      "name_b": "Radioactive decay geochronology N(t)=N0*exp(-lambda*t)",
+      "domain_a": "Chemistry",
+      "domain_b": "Geology"
+    },
+    {
+      "node_a": "A03",
+      "node_b": "A05",
+      "tree": "MUL_EXP_NEG_MUL",
+      "name_a": "Radioactive decay / first-order kinetics",
+      "name_b": "Exponential decay N0*exp(-lambda*t)",
+      "domain_a": "Chemistry/Biology",
+      "domain_b": "Biology"
+    },
+    {
+      "node_a": "A03",
+      "node_b": "A08",
+      "tree": "MUL_EXP_NEG_MUL",
+      "name_a": "Radioactive decay / first-order kinetics",
+      "name_b": "One-compartment PK C(t)=C0*exp(-k*t)",
+      "domain_a": "Chemistry/Biology",
+      "domain_b": "Biology/Pharmacology"
+    },
+    {
+      "node_a": "A03",
+      "node_b": "A11",
+      "tree": "MUL_EXP_NEG_MUL",
+      "name_a": "Radioactive decay / first-order kinetics",
+      "name_b": "Radioactive decay geochronology N(t)=N0*exp(-lambda*t)",
+      "domain_a": "Chemistry/Biology",
+      "domain_b": "Geology"
+    },
+    {
+      "node_a": "A05",
+      "node_b": "A08",
+      "tree": "MUL_EXP_NEG_MUL",
+      "name_a": "Exponential decay N0*exp(-lambda*t)",
+      "name_b": "One-compartment PK C(t)=C0*exp(-k*t)",
+      "domain_a": "Biology",
+      "domain_b": "Biology/Pharmacology"
+    },
+    {
+      "node_a": "A05",
+      "node_b": "A11",
+      "tree": "MUL_EXP_NEG_MUL",
+      "name_a": "Exponential decay N0*exp(-lambda*t)",
+      "name_b": "Radioactive decay geochronology N(t)=N0*exp(-lambda*t)",
+      "domain_a": "Biology",
+      "domain_b": "Geology"
+    },
+    {
+      "node_a": "A08",
+      "node_b": "A11",
+      "tree": "MUL_EXP_NEG_MUL",
+      "name_a": "One-compartment PK C(t)=C0*exp(-k*t)",
+      "name_b": "Radioactive decay geochronology N(t)=N0*exp(-lambda*t)",
+      "domain_a": "Biology/Pharmacology",
+      "domain_b": "Geology"
+    },
+    {
+      "node_a": "A02",
+      "node_b": "D01",
+      "tree": "EXP_NEG_MUL",
+      "name_a": "Boltzmann weight",
+      "name_b": "Boltzmann ratio N2/N1=exp(-dE/kT)",
+      "domain_a": "Statistical Mechanics",
+      "domain_b": "Chemistry"
+    },
+    {
+      "node_a": "A04",
+      "node_b": "A06",
+      "tree": "MUL_EXP_MUL",
+      "name_a": "Exponential growth N0*exp(r*t)",
+      "name_b": "Continuous compounding A=P*exp(rt)",
+      "domain_a": "Biology",
+      "domain_b": "Economics"
+    },
+    {
+      "node_a": "B01",
+      "node_b": "B02",
+      "tree": "MUL",
+      "name_a": "Malthus recursion N(t+1)=lambda*N(t)",
+      "name_b": "Enzyme turnover v=k_cat*[E]",
+      "domain_a": "Biology",
+      "domain_b": "Biology"
+    },
+    {
+      "node_a": "B01",
+      "node_b": "B04",
+      "tree": "MUL",
+      "name_a": "Malthus recursion N(t+1)=lambda*N(t)",
+      "name_b": "Hooke's law sigma=E*epsilon",
+      "domain_a": "Biology",
+      "domain_b": "Materials Science"
+    },
+    {
+      "node_a": "B01",
+      "node_b": "B05",
+      "tree": "MUL",
+      "name_a": "Malthus recursion N(t+1)=lambda*N(t)",
+      "name_b": "Hubble's law v=H0*d",
+      "domain_a": "Biology",
+      "domain_b": "Astrophysics"
+    },
+    {
+      "node_a": "B01",
+      "node_b": "B06",
+      "tree": "MUL",
+      "name_a": "Malthus recursion N(t+1)=lambda*N(t)",
+      "name_b": "Ohm's law V=I*R",
+      "domain_a": "Biology",
+      "domain_b": "Electromagnetism"
+    },
+    {
+      "node_a": "B01",
+      "node_b": "B07",
+      "tree": "MUL",
+      "name_a": "Malthus recursion N(t+1)=lambda*N(t)",
+      "name_b": "Newton's second law F=m*a",
+      "domain_a": "Biology",
+      "domain_b": "Classical Mechanics"
+    },
+    {
+      "node_a": "B01",
+      "node_b": "B09",
+      "tree": "MUL",
+      "name_a": "Malthus recursion N(t+1)=lambda*N(t)",
+      "name_b": "SEIR dR/dt = gamma*I",
+      "domain_a": "Biology",
+      "domain_b": "Epidemiology"
+    },
+    {
+      "node_a": "B02",
+      "node_b": "B04",
+      "tree": "MUL",
+      "name_a": "Enzyme turnover v=k_cat*[E]",
+      "name_b": "Hooke's law sigma=E*epsilon",
+      "domain_a": "Biology",
+      "domain_b": "Materials Science"
+    },
+    {
+      "node_a": "B02",
+      "node_b": "B05",
+      "tree": "MUL",
+      "name_a": "Enzyme turnover v=k_cat*[E]",
+      "name_b": "Hubble's law v=H0*d",
+      "domain_a": "Biology",
+      "domain_b": "Astrophysics"
+    },
+    {
+      "node_a": "B02",
+      "node_b": "B06",
+      "tree": "MUL",
+      "name_a": "Enzyme turnover v=k_cat*[E]",
+      "name_b": "Ohm's law V=I*R",
+      "domain_a": "Biology",
+      "domain_b": "Electromagnetism"
+    },
+    {
+      "node_a": "B02",
+      "node_b": "B07",
+      "tree": "MUL",
+      "name_a": "Enzyme turnover v=k_cat*[E]",
+      "name_b": "Newton's second law F=m*a",
+      "domain_a": "Biology",
+      "domain_b": "Classical Mechanics"
+    },
+    {
+      "node_a": "B02",
+      "node_b": "B09",
+      "tree": "MUL",
+      "name_a": "Enzyme turnover v=k_cat*[E]",
+      "name_b": "SEIR dR/dt = gamma*I",
+      "domain_a": "Biology",
+      "domain_b": "Epidemiology"
+    },
+    {
+      "node_a": "B04",
+      "node_b": "B05",
+      "tree": "MUL",
+      "name_a": "Hooke's law sigma=E*epsilon",
+      "name_b": "Hubble's law v=H0*d",
+      "domain_a": "Materials Science",
+      "domain_b": "Astrophysics"
+    },
+    {
+      "node_a": "B04",
+      "node_b": "B06",
+      "tree": "MUL",
+      "name_a": "Hooke's law sigma=E*epsilon",
+      "name_b": "Ohm's law V=I*R",
+      "domain_a": "Materials Science",
+      "domain_b": "Electromagnetism"
+    },
+    {
+      "node_a": "B04",
+      "node_b": "B07",
+      "tree": "MUL",
+      "name_a": "Hooke's law sigma=E*epsilon",
+      "name_b": "Newton's second law F=m*a",
+      "domain_a": "Materials Science",
+      "domain_b": "Classical Mechanics"
+    },
+    {
+      "node_a": "B04",
+      "node_b": "B09",
+      "tree": "MUL",
+      "name_a": "Hooke's law sigma=E*epsilon",
+      "name_b": "SEIR dR/dt = gamma*I",
+      "domain_a": "Materials Science",
+      "domain_b": "Epidemiology"
+    },
+    {
+      "node_a": "B05",
+      "node_b": "B06",
+      "tree": "MUL",
+      "name_a": "Hubble's law v=H0*d",
+      "name_b": "Ohm's law V=I*R",
+      "domain_a": "Astrophysics",
+      "domain_b": "Electromagnetism"
+    },
+    {
+      "node_a": "B05",
+      "node_b": "B07",
+      "tree": "MUL",
+      "name_a": "Hubble's law v=H0*d",
+      "name_b": "Newton's second law F=m*a",
+      "domain_a": "Astrophysics",
+      "domain_b": "Classical Mechanics"
+    },
+    {
+      "node_a": "B05",
+      "node_b": "B09",
+      "tree": "MUL",
+      "name_a": "Hubble's law v=H0*d",
+      "name_b": "SEIR dR/dt = gamma*I",
+      "domain_a": "Astrophysics",
+      "domain_b": "Epidemiology"
+    },
+    {
+      "node_a": "B06",
+      "node_b": "B07",
+      "tree": "MUL",
+      "name_a": "Ohm's law V=I*R",
+      "name_b": "Newton's second law F=m*a",
+      "domain_a": "Electromagnetism",
+      "domain_b": "Classical Mechanics"
+    },
+    {
+      "node_a": "B06",
+      "node_b": "B09",
+      "tree": "MUL",
+      "name_a": "Ohm's law V=I*R",
+      "name_b": "SEIR dR/dt = gamma*I",
+      "domain_a": "Electromagnetism",
+      "domain_b": "Epidemiology"
+    },
+    {
+      "node_a": "B07",
+      "node_b": "B09",
+      "tree": "MUL",
+      "name_a": "Newton's second law F=m*a",
+      "name_b": "SEIR dR/dt = gamma*I",
+      "domain_a": "Classical Mechanics",
+      "domain_b": "Epidemiology"
+    },
+    {
+      "node_a": "B03",
+      "node_b": "B08",
+      "tree": "NEG_MUL",
+      "name_a": "Fick's first law J=-D*(dc/dx)",
+      "name_b": "Heat flow Fourier's law q=-k*(dT/dx)",
+      "domain_a": "Biology/Physics",
+      "domain_b": "Geology/Physics"
+    },
+    {
+      "node_a": "B03",
+      "node_b": "U13",
+      "tree": "NEG_MUL",
+      "name_a": "Fick's first law J=-D*(dc/dx)",
+      "name_b": "Fourier heat conduction q=-k*(dT/dx)",
+      "domain_a": "Biology/Physics",
+      "domain_b": "Physics"
+    },
+    {
+      "node_a": "B08",
+      "node_b": "U13",
+      "tree": "NEG_MUL",
+      "name_a": "Heat flow Fourier's law q=-k*(dT/dx)",
+      "name_b": "Fourier heat conduction q=-k*(dT/dx)",
+      "domain_a": "Geology/Physics",
+      "domain_b": "Physics"
+    },
+    {
+      "node_a": "B10",
+      "node_b": "B11",
+      "tree": "MUL_MUL",
+      "name_a": "Beer-Lambert A=epsilon*c*l",
+      "name_b": "Second-order rate r=k[A][B]",
+      "domain_a": "Biology/Optics",
+      "domain_b": "Chemistry"
+    },
+    {
+      "node_a": "D02",
+      "node_b": "D03",
+      "tree": "DIV",
+      "name_a": "Young's modulus E=sigma/eps",
+      "name_b": "Wien's displacement law lambda_max=b/T",
+      "domain_a": "Materials Science",
+      "domain_b": "Astrophysics"
+    },
+    {
+      "node_a": "D02",
+      "node_b": "D04",
+      "tree": "DIV",
+      "name_a": "Young's modulus E=sigma/eps",
+      "name_b": "Curie law chi=C/T",
+      "domain_a": "Materials Science",
+      "domain_b": "Electromagnetism"
+    },
+    {
+      "node_a": "D02",
+      "node_b": "D05",
+      "tree": "DIV",
+      "name_a": "Young's modulus E=sigma/eps",
+      "name_b": "Perpetuity PV=C/r",
+      "domain_a": "Materials Science",
+      "domain_b": "Economics"
+    },
+    {
+      "node_a": "D02",
+      "node_b": "D06",
+      "tree": "DIV",
+      "name_a": "Young's modulus E=sigma/eps",
+      "name_b": "Subduction velocity v=d/t",
+      "domain_a": "Materials Science",
+      "domain_b": "Geology"
+    },
+    {
+      "node_a": "D02",
+      "node_b": "D07",
+      "tree": "DIV",
+      "name_a": "Young's modulus E=sigma/eps",
+      "name_b": "Distribution coefficient Kd=Cs/Cw",
+      "domain_a": "Materials Science",
+      "domain_b": "Geology"
+    },
+    {
+      "node_a": "D02",
+      "node_b": "D08",
+      "tree": "DIV",
+      "name_a": "Young's modulus E=sigma/eps",
+      "name_b": "Case fatality rate CFR=deaths/cases",
+      "domain_a": "Materials Science",
+      "domain_b": "Epidemiology"
+    },
+    {
+      "node_a": "D03",
+      "node_b": "D04",
+      "tree": "DIV",
+      "name_a": "Wien's displacement law lambda_max=b/T",
+      "name_b": "Curie law chi=C/T",
+      "domain_a": "Astrophysics",
+      "domain_b": "Electromagnetism"
+    },
+    {
+      "node_a": "D03",
+      "node_b": "D05",
+      "tree": "DIV",
+      "name_a": "Wien's displacement law lambda_max=b/T",
+      "name_b": "Perpetuity PV=C/r",
+      "domain_a": "Astrophysics",
+      "domain_b": "Economics"
+    },
+    {
+      "node_a": "D03",
+      "node_b": "D06",
+      "tree": "DIV",
+      "name_a": "Wien's displacement law lambda_max=b/T",
+      "name_b": "Subduction velocity v=d/t",
+      "domain_a": "Astrophysics",
+      "domain_b": "Geology"
+    },
+    {
+      "node_a": "D03",
+      "node_b": "D07",
+      "tree": "DIV",
+      "name_a": "Wien's displacement law lambda_max=b/T",
+      "name_b": "Distribution coefficient Kd=Cs/Cw",
+      "domain_a": "Astrophysics",
+      "domain_b": "Geology"
+    },
+    {
+      "node_a": "D03",
+      "node_b": "D08",
+      "tree": "DIV",
+      "name_a": "Wien's displacement law lambda_max=b/T",
+      "name_b": "Case fatality rate CFR=deaths/cases",
+      "domain_a": "Astrophysics",
+      "domain_b": "Epidemiology"
+    },
+    {
+      "node_a": "D04",
+      "node_b": "D05",
+      "tree": "DIV",
+      "name_a": "Curie law chi=C/T",
+      "name_b": "Perpetuity PV=C/r",
+      "domain_a": "Electromagnetism",
+      "domain_b": "Economics"
+    },
+    {
+      "node_a": "D04",
+      "node_b": "D06",
+      "tree": "DIV",
+      "name_a": "Curie law chi=C/T",
+      "name_b": "Subduction velocity v=d/t",
+      "domain_a": "Electromagnetism",
+      "domain_b": "Geology"
+    }
+  ]
+}

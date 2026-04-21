@@ -1,0 +1,191 @@
+{
+  "session": "X6",
+  "title": "Acoustics and Music Theory — ELC Costs (SuperBEST v5)",
+  "superBEST_v5_costs": {
+    "add": "2n", "sub": "2n", "mul": "2n", "div": "1n",
+    "recip": "1n", "pow": "3n", "exp": "1n", "ln": "1n", "sqrt": "2n",
+    "note": "sin/cos are OUTSIDE real ELC(ℝ) by T01 (infinitely many zeros)"
+  },
+  "equations": [
+    {
+      "id": 1,
+      "name": "Frequency ratio (musical intervals)",
+      "formula": "f₂ / f₁",
+      "decomposition": [
+        "div(f₂, f₁) = 1n"
+      ],
+      "elc_cost": "1n",
+      "elc_status": "INSIDE",
+      "notes": "Simplest acoustic ratio. Basis of all interval arithmetic."
+    },
+    {
+      "id": 2,
+      "name": "Equal temperament tuning",
+      "formula": "f(n) = f₀ · 2^(n/12)",
+      "decomposition": [
+        "2^(n/12) = exp(ln(2) · (n/12))",
+        "  div(n, 12) = 1n",
+        "  ln(2) is a fixed constant = 0n",
+        "  mul(ln(2), div_result) = 2n",
+        "  exp(...) = 1n",
+        "  subtotal for 2^(n/12): 4n",
+        "mul(f₀, 2^(n/12)) = 2n"
+      ],
+      "elc_cost": "6n",
+      "elc_status": "INSIDE",
+      "notes": "pow(2, n/12) is NOT used directly because the exponent n/12 is irrational in general; instead rewrite as exp(mul(div(n,12), ln(2))). ln(2) is a real constant treated as 0n. The div→mul→exp chain costs 4n; the final mul with f₀ adds 2n."
+    },
+    {
+      "id": 3,
+      "name": "Beat frequency",
+      "formula": "|f₁ − f₂|",
+      "decomposition": [
+        "sub(f₁, f₂) = 2n",
+        "abs(x): in real ELC, abs(x) = sqrt(x²) requires ln(x) which is undefined for x < 0",
+        "For f₁ > f₂ (physical assumption): sub alone = 2n"
+      ],
+      "elc_cost": "2n (under physical assumption f₁ > f₂)",
+      "elc_status": "INSIDE (conditional) / FLAGGED (general)",
+      "abs_flag": {
+        "problem": "abs(x) is not representable in real ELC for arbitrary signed reals. The identity abs(x) = sqrt(x²) = exp(ln(x²)/2) = exp(mul(2, ln(x))/2) requires ln(x), which is undefined (or complex) when x ≤ 0.",
+        "connection_to_X7": "This is the same boundary encountered in X7: sign-sensitive functions create obstructions in real ELC. The absolute value is the prototype of a piecewise-smooth function that requires case splitting — not an ELC composition.",
+        "conclusion": "abs is OUTSIDE real ELC(ℝ) for general signed inputs. Beat frequency is INSIDE only when the sign of f₁−f₂ is known a priori."
+      }
+    },
+    {
+      "id": 4,
+      "name": "Decibel scale",
+      "formula": "dB = 20 · log₁₀(A/A₀) = 20 · ln(A/A₀) / ln(10)",
+      "decomposition": [
+        "div(A, A₀) = 1n",
+        "ln(div_result) = 1n",
+        "ln(10) is a fixed constant = 0n",
+        "div(ln_result, ln(10)) = 1n",
+        "mul(20, div_result) = 2n"
+      ],
+      "elc_cost": "5n",
+      "elc_status": "INSIDE",
+      "notes": "log₁₀ is not a primitive; it is computed as ln(·)/ln(10). Both ln(10) and the scalar 20 are constants (0n each). Requires A, A₀ > 0, which is physically guaranteed for acoustic amplitudes."
+    },
+    {
+      "id": 5,
+      "name": "Resonant frequency (LC circuit)",
+      "formula": "f = 1 / (2π · √(LC))",
+      "decomposition": [
+        "mul(L, C) = 2n",
+        "sqrt(mul_result) = 2n",
+        "mul(2π, sqrt_result) = 2n  [2π is a constant, 0n]",
+        "recip(mul_result) = 1n"
+      ],
+      "elc_cost": "7n",
+      "elc_status": "INSIDE",
+      "notes": "L, C > 0 physically. 2π is a fixed constant. recip used instead of div because numerator is 1."
+    },
+    {
+      "id": 6,
+      "name": "Sound intensity (point source)",
+      "formula": "I = P / (4π r²)",
+      "decomposition": [
+        "pow(r, 2) = 3n  [r > 0 physically, so pow is valid]",
+        "mul(4π, r²) = 2n  [4π is a constant, 0n]",
+        "div(P, mul_result) = 1n"
+      ],
+      "elc_cost": "6n",
+      "elc_status": "INSIDE",
+      "notes": "r is a physical radius so r > 0; pow(r, 2) costs 3n (not mul) because pow is the general real power operation. r² could also be computed as mul(r, r) = 2n, saving 1n if preferred — but pow is the canonical form."
+    },
+    {
+      "id": "6_alt",
+      "name": "Sound intensity — alternative r² via mul",
+      "formula": "I = P / (4π r²), with r² = r·r",
+      "decomposition": [
+        "mul(r, r) = 2n  [valid since r is a specific real, not a general power]",
+        "mul(4π, r²) = 2n",
+        "div(P, mul_result) = 1n"
+      ],
+      "elc_cost": "5n",
+      "elc_status": "INSIDE",
+      "notes": "If r² is treated as mul(r,r) rather than pow(r,2), cost drops to 5n. This is valid because squaring is a special case of multiplication. Shows that canonical form choice affects cost."
+    },
+    {
+      "id": 7,
+      "name": "Doppler effect",
+      "formula": "f' = f · (v + v_r) / (v + v_s)",
+      "decomposition": [
+        "add(v, v_r) = 2n  [numerator velocity sum]",
+        "add(v, v_s) = 2n  [denominator velocity sum]",
+        "div(add1_result, add2_result) = 1n",
+        "mul(f, div_result) = 2n"
+      ],
+      "elc_cost": "7n",
+      "elc_status": "INSIDE",
+      "notes": "All operations are add/div/mul. No transcendental functions. v + v_s ≠ 0 required (no sonic boom singularity), which is a physical constraint, not an ELC constraint."
+    },
+    {
+      "id": 8,
+      "name": "Reverberation time (Sabine formula)",
+      "formula": "T₆₀ = 0.161 · V / A",
+      "decomposition": [
+        "div(V, A) = 1n",
+        "mul(0.161, div_result) = 2n"
+      ],
+      "elc_cost": "3n",
+      "elc_status": "INSIDE",
+      "notes": "0.161 is an empirical constant (= 24·ln(10)/c, c ≈ 343 m/s), treated as a fixed real (0n). V is room volume, A is total absorption — both positive reals. Simplest multi-variable acoustic formula in this set."
+    },
+    {
+      "id": 9,
+      "name": "Wave equation solution (sinusoidal wave)",
+      "formula": "y(x,t) = A · sin(kx − ωt)",
+      "decomposition": [
+        "mul(k, x) = 2n",
+        "mul(ω, t) = 2n",
+        "sub(kx, ωt) = 2n",
+        "sin(θ) = OUTSIDE real ELC (T01: sin has infinitely many zeros, cannot be represented in ELC(ℝ))",
+        "In complex ELC: sin(θ) = Im(exp(i·θ)), computable via exp(i·θ) = 1n in ELC(ℂ)"
+      ],
+      "elc_cost": "OUTSIDE real ELC(ℝ) / INSIDE complex ELC(ℂ)",
+      "elc_status": "OUTSIDE (real) / INSIDE (complex)",
+      "notes": "The obstruction is sin, not the linear argument kx−ωt. The argument is 6n in ELC(ℝ) but sin applied to it is not in ELC(ℝ). In ELC(ℂ), sin is representable via the imaginary part of exp."
+    }
+  ],
+  "key_finding": {
+    "title": "Spectral/Temporal Boundary in Acoustics",
+    "statement": "Acoustic SPECTRUM (frequency content and energy distribution) is INSIDE real ELC(ℝ). Acoustic WAVEFORM (time-domain wave values) is OUTSIDE real ELC(ℝ).",
+    "inside_real_ELC": [
+      "Frequency ratio f₂/f₁ (1n)",
+      "Equal temperament f₀·2^(n/12) (6n)",
+      "Beat frequency |f₁−f₂| for f₁>f₂ (2n)",
+      "Decibel scale 20·log₁₀(A/A₀) (5n)",
+      "Resonant frequency 1/(2π√(LC)) (7n)",
+      "Sound intensity P/(4πr²) (5–6n)",
+      "Doppler shift f·(v+v_r)/(v+v_s) (7n)",
+      "Sabine reverberation 0.161·V/A (3n)"
+    ],
+    "outside_real_ELC": [
+      "Sinusoidal waveform A·sin(kx−ωt)",
+      "Any function with sin or cos of a varying argument",
+      "abs(x) for general signed inputs (not a waveform, but sign-sensitive — same obstruction class)"
+    ],
+    "interpretation": "The boundary is clean: quantities that describe the frequency domain (ratios, levels, intervals, decay times, cutoffs) are all computable in ELC(ℝ). Quantities that describe the time domain (actual wave displacement as a function of position and time) require sin/cos, which are provably outside ELC(ℝ) by T01. This makes ELC(ℝ) a natural algebra for acoustic engineering (filter design, tuning, level calculations) but not for direct waveform synthesis.",
+    "complex_ELC_bridge": "In ELC(ℂ), sin and cos are representable as imaginary/real parts of exp(i·θ), so complex ELC closes the temporal gap. The spectral/temporal distinction collapses in ELC(ℂ) — it is a purely real phenomenon.",
+    "abs_note": "abs(x) is outside real ELC for general signed reals (same obstruction class as sign-sensitive functions in X7). Beat frequency is inside ELC only under the physical assumption f₁ > f₂."
+  },
+  "cost_summary": [
+    {"id": 1, "name": "Frequency ratio",      "cost": "1n",  "status": "INSIDE"},
+    {"id": 2, "name": "Equal temperament",    "cost": "6n",  "status": "INSIDE"},
+    {"id": 3, "name": "Beat frequency",       "cost": "2n",  "status": "INSIDE (f₁>f₂) / FLAGGED (general)"},
+    {"id": 4, "name": "Decibel scale",        "cost": "5n",  "status": "INSIDE"},
+    {"id": 5, "name": "Resonant frequency",   "cost": "7n",  "status": "INSIDE"},
+    {"id": 6, "name": "Sound intensity",      "cost": "5–6n","status": "INSIDE"},
+    {"id": 7, "name": "Doppler effect",       "cost": "7n",  "status": "INSIDE"},
+    {"id": 8, "name": "Sabine reverberation", "cost": "3n",  "status": "INSIDE"},
+    {"id": 9, "name": "Wave equation",        "cost": "OUTSIDE ℝ / INSIDE ℂ", "status": "OUTSIDE real ELC"}
+  ],
+  "metadata": {
+    "date": "2026-04-20",
+    "session": "X6",
+    "prior_session": "X5 (physics ELC costs)",
+    "next_session": "X7 (abs/sign obstruction class)"
+  }
+}
