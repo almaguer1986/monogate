@@ -1,0 +1,1 @@
+D:\monogate\monogate-core\target\release\n12_search.exe: D:\monogate\monogate-core\src\bin\n12_search.rs D:\monogate\monogate-core\src\evaluator.rs D:\monogate\monogate-core\src\lib.rs D:\monogate\monogate-core\src\sin_search.rs
