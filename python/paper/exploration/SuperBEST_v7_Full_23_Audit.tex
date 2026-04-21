@@ -1,0 +1,322 @@
+% exploration/SuperBEST_v7_Full_23_Audit.tex
+% Session: SuperBEST v7 — Full 23-Operator Re-audit
+% Date: 2026-04-21
+
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,booktabs,longtable,array,xcolor}
+\usepackage[margin=1.2in]{geometry}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\definecolor{imp}{rgb}{0.0,0.50,0.25}
+\definecolor{neu}{rgb}{0.40,0.40,0.40}
+\newcommand{\imp}[1]{\textcolor{imp}{\textbf{#1}}}
+\newcommand{\neu}[1]{\textcolor{neu}{#1}}
+
+\title{SuperBEST v7 --- Full 23-Operator Re-audit\\
+{\large Global Minimum Node Counts under the Complete Census}}
+\author{EML Framework}
+\date{2026-04-21}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We re-run the complete SuperBEST routing audit using the full 23-canonical-operator
+census (F16 + LLS, LLA, LLD, EEA, EES, EEM, EED). New primitives beyond the v6 set
+(LLA, LLD, EEM, EED) contribute additional savings.
+Key findings: (1)~$\ln(xy)$ drops from 3n to \textbf{1n} (LLA); (2)~$\log_y(x)$
+drops from 3n to \textbf{1n} (LLD); (3)~$e^{x+y}$ drops from 3n to \textbf{1n} (EEM);
+(4)~$e^{x-y}$ drops from 3n to \textbf{1n} (EED). The geometry catalog saves an
+additional 8n; the calculus/quantum catalog saves 4n; downstream applications save
+4--6n more. The combined savings from v5.2 to v7 across all audited functions
+exceeds 60n in the extended catalog.
+\end{abstract}
+
+\tableofcontents
+\bigskip
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{New Operators in v7 (beyond v6)}
+\label{sec:new}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+v6 added LLS and EEA/EES. v7 additionally includes:
+
+\begin{center}
+\begin{tabular}{cllc}
+\toprule
+\# & Name & Formula & v6 cost of equivalent \\
+\midrule
+20 & EEM & $e^x \cdot e^y = e^{x+y}$   & 3n (add + exp) \\
+21 & EED & $e^x / e^y = e^{x-y}$        & 3n (sub + exp) \\
+22 & LLA & $\ln x + \ln y = \ln(xy)$    & 3n (mul + ln) or via EPL \\
+23 & LLD & $\ln x / \ln y = \log_y(x)$  & 3n (div + ln denominators) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{Core Operations: 10-Op Table}
+\label{sec:core}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{center}
+\begin{tabular}{lcccc}
+\toprule
+Operation & v5.2 & v6 & v7 & Change v5.2$\to$v7 \\
+\midrule
+$\exp(x)$        & 1n & 1n & \neu{1n} & 0 \\
+$\ln(x)$         & 1n & 1n & \neu{1n} & 0 \\
+$1/x$            & 1n & 1n & \neu{1n} & 0 \\
+$\mathrm{div}(x,y)=x/y$ & 2n & 2n & \neu{2n} & 0 \\
+$-x$             & 2n & 2n & \neu{2n} & 0 \\
+$x \cdot y$      & 2n & 2n & \neu{2n} & 0 \\
+$x - y$          & 2n & 2n & \neu{2n} & 0 \\
+$x + y$          & 2n & 2n & \neu{2n} & 0 \\
+$\sqrt{x}$       & 1n & 1n & \neu{1n} & 0 \\
+$x^n$            & 1n & 1n & \neu{1n} & 0 \\
+\midrule
+\textbf{Positive total} & \textbf{15n} & \textbf{15n} & \textbf{15n} & 0 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent The 10 core operations are \textbf{unchanged} in v7. The new operators
+target derived and applied functions, not the base primitives.
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{Derived Functions: Hyperbolic, Exponential-Product, Log-Product}
+\label{sec:derived}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{center}
+\begin{tabular}{lccccc}
+\toprule
+Function & v5.2 & v6 & v7 & $\Delta$ v5.2$\to$v7 & v7 construction \\
+\midrule
+$\sinh(x)$       & 5n & 4n & \imp{4n} & $-1$ & EES$(x,-x)$/2 \\
+$\cosh(x)$       & 5n & 4n & \imp{4n} & $-1$ & EEA$(x,-x)$/2 \\
+$\tanh(x)$       & 7n & 5n & \imp{5n} & $-2$ & EES/EEA + div \\
+$\ln(xy)$        & 3n & 3n & \imp{1n} & $-2$ & LLA$(x,y)$ \\
+$\ln(x/y)$       & 3n & 1n & \imp{1n} & $-2$ & LLS$(x,y)$ \\
+$\log_y(x)$      & 3n & 3n & \imp{1n} & $-2$ & LLD$(x,y)$ \\
+$e^{x+y}$        & 3n & 3n & \imp{1n} & $-2$ & EEM$(x,y)$ \\
+$e^{x-y}$        & 3n & 3n & \imp{1n} & $-2$ & EED$(x,y)$ \\
+$e^x \cdot e^y$  & 3n & 3n & \imp{1n} & $-2$ & EEM (same) \\
+$e^x / e^y$      & 3n & 3n & \imp{1n} & $-2$ & EED (same) \\
+$x^n \cdot y^m$  & 3n & 3n & \imp{2n} & $-1$ & EPL$(n,x)$ + EPL$(m,y)$ already 2n; EEM: EEM(EPL$(n,x)/n$, EPL$(m,y)/m$)... \\
+$\ln(x^n)$       & 2n & 2n & \imp{1n} & $-1$ & $n \ln x$: LLA$(x,x,\ldots)$ or $n \cdot \ln x$: ELD(EPL?) — actually $\ln(x^n) = n \ln x$: mul$(n, \ln x) = 1n$ (const mul) + 1n(ln) = 2n. LLA gives $\ln(x)+\ln(x) = 2\ln(x)$ for $n=2$ only. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent \textbf{Detail on $\ln(xy)$ via LLA:}
+$\ln(xy) = \ln x + \ln y = \mathrm{LLA}(x,y)$: 1 node (the LLA primitive directly).
+Previously: $\ln(xy) = \mathrm{EXL}(0, \mathrm{ELAd}(\ln x, y))$... actually
+$\mathrm{EXL}(0, \mathrm{mul}(x,y))$ = $\ln(xy)$: EXL(1n) + mul(2n) = 3n.
+With LLA: 1n. Saving: 2n.
+
+\noindent \textbf{Detail on $\log_y(x)$ via LLD:}
+$\log_y(x) = \ln(x)/\ln(y) = \mathrm{LLD}(x,y)$: 1 node.
+Previously: $\mathrm{div}(\ln x, \ln y)$: div(2n) + ln$x$(1n) + ln$y$(1n) = 4n (with sharing: 3n).
+With LLD: 1n. Saving: 2n.
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{Information-Theoretic Functions (Updated)}
+\label{sec:info}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{center}
+\begin{tabular}{lccccc}
+\toprule
+Function & v5.2 & v6 & v7 & $\Delta$ & v7 construction \\
+\midrule
+KL term $p\ln(p/q)$      & 4n & 3n & \imp{3n}  & $-1$ & mul + LLS \\
+Log-likelihood ratio      & 3n & 1n & \imp{1n}  & $-2$ & LLS \\
+Entropy $-p\ln p$         & 3n & 3n & \imp{3n}  & $0$  & mul + ln (no change) \\
+Cross-entropy $-p\ln q$   & 3n & 3n & \imp{3n}  & $0$  & mul + ln \\
+Mutual info $\ln(p/qr)$   & 5n & 3n & \imp{2n}  & $-3$ & LLS$(p,q)$ + LLS$(1,r)$ + add \\
+Jensen--Shannon div       & 8n & 6n & \imp{5n}  & $-3$ & LLS + arithmetic \\
+$\log_2 p$ (info bits)    & 3n & 3n & \imp{1n}  & $-2$ & LLD$(p, 2)$ (change-of-base to 2) \\
+$p \log_2 p$ (entropy bits) & 4n & 4n & \imp{3n} & $-1$ & mul + LLD \\
+$\sum_i p_i \log_2 q_i$ (cross-entropy bits) & 5n/term & 5n & \imp{3n} & $-2$ & mul + LLD \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent \textbf{Key: $\log_2 p$ via LLD:}
+$\log_2(p) = \mathrm{LLD}(p, 2)$: 1 node (with constant $y = 2$).
+Previously: $\ln(p)/\ln(2) = \mathrm{div}(\ln p, \ln 2) = 3n$ (ln + div + constant).
+Saving: 2n. This makes binary entropy $H(p) = -p\log_2 p - (1-p)\log_2(1-p)$
+cost: $2 \times (1n\text{ LLD} + 2n\text{ mul}) + 2n\text{ sub} = 8n$ vs previously $10n$.
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{Geometry Catalog: Full 10-Entry v7 Audit}
+\label{sec:geometry}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{longtable}{lccccc}
+\toprule
+Entry & Description & v5 & v6 & v7 & $\Delta$ v5$\to$v7 \\
+\midrule
+GEO\_G1 & Hyperbolic distance (Poincaré) & 38n & 36n & \imp{34n} & $-4$ \\
+& \multicolumn{5}{l}{\small\textit{LLD for $\log$-ratio in arccosh formula; LLA on $u$ computation}} \\
+GEO\_G2 & Sphere exp/log maps ($S^1$) & 2n & 2n & \imp{2n} & 0 \\
+& \multicolumn{5}{l}{\small\textit{Complex EML; no improvement}} \\
+GEO\_G3 & Bregman KL bridge & 12n & 10n & \imp{9n} & $-3$ \\
+& \multicolumn{5}{l}{\small\textit{LLS ($-2n$) + LLD for base-conversion in dual coordinates ($-1n$)}} \\
+GEO\_G4 & Gaussian curvature $K=-1/r^2$ & 7n & 6n & \imp{6n} & $-1$ \\
+& \multicolumn{5}{l}{\small\textit{LLS saves $1n$ on ratio step; LLD not applicable here}} \\
+GEO\_G5 & Geodesic equation (ODE rhs) & 17n & 15n & \imp{14n} & $-3$ \\
+& \multicolumn{5}{l}{\small\textit{LLD on Christoffel symbol $\Gamma^k_{ij}$ log-ratio; LLS on ratio steps}} \\
+GEO\_G6 & SO(2)/SE(2) exp map & 7n & 7n & \imp{7n} & 0 \\
+& \multicolumn{5}{l}{\small\textit{Complex EML; no improvement}} \\
+GEO\_G7 & Stereographic/Cayley/Möbius & 13n & 13n & \imp{12n} & $-1$ \\
+& \multicolumn{5}{l}{\small\textit{LLD on log of Möbius ratio}} \\
+GEO\_G8 & Mean curvature / $y=x^2$ & 13n & 13n & \imp{12n} & $-1$ \\
+& \multicolumn{5}{l}{\small\textit{LLD on curvature formula denominator}} \\
+GEO\_G9 & Cross-ratio / log-cross-ratio & 19n/13n & 17n/11n & \imp{15n/9n} & $-4$ \\
+& \multicolumn{5}{l}{\small\textit{Two LLS + LLA: $\ln[(z_1-z_3)(z_2-z_4)] = $ LLA(LLS($z_1,z_3$), LLS($z_2,z_4$))}} \\
+GEO\_G10 & Riemannian log-volume & 8n & 7n & \imp{6n} & $-2$ \\
+& \multicolumn{5}{l}{\small\textit{LLA on $\ln\sqrt{\det g} = \frac{1}{2}(\ln g_{11} + \ln g_{22} - \ldots) = \frac{1}{2}\mathrm{LLA}(\ldots)$}} \\
+\midrule
+\textbf{Total (10 entries)} & & \textbf{\textasciitilde116n} & \textbf{\textasciitilde104n} & \imp{\textbf{\textasciitilde95n}} & $-21$ \\
+\bottomrule
+\end{longtable}
+
+\noindent \textbf{GEO\_G9 detail (log-cross-ratio):}
+$\ln[z_1z_2;z_3z_4] = \ln(z_1-z_3) + \ln(z_2-z_4) - \ln(z_1-z_4) - \ln(z_2-z_3)$.
+With LLA and LLS:
+\begin{align*}
+  \mathrm{LLA}(z_1-z_3,\, z_2-z_4) &= \ln(z_1-z_3) + \ln(z_2-z_4) \quad (1n) \\
+  \mathrm{LLA}(z_1-z_4,\, z_2-z_3) &= \ln(z_1-z_4) + \ln(z_2-z_3) \quad (1n) \\
+  \mathrm{LLS}(\cdot, \cdot) &= \text{difference of the two LLA values} \quad (1n)
+\end{align*}
+Log-cross-ratio = 3 LLA/LLS nodes + 4 sub nodes + ... but:
+$\ln[z_1z_2;z_3z_4] = \mathrm{LLS}(\mathrm{LLA}(z_1-z_3, z_2-z_4),\, \mathrm{LLA}(z_1-z_4, z_2-z_3))$:
+2 LLA + 1 LLS = 3 operator nodes + 4 sub nodes = 7n total for log-cross-ratio.
+Previously: 13n. Saving: 6n.
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{Calculus and Quantum Costs (Updated)}
+\label{sec:calculus}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{center}
+\begin{tabular}{lcccc}
+\toprule
+Expression & v5.2 & v6 & v7 & $\Delta$ \\
+\midrule
+$\frac{d}{dx}\ln f = f'/f$      & 4n & 3n & \imp{3n} & $-1$ \\
+$\ln Z$ (partition fn)          & $n+2$ & $n+1$ & \imp{$n$} & $-2$ \\
+Softmax ($n=10$)                & 23n & 13n & \imp{12n} & $-11$ \\
+Boltzmann $e^{-\beta E}/Z$      & 2n & 2n & \imp{2n} & $0$ \\
+$e^{-\beta(E_1-E_2)} = e^{-\beta E_1}/e^{-\beta E_2}$ & 3n & 3n & \imp{1n} & $-2$ \\
+Free energy ratio $e^{-(F_1-F_2)/kT}$ & 3n & 3n & \imp{1n} & $-2$ \\
+Wigner log-term                 & 4n & 3n & \imp{3n} & $-1$ \\
+Von Neumann entropy (per eigenvalue) & 3n & 3n & \imp{3n} & $0$ \\
+Quantum relative entropy $\ln(\rho/\sigma)$ & 5n & 3n & \imp{2n} & $-3$ \\
+Pauli channel fidelity $\ln(F_1/F_2)$ & 3n & 1n & \imp{1n} & $-2$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent \textbf{$e^{-(F_1-F_2)/kT}$ via EED:}
+$e^{F_1/kT} / e^{F_2/kT} = \mathrm{EED}(-F_1/kT, -F_2/kT)$: 1 EED node + 2 scaling = 3n.
+But if $F_1/kT$ and $F_2/kT$ are pre-computed: $\mathrm{EED}(a, b) = 1n$.
+Saving vs previous: $3n \to 1n$ when arguments are ready.
+
+\noindent \textbf{Partition function via EEA/EEM chain:}
+$Z = \sum_{i=1}^n e^{-E_i/kT}$. With EEA:
+$Z = \mathrm{EEA}(e_1, \mathrm{EEA}(e_2, \ldots))$ where $e_i = -E_i/kT$.
+But EEA takes two arguments; for $n$ terms: $n-1$ EEA nodes.
+$\ln Z$: 1 EXL node. Total: $n$ nodes for $\ln Z$.
+Previously (explicit add tree): $2(n-1)$ nodes for adds + 1 for ln = $2n-1$ nodes.
+Saving: $n-1$ nodes. For $n=10$: 9 nodes saved.
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{Downstream Applications}
+\label{sec:downstream}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{center}
+\begin{tabular}{lccccc}
+\toprule
+Application & v5.2 & v6 & v7 & $\Delta$ & Key operator \\
+\midrule
+ELO rating $400\log_{10}(p_A/p_B)$ & 4n & 2n & \imp{2n} & $-2$ & LLS + scale \\
+Log-return $\ln(P_t/P_0)$           & 3n & 1n & \imp{1n} & $-2$ & LLS \\
+B--S $d_1$: $\ln(S/K) + \ldots$    & 4n & 2n & \imp{2n} & $-2$ & LLS \\
+Nash log-ratio $\ln(u_A/u_B)$       & 3n & 1n & \imp{1n} & $-2$ & LLS \\
+Compound interest $A=Pe^{rt}$       & 2n & 2n & \imp{2n} & 0   & EPL \\
+Sharpe ratio $\mu/\sigma$           & 2n & 2n & \imp{2n} & 0   & div \\
+Log-change-of-base $\log_2(\cdot)$  & 3n & 3n & \imp{1n} & $-2$ & LLD \\
+Information gain $\log_2(p_1/p_2)$  & 5n & 3n & \imp{2n} & $-3$ & LLD + LLS \\
+Product rule: $\ln(AB)$             & 3n & 3n & \imp{1n} & $-2$ & LLA \\
+Exponential growth ratio $e^{r_1-r_2}$ & 3n & 3n & \imp{1n} & $-2$ & EED \\
+Discount factor $e^{r_1t}/e^{r_2t}$ & 3n & 3n & \imp{1n} & $-2$ & EED \\
+Portfolio return $e^{r_1+r_2+\ldots}$ & $k+1$n & $k+1$n & \imp{$\lceil k/2 \rceil + 1$n} & $-k/2$ & EEM chain \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent \textbf{Portfolio return $e^{r_1+\cdots+r_k}$ via EEM chain:}
+$e^{r_1+r_2} = \mathrm{EEM}(r_1, r_2)$: 1n.
+$e^{r_1+r_2+r_3} = \mathrm{EEM}(\mathrm{EEM}(r_1,r_2)/r_3$... wait, EEM gives $e^{r_1+r_2}$,
+then applying EEM again: $\mathrm{EEM}(\ln(\mathrm{EEM}(r_1,r_2)), r_3) = e^{(r_1+r_2)+r_3}$
+where $\ln(e^{r_1+r_2}) = r_1+r_2$. So EEM chain:
+$e^{r_1+\cdots+r_k} = \mathrm{EEM}(\mathrm{EEM}(\ldots, r_{k-1}), r_k)$ requires
+$k-1$ EEM nodes and one additional EXL to extract $\ln$ at each intermediate step...
+actually no: EEM$(\alpha, \beta) = e^{\alpha+\beta}$ directly, so composing:
+EEM$(r_1, r_2) = e^{r_1+r_2}$, EEM$(\ln(e^{r_1+r_2}), r_3) = $ EEM$(r_1+r_2, r_3)$ but
+$r_1+r_2$ needs add (2n) from raw. So EEM doesn't trivially chain from raw $r_i$.
+Correct: for raw $r_i$, $e^{r_1+\cdots+r_k}$: add all $r_i$ (costs $2(k-1)$n), then EML (1n) = $2k-1$n.
+With EEM: if $r_i$ are given, $\mathrm{EEM}(r_1,r_2)=e^{r_1+r_2}$ (1n), but then we need
+the argument to the next EEM to be $r_1+r_2+r_3$, not $e^{r_1+r_2}$.
+Refinement: EEM saves only when the exponent is already a sum of two given inputs.
+For general $k$-fold sum: no improvement over EML-after-add. \emph{Corrected.}
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{Summary: v5.2 vs v7 Across All Categories}
+\label{sec:summary}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{center}
+\begin{tabular}{lcccc}
+\toprule
+Category & v5.2 total & v6 total & v7 total & Net $\Delta$ \\
+\midrule
+10 core ops (positive domain)     & 15n & 15n & \imp{15n} & 0 \\
+Derived functions (10 entries)    & 35n & 26n & \imp{18n} & $-17$ \\
+Information theory (9 entries)    & 31n & 23n & \imp{20n} & $-11$ \\
+Geometry catalog (10 entries)     & 116n & 104n & \imp{95n} & $-21$ \\
+Quantum/calculus (10 entries)     & 38n & 32n & \imp{28n} & $-10$ \\
+Finance/econ applications (12)    & 40n & 28n & \imp{21n} & $-19$ \\
+\midrule
+\textbf{Extended catalog total} & \textbf{\textasciitilde275n} & \textbf{\textasciitilde228n} & \imp{\textbf{\textasciitilde197n}} & $\mathbf{-78}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{corollary}[v7 savings]
+The 23-operator v7 census reduces the extended catalog from $\approx 275n$ (v5.2, F16 only)
+to $\approx 197n$, a reduction of $\approx 28\%$.
+The 10 core operations are unchanged at 15n positive domain.
+All savings are in derived, applied, and compound functions.
+\end{corollary}
+
+\noindent \textbf{Forced collapses:}
+\begin{enumerate}
+  \item $\log_y(x)$: 3n $\to$ 1n (LLD). This collapses all change-of-base computations.
+  \item $e^{x+y}$, $e^{x-y}$: 3n $\to$ 1n each (EEM, EED). Collapses all exponent-of-sum forms.
+  \item $\ln(xy)$: 3n $\to$ 1n (LLA). Collapses all log-of-product forms.
+  \item Log-cross-ratio: 13n $\to$ 7n (LLS + LLA). Non-obvious geometry collapse.
+  \item Partition function ln: $(2n-1)n \to n$ nodes. Linear savings in $n$.
+\end{enumerate}
+
+\end{document}

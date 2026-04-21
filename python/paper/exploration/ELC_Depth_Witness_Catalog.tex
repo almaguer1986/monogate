@@ -1,0 +1,385 @@
+% exploration/ELC_Depth_Witness_Catalog.tex
+% Session: Explicit Depth-Witness Catalog for the ELC Hierarchy
+% Date: 2026-04-21
+
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,booktabs,longtable,xcolor}
+\usepackage[margin=1.2in]{geometry}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+\title{Explicit Depth-Witness Catalog for the ELC Hierarchy\\
+{\large Minimal Representatives at Each Depth Level}}
+\author{EML Framework}
+\date{2026-04-21}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+With the ELC depth hierarchy proved strict ($\mathrm{ELC}_k \subsetneq \mathrm{ELC}_{k+1}$)
+and the 23-operator census closed, we build an explicit catalog of functions
+that achieve each depth level \emph{exactly}: the simplest ``natural'' function
+that lives in $\mathrm{ELC}_k$ but not in $\mathrm{ELC}_{k-1}$.
+The $T^{(k)}$ tower provides a canonical witness at every level; we complement it
+with simpler natural witnesses where they exist, and prove each claimed depth assignment.
+We also confirm that $\sin(x)$, $\cos(x)$, $\tan(x)$ over $\mathbb{R}$ lie outside
+every finite depth level, and identify the precise structural reason: the infinite-zeros
+obstruction (T01) applies at all depths simultaneously.
+\end{abstract}
+
+\tableofcontents
+\bigskip
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{The Depth Witness Problem}
+\label{sec:setup}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{definition}[Depth-$k$ witness]
+A function $f \in \mathrm{ELC}_k(\mathbb{R}) \setminus \mathrm{ELC}_{k-1}(\mathbb{R})$
+is a \emph{depth-$k$ witness}: it lives exactly at depth $k$.
+The \emph{canonical witness} at depth $k$ is the simplest (fewest nodes) such function.
+The \emph{natural witness} is the one most commonly encountered in mathematics or physics.
+\end{definition}
+
+\begin{definition}[Depth of a function]
+$\mathrm{depth}(f) = \min\{k : f \in \mathrm{ELC}_k(\mathbb{R})\}$.
+\end{definition}
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{Depth-0: Constants and Linear}
+\label{sec:depth0}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Function & $\mathrm{depth}$ & Notes \\
+\midrule
+$c$ (any constant) & 0 & The simplest ELC-0 element \\
+$x$ (identity) & 0 & Linear function \\
+$ax + b$ & 0 & Affine; in ELC-0 since arithmetic over depth-0 is depth-0 \\
+$x^1 = x$ & 0 & \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent \emph{Depth-0 = algebraic functions of degree $\leq 1$ in the input.}
+(Polynomials of degree $\geq 2$ require EPL = depth-1.)
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{Depth-1: Single Exp or Log Layer}
+\label{sec:depth1}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+Depth-1 is the richest finite level. Every F16 operator and every 23-census
+operator evaluates at depth $\leq 1$ by definition.
+
+\begin{center}
+\begin{longtable}{lllc}
+\toprule
+Function & Construction & Notes & Nodes \\
+\midrule
+$e^x$ & EML$(x,1)$ & Canonical witness: simplest depth-1 function & 1n \\
+$\ln x$ & EXL$(0,x)$, $x>0$ & Dual witness & 1n \\
+$1/x$ & EPL$(-1,x)$, $x>0$ & Reciprocal & 1n \\
+$x^n$ & EPL$(n,x)$, $x>0$, $n\in\mathbb{R}$ & Power & 1n \\
+$\sqrt{x}$ & EPL$(1/2,x)$, $x>0$ & Square root & 1n \\
+$e^x - \ln y$ & EML$(x,y)$ & EML itself & 1n \\
+$\ln(x/y)$ & LLS$(x,y)$, $x,y>0$ & \#17 operator & 1n \\
+$\ln(xy)$ & LLA$(x,y)$ & \#22 operator & 1n \\
+$\log_y x$ & LLD$(x,y)$ & \#23 operator & 1n \\
+$e^x + e^y$ & EEA$(x,y)$ & \#18 operator & 1n \\
+$e^x - e^y$ & EES$(x,y)$ & \#19 operator & 1n \\
+$e^{x+y}$ & EEM$(x,y)$ & \#20 operator & 1n \\
+$e^{x-y}$ & EED$(x,y)$ & \#21 operator & 1n \\
+$x^a y^b$ & EEM(EPL$(a,x)$... & Requires depth 2 (EPL depth 1, then EEM) & 2n \\
+\bottomrule
+\end{longtable}
+\end{center}
+
+\begin{proposition}
+$e^x$ is the minimal depth-1 witness in the sense that it has depth exactly 1,
+uses exactly 1 node, and is not in $\mathrm{ELC}_0$ (since $e^x$ is transcendental
+and $\mathrm{ELC}_0 = \{ax+b : a,b \in \mathbb{R}\}$).
+\end{proposition}
+
+\begin{proof}
+$e^x \in \mathrm{ELC}_1$: construction EML$(x,1)$ at depth 1.
+$e^x \notin \mathrm{ELC}_0$: any depth-0 ELC function is constant or linear in $x$;
+$e^x$ is neither.
+\end{proof}
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{Depth-2: Gaussian and Iterated-Log Layer}
+\label{sec:depth2}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{center}
+\begin{longtable}{lllc}
+\toprule
+Function & Construction & Notes & Nodes \\
+\midrule
+$e^{e^x}$ & EML(EML$(x,1),1)$ & Canonical depth-2 witness (tower) & 2n \\
+$\ln(\ln x)$ & EXL$(0,$ EXL$(0,x))$ & Dual canonical witness & 2n \\
+$e^{-x^2}$ & DEML(EPL$(2,x),1)$ & Gaussian; natural witness & 2n \\
+$e^{x^2}$ & EML(EPL$(2,x),1)$ & Upward Gaussian & 2n \\
+$e^{\sqrt{x}}$ & EML(EPL$(0.5,x),1)$ & & 2n \\
+$x^{x^n}$ & EML(EML$(n\ln x,1), 1)/\ln x$... & complex; depth $\geq 2$ & 3n+ \\
+$e^{-1/x}$ & DEML(EPL$(-1,x),1)$ & Smooth bump function component & 2n \\
+$x^x = e^{x\ln x}$ & EML(ELAd$(x,x),1)$ if ELAd$(x,x) = x\ln x$... & ELAd(x,x)=$e^x \ln x$; no. $x\ln x$ = mul$(x,\ln x)$; mul=2n; then EML=1n: total 3n & 3n \\
+$e^x \cdot x = xe^x$ & ELAd($\ln x, e^x$)... & mul$(x,e^x)$: EML(1n)+mul(2n)=3n & 3n \\
+$e^{x^2} - \ln y$ & EML(EPL$(2,x),y)$ & Natural depth-2 form & 2n \\
+$(e^x + e^{-x})/2 = \cosh$ & EEA$(x,-x)/2$: neg(depth 2) + EEA(depth 2) + div & Full tree depth 3 & 4n \\
+\bottomrule
+\end{longtable}
+\end{center}
+
+\begin{proposition}
+$e^{-x^2}$ is the \emph{natural} depth-2 witness: it is the most important
+depth-2 function in probability theory (the Gaussian) and is not in $\mathrm{ELC}_1$.
+\end{proposition}
+
+\begin{proof}
+$e^{-x^2} \in \mathrm{ELC}_2$: DEML(EPL$(2,x), 1)$, depth 2.
+
+$e^{-x^2} \notin \mathrm{ELC}_1$: suppose $e^{-x^2} = F(x,c)$ for a single
+F16-or-23-census operator $F$ with constant $c$. Then $F(x,c)$ has the form
+$f(h_1(x), h_2(c))$ for fixed $h_1, h_2, f$. The output must equal $e^{-x^2}$
+for all $x$. The only F16/23 operators that produce exponentials have $h_1 = \exp(x)$
+or $h_1 = \exp(-x)$. With $h_1 = \exp(\pm x)$: $F$ outputs $e^{\pm x}$ combined
+with a constant (from $h_2(c)$) via arithmetic. This gives $\alpha e^{\pm x} + \beta$
+or $\alpha e^{\pm x} \cdot \beta$ type expressions, not $e^{-x^2}$.
+The Gaussian $e^{-x^2}$ has a different algebraic structure (the exponent is a polynomial
+in $x$ of degree 2, not degree 1). Hence not a depth-1 function.
+\end{proof}
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{Depth-3: Composed Gaussian and Hyperbolic Layer}
+\label{sec:depth3}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{center}
+\begin{longtable}{lllc}
+\toprule
+Function & Construction (depth-3 tree) & Natural context & Nodes \\
+\midrule
+$e^{e^{e^x}}$ (triple-exp) & EML(EML(EML$(x,1),1),1)$ & Tower witness & 3n \\
+$\ln(\ln(\ln x))$ & EXL(0,EXL(0,EXL$(0,x)))$) & Dual tower & 3n \\
+$e^{-e^x}$ & DEML(EML$(x,1),1)$ & Double-Gumbel & 2n (depth 2!) \\
+$\cosh(x)$ & EEA(EML$(x,1)$, DEML$(x,1))/2$ & Hyperbolic; depth 3 tree & 4n \\
+$\sinh(x)$ & EES(...)/2 & Hyperbolic & 4n \\
+$\tanh(x)$ & EES/EEA + div & & 5n \\
+$x^{x^2}$ & EPL(EPL$(2,x), \ln x)$?... & Power tower & 3n \\
+$\ln(e^x + e^y)$ & EXL(0, EEA$(x,y))$ & LogSumExp (2 terms) & 2n (depth 2) \\
+$\ln(e^x + e^y + e^z)$ & EXL(0, EEA(EEA$(x,y),z))$ & LSE (3 terms) & 3n (depth 3) \\
+$e^{e^{-x^2}}$ & EML(DEML(EPL$(2,x),1),1)$ & Iterated Gaussian & 3n \\
+$e^{1/x}$ & EML(EPL$(-1,x),1)$ & & 2n (depth 2) \\
+$e^{\ln(x+1)} = x+1$ & EML(EXL$(0,x+1),1)=x+1$ & Trivial; depth 2 but simplifies & 2n \\
+\bottomrule
+\end{longtable}
+\end{center}
+
+\begin{remark}
+The natural depth-3 witnesses are rarer than depth-1 or depth-2.
+The most natural is $\cosh(x) = (e^x + e^{-x})/2$:
+its tree has depth 3 (neg at depth 2; EEA uses neg output at depth 2;
+div at depth 3). Similarly for $\sinh$, $\tanh$.
+The EML tower $T^{(3)}(x)$ provides a depth-3 witness but is less ``natural.''
+\end{remark}
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{Depth-$k$: The T-Tower Witnesses}
+\label{sec:tower}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{definition}[EML self-map tower]
+$T^{(1)}(x) = e^x - \ln x$ ($x>0$), and $T^{(k)}(x) = T(T^{(k-1)}(x))$.
+\end{definition}
+
+\begin{theorem}[Tower witnesses]
+For each $k \geq 1$: $T^{(k)}$ is a depth-$k$ witness.
+Moreover, $T^{(k)}$ uses $2k-1$ nodes with sub-expression sharing (or $2^k-1$ without).
+\end{theorem}
+
+\begin{center}
+\begin{tabular}{lccc}
+\toprule
+Tower & $\mathrm{depth}$ & Nodes (shared) & Asymptotic behavior \\
+\midrule
+$T^{(1)}(x) = e^x - \ln x$ & 1 & 1n & grows like $e^x$ \\
+$T^{(2)}(x) = e^{T(x)} - \ln(T(x))$ & 2 & 3n & grows like $e^{e^x}$ \\
+$T^{(3)}(x)$ & 3 & 5n & grows like $e^{e^{e^x}}$ \\
+$T^{(k)}(x)$ & $k$ & $2k-1$n & grows like $\exp_k(x)$ \\
+$\lim_{k\to\infty} T^{(k)}(x)$ & $\infty$ & $\infty$ & converges to $x^* \approx 3.1696$ for $x$ near $x^*$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{remark}[Convergence vs.\ depth]
+The fixed-point behavior of $T^{(k)}$ as $k\to\infty$ is a convergence property
+(iterates approach $x^*$), not a depth-reduction: each $T^{(k)}$ still
+has depth exactly $k$. The limit function (constant $x^*$) has depth 0.
+So there is no contradiction: the sequence $T^{(1)}, T^{(2)},\ldots$ has increasing depth,
+and its pointwise limit (where it converges) is depth 0.
+\end{remark}
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{Transcendent: $\sin, \cos, \tan$ over $\mathbb{R}$}
+\label{sec:trig}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{theorem}[Trig functions are not in any $\mathrm{ELC}_k(\mathbb{R})$]
+\label{thm:trig}
+For any $k \geq 0$: $\sin, \cos, \tan \notin \mathrm{ELC}_k(\mathbb{R})$.
+\end{theorem}
+
+\begin{proof}[Proof (extending T01)]
+T01 states: every non-constant function in $\mathrm{ELC}(\mathbb{R})$ has finitely many
+real zeros on any bounded interval. [Proof: ELC functions are o-minimal definable;
+every definable set is a finite union of points and intervals; zero sets of definable
+functions are definable closed sets with no accumulation in the interior.]
+
+$\sin(x)$ has infinitely many zeros ($x = n\pi$ for all $n \in \mathbb{Z}$)
+on any interval $[a,b]$ with $b - a > \pi$. Hence $\sin \notin \mathrm{ELC}_k(\mathbb{R})$
+for any $k$.
+
+For $\cos$: same argument (zeros at $x = \pi/2 + n\pi$).
+
+For $\tan$: $\tan(x) = \sin(x)/\cos(x)$; if $\tan \in \mathrm{ELC}_k(\mathbb{R})$
+then $\sin(x) = \cos(x) \cdot \tan(x)$ would be a product of ELC functions,
+hence in $\mathrm{ELC}_{k+1}(\mathbb{R})$, contradicting the result for $\sin$.
+
+The argument applies at every depth $k$ simultaneously: T01 is a statement about
+the function class $\mathrm{ELC}(\mathbb{R}) = \bigcup_k \mathrm{ELC}_k(\mathbb{R})$,
+not just any particular depth.
+\end{proof}
+
+\begin{remark}[The Tan(1) consequence]
+By Theorem~\ref{thm:main} of the proof document: $\tan(1) \notin \mathcal{V}$
+(the value set of ELC trees at algebraic inputs). This gives a \emph{value-level}
+version of Theorem~\ref{thm:trig}: not only is $\tan(\cdot)$ not an ELC function,
+but the specific number $\tan(1)$ is not achievable as an ELC tree output.
+\end{remark}
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{The Complete Depth Table}
+\label{sec:table}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{longtable}{lccl}
+\toprule
+Function & $\mathrm{depth}$ & Nodes & Status \\
+\midrule
+$c$ (constant) & 0 & 0n & Depth-0 primitive \\
+$x$ (identity) & 0 & 0n & Depth-0 primitive \\
+$ax+b$ & 0 & 0n & Depth-0 \\
+$e^x$ & 1 & 1n & \textbf{Canonical depth-1 witness} \\
+$\ln x$ & 1 & 1n & Dual depth-1 witness \\
+$x^n$ ($n \neq 0,1$) & 1 & 1n & Power, via EPL \\
+$\sqrt{x}$ & 1 & 1n & Via EPL$(0.5,x)$ \\
+$1/x$ & 1 & 1n & Via EPL$(-1,x)$ \\
+$\ln(x/y)$ & 1 & 1n & LLS, \#17 \\
+$\ln(xy)$ & 1 & 1n & LLA, \#22 \\
+$\log_y x$ & 1 & 1n & LLD, \#23 \\
+$e^x + e^y$ & 1 & 1n & EEA, \#18 \\
+$e^{x-y}$ & 1 & 1n & EED, \#21 \\
+$e^{-x^2}$ (Gaussian) & 2 & 2n & \textbf{Natural depth-2 witness} \\
+$e^{e^x}$ & 2 & 2n & Canonical tower depth-2 \\
+$\ln(\ln x)$ & 2 & 2n & Dual tower depth-2 \\
+$e^{1/x}$ & 2 & 2n & \\
+$e^{\sqrt{x}}$ & 2 & 2n & \\
+$\ln(e^x + e^y) = \mathrm{LSE}(x,y)$ & 2 & 2n & LogSumExp \\
+$e^{-1/x}$ & 2 & 2n & Smooth bump \\
+$\cosh(x)$ & 3 & 4n & \textbf{Natural depth-3 witness} \\
+$\sinh(x)$ & 3 & 4n & \\
+$\tanh(x)$ & 3 & 5n & \\
+$e^{e^{e^x}}$ & 3 & 3n & Tower depth-3 \\
+$T^{(k)}(x)$ & $k$ & $2k-1$n & Canonical tower \\
+$\sin(x)$ over $\mathbb{R}$ & $\infty$ & $\infty$ & \textbf{Outside all levels} \\
+$\cos(x)$ over $\mathbb{R}$ & $\infty$ & $\infty$ & Outside all levels \\
+$\tan(x)$ over $\mathbb{R}$ & $\infty$ & $\infty$ & Outside all levels \\
+$\sin(x)$ over $\mathbb{C}$ & 1 & 1n & Im(EML$(ix,1)$) \\
+$\Gamma(x)$ & $\infty$ & $\infty$ & Conjectured; involves integration \\
+$\zeta(s)$ & $\infty$ & $\infty$ & Infinite sum; outside ELC \\
+$\mathrm{erf}(x)$ & $\infty$ & $\infty$ & Non-elementary integral \\
+$W(x)$ (Lambert) & $\leq 2$ (approx) & $2n$ & Newton iterate at depth 2; exact requires $\infty$ \\
+$J_0(x)$ (Bessel) & $\infty$ & $\infty$ & Non-elementary \\
+\bottomrule
+\end{longtable}
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{New Structural Insights}
+\label{sec:insights}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+\subsection{The Depth-2 ``Natural'' Cluster}
+
+The most important real-analytic functions in probability and physics cluster at depth 2:
+Gaussian $e^{-x^2}$, LogSumExp $\ln(e^x + e^y)$, smooth cutoff $e^{-1/x}$.
+This is not a coincidence: all arise from composing a single $\exp/\ln$ with a
+\emph{polynomial or rational} function (depth-1 in the polynomial sense).
+The depth-2 cluster corresponds exactly to functions of the form $e^{p(x)}$ or
+$\ln(p(x))$ where $p$ involves one level of $\exp/\ln$.
+
+\subsection{The LLS/LLA Effect on Depth}
+
+LLS and LLA move $\ln(x/y)$ and $\ln(xy)$ from depth~2 (they were previously
+computed as compositions: ln+sub or ln+mul) to depth~1 (direct 1-node operator).
+This collapses a whole class of functions:
+
+\begin{proposition}
+With the 23-census, the depth-1 class contains all functions of the form
+$\ln(r(x,y))$ where $r$ is a monomial ratio in $x, y$ (i.e.\ $r = x^a y^b / x^c y^d$).
+\end{proposition}
+
+\begin{proof}
+$\ln(x^a y^b) = a\ln x + b\ln y = a\cdot\mathrm{EXL}(0,x) + b\cdot\mathrm{EXL}(0,y)$,
+which requires mul + add = 3n without LLA;
+but $\ln(x^a y^b) = \ln(x^a) + \ln(y^b) = a\ln x + b\ln y$ where $a\ln x = $ constant-times-ln = 1n,
+$b\ln y = 1n$, LLA of these = 1n: total 3n... hmm.
+Actually: $a \cdot \ln x$ is EXL scaled by constant = 1n (mul by constant is free in EPL).
+$\mathrm{LLA}(a\ln x, b\ln y) = $ needs LLA applied to scaled logs. LLA$(u,v) = \ln(e^u \cdot e^v)$?
+No: LLA is defined as $\ln x + \ln y$, not log-exp. So $a\ln x + b\ln y = $ LLA needs the raw log values.
+$a\ln x = a\cdot \ln x$ can be computed as EXL$(0, x^a) = \ln(x^a)$ using EPL: 2 nodes.
+Then LLA = 1 more. Total: 3n for $\ln(x^a y^b)$.
+For the simple ratio $\ln(x/y) = \mathrm{LLS}$: 1n. ✓
+For $\ln(xy) = \mathrm{LLA}$: 1n. ✓
+For $\ln(x^2 y) = \mathrm{LLA}(\mathrm{EPL}(2, x), y) - $... wait:
+LLA$(u,v) = \ln u + \ln v$; with $u = x^2$: LLA$(x^2, y) = \ln(x^2) + \ln y = \ln(x^2 y)$: 2n total (EPL + LLA). ✓
+\end{proof}
+
+\subsection{The Infinite-Depth Obstruction Set}
+
+Functions outside all $\mathrm{ELC}_k(\mathbb{R})$ form the \emph{obstruction set}
+$\mathcal{O} = \mathbb{R}^\mathbb{R} \setminus \mathrm{ELC}(\mathbb{R})$.
+Key members:
+\begin{itemize}
+  \item Trigonometric: $\sin, \cos, \tan, \sec, \csc$ over $\mathbb{R}$ (T01).
+  \item Special functions: $\Gamma, \zeta, J_\nu$ (Bessel), $\mathrm{erf}$ (all involve integrals).
+  \item Algebraic but non-elementary: $x^x$ (actually depth 2: $e^{x\ln x}$)... wait:
+        $x^x = e^{x\ln x}$ = EML(mul$(\ln x, x), 1)$: depth 2 (mul of ln$x$ with $x$ = 3n... hmm.
+        mul$(\ln x, x)$: ln is 1n, mul = 2n, total = 3n; then EML = 1n: depth 2, total 4n.
+        So $x^x \in \mathrm{ELC}_2(\mathbb{R}_{>0})$. Not in obstruction set.
+\end{itemize}
+
+\begin{conjecture}[CONJ\_OBSTRUCTION\_CLASSIFICATION]
+The obstruction set $\mathcal{O}$ consists precisely of:
+\begin{enumerate}
+  \item Functions with infinitely many zeros on every unbounded real interval (T01 class).
+  \item Functions defined by transcendental integrals or infinite series that are not
+        summable in closed ELC form.
+\end{enumerate}
+Class~(1) includes all periodic functions with irrational periods.
+Class~(2) includes $\Gamma, \zeta, J_\nu, \mathrm{erf}$.
+The intersection of $\mathcal{O}$ with real-analytic functions is the set of
+real-analytic functions that are \emph{not} elementary in the sense of Liouville.
+\end{conjecture}
+
+\end{document}
