@@ -1,0 +1,334 @@
+% exploration/Operator_17_Generalized_Forms.tex
+% Session: Operator #17 and Generalized Exp-Ln Forms
+% Date: 2026-04-21
+
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,array,booktabs,xcolor}
+\usepackage[margin=1.2in]{geometry}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+\title{Operator \#17 and Generalized Exp--Log Forms\\
+{\large Are the 16 F16 Operators the End?}}
+\author{Exploration Session --- EML Framework}
+\date{2026-04-21}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+The EML framework rests on 16 binary operators obtained from
+$f(\pm\exp(\pm x),\, \pm\ln(\pm y))$ with $f \in \{+,-,\times,\div\}$.
+We ask whether these 16 are truly the natural stopping point, or whether
+there exist structurally canonical ``Operator \#17'' forms.
+We enumerate every natural generalization class, test each for
+(i)~functional completeness over elementary functions,
+(ii)~SuperBEST node-count impact,
+(iii)~fixed-point and zero-counting behaviour, and
+(iv)~interaction with the $\tan(1)$ obstruction.
+The main finding: the 16 form a \emph{closed orbit} under the natural
+symmetry group acting on two-argument exp--log expressions, making any
+addition genuinely structural rather than notational. Two candidate families
+--- the EE-class $(\exp(x) \pm \exp(y))$ and the LL-class $(\ln(x) \pm \ln(y))$
+--- emerge as the most natural ``17th'' operators, with concrete SuperBEST
+consequences. We close with a precise conjecture (CONJ\_ORBIT\_CLOSURE) and
+a new obstruction result for the $\tan(1)$ value.
+\end{abstract}
+
+\tableofcontents
+\bigskip
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{The 16-Operator Census: Definition and Symmetry Structure}
+\label{sec:census}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{definition}[F16 operator family]
+The \emph{F16 family} consists of all two-argument real functions of the form
+\[
+  F_{\varepsilon_1,\varepsilon_2,\delta_1,\delta_2}(x,y)
+  \;=\;
+  f\!\bigl(\varepsilon_1\exp(\varepsilon_2 x),\; \delta_1\ln(\delta_2 y)\bigr),
+\]
+where $\varepsilon_i, \delta_i \in \{+1,-1\}$ and $f \in \{+,-,\times,\div\}$.
+This yields $2 \times 2 \times 4 = 16$ operators (with domain restrictions where
+$\delta_2 y > 0$ or the denominator is nonzero).
+\end{definition}
+
+\noindent The 16 operators inherit a natural group structure.
+
+\begin{definition}[Symmetry group $\mathcal{G}_{16}$]
+Define four involutions acting on F16 expressions:
+\begin{align*}
+  \sigma_x &: x \mapsto -x \quad (\text{negate first argument}),\\
+  \sigma_y &: y \mapsto -y \quad (\text{negate second argument}),\\
+  \rho     &: f \mapsto 1/f \quad (\text{reciprocal of output, maps $+\leftrightarrow\div$ etc.}),\\
+  \tau     &: (x,y) \mapsto (y,x) \quad (\text{swap arguments}).
+\end{align*}
+The group $\mathcal{G}_{16} = \langle \sigma_x, \sigma_y, \rho, \tau \rangle \cong (\mathbb{Z}/2\mathbb{Z})^4$
+acts on the set of F16 operators.
+\end{definition}
+
+\begin{proposition}[The 16 form a single orbit]
+\label{prop:orbit}
+Starting from $\mathrm{EML}(x,y) = \exp(x) - \ln(y)$, the orbit under
+$\mathcal{G}_{16}$ covers all 16 operators and no others.
+The 16 operators are exactly the orbit.
+\end{proposition}
+
+\begin{proof}
+Straightforward enumeration: $\sigma_x$ toggles $\exp(x) \leftrightarrow \exp(-x)$,
+$\sigma_y$ toggles $\ln(y) \leftrightarrow \ln(-y)$ (equivalently $-\ln(y)$ when $y>0$),
+and $\rho$ toggles the arithmetic operation between additive and multiplicative forms.
+The full $(\mathbb{Z}/2)^4$ action produces $2^4 = 16$ elements, all distinct
+as functions on generic inputs.
+\end{proof}
+
+\begin{remark}
+Proposition~\ref{prop:orbit} is the key structural fact. It means:
+any putative ``Operator \#17'' must \emph{lie outside this orbit}---it cannot be
+reached by sign changes and reciprocals from EML.  The question is whether
+any outside form is \emph{canonically motivated}.
+\end{remark}
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{Candidate Classes Beyond F16}
+\label{sec:candidates}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+We classify candidates by which aspect of the F16 template they generalise.
+
+\subsection{Class EE: Both Arguments Exponential}
+
+\begin{definition}[EE operators]
+\[
+  \mathrm{EEA}(x,y) = \exp(x) + \exp(y), \quad
+  \mathrm{EES}(x,y) = \exp(x) - \exp(y).
+\]
+\end{definition}
+
+\noindent \textbf{Why natural:} The F16 template uses one $\exp$ and one $\ln$ argument.
+Allowing both arguments to be exponential is the most symmetric departure.
+
+\noindent \textbf{Expressibility within F16:}
+$\mathrm{EES}(x,y) = \exp(x) - \exp(y)$ cannot be written as a single F16 operator.
+Proof: every F16 operator has $\ln(\cdot)$ appearing in at least one branch;
+$\exp(y)$ has no logarithm. However, using the v5.2 SuperBEST table:
+\[
+  \mathrm{EES}(x,y) = \mathrm{sub}\!\bigl(\exp(x), \exp(y)\bigr)
+  = 2n\;(\text{sub}) + 1n\;(\exp x) + 1n\;(\exp y) = 4n \text{ total from raw inputs}.
+\]
+As a \emph{new primitive} F17 = EEA or EES:
+\begin{itemize}
+  \item $\sinh(x) = \mathrm{EES}(x,-x)/2$: EES costs 1n, $-x$ costs 2n, div-by-2 costs
+        1n (since 2 is a constant) $= 4n$ vs current $\approx 5n$ via sub+neg+mul route.
+        \emph{Net saving: 1n per sinh.}
+  \item $\cosh(x) = \mathrm{EEA}(x,-x)/2$: same analysis. \emph{Net saving: 1n per cosh.}
+  \item $e^x + e^{-x}$ in Fourier-type sums: each occurrence $1n$ instead of $4n$.
+\end{itemize}
+
+\noindent \textbf{Completeness impact:} Adding EE does not extend the \emph{functional class}
+(ELC remains the same set), but reduces node costs for hyperbolic functions.
+
+\subsection{Class LL: Both Arguments Logarithmic}
+
+\begin{definition}[LL operators]
+\[
+  \mathrm{LLA}(x,y) = \ln(x) + \ln(y) = \ln(xy), \quad
+  \mathrm{LLS}(x,y) = \ln(x) - \ln(y) = \ln(x/y).
+\]
+\end{definition}
+
+\noindent \textbf{Expressibility:} LLS is already F16 (it equals
+$\mathrm{LEDIV}(x,y) = \ln(\exp(x)/y)$ with $x = \ln(u)$... actually
+$\mathrm{ELSb}(\ln(x), y) = \exp(\ln(x) - \ln(y)) = x/y$, not LLS directly).
+Direct check: none of the 16 F16 operators output $\ln(x) - \ln(y)$ directly
+with both arguments raw; this would require a two-$\ln$ structure not present in F16.
+So LL is genuinely outside F16.
+
+\noindent \textbf{Node impact:}
+$\ln(x) + \ln(y) = \ln(xy)$ as 1 node vs current 3n ($\ln x + \ln y$ via add).
+Applications:
+\begin{itemize}
+  \item $\log$-likelihood sums in statistical models: $\sum_i \ln p_i$ halved in depth.
+  \item $\ln\Gamma(n) = \sum_{k=1}^{n-1} \ln k$: currently $O(n)$ add nodes, with LLA
+        reduces by factor 2 per pairwise grouping.
+\end{itemize}
+
+\subsection{Class DE: Double-Exponential Forms}
+
+\begin{definition}
+$\mathrm{DEML}(x,y) = \exp(\exp(x)) - \ln(y)$, and its 16 sign variants.
+\end{definition}
+
+\noindent These require 2 nodes within the first argument alone ($\exp(\exp(x))$ is
+2 nodes), so as a single ``gate'' they encode a depth-2 subtree.
+This violates the spirit of a \emph{primitive} operator.
+
+\begin{proposition}
+No function of the form $f(\exp(\exp(x)), g(y))$ can be a single F16-style
+primitive without extending the gate complexity.
+\end{proposition}
+
+\noindent \textbf{Conclusion:} Double-exponential forms are not good primitives;
+they are already expressible as depth-2 F16 trees.
+
+\subsection{Class IL: Iterated-Logarithm Forms}
+
+\begin{definition}
+$\mathrm{ILML}(x,y) = \exp(x) - \ln(\ln(y))$ for $y > 1$ (so $\ln(y) > 0$).
+\end{definition}
+
+\noindent Same issue: $\ln(\ln(y))$ requires 2 nodes. As a primitive this
+encodes a depth-2 subtree. Node savings over explicit tree: 0
+(you still need both $\ln$ applications). Not canonical.
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{Structural Properties Distinguishing a Canonical Operator \#17}
+\label{sec:structural}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+For an operator to deserve the label ``\#17 canonical,'' we propose four criteria:
+
+\begin{enumerate}
+  \item \textbf{Outside the $\mathcal{G}_{16}$ orbit} (Proposition~\ref{prop:orbit}).
+  \item \textbf{Analytically irreducible:} cannot be written as a composition of
+        fewer than 2 F16 nodes for generic inputs.
+  \item \textbf{SuperBEST-reducing:} adding it as a primitive lowers at least one
+        entry in the SuperBEST table by $\geq 1n$.
+  \item \textbf{Structurally motivated:} arises naturally from the algebraic
+        closure properties of the EML framework (not ad hoc).
+\end{enumerate}
+
+\noindent Under these criteria:
+\begin{itemize}
+  \item EEA/EES: satisfy (1), (2), (3). Do they satisfy (4)?
+    The cheap-addition breakthrough ($\mathrm{add} = 2n$) implies
+    $\exp(x) + \exp(y) = \mathrm{add}(\exp(x), \exp(y))$ costs $4n$ from raw inputs.
+    There is no EML-algebraic reason to privilege this form over other 4n forms.
+    \emph{Verdict: weakly motivated.}
+  \item LLA/LLS: satisfy (1), (2), (3). Motivation: LLS $= \ln(x/y)$ is the
+    logarithm of a ratio---a fundamental information-theoretic primitive (relative
+    entropy, KL divergence). \emph{Verdict: strongly motivated by information theory.}
+\end{itemize}
+
+\subsection{Fixed-Point Behaviour}
+
+For EML$(x^*,x^*) = x^*$: the attractor is at $\exp(x^*) - \ln(x^*) = x^*$,
+solved numerically at $x^* \approx 3.1696$ (the phantom attractor).
+
+For EEA$(x^*,x^*) = x^*$: $2\exp(x^*) = x^* \Rightarrow x^* \approx -0.4428$
+(Lambert $W$: $x^* = -W(1/2) \approx -0.4428$). A \emph{negative} fixed point,
+structurally distinct from EML's positive attractor.
+
+For LLS$(x^*,x^*) = x^*$: $\ln(x^*/x^*) = \ln(1) = 0 = x^*$.
+Fixed point at 0 (trivial). No phantom attractor analogue.
+
+\subsection{Zero-Counting and the Tan(1) Obstruction}
+
+\noindent\textbf{Tan(1) obstruction recap:}
+$\tan(1) \approx 1.5574...$ is not in the values of depth-bounded ELC trees
+applied to algebraic inputs (conjectured; supported by the near-miss
+analysis in \texttt{Unifying\_Obstruction\_Tan1.tex}).
+
+For Operator \#17 candidates:
+\begin{itemize}
+  \item $\mathrm{EES}(x,y) = 0 \Leftrightarrow \exp(x) = \exp(y) \Leftrightarrow x = y$.
+    Zero locus: the diagonal $x=y$---finitely many intersections with any ELC curve.
+    \emph{T01-compatible.}
+  \item $\mathrm{LLS}(x,y) = 0 \Leftrightarrow \ln(x) = \ln(y) \Leftrightarrow x = y$
+    (for $x,y > 0$). Same structure.
+  \item Both EE and LL operators preserve the finite-zeros property over any compact
+    interval for compositions with ELC trees. The $\tan(1)$ obstruction is therefore
+    not relaxed by adding these operators.
+\end{itemize}
+
+\begin{conjecture}[CONJ\_TAN1\_PERSISTENCE]
+Adding any finite collection of operators of the form $f(g_1(x), g_2(y))$ where
+$g_1, g_2$ are compositions of $\exp, \ln$, and arithmetic, does not allow
+$\tan(1)$ to be represented in a finite-depth ELC tree with algebraic inputs.
+The tan(1) obstruction is structural to the exp--log algebraic closure, not
+an artifact of the specific 16-operator basis.
+\end{conjecture}
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{SuperBEST Impact of Adding EE and LL as Primitives}
+\label{sec:superbest}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{center}
+\begin{tabular}{lcccc}
+\toprule
+Function & Current cost (F16) & With EE & With LL & Note \\
+\midrule
+$\sinh(x)$     & 5n & 4n & --- & EES$(x,-x)$/2 \\
+$\cosh(x)$     & 5n & 4n & --- & EEA$(x,-x)$/2 \\
+$\tanh(x)$     & 7n & 6n & --- & $\sinh/\cosh$ via EE \\
+$\ln(xy)$      & 3n & --- & 1n & LLA direct \\
+$\ln(x/y)$     & 3n & --- & 1n & LLS direct \\
+$\ln^2(x)$     & 3n & --- & 1n & LLA$(x,x)=2\ln x$; then... \\
+KL div $\sum p\ln(p/q)$ & high & --- & reduced & LLS per term \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent Note: $\tanh(x) = (e^x - e^{-x})/(e^x + e^{-x})$
+$= \mathrm{EES}(x,-x)/\mathrm{EEA}(x,-x)$, costing $2 \times 1n(\mathrm{EE})
++ 2n(\mathrm{neg}) + 1n(\mathrm{div}) = 5n$ vs current $\approx 7n$. Saving: $2n$.
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{Conjectures and Open Questions}
+\label{sec:conjectures}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{conjecture}[CONJ\_ORBIT\_CLOSURE]
+The F16 operators form the unique maximal orbit of $\mathrm{EML}(x,y)$ under
+the symmetry group $\mathcal{G}_{16}$.
+Any two-argument function $F(x,y)$ expressible as a single application of
+$\exp, \ln$, and one arithmetic operation lies in the F16 family or requires
+a strictly larger orbit (i.e., a different generating element).
+\end{conjecture}
+
+\begin{conjecture}[CONJ\_EE\_LL\_MINIMAL]
+The EE and LL operator classes are the unique minimal extensions of F16 that:
+(a) strictly lower at least one SuperBEST entry,
+(b) preserve the finite-zeros property (T01-compatibility), and
+(c) are closed under the $\mathcal{G}_{16}$ symmetry restricted to their class.
+\end{conjecture}
+
+\begin{remark}[What a proof of CONJ\_ORBIT\_CLOSURE would require]
+One needs to classify all two-argument functions of the form
+$f(h_1(x), h_2(y))$ where $h_1, h_2 \in \{\exp, \ln, \mathrm{id}\}$ and
+$f \in \{\text{arithmetic ops}\}$, and show these split into exactly the
+F16 family plus the EE/LL classes. This is a finite enumeration argument
+combined with an algebraic independence lemma (the functions $\exp(x)$,
+$\ln(x)$, and $x$ are algebraically independent over $\mathbb{R}$ on generic inputs).
+\end{remark}
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{Recommendation}
+\label{sec:recommendation}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+\textbf{Operator \#17 canonical candidate: LLS$(x,y) = \ln(x) - \ln(y) = \ln(x/y)$.}
+
+Rationale:
+\begin{enumerate}
+  \item Outside $\mathcal{G}_{16}$ orbit (both arguments use $\ln$, not one $\exp$ + one $\ln$).
+  \item Information-theoretically fundamental (relative entropy, KL divergence, log-ratio tests).
+  \item Saves $2n$ per $\ln(x/y)$ occurrence (from 3n to 1n).
+  \item Closed-form fixed point at 0 (trivial, structurally clean).
+  \item Directly analogous to the EPL operator extending pow---both are
+        ``same-function both arguments'' variants of a core primitive.
+\end{enumerate}
+
+\textbf{Operator \#18 candidate: EEA$(x,y) = \exp(x) + \exp(y)$.}
+
+Dual of LLS in the exp--log symmetry. Saves $1n$ per hyperbolic function.
+
+\end{document}

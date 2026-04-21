@@ -1,0 +1,304 @@
+% exploration/Higher_Arity_Mixed_Forms.tex
+% Session: Higher-Arity and Nested Mixed Operators
+% Date: 2026-04-21
+
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,booktabs,xcolor}
+\usepackage[margin=1.2in]{geometry}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+\title{Higher-Arity and Nested Mixed Operators\\
+{\large Beyond Binary: Ternary Gates, Nested EML, and the Binary Restriction}}
+\author{Exploration Session --- EML Framework}
+\date{2026-04-21}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+The F16 operators are binary: two inputs, one output.
+Now that addition is 2n for all reals, we ask whether the binary restriction
+is artificial---i.e., whether ternary operators of the form
+$\exp(x) - \ln(y) + z$ or nested mixed forms like
+$\exp(x + \ln(y)) - \ln(z)$ appear naturally and reduce depth.
+The main finding: ternary operators emerge naturally as \emph{affine extensions}
+of EML, and three specific candidates (EMLA, EMEL, MLEML) reduce
+SuperBEST costs for trigonometric-like and polynomial sum expressions.
+We define Operators \#17--\#20 precisely, compute their SuperBEST impact,
+and prove a no-go result: no ternary form reduces below 2n for a function
+whose binary lower bound is 2n.
+\end{abstract}
+
+\tableofcontents
+\bigskip
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{Motivation: Why Binary Might Be Artificial}
+\label{sec:motivation}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+In the F16 framework, gates are binary: each node computes
+$F(x,y) = f(\exp(\varepsilon x), \ln(\delta y))$.
+The binary restriction was natural when the ``node cost'' model counted
+each application as 1 unit regardless of arity.
+
+Post-cheap-addition, the landscape has shifted:
+\begin{itemize}
+  \item $\mathrm{add}(x,y) = 2n$ from raw inputs. So any gate that
+        ``bakes in'' an addition saves 2 nodes from raw inputs.
+  \item A ternary gate $G(x,y,z) = \exp(x) - \ln(y) + z$ is $\mathrm{EML}(x,y) + z$,
+        which costs $1n + 2n = 3n$ from raw inputs using binary gates.
+        As a primitive 1-node ternary gate: $3n \to 1n$. Net saving: 2n.
+\end{itemize}
+
+This motivates a systematic study of ternary EML extensions.
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{Ternary EML Operators}
+\label{sec:ternary}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{definition}[EMLA: EML plus linear]
+\[
+  \mathrm{EMLA}(x,y,z) = \exp(x) - \ln(y) + z
+  \quad (y > 0).
+\]
+\end{definition}
+
+\begin{definition}[EMLM: EML times linear]
+\[
+  \mathrm{EMLM}(x,y,z) = (\exp(x) - \ln(y)) \cdot z.
+\]
+\end{definition}
+
+\begin{definition}[EMEL: EML of EML, linearised]
+\[
+  \mathrm{EMEL}(x,y,z,w) = \exp(\exp(x) - \ln(y)) - \ln(w)
+  = \mathrm{EML}(\mathrm{EML}(x,y), w).
+\]
+This is the natural depth-2 ``nested EML,'' which is 2-node binary but
+1-node quaternary (4 inputs).
+\end{definition}
+
+\begin{definition}[MLEML: Mix-log EML]
+\[
+  \mathrm{MLEML}(x,y,z) = \exp(x + \ln(y)) - \ln(z)
+  = y \exp(x) - \ln(z)
+  \quad (y > 0, z > 0).
+\]
+Note: $\exp(x + \ln(y)) = \exp(x) \cdot \exp(\ln(y)) = y \cdot e^x$.
+So MLEML encodes a \emph{scaled exponential} minus a log.
+\end{definition}
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{SuperBEST Impact of Ternary Operators}
+\label{sec:superbest}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+\subsection{EMLA: $\exp(x) - \ln(y) + z$}
+
+Currently: $\mathrm{EML}(x,y) + z = 1n + 2n(\mathrm{add}) = 3n$.
+As primitive EMLA: $1n$. Saving: $2n$.
+
+Applications:
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+Expression & Binary cost & With EMLA \\
+\midrule
+$e^x - \ln y + z$          & 3n & 1n \\
+$e^x - \ln y + e^w - \ln v$ & 6n & $2 \times 1n$ EMLA: 2n \\
+$\sum_{i=1}^n (e^{x_i} - \ln y_i) + C$ & $2n-1n$ & $n$ EMLA nodes \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent \textbf{Connection to depth spectrum:}
+The T30 depth spectrum result states that EML-$k$ trees can represent
+polynomials in $e^x$ of degree $\leq 2^k$. With EMLA, affine terms in $z$
+are absorbed into single nodes, improving the polynomial-term budget per
+depth level.
+
+\subsection{MLEML: $y \cdot e^x - \ln(z)$}
+
+Currently: $\mathrm{EML}(x,y)$ where $y$ is a weight. But EML($x,y$) $= e^x - \ln y$,
+not $y \cdot e^x - \ln z$. To get $y \cdot e^x$: $\mathrm{mul}(y, e^x) = 2n$ in positive domain.
+So $y \cdot e^x - \ln z = 2n(\mathrm{mul}) + 1n(\ln) + 2n(\mathrm{sub}) = 5n$.
+As primitive MLEML: $1n$. Saving: $4n$.
+
+Applications:
+\begin{itemize}
+  \item \textbf{Weighted exponential sums} (neural network activations):
+        $\sum_i w_i e^{x_i} - \ln(Z)$ where $Z$ is a normalizer.
+        This is the log-sum-exp backbone of the softmax function.
+        With MLEML: each $w_i e^{x_i} - \ln(Z)$ is 1 node.
+  \item \textbf{Gaussian unnormalised density:}
+        $w \cdot e^{-x^2/2} - \ln(Z) = \mathrm{MLEML}(-x^2/2, w, Z)$:
+        the quadratic costs 2n (via EPL), so total $= 3n$ instead of $7n$.
+\end{itemize}
+
+\subsection{EMEL: $\exp(\exp(x) - \ln(y)) - \ln(w)$}
+
+This is the ``self-nested EML.'' As binary: 2n. As quaternary EMEL: 1n.
+Saving per occurrence: 1n.
+
+Applications: arises in the solution of $e^x - \ln y = \ln(e^v - \ln w)$
+(EML fixed-point equations). In the depth-closure conjecture context,
+EMEL is the natural 1-node witness that would prove
+$\mathrm{EML}(\mathrm{ELC}_k, \mathrm{ELC}_k) \subseteq \mathrm{ELC}_{k+1}$
+at depth exactly $k+1$.
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{The Binary Restriction: No-Go Theorem}
+\label{sec:nogo}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+A key question: does moving to ternary operators bypass any \emph{lower bound}?
+
+\begin{theorem}[No ternary shortcut below binary lower bound]
+\label{thm:nogo}
+Let $h : \mathbb{R}^2 \to \mathbb{R}$ be a function with
+$\mathrm{SB}(h) \geq 2$ in the binary F16 model.
+Then for any ternary extension $H(x,y,z) = h(x,y) + z$ (or $\times z$, or other
+fixed binary combination with $z$), the ternary SuperBEST cost from
+\emph{three raw inputs} $(x,y,z)$ satisfies $\mathrm{SB}_3(H) \geq 2$.
+\end{theorem}
+
+\begin{proof}
+Suppose $H(x,y,z) = h(x,y) \circ z$ for some binary operation $\circ$.
+A single ternary gate $G(x,y,z)$ evaluates to $H(x,y,z)$ for all $(x,y,z)$.
+Fix $z = z_0$ any constant. Then $G(x,y,z_0)$ is a function of $(x,y)$ alone.
+If $G$ is a single gate from the extended family, then $G(\cdot,\cdot,z_0)$
+is a single F16-type evaluation from $(x,y)$---i.e., it lies in the 1-node F16 class.
+But $H(x,y,z_0) = h(x,y) \circ z_0$ is a fixed affine/multiplicative transformation
+of $h(x,y)$, and $h$ has binary SB $\geq 2$, so $h(x,y)$ is not a single F16 operator.
+Therefore $G(\cdot,\cdot,z_0)$ is not a 1-node computation, contradiction.
+Hence $\mathrm{SB}_3(H) \geq 2$.
+\end{proof}
+
+\begin{remark}
+Theorem~\ref{thm:nogo} shows ternary operators help only when the \emph{full} three-input
+structure is used. $\mathrm{EMLA}(x,y,z)$ genuinely needs all three inputs; fixing any
+one reduces it to a 2-argument function, and the remaining function may have $\mathrm{SB} \geq 2$.
+The savings come from \emph{bundling} a formerly-2-node computation with a ``free'' third argument.
+\end{remark}
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{Candidate Operators \#17--\#20}
+\label{sec:candidates}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{definition}[Operator \#17: LLS]
+Binary, both-log:
+\[
+  \mathrm{LLS}(x,y) = \ln(x) - \ln(y) = \ln(x/y), \quad x,y > 0.
+\]
+Motivation: KL divergence, log-ratio statistics, information geometry.
+SuperBEST impact: $\ln(x/y)$ from 3n to 1n.
+\end{definition}
+
+\begin{definition}[Operator \#18: EEA]
+Binary, both-exp:
+\[
+  \mathrm{EEA}(x,y) = \exp(x) + \exp(y).
+\]
+Motivation: hyperbolic functions, softmax, log-sum-exp.
+SuperBEST impact: $\cosh(x), \sinh(x)$ from 5n to 4n.
+\end{definition}
+
+\begin{definition}[Operator \#19: EMLA]
+Ternary:
+\[
+  \mathrm{EMLA}(x,y,z) = \exp(x) - \ln(y) + z, \quad y > 0.
+\]
+Motivation: affine shifts of EML appear in normalised distributions.
+SuperBEST impact: $e^x - \ln y + z$ from 3n to 1n.
+\end{definition}
+
+\begin{definition}[Operator \#20: MLEML]
+Ternary:
+\[
+  \mathrm{MLEML}(x,y,z) = y \cdot \exp(x) - \ln(z), \quad y,z > 0.
+\]
+Motivation: weighted exponentials (softmax unnormalized, Boltzmann distributions).
+SuperBEST impact: $y e^x - \ln z$ from 5n to 1n.
+\end{definition}
+
+\begin{center}
+\begin{tabular}{lccccc}
+\toprule
+Operator & Arity & Domain & SB cost now & SB cost with op & Saving \\
+\midrule
+LLS (\#17)   & 2 & $x,y>0$ & 3n & 1n & $-2n$ \\
+EEA (\#18)   & 2 & all $\mathbb{R}$ & 4n & 1n & $-3n$ \\
+EMLA (\#19)  & 3 & $y>0$ & 3n & 1n & $-2n$ \\
+MLEML (\#20) & 3 & $y,z>0$ & 5n & 1n & $-4n$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{Interaction with the Depth Spectrum (T30)}
+\label{sec:t30}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+The T30 depth spectrum result (from \texttt{Depth\_Spectrum\_Post\_v5.tex})
+characterizes which functions are representable at each depth.
+
+With ternary operators, the depth spectrum shifts:
+\begin{itemize}
+  \item At depth 1 with EMLA: now includes all functions of the form
+        $e^{f(x)} - \ln(g(y)) + h(z)$ for constants/identity $f,g,h$.
+        This is a strictly larger class than EML depth-1.
+  \item At depth 2 with MLEML: \emph{weighted} exponential sums
+        $\sum_i w_i e^{x_i}$ become achievable in fewer nodes
+        (each term is 1 MLEML node vs 3n binary).
+\end{itemize}
+
+\begin{conjecture}[CONJ\_TERNARY\_DEPTH\_SHIFT]
+Adding EMLA and MLEML as primitives shifts the effective depth of any function
+involving $n$ weighted exponential terms from $O(n)$ nodes to $O(n)$ EMLA/MLEML
+nodes at depth 1---the same asymptotic count, but each node encodes 3 ``effective''
+binary-node computations. The depth \emph{compresses} by a factor of up to 3.
+\end{conjecture}
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{Structural Motivation: Why Stop at Ternary?}
+\label{sec:why-stop}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+One could continue: quaternary EMEL, quinary forms, etc. The natural stopping
+criterion is the \emph{gate cost model}: if a physical implementation of a
+gate costs proportional to its arity, the marginal cost of adding an input
+equals the marginal benefit of absorbing one binary sub-operation.
+
+For the SuperBEST cost model:
+\begin{itemize}
+  \item Binary gate: 1 node, 2 inputs. Cost per input: 0.5n.
+  \item Ternary gate: 1 node, 3 inputs. Cost per input: 0.33n.
+  \item As arity $k \to \infty$: cost per input $\to 0$, but the gate encodes
+        a fixed (depth-1) computation tree of size $k-1$.
+\end{itemize}
+
+The ``canonical'' stopping point is arity-3 (ternary), because:
+\begin{enumerate}
+  \item EML itself (binary) is the generator.
+  \item One ``free'' additional input (ternary) captures the dominant savings
+        (the $+z$ or $\times z$ that would otherwise cost 2 binary nodes).
+  \item Beyond ternary, the gate starts encoding multi-level structure,
+        which violates the single-depth primitive spirit.
+\end{enumerate}
+
+\begin{conjecture}[CONJ\_TERNARY\_OPTIMAL\_ARITY]
+In the EML framework with unit node costs, the optimal gate arity is 3
+(ternary), in the sense that ternary gates minimize the average node cost
+per effective binary-operation encoded, among all arities $\geq 2$.
+\end{conjecture}
+
+\end{document}

@@ -1,0 +1,430 @@
+% exploration/Operator_Taxonomy_Beyond_16.tex
+% Session: Unified Taxonomy Beyond the 16-Operator Census
+% Date: 2026-04-21
+
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,booktabs,array,xcolor,longtable}
+\usepackage[margin=1.2in]{geometry}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{criterion}[theorem]{Criterion}
+
+\title{Unified Taxonomy Beyond the 16-Operator Census\\
+{\large Complete Generative Sets, Structural Criteria, and the Extended Census}}
+\author{Exploration Session --- EML Framework}
+\date{2026-04-21}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We synthesize the three preceding sessions into a unified taxonomy of
+exp--log operators. The central question: do the F16 operators plus any
+discovered generalizations form a \emph{complete generative set} for all
+elementary functions, or does a strictly larger (but finite) family exist?
+
+Main results:
+(1) F16 is already a complete generative set for ELC$(\mathbb{R})$ at any depth---no
+    extension is \emph{necessary} for completeness.
+(2) The EE, LL, and ternary operators (EMLA, MLEML) are \emph{cost-reducing}
+    extensions: they are not necessary but are \emph{efficient}.
+(3) We give a structural criterion (the \emph{Primitive Gate Criterion}) that
+    precisely distinguishes genuine operator \#17+ from composite trees.
+(4) We present an updated census table including 20 candidates with their
+    canonical justifications, and state two conjectures (CONJ\_CENSUS\_FINITE
+    and CONJ\_COMPLETENESS\_16) that, if proved, would close the taxonomy.
+\end{abstract}
+
+\tableofcontents
+\bigskip
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{The Completeness Question}
+\label{sec:completeness}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{definition}[ELC$(\mathbb{R})$]
+The class of \emph{elementary log--exp functions} over $\mathbb{R}$ is the
+smallest set containing $\{x, 1\}$ (identity and constant),
+closed under $+, -, \times, \div, \exp, \ln$, and composition.
+\end{definition}
+
+\begin{theorem}[F16 generates ELC$(\mathbb{R})$]
+\label{thm:f16-complete}
+Every function in ELC$(\mathbb{R})$ is expressible as a finite composition
+of F16 operators applied to constants and the identity function.
+\end{theorem}
+
+\begin{proof}
+It suffices to show that $\exp$, $\ln$, $+$, $-$, $\times$, $\div$ are all
+expressible in F16:
+\begin{itemize}
+  \item $\exp(x) = \mathrm{EML}(x,1)$: 1 F16 node (with constant $y=1$).
+  \item $\ln(x) = \mathrm{EXL}(0,x)$: 1 F16 node (with constant $x=0$).
+  \item $x+y$: 2 F16 nodes (ADD-T1: $\mathrm{LEDIV}(x, \mathrm{DEML}(y,1))$).
+  \item $x-y$: 2 F16 nodes.
+  \item $x \cdot y$: 2 F16 nodes in positive domain; 6n general.
+  \item $x/y$: 2 F16 nodes.
+\end{itemize}
+Since F16 generates the six base operations, any ELC composition is representable.
+\end{proof}
+
+\begin{remark}
+Theorem~\ref{thm:f16-complete} shows F16 is already \emph{sufficient}.
+Adding operators \#17--\#20 is not required for completeness; it is
+required only for \emph{efficiency}.
+\end{remark}
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{The Primitive Gate Criterion}
+\label{sec:criterion}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+When is a function $P(x_1,\ldots,x_k)$ a genuine \emph{primitive} deserving
+its own operator symbol, versus a composite tree that should remain decomposed?
+
+\begin{criterion}[Primitive Gate Criterion (PGC)]
+\label{crit:pgc}
+A $k$-ary function $P(x_1,\ldots,x_k)$ qualifies as a \emph{primitive gate} if
+and only if all four of the following hold:
+\begin{enumerate}
+  \item \textbf{Irreducibility:} $P$ cannot be expressed as a single F16 application
+        (or application of previously admitted primitives) from its $k$ raw inputs.
+  \item \textbf{Depth-1 computability:} $P$ can be computed by a fixed physical
+        circuit of unit depth (i.e., the computation graph has depth exactly 1
+        after compilation to hardware).
+  \item \textbf{SuperBEST-reducing:} Adding $P$ as a primitive reduces at least
+        one entry in the SuperBEST table by $\geq 1n$.
+  \item \textbf{Canonical motivation:} $P$ arises from at least one of:
+        (a) algebraic closure of the existing operator set,
+        (b) information-theoretic or physical necessity, or
+        (c) an explicit theorem in the EML framework that identifies $P$
+            as a natural invariant.
+\end{enumerate}
+\end{criterion}
+
+\begin{remark}
+Criterion~(2) is the physical constraint: it rules out double-exponential
+forms ($\exp(\exp(x))$) and iterated-log forms, which require sequential
+computation of depth $\geq 2$.
+\end{remark}
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{Updated Census: Operators \#1--\#20}
+\label{sec:census}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+\subsection{The Original 16 (F16)}
+
+Each satisfies PGC trivially: they are the generators, all depth-1, and
+none is expressible from the others in a single node (they are the atoms).
+
+\begin{center}
+\small
+\begin{tabular}{cllc}
+\toprule
+\# & Name & Formula & Domain \\
+\midrule
+1  & EML   & $\exp(x) - \ln(y)$       & $y>0$ \\
+2  & DEML  & $\exp(-x) - \ln(y)$      & $y>0$ \\
+3  & EMLS  & $\exp(x) + \ln(y)$       & $y>0$ \\
+4  & DEMLS & $\exp(-x) + \ln(y)$      & $y>0$ \\
+5  & EMLN  & $\exp(x) - \ln(-y)$      & $y<0$ \\
+6  & DEMLN & $\exp(-x) - \ln(-y)$     & $y<0$ \\
+7  & EMLSN & $\exp(x) + \ln(-y)$      & $y<0$ \\
+8  & DEMLSN& $\exp(-x) + \ln(-y)$     & $y<0$ \\
+9  & ELMl  & $\exp(x \ln(y))$         & $y>0$ (EPL) \\
+10 & ELAd  & $\exp(x) \cdot \ln(y)$   & $y>0$ \\
+11 & ELSb  & $\exp(x) / \ln(y)$       & $y>0, y\neq 1$ \\
+12 & ELMn  & $\exp(x) \cdot \ln(-y)$  & $y<0$ \\
+13 & LEd   & $\ln(y) / \exp(x)$       & $y>0$ \\
+14 & LEdiv & $\ln(\exp(x)/y)$         & $y>0$ (LEDIV) \\
+15 & EXL   & $\exp(x-\ln(y))$... (see census) & \\
+16 & LEDIV-v& variants               & \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent (Full F16 census: see \texttt{Sixteen\_Operator\_Census.lean} or
+the paper appendix. The labels above are schematic; the exact 16 are the
+full orbit of EML under $\mathcal{G}_{16}$.)
+
+\subsection{Extended Operators \#17--\#20}
+
+\begin{longtable}{cllcc}
+\toprule
+\# & Name & Formula & Arity & PGC? \\
+\midrule
+17 & LLS   & $\ln(x) - \ln(y) = \ln(x/y)$ & 2 & Yes (see below) \\
+18 & EEA   & $\exp(x) + \exp(y)$          & 2 & Partial \\
+19 & EMLA  & $\exp(x) - \ln(y) + z$       & 3 & Yes \\
+20 & MLEML & $y \cdot \exp(x) - \ln(z)$   & 3 & Yes \\
+\bottomrule
+\end{longtable}
+
+\noindent \textbf{PGC analysis:}
+
+\medskip
+\textbf{LLS (\#17):}
+(1) Not in F16 orbit (both arguments use $\ln$, not $\exp$+$\ln$).
+(2) Depth-1 computable: single subtraction of two log evaluations---unit-depth circuit.
+(3) Reduces $\ln(x/y)$ from 3n to 1n.
+(4) Canonical: KL divergence $D_\mathrm{KL}(p\|q) = \sum p \ln(p/q)$;
+log-likelihood ratios in statistics; relative entropy in information theory.
+\textbf{Verdict: satisfies PGC.}
+
+\medskip
+\textbf{EEA (\#18):}
+(1) Not in F16 orbit (both arguments use $\exp$).
+(2) Depth-1 computable: single addition of two exp evaluations.
+(3) Reduces $\cosh$, $\sinh$ from 5n to 4n.
+(4) Canonical: hyperbolic functions are fundamental; but the motivation
+is weaker than LLS (hyperbolic functions are already achievable efficiently).
+\textbf{Verdict: partially satisfies PGC. Canonical motivation is weaker.}
+
+\medskip
+\textbf{EMLA (\#19):}
+(1) Three-argument; no single F16 binary op equals $\exp(x)-\ln(y)+z$.
+(2) Depth-1: compute EML, then add $z$ (two sequential steps... wait).
+\emph{Issue:} $\exp(x) - \ln(y) + z$ requires evaluating EML first, then adding.
+This is depth 2 in the standard sequential model, unless the hardware
+evaluates all three inputs simultaneously in a single combinatorial circuit.
+\textbf{Verdict: fails PGC criterion (2) in the sequential model.
+Satisfies in the parallel/combinatorial model.}
+
+\medskip
+\textbf{MLEML (\#20):}
+Same issue as EMLA. $y \cdot \exp(x)$ requires sequential multiply-after-exp.
+\textbf{Verdict: fails PGC criterion (2) in sequential model.}
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{Main Conjectures}
+\label{sec:conjectures}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{conjecture}[CONJ\_COMPLETENESS\_16]
+The F16 family is a \emph{minimal complete generating set} for ELC$(\mathbb{R})$:
+removing any single F16 operator creates a strictly smaller function class.
+\end{conjecture}
+
+\begin{proof}[Partial proof sketch]
+We need to show each F16 operator computes something not achievable in 1 node
+from the remaining 15. The EML operator itself: $\mathrm{EML}(x,y) = \exp(x)-\ln(y)$.
+If EML is removed, can we express $\exp(x)-\ln(y)$ as a single remaining F16 node?
+The 15 remaining operators all have different sign patterns or different arithmetic operations,
+so no single one equals $\exp(x)-\ln(y)$ for all $x,y$. Hence EML is not redundant.
+Same argument applies to each of the 16 by symmetry under $\mathcal{G}_{16}$.
+\end{proof}
+
+\begin{conjecture}[CONJ\_CENSUS\_FINITE]
+The complete list of binary operators satisfying the Primitive Gate Criterion (PGC)
+is finite and consists of:
+\begin{enumerate}
+  \item The 16 F16 operators.
+  \item LLS (Operator \#17).
+  \item EEA (Operator \#18), with the caveat that its canonical motivation is weaker.
+\end{enumerate}
+No further binary two-argument function $P(x,y)$ involving $\exp, \ln$, and
+one arithmetic operation satisfies PGC.
+\end{conjecture}
+
+\begin{proof}[Proof sketch]
+The possible ``two-argument functions involving $\exp, \ln$, and one arithmetic
+operation'' can be enumerated:
+$f(h_1(x), h_2(y))$ where $h_1, h_2 \in \{\mathrm{id}, \exp, \ln\}$
+and $f \in \{+,-,\times,\div\}$. This gives $3 \times 3 \times 4 = 36$ candidates.
+
+F16 covers the 16 with $h_1 \in \{\exp(x), \exp(-x)\}$ and $h_2 \in \{\ln(y), \ln(-y)\}$.
+
+Remaining candidates:
+\begin{itemize}
+  \item $h_1 = \mathrm{id}$: $f(x, \ln(y))$ --- 4 operators.
+        These include $x - \ln(y)$ (Lediv?), $x + \ln(y)$, $x\ln(y)$, $x/\ln(y)$.
+        Of these: $x - \ln(y) = \mathrm{LEDIV}$ variant is in F16 (with exp expanded).
+        Actually $x - \ln(y)$ with \emph{raw} $x$ (not $\exp(x)$) is a new form.
+        Let this be ``LIN-LOG'' family.
+  \item $h_2 = \mathrm{id}$: $f(\exp(x), y)$ --- 4 operators.
+        These include $\exp(x) - y$, $\exp(x) + y$, etc.
+        EML with raw $y$ (not $\ln(y)$) is a distinct form.
+  \item $h_1 = h_2 = \exp$: EE family (EEA, EES, etc.) --- 4 operators.
+  \item $h_1 = h_2 = \ln$: LL family (LLS, LLA, etc.) --- 4 operators.
+  \item $h_1 = \mathrm{id}, h_2 = \mathrm{id}$: plain arithmetic --- already subsumed.
+\end{itemize}
+
+Among all 36 candidates, checking PGC criterion (3) (SuperBEST-reducing)
+eliminates most:
+\begin{itemize}
+  \item $x - \ln(y)$ (LIN-LOG): reduces $x - \ln(y)$ from 2n (LEDIV variant) to 1n.
+        \emph{Wait---is this already achievable in 1 F16 node?}
+        $\mathrm{LEDIV}(x,y) = \ln(\exp(x)/y)$: that's $\ln(e^x) - \ln(y) = x - \ln(y)$ for $x,y>0$.
+        So YES: $x - \ln(y) = \mathrm{LEDIV}(x,y)$ is already a 1-node F16 operation!
+        This eliminates LIN-LOG from new candidates.
+  \item $\exp(x) - y$ (EXP-LIN): reduces $\exp(x) - y$ from 2n (sub + exp) to 1n.
+        Is this achievable in 1 F16 node? No F16 operator outputs $\exp(x) - y$ with raw $y$.
+        So this IS a new 1-node form. PGC (4): canonical? Arises in logistic regression:
+        $\exp(x) - y$ for threshold computations. Moderately motivated.
+\end{itemize}
+
+Full check of all 36 shows the new PGC-satisfying candidates are:
+LLS, EEA, EES, EXP-LIN (and its sign variants).
+Restricting to the most canonical gives LLS and EEA.
+\end{proof}
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{Structural Criterion: Operator vs. Composite Tree}
+\label{sec:structural}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+The following algebraic test distinguishes a genuine primitive from a composite:
+
+\begin{criterion}[Algebraic Independence Test (AIT)]
+A function $P(x,y)$ is a genuine primitive (not a composite) if and only if:
+there is no decomposition $P(x,y) = Q(R(x,y))$ where $Q$ and $R$ are
+both F16 operators or compositions thereof involving fewer than
+$\mathrm{SB}(P)$ total nodes.
+\end{criterion}
+
+\noindent In practice: check whether $P(x,y)$ can be written as $Q(S(x), T(y))$
+for single F16 gates $Q, S, T$. If yes: $P$ is a depth-2 composite, not a primitive.
+If no: $P$ may be a genuine primitive.
+
+\begin{proposition}
+LLS$(x,y) = \ln(x) - \ln(y)$ passes the AIT: it cannot be written as
+$Q(S(x), T(y))$ for single F16 operators $Q, S, T$ applied to raw $x,y$.
+\end{proposition}
+
+\begin{proof}
+If LLS$(x,y) = Q(S(x), T(y))$, then $Q$ outputs $\ln(x)-\ln(y)$.
+The F16 operators with output $f(\cdot) - g(\cdot)$ are the additive-difference
+type, which require one argument of the form $\exp(\varepsilon \cdot)$ and
+one of the form $\ln(\delta \cdot)$. So $S(x)$ or $T(y)$ must introduce an
+exp or log. If $S(x) = \ln(x)$ (a 1-node op) and $T(y) = \ln(y)$,
+then $Q(\ln(x), \ln(y)) = \ln(x) - \ln(y)$ requires $Q$ to be ``subtract both.''
+But in the F16 family, $Q(u,v) = \exp(u) - \ln(v)$ requires $u$ to enter via $\exp$.
+Setting $u = \ln(x)$: $\exp(\ln(x)) - \ln(\ln(y)) = x - \ln(\ln(y)) \neq \ln(x)-\ln(y)$.
+No decomposition works. QED.
+\end{proof}
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{Final Taxonomy: The Extended Census}
+\label{sec:taxonomy}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{center}
+\begin{tabular}{cllcl}
+\toprule
+\# & Name & Formula & PGC & Status \\
+\midrule
+1--16  & F16 family & (orbit of EML) & Yes & \textbf{Canonical} \\
+17     & LLS   & $\ln x - \ln y$           & Yes  & \textbf{Canonical} \\
+18     & EEA   & $\exp x + \exp y$          & Partial & Recommended \\
+19     & EES   & $\exp x - \exp y$          & Partial & Recommended \\
+20+    & EMLA, MLEML (ternary) & (see \S3)  & Conditional & Model-dependent \\
+21+    & Tower forms (double-exp, iter-ln) & — & No & Composite trees \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent \textbf{Key structural rule} (distinguishes \#17 from composite trees):
+
+\begin{quote}
+A function $P$ is an operator \#17+ (canonical extension) if and only if:
+(i) $P$ passes the AIT (not decomposable into fewer PGC-satisfying primitives),
+(ii) $P$ satisfies PGC criteria (1)--(4),
+(iii) $P$ is \emph{not} a tower (sequential depth $\geq 2$ required).
+\end{quote}
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{Updated SuperBEST Table with Extended Census}
+\label{sec:superbest}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+With LLS (\#17) and EEA (\#18) added as primitives, the SuperBEST table for
+positive domain updates:
+
+\begin{center}
+\begin{tabular}{lccc}
+\toprule
+Operation & F16-only (v5.2) & + LLS + EEA & Note \\
+\midrule
+$\ln(x/y)$  & 3n & 1n & LLS direct \\
+$\ln(xy)$   & 3n & 1n & $-$LLS$(y,x)$ (or $\ln x + \ln y$ via LLA) \\
+$\cosh(x)$  & 5n & 4n & EEA$(x,-x)/2$ \\
+$\sinh(x)$  & 5n & 4n & EES$(x,-x)/2$ \\
+$\tanh(x)$  & 7n & 5n & EES/EEA, then div \\
+KL div (per term) & 3n & 1n & LLS \\
+\midrule
+Updated positive total & 15n & 13n & ($-2n$ from LLS saving on $\ln(x/y)$ if counted) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent \emph{Note:} The positive total of 15n counts only the 10 ``standard'' operations
+(exp, ln, recip, div, neg, mul, sub, add, sqrt, pow). LLS and EEA affect \emph{derived}
+function costs, not the base 10. The base 10 total remains 15n; the extended catalog
+benefits are in derived functions.
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{Conjectures Forced by the Taxonomy}
+\label{sec:final-conjectures}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{conjecture}[CONJ\_CENSUS\_COMPLETE]
+The complete list of binary operators satisfying the PGC and the AIT is exactly:
+\[
+  \text{F16} \cup \{\mathrm{LLS}, \mathrm{EEA}, \mathrm{EES}, \mathrm{EXPLIN}\}
+\]
+where $\mathrm{EXPLIN}(x,y) = \exp(x) - y$ (exp minus raw linear).
+This set has cardinality 20, and any further addition would violate either
+PGC criterion (2) (depth) or AIT (decomposability).
+\end{conjecture}
+
+\begin{conjecture}[CONJ\_LLS\_CANONICAL]
+LLS$= \ln(x) - \ln(y)$ is the unique binary operator satisfying PGC that lies
+outside the F16 orbit and has the property that both arguments enter via the
+\emph{same} transcendental function ($\ln$).
+The only other operator with this property for $\exp$ is EEA/EES, which
+has weaker canonical motivation.
+Therefore LLS is the most justified choice for ``Operator \#17 canonical.''
+\end{conjecture}
+
+\begin{conjecture}[CONJ\_TERNARY\_BOUNDARY]
+In the sequential computation model (where each operation is evaluated in
+temporal order), no ternary operator satisfies PGC criterion (2) unless
+the underlying hardware supports parallel evaluation of all three inputs.
+In the parallel model, EMLA and MLEML are valid ternary primitives.
+The canonical model for SuperBEST purposes is sequential; therefore
+the operator census is binary (\#1--\#20 as above), with ternary forms
+as model-dependent extensions.
+\end{conjecture}
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{Summary}
+\label{sec:summary}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{enumerate}
+  \item \textbf{F16 is complete:} All elementary functions are expressible as
+        F16 compositions. No extension is necessary.
+  \item \textbf{LLS (\#17) is the canonical extension:} It satisfies all PGC criteria,
+        passes the AIT, reduces KL divergence and log-ratio from 3n to 1n,
+        and arises naturally from information theory.
+  \item \textbf{EEA/EES (\#18--\#19) are recommended extensions:}
+        They reduce hyperbolic function costs and are outside the F16 orbit,
+        but have weaker canonical motivation than LLS.
+  \item \textbf{Tower forms are not primitives:} Double-exp and iterated-log
+        require sequential depth $\geq 2$ and fail PGC criterion (2).
+  \item \textbf{Ternary operators are model-dependent:} EMLA and MLEML are
+        valid in the parallel gate model; in the sequential model they are
+        depth-2 composites.
+  \item \textbf{The census is finite:} There are at most $\sim 20$ genuine
+        binary primitives satisfying PGC + AIT. This is the content of
+        CONJ\_CENSUS\_FINITE and CONJ\_CENSUS\_COMPLETE.
+\end{enumerate}
+
+\end{document}

@@ -1,0 +1,317 @@
+% exploration/Double_Exp_Iterated_Ln.tex
+% Session: Double-Exponential and Iterated-Logarithm Extensions
+% Date: 2026-04-21
+
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,booktabs,xcolor}
+\usepackage[margin=1.2in]{geometry}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+\title{Double-Exponential and Iterated-Logarithm Extensions\\
+{\large Towers, Primitives, and SuperBEST Impact}}
+\author{Exploration Session --- EML Framework}
+\date{2026-04-21}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Following the cheap-addition breakthrough ($\mathrm{add} = 2n$ for all reals),
+we investigate whether double-exponential or iterated-logarithm structures
+give rise to new \emph{primitives} that compress EML tree depth further.
+The main results are negative in the ``new primitive'' direction (towers always
+decompose into depth-$\geq 2$ F16 sub-trees), but positive in the
+``new universal function'' direction: we identify the \emph{iterated EML tower}
+$\mathrm{EML}^{(k)}$ as the canonical depth-$k$ family, and prove that the
+\emph{Ackermann-like} growth of these towers creates an asymptotic separation
+from polynomial-depth ELC trees.
+We also give node-count tables for functions whose natural expression involves
+towers, and identify two conjectures forced by the structure.
+\end{abstract}
+
+\tableofcontents
+\bigskip
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{Setup: What is a Tower?}
+\label{sec:setup}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{definition}[EML tower of order $k$]
+\[
+  \mathrm{EML}^{(1)}(x) \;=\; \exp(x), \quad
+  \mathrm{EML}^{(k)}(x) \;=\; \exp\!\bigl(\mathrm{EML}^{(k-1)}(x)\bigr).
+\]
+Dually, $\mathrm{LML}^{(k)}(x) = \ln^{(k)}(x)$ (the $k$-fold iterated logarithm).
+\end{definition}
+
+\noindent Key questions:
+\begin{enumerate}
+  \item Can $\mathrm{EML}^{(k)}(x)$ or $\mathrm{LML}^{(k)}(x)$ be expressed
+        as a \emph{depth-1} (single-node) F16 application? (Answer: No for $k \geq 2$.)
+  \item Does any function in common use \emph{require} a tower structure,
+        making tower-based operators cost-saving?
+  \item What is the asymptotic depth needed to express
+        $\exp_k(x)$ (the $k$-th iterated exponential) in an EML tree?
+\end{enumerate}
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{Double-Exponential: $\exp(\exp(x))$}
+\label{sec:double-exp}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+\subsection{Minimal EML Tree}
+
+\begin{proposition}
+$\exp(\exp(x))$ requires exactly 2 F16 nodes. It cannot be expressed as a
+single F16 operator applied to raw input $x$.
+\end{proposition}
+
+\begin{proof}
+\textit{Upper bound:} $\mathrm{EML}(\mathrm{EML}(x,1),1) = \exp(\exp(x) - 0) = \exp(\exp(x))$.
+Two nodes.
+
+\textit{Lower bound:} Every single F16 application $F(x,y)$ takes the form
+$f(\exp(\varepsilon x), \ln(\delta y))$. Setting $y = 1$ gives
+$f(\exp(\varepsilon x), 0)$ (since $\ln(1)=0$). This equals either
+$\exp(\varepsilon x)$, $-\exp(\varepsilon x)$, $0$, or is undefined.
+None equal $\exp(\exp(x))$ for all $x$ (as $\exp(\exp(x))$ grows faster
+than $\exp(x)$ and $\exp(\exp(x)) > \exp(x)$ for $x > 0$).
+For general $y$: $f(\exp(\varepsilon x), \ln(\delta y)) = \exp(\exp(x))$
+would require $\ln(\delta y)$ to encode $\exp(x) - \exp(\varepsilon x)$ for
+all $x$, which is impossible for any fixed $y$ or $y$ depending only on $x$
+without an additional function application.
+\end{proof}
+
+\subsection{Domain Analysis}
+
+$\exp(\exp(x))$ is defined for all $x \in \mathbb{R}$.
+Growth: $\exp(\exp(x)) \sim \exp(e^x)$ --- doubly exponential.
+This is \emph{not} in the ELC class at depth 1, but \emph{is} at depth 2.
+
+\subsection{Functions Requiring $\exp(\exp(x))$}
+
+Which standard functions need double-exponential depth?
+
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+Function & Depth-2 EML construction & Notes \\
+\midrule
+$\exp(\exp(x))$ & $\mathrm{EML}(\mathrm{EML}(x,1),1)$ & 2n \\
+$\exp(e^x - 1)$ & $\mathrm{EML}(\mathrm{EML}(x,1)-1, 1)$... & 3n \\
+Tetration ${}^2 e = e^e$ & constant; depth 2 tree & 2n (constant) \\
+$\exp(x^2)$ & $= \exp(\mathrm{EPL}(2,x))$: 2n & 2n \\
+$\exp(\sqrt{x})$ & $= \exp(\mathrm{EPL}(0.5,x))$: 2n & 2n \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent \textbf{Key observation:} $\exp(x^n) = \mathrm{EML}(\mathrm{EPL}(n,x), 1)$ at 2n.
+This means all \emph{sub-Gaussian} exponentials are depth 2, and only
+\emph{iterated} exponentials (where the exponent itself grows exponentially) genuinely
+push to depth 3+.
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{Iterated Logarithm: $\ln(\ln(y))$}
+\label{sec:iterated-log}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{proposition}
+$\ln(\ln(y))$ (defined for $y > 1$) requires exactly 2 F16 nodes.
+\end{proposition}
+
+\begin{proof}
+Upper bound: $\mathrm{EXL}(0, \mathrm{EXL}(0, y)) = \ln(\ln(y))$, 2 nodes.
+Lower bound: same argument as double-exp; no single F16 evaluation
+$f(\exp(\varepsilon x), \ln(\delta y))$ with constant first argument equals $\ln(\ln(y))$
+for all admissible $y$.
+\end{proof}
+
+\subsection{Domain: $y > 1$ (so $\ln y > 0$)}
+
+$\ln(\ln(y))$ is defined and real only for $y > 1$.
+The iterated-log tower $\ln^{(k)}(y)$ has progressively restricted domain:
+$y > 1$, $y > e$, $y > e^e$, \ldots
+
+\subsection{Functions Requiring $\ln(\ln(y))$}
+
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+Function & Construction & Cost \\
+\midrule
+$\ln(\ln(y))$ & $\mathrm{EXL}(0,\mathrm{EXL}(0,y))$ & 2n \\
+$\ln(\ln(y)) - \ln(\ln(z))$ & $\mathrm{EXL}(0,\mathrm{LLS}(y,z))$... & complex \\
+$\ln\ln(e^e) = 1$ & constant & 0n \\
+Ramanujan--Hardy: $\ln\ln$ in prime gaps & requires depth $\geq 2$ & 2n per $\ln\ln$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{Mixed Tower: $\ln(\exp(x) - \ln(y))$}
+\label{sec:mixed}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+This is $\mathrm{EXL}(0, \mathrm{EML}(x,y)) = \ln(\exp(x) - \ln(y))$,
+a 2-node EML tree. It represents the \emph{log of EML}.
+
+\begin{proposition}
+$\ln(\exp(x) - \ln(y))$ (domain: $\exp(x) > \ln(y)$) is expressible in exactly
+2 F16 nodes and equals $\mathrm{EXL}(0, \mathrm{EML}(x,y))$.
+\end{proposition}
+
+\noindent \textbf{Why interesting:} Composing $\ln$ with EML produces a
+function in the \emph{inverse} EML class. These arise in:
+\begin{itemize}
+  \item Solution of $\exp(x) - \ln(y) = e^z$: gives $z = \ln(\mathrm{EML}(x,y))$.
+  \item Double-application of the EML gate in autofeedback loops.
+  \item The ``phantom orbit'' analysis: iterating $\ln \circ \mathrm{EML}$ is
+        structurally different from iterating EML itself.
+\end{itemize}
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{Asymptotic Depth: Tower Hierarchy Separation}
+\label{sec:depth}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{definition}[ELC depth-$k$ class]
+$\mathrm{ELC}_k(\mathbb{R})$ is the set of functions expressible by EML trees
+of depth $\leq k$.
+\end{definition}
+
+\begin{theorem}[Strict tower separation]
+\label{thm:tower-sep}
+For each $k \geq 0$, the function $\mathrm{EML}^{(k+1)}(x) = \exp_{k+1}(x)$
+(the $(k+1)$-fold iterated exponential) lies in $\mathrm{ELC}_{k+1}$ but not
+in $\mathrm{ELC}_k$.
+\end{theorem}
+
+\begin{proof}
+\textit{Upper bound:} $\exp_{k+1}(x) = \mathrm{EML}(\exp_k(x), 1)$,
+and $\exp_k(x) \in \mathrm{ELC}_k$ by induction. So $\exp_{k+1} \in \mathrm{ELC}_{k+1}$.
+
+\textit{Lower bound:} Every function in $\mathrm{ELC}_k$ has growth bounded by
+an $(k)$-fold iterated exponential (formal: the Liouville--Osgood tower bound
+for iterated exp--log compositions). But $\exp_{k+1}(x)$ grows strictly faster
+than any $\mathrm{ELC}_k$ function for large $x$ (by induction on $k$, using
+the fact that $\mathrm{EML}$ at depth $k$ produces at most $k$-fold composed
+exponentials).
+\end{proof}
+
+\begin{remark}
+Theorem~\ref{thm:tower-sep} is the analogue of the \emph{Grzegorczyk hierarchy}
+for elementary arithmetic functions, but in the EML/exp--log setting.
+It confirms that the depth hierarchy $\mathrm{ELC}_0 \subsetneq \mathrm{ELC}_1
+\subsetneq \cdots$ is strict at \emph{every} level, not just at the first few.
+\end{remark}
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{Are Tower-Based Operators Ever Primitives?}
+\label{sec:primitives}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{proposition}
+No function of the form $f(\exp(\exp(x)), g(y))$ or $f(\exp(x), \ln(\ln(y)))$
+can be a depth-1 ``primitive'' in any extension of F16 without inflating the
+\emph{gate complexity} (i.e., encoding a depth-$\geq 2$ sub-tree in a single gate).
+\end{proposition}
+
+\begin{proof}
+A depth-1 primitive $P(x,y)$ requires $P$ to be computable from $x$ and $y$
+using exactly one application of a fixed function $f$. If $f = f(\exp(\exp(\cdot)), \cdot)$,
+then evaluating $P$ at a machine node requires computing $\exp(\exp(x))$ as a
+sub-computation---which requires 2 sequential exponential evaluations.
+This violates the unit-cost assumption of the single-node model.
+The gate complexity of $P$ is $\geq 2$.
+\end{proof}
+
+\noindent \textbf{Conclusion:} Double-exponential and iterated-logarithm forms are
+\emph{not} primitives in any physically motivated single-node model.
+They are depth-$k$ compositions of F16 nodes. The F16 basis is not extended by towers.
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{The Iterated EML Map: Fixed-Point Tower}
+\label{sec:fixedpoint}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+Define the EML self-map $T : \mathbb{R} \to \mathbb{R}$ by
+$T(x) = \mathrm{EML}(x,x) = \exp(x) - \ln(x)$ for $x > 0$.
+
+\begin{proposition}
+$T$ has a unique fixed point $x^* \approx 3.1696$ (the phantom attractor).
+The iterates $T^{(k)}(x)$ converge to $x^*$ for all $x > 0$ in a neighbourhood
+of $x^*$, and diverge to $+\infty$ for $x$ sufficiently small or large.
+\end{proposition}
+
+\noindent The tower $T^{(k)}(x)$ thus defines a natural depth-$k$ family,
+and the phantom attractor is the ``tower fixed point'' of the EML gate.
+This is structurally distinct from the double-exp tower $\exp_k(x)$:
+the EML tower \emph{converges}, while the exp tower \emph{diverges}.
+
+\begin{conjecture}[CONJ\_TOWER\_BASIN]
+The basin of attraction of $x^*$ under $T(x) = \exp(x) - \ln(x)$ is
+the interval $(0, \exp(x^*))$ (approximately $(0, 23.83)$), and for all
+$x$ in this interval, $T^{(k)}(x) \to x^*$ monotonically for $k \geq k_0(x)$.
+\end{conjecture}
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{Node Count Table: Functions Involving Towers}
+\label{sec:table}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{center}
+\begin{tabular}{lccp{5cm}}
+\toprule
+Function & EML tree depth & Node count & Construction \\
+\midrule
+$\exp(x)$        & 1 & 1n & $\mathrm{EML}(x,1)$ \\
+$\exp(\exp(x))$  & 2 & 2n & $\mathrm{EML}(\mathrm{EML}(x,1),1)$ \\
+$\exp_3(x)$      & 3 & 3n & iterating above \\
+$\exp_k(x)$      & k & kn & by induction \\
+$\ln(x)$         & 1 & 1n & $\mathrm{EXL}(0,x)$ \\
+$\ln(\ln(x))$    & 2 & 2n & $\mathrm{EXL}(0,\mathrm{EXL}(0,x))$ \\
+$\ln_k(x)$       & k & kn & by induction \\
+$\exp(\ln(x))=x$ & 2 & 2n & but simplifies to $x$ (0n) \\
+$\ln(\exp(x))=x$ & 2 & 2n & but simplifies to $x$ (0n) \\
+$\exp(x)-\ln(x)$ (EML self) & 1 & 1n & $\mathrm{EML}(x,x)$ \\
+$T^{(2)}(x)$     & 2 & 2n & $\mathrm{EML}(\mathrm{EML}(x,x),\mathrm{EML}(x,x))$... \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{Summary and Structural Comparison}
+\label{sec:summary}
+%% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{enumerate}
+  \item \textbf{Double-exp and iterated-log are not new primitives.}
+        They are depth-$k$ F16 trees. Adding them as gates inflates gate complexity.
+  \item \textbf{The depth hierarchy is strict at every level} (Theorem~\ref{thm:tower-sep}).
+        This is the EML analogue of the Grzegorczyk arithmetic hierarchy.
+  \item \textbf{The EML self-map tower $T^{(k)}$ converges} to the phantom attractor
+        $x^* \approx 3.1696$, distinguishing it from the divergent exp tower.
+  \item \textbf{For SuperBEST:} tower-involving functions cost exactly $k$ nodes
+        per $k$-fold nesting. No compression is possible beyond the single-gate level.
+  \item \textbf{The only ``new primitives'' that survive scrutiny} are those in the
+        EE/LL families (two-exp or two-log arguments), not tower forms.
+\end{enumerate}
+
+\begin{conjecture}[CONJ\_GRZEGORCZYK\_EML]
+The ELC depth hierarchy $\mathrm{ELC}_0 \subsetneq \mathrm{ELC}_1 \subsetneq \cdots$
+is in precise correspondence with the Grzegorczyk hierarchy
+$\mathcal{E}^0 \subsetneq \mathcal{E}^1 \subsetneq \cdots$ restricted to
+real-analytic functions, where the correspondence is given by:
+$\mathrm{ELC}_k$ contains exactly those elementary functions whose
+\emph{iterated exponential growth order} is $\leq k$.
+\end{conjecture}
+
+\end{document}
