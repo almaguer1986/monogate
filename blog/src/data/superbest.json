@@ -1,7 +1,7 @@
 {
-  "version": "v5.1",
-  "date": "2026-04-20",
-  "revision": "X20 resolution — dual-domain split added; pow corrected to 1n for positive domain",
+  "version": "v5.2",
+  "date": "2026-04-21",
+  "revision": "X20 resolution + sqrt correction — sqrt = EPL(0.5, x) = 1n for positive domain (was 2n in v5.1)",
   "breakthrough": "add_gen = 2n discovered via LEdiv+DEML construction: lediv(x, deml(y,1)) = ln(exp(x)/exp(-y)) = x+y for ALL real x,y",
   "X20_finding": "EPL(x,y) = exp(x*ln(y)) = y^x is one of the 16 F16 operators (ELMl in Sixteen_Operator_Census). Therefore pow(x,y) = x^y = EPL(y,x) for x>0 is a single 1-node F16 application — not 3n. The 3n construction was for general domain where x can be negative (ln(x) undefined). This resolves the F17d paradox in X20.",
   "construction_detail": {
@@ -115,15 +115,17 @@
     },
     {
       "op": "sqrt(x) = x^(1/2)",
-      "cost_positive": 2,
+      "cost_positive": 1,
       "cost_general": "UNDEFINED",
-      "construction_positive": "EML(0.5 * EXL(0,x), 1) = exp(0.5 * ln(x)) = sqrt(x), x > 0",
+      "construction_positive": "EPL(0.5, x) = ELMl(0.5, x) = exp(0.5·ln(x)) = sqrt(x), x > 0 — single F16 node",
       "construction_general": "UNDEFINED — sqrt(x) undefined for x < 0 in real arithmetic; no real F16 tree covers all reals",
       "domain_positive": "x > 0 — natural domain for real sqrt",
       "domain_general": "not defined for x < 0 in real F16; complex sqrt is outside real ELC",
-      "notes": "T08; derivative obstruction lower bound confirms 2n optimal",
+      "notes": "T_SQRT_1N; EPL(0.5,x) = ELMl direct primitive. Same mechanism as pow=1n. Corrected from v5.1 (was 2n). Verified: EPL(0.5,4)=2.0, EPL(0.5,9)=3.0, EPL(0.5,16)=4.0.",
+      "cost_correction": "positive domain corrected from 2n to 1n",
       "v4_cost": 2,
-      "delta": 0
+      "delta_positive": -1,
+      "delta_general": 0
     },
     {
       "op": "pow(x,n) = x^n",
@@ -142,9 +144,9 @@
   ],
   "totals": {
     "total_positive": {
-      "value": 16,
-      "formula": "exp(1) + ln(1) + recip(1) + div_full_tree(2) + neg(2) + mul(2) + sub(2) + add(2) + sqrt(2) + pow_positive(1) = 16",
-      "note": "div counted as 2n for the full 2-node tree (EXL + ELSb). pow corrected to 1n from X20. Ops with UNDEFINED positive cost: none among the 10 (ln and sqrt are defined only for x>0 which is the positive domain).",
+      "value": 15,
+      "formula": "exp(1) + ln(1) + recip(1) + div_full_tree(2) + neg(2) + mul(2) + sub(2) + add(2) + sqrt(1) + pow_positive(1) = 15",
+      "note": "div counted as 2n for the full 2-node tree (EXL + ELSb). pow corrected to 1n from X20. sqrt corrected to 1n in v5.2 (EPL/ELMl direct primitive).",
       "undefined_ops": []
     },
     "total_general": {
@@ -154,14 +156,14 @@
       "undefined_ops": [],
       "excluded_from_sum": []
     },
-    "positive_headline": "16n / 78.1% savings (positive domain, pow=1n via EPL/ELMl, mul=2n)",
+    "positive_headline": "15n / 79.5% savings (positive domain, pow=1n + sqrt=1n via EPL/ELMl, mul=2n)",
     "general_headline": "22n / 69.9% savings (general domain, mul=6n via neg/mul/neg, pow=3n)",
     "savings_positive": {
       "naive_total": 73,
-      "superbest_positive_total": 16,
-      "savings_n": 57,
-      "savings_pct": "78.1%",
-      "formula": "(73 - 16) / 73 = 57/73 = 0.7808... ≈ 78.1%"
+      "superbest_positive_total": 15,
+      "savings_n": 58,
+      "savings_pct": "79.5%",
+      "formula": "(73 - 15) / 73 = 58/73 = 0.7945... ≈ 79.5%"
     },
     "savings_general": {
       "naive_total": 73,
@@ -173,7 +175,7 @@
   },
   "sum_v4": 19,
   "sum_v5": 18,
-  "sum_v5_positive": 16,
+  "sum_v5_positive": 15,
   "v4_entry_count": 10,
   "v5_entry_count": 10,
   "add_gen_v4": 11,

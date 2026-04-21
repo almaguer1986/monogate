@@ -8,7 +8,7 @@ const totals = superbest.totals;
 
 <Base
   title="SuperBEST — Optimal EML Routing Table"
-  description="Minimum node counts for every arithmetic primitive in the EML/F16 operator family. Positive-domain: 16n (78.1% savings). General-domain: 22n (69.9% savings)."
+  description="Minimum node counts for every arithmetic primitive in the EML/F16 operator family. Positive-domain: 15n (79.5% savings). General-domain: 22n (69.9% savings)."
 >
   <div class="meta">
     <span>SuperBEST v{superbest.version}</span>
@@ -81,8 +81,9 @@ const totals = superbest.totals;
     <ul>
       <li><strong>add(x,y) = 2n for all reals</strong> — ADD-T1: <code>LEdiv(x, DEML(y,1)) = x+y</code></li>
       <li><strong>pow(x,n) = 1n for x&gt;0</strong> — EPL/ELMl: <code>exp(n·ln(x)) = xⁿ</code> is a direct F16 primitive</li>
+      <li><strong>sqrt(x) = 1n for x&gt;0</strong> — EPL(0.5, x): same mechanism as pow, single F16 node. Verified.</li>
       <li><strong>mul general = 6n</strong> — via <code>neg(mul(neg(x), y))</code></li>
-      <li>All 10 operations: positive domain ≤ 2 nodes each</li>
+      <li>All 10 operations: positive domain ≤ 2 nodes each (7 ops at 1n, 3 at 2n)</li>
     </ul>
     <p style="margin-top:20px">
       Full proof: <a href="/paper">papers and Lean proofs</a> ·
