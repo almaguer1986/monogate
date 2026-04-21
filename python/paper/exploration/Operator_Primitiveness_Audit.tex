@@ -1,0 +1,363 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,booktabs,array,geometry,hyperref}
+\geometry{margin=1in}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+\title{Are the 7 Extended Operators Genuine Primitives?\\
+A Direct F16-Decomposition Audit}
+\author{Monogate Research}
+\date{2026-04-21}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+The PGC + AIT filter was applied when promoting EEM, EED, EES, LLA, LLS, LLD, and EEA
+from ``multi-node F16 compositions'' to ``1-node primitives'' in the 23-operator extended set.
+This paper asks the harder question: can each of these 7 operators be expressed as a
+composition of \emph{2 or fewer} existing F16 operators?
+If yes, they are not genuine primitives---they are shortcut notation for a
+multi-step F16 computation.
+We compute the exact F16 decomposition cost for each operator, distinguish real F16 savings
+(algebraic-identity shortcuts that reduce the F16 node count) from notational savings
+(the additional count reduction from re-labeling a multi-node composition as ``1n''),
+and issue a corrected accounting of all downstream SuperBEST claims in v6--v8.
+\end{abstract}
+
+\section{The Primitiveness Test}
+
+\begin{definition}[F16 primitive]
+An operator $O(x,y)$ is a \emph{genuine F16 primitive} if it is a single element of the
+16-operator orbit $\{\exp(\pm x)\,[\pm]\,\ln(\pm y)\}$ where $[\pm]\in\{+,-,\times,\div\}$.
+Each F16 primitive costs exactly $1n$ (one node).
+\end{definition}
+
+\begin{definition}[F16 decomposition cost]
+The \emph{F16 decomposition cost} $C_{F16}(O)$ of an operator $O$ is the minimum number
+of F16 nodes required to compute $O(x,y)$ exactly, using only the F16 primitives and
+the SuperBEST v5.2 routing for arithmetic sub-expressions
+($\mathrm{mul}=2n$, $\mathrm{add}=2n$, $\mathrm{sub}=2n$, $\mathrm{div}=2n$).
+\end{definition}
+
+The test: does $C_{F16}(O)=1$? If yes: genuine F16 primitive.
+If $C_{F16}(O)\geq2$: not a genuine F16 primitive; it is a multi-step macro.
+
+\section{Individual Audits}
+
+\subsection{EEM$(x,y) = e^{x+y}$}
+
+\textbf{Is it an F16 primitive?} No. F16 operators have the form $\exp(\pm x)\,[\pm]\,\ln(\pm y)$;
+none produce $\exp(x+y)$.
+
+\textbf{Best F16 decomposition}:
+\begin{enumerate}
+  \item $\mathrm{add}(x,y)$: $2n$ (SuperBEST cost for addition).
+  \item $\mathrm{EML}(\mathrm{add}(x,y),\,1) = e^{x+y} - \ln 1 = e^{x+y}$: $1n$.
+  \item Total: $C_{F16}(\mathrm{EEM}) = 3n$.
+\end{enumerate}
+
+\textbf{Comparison with naive route} ($e^x\cdot e^y$):
+$e^x\,[1n] + e^y\,[1n] + \mathrm{mul}\,[2n] = 4n$.
+
+\textbf{Real F16 saving from algebraic identity}: $4n\to3n = \mathbf{1n}$.
+\textbf{Notational saving from ``1n'' label}: additional $3n-1n = \mathbf{2n}$ (notation only).
+\[
+\boxed{C_{F16}(\mathrm{EEM}) = 3n.\quad\text{Saves 1n in F16 via add-then-exp route.}}
+\]
+
+\subsection{EED$(x,y) = e^{x-y}$}
+
+\textbf{F16 primitive?} No.
+
+\textbf{Best F16 decomposition}:
+$\mathrm{sub}(x,y)\,[2n] + \exp\,[1n] = 3n$.
+
+\textbf{Naive route} ($e^x/e^y$):
+$e^x\,[1n] + e^y\,[1n] + \mathrm{div}\,[2n] = 4n$.
+
+\textbf{Real F16 saving}: $4n\to3n = \mathbf{1n}$.
+\textbf{Notational saving}: $2n$ (notation only).
+\[
+\boxed{C_{F16}(\mathrm{EED}) = 3n.\quad\text{Saves 1n in F16 via sub-then-exp route.}}
+\]
+
+\subsection{EES$(x,y) = e^x - e^y$}
+
+\textbf{F16 primitive?} No.
+
+\textbf{Best F16 decomposition}:
+$e^x\,[1n] + e^y\,[1n] + \mathrm{sub}\,[2n] = 4n$.
+
+\textbf{Is there a smarter route?} No. F16 operators always involve exactly one exponential
+and one logarithm; there is no single-step F16 formula for the difference of two exponentials.
+The $e^{x-y}$ route gives $e^{x-y}\neq e^x - e^y$ in general.
+
+\textbf{Real F16 saving}: $\mathbf{0n}$ (no F16 shortcut exists).
+\textbf{Notational saving}: $4n - 1n = \mathbf{3n}$ (notation only---calling EES ``1n'' saves 3n
+in the 23-op accounting relative to F16, but saves nothing in F16 itself).
+\[
+\boxed{C_{F16}(\mathrm{EES}) = 4n.\quad\text{Saves 0n in F16. Purely notational primitive.}}
+\]
+
+\subsection{LLA$(x,y) = \ln x + \ln y = \ln(xy)$}
+
+\textbf{F16 primitive?} No.
+
+\textbf{Best F16 decomposition}:
+$\mathrm{mul}(x,y)\,[2n] + \ln\,[1n] = 3n$.
+
+\textbf{Naive route} (two lns + add):
+$\ln x\,[1n] + \ln y\,[1n] + \mathrm{add}\,[2n] = 4n$.
+
+\textbf{Real F16 saving}: $4n\to3n = \mathbf{1n}$ (via mul-then-ln route).
+\textbf{Notational saving}: $2n$ (notation only).
+\[
+\boxed{C_{F16}(\mathrm{LLA}) = 3n.\quad\text{Saves 1n in F16 via mul-then-ln route.}}
+\]
+
+\subsection{LLS$(x,y) = \ln x - \ln y = \ln(x/y)$}
+
+\textbf{F16 primitive?} No.
+
+\textbf{Best F16 decomposition}:
+$\mathrm{div}(x,y)\,[2n] + \ln\,[1n] = 3n$.
+
+\textbf{Naive route}:
+$\ln x\,[1n] + \ln y\,[1n] + \mathrm{sub}\,[2n] = 4n$.
+
+\textbf{Real F16 saving}: $4n\to3n = \mathbf{1n}$ (via div-then-ln route).
+\textbf{Notational saving}: $2n$ (notation only).
+\[
+\boxed{C_{F16}(\mathrm{LLS}) = 3n.\quad\text{Saves 1n in F16 via div-then-ln route.}}
+\]
+
+\subsection{LLD$(x,y) = \ln x / \ln y$}
+
+\textbf{F16 primitive?} No.
+
+\textbf{Best F16 decomposition}:
+$\ln x\,[1n] + \ln y\,[1n] + \mathrm{div}(\ln x,\ln y)\,[2n] = 4n$.
+
+\textbf{Is there a smarter route?} No. LLD cannot exploit the log-of-ratio identity
+because $\ln x / \ln y \neq \ln(x/y)$ (that is LLS). The ratio of two logs has no
+shorter F16 expression.
+
+\textbf{Real F16 saving}: $\mathbf{0n}$.
+\textbf{Notational saving}: $4n - 1n = \mathbf{3n}$ (notation only).
+\[
+\boxed{C_{F16}(\mathrm{LLD}) = 4n.\quad\text{Saves 0n in F16. Purely notational primitive.}}
+\]
+
+\subsection{EEA$(x,y) = e^x + e^y$}
+
+\textbf{F16 primitive?} No.
+
+\textbf{Best F16 decomposition}:
+$e^x\,[1n] + e^y\,[1n] + \mathrm{add}\,[2n] = 4n$.
+
+\textbf{Is there a smarter route?} No. F16 operators always combine one exponential and
+one logarithm; there is no F16 formula for the sum of two exponentials.
+The EEM route gives $e^{x+y}$, not $e^x+e^y$.
+
+\textbf{Real F16 saving}: $\mathbf{0n}$.
+\textbf{Notational saving}: $4n - 1n = \mathbf{3n}$ (notation only).
+\[
+\boxed{C_{F16}(\mathrm{EEA}) = 4n.\quad\text{Saves 0n in F16. Purely notational primitive.}}
+\]
+
+\section{Summary Audit Table}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{lcccccl}
+\toprule
+Op & Definition & $C_{F16}$(naive) & $C_{F16}$(best) & 23-op claim & Real F16 saving & Type \\
+\midrule
+EEM & $e^{x+y}$ & $4n$ & $3n$ & $1n$ & $1n$ & Algebraic shortcut \\
+EED & $e^{x-y}$ & $4n$ & $3n$ & $1n$ & $1n$ & Algebraic shortcut \\
+EES & $e^x-e^y$ & $4n$ & $4n$ & $1n$ & $0n$ & Notational macro \\
+LLA & $\ln(xy)$ & $4n$ & $3n$ & $1n$ & $1n$ & Algebraic shortcut \\
+LLS & $\ln(x/y)$ & $4n$ & $3n$ & $1n$ & $1n$ & Algebraic shortcut \\
+LLD & $\log_y x$ & $4n$ & $4n$ & $1n$ & $0n$ & Notational macro \\
+EEA & $e^x+e^y$ & $4n$ & $4n$ & $1n$ & $0n$ & Notational macro \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{definition}[Algebraic shortcut vs.\ notational macro]
+An operator is an \emph{algebraic shortcut} if its F16 best-route cost is strictly less
+than its naive F16 cost: the algebraic identity (e.g., $\ln(x/y)=\mathrm{div}(x,y)$-then-$\ln$)
+saves at least $1n$ in pure F16 even without elevating the operator to primitive status.
+
+An operator is a \emph{notational macro} if its F16 best-route cost equals its naive cost:
+calling it ``$1n$'' saves nodes only because we declared it a primitive in the 23-op system,
+not because any underlying F16 identity is cheaper.
+\end{definition}
+
+\section{Corrected Accounting of SuperBEST v6--v8 Savings}
+
+All downstream papers (SuperBEST v6, v7, v8, and all quantum/physics catalogs) use the 23-op
+extended set as the measurement baseline. The savings figures are correct \emph{relative to
+the 23-op baseline} but overstate the F16-only savings.
+The corrected picture for each claim:
+
+\subsection{Quantum Relative Entropy: claimed $6n\to3n$}
+
+$\lambda\ln(\lambda/\mu)$:
+\begin{itemize}
+  \item 16-op naive: $\ln\lambda\,[1n] + \ln\mu\,[1n] + \mathrm{sub}\,[2n] + \mathrm{mul}\,[2n] = 6n$.
+  \item 23-op with LLS: $\mathrm{LLS}(\lambda,\mu)\,[1n] + \mathrm{mul}\,[2n] = 3n$.
+  \item F16 optimized (LLS$=3n$ in F16): $\mathrm{div}(\lambda,\mu)\,[2n] + \ln\,[1n] + \mathrm{mul}\,[2n] = 5n$.
+  \item \textbf{Actual F16 saving: $6n\to5n = 1n$.}
+  \item \textbf{Additional notational saving: $5n\to3n = 2n$ (from declaring LLS as $1n$ primitive).}
+\end{itemize}
+
+\subsection{Partition Function per Pair: claimed $10n\to7n$}
+
+$e^{-\beta E_1} + e^{-\beta E_2}$ (after computing $-\beta E_i$ at $3n$ each):
+\begin{itemize}
+  \item 16-op: two exps [2n] + add [2n] = $4n$ for the final sum (plus $3n$ each for $-\beta E_i$).
+  \item 23-op with EEA: $\mathrm{EEA}(-\beta E_1,-\beta E_2)\,[1n]$ = $1n$ for the sum.
+  \item F16 optimized: EEA has no F16 shortcut; $4n$ for the sum regardless.
+  \item \textbf{Actual F16 saving: $10n\to10n = 0n$ (EEA is notational).}
+  \item \textbf{Notational saving: $10n\to7n = 3n$ (from declaring EEA as $1n$ primitive).}
+\end{itemize}
+
+\subsection{Log-Sum-Exp (LSE): claimed $5n\to2n$}
+
+$\ln(e^x+e^y)$:
+\begin{itemize}
+  \item 16-op: $4n$ (EEA) $+ 1n$ ($\ln$) = $5n$.
+  \item 23-op: $\mathrm{EEA}(x,y)\,[1n] + \ln\,[1n] = 2n$.
+  \item F16 optimized: EEA$=4n$ in F16 $+\ln=1n$ = $5n$.
+  \item \textbf{Actual F16 saving: $0n$.}
+  \item \textbf{Notational saving: $3n$ (from EEA as $1n$).}
+\end{itemize}
+
+\subsection{Mayer $f$-Function: claimed $6n\to3n$}
+
+$e^{-\beta u}-1 = \mathrm{EES}(-\beta u, 0)$:
+\begin{itemize}
+  \item 16-op: $\mathrm{mul}(\beta,u)\,[2n] + \mathrm{neg}\,[1n] + \exp\,[1n] + \mathrm{sub}(\cdot,1)\,[2n] = 6n$.
+  \item 23-op with EES: $\mathrm{mul}(\beta,u)\,[2n] + \mathrm{EES}(\cdot,0)\,[1n] = 3n$.
+  \item F16 optimized for $e^{-\beta u}-1$:
+    $\mathrm{sub}(0,-\beta u)$... using EED: $\mathrm{EED}(0,\beta u)=e^{-\beta u}$,
+    then $\mathrm{sub}(e^{-\beta u},1)\,[2n]$. Cost: $\mathrm{mul}\,[2n]+\mathrm{EED via sub+exp}\,[3n]+\mathrm{sub}\,[2n]=7n$.
+    Or: $\mathrm{mul}\,[2n]+\mathrm{sub}(0,\cdot)=\mathrm{neg}\,[1n]+\exp\,[1n]+\mathrm{sub}\,[2n]=6n$.
+    Best F16: $6n$ (no shortcut available; EES$=4n$ in F16 $+$ the mul = $6n$ total).
+  \item \textbf{Actual F16 saving: $6n\to6n = 0n$.}
+  \item \textbf{Notational saving: $6n\to3n = 3n$ (from EES as $1n$).}
+\end{itemize}
+
+\section{Full Corrected Savings Table}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{lcccc}
+\toprule
+Expression & 16-op & F16 best & 23-op (claimed) & F16 actual saving \\
+\midrule
+$p\ln(p/q)$ (KL term) & $6n$ & $5n$ & $3n$ & $1n$ \\
+$\lambda\ln(\lambda/\mu)$ (rel.\ entropy) & $6n$ & $5n$ & $3n$ & $1n$ \\
+$\ln(e^x+e^y)$ (LSE) & $5n$ & $5n$ & $2n$ & $0n$ \\
+$\ln(1+e^x)$ (softplus) & $4n$ & $4n$ & $2n$ & $0n$ \\
+$e^x\cdot e^y$ (via EEM) & $4n$ & $3n$ & $1n$ & $1n$ \\
+$e^x/e^y$ (via EED) & $4n$ & $3n$ & $1n$ & $1n$ \\
+$e^x+e^y$ (via EEA) & $4n$ & $4n$ & $1n$ & $0n$ \\
+$\ln(xy)$ (via LLA) & $4n$ & $3n$ & $1n$ & $1n$ \\
+$\ln(x/y)$ (via LLS) & $4n$ & $3n$ & $1n$ & $1n$ \\
+$\log_y x$ (via LLD) & $4n$ & $4n$ & $1n$ & $0n$ \\
+Partition fn (per pair) & $10n$ & $10n$ & $7n$ & $0n$ \\
+Boltzmann ratio $e^{-\beta\Delta E}$ & $10n$ & $5n$ & $5n$ & $5n$ \\
+Mayer $f$ $e^{-\beta u}-1$ & $6n$ & $6n$ & $3n$ & $0n$ \\
+$\cosh(x)$ & $6n$ & $5n$ & $4n$ & $1n$ \\
+\midrule
+\multicolumn{5}{l}{\textit{Note: ``F16 best'' = minimum F16 nodes for the expression, using algebraic identities}} \\
+\multicolumn{5}{l}{\textit{but without any of the 7 macro-operators. ``23-op (claimed)'' = prior paper counts.}} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{remark}
+The Boltzmann ratio stands out: its $5n$ F16 saving is genuine (algebraic identity
+$e^{-\beta\Delta E} = e^{-\beta(E_j-E_i)}$ reduces $10n$ to $5n$ via a single EED/EEM chain),
+not a notational artifact. This is because EED here replaces a full ratio-of-two-Boltzmanns
+computation with a single exponential-of-difference computation.
+\end{remark}
+
+\section{Classification: Which Operators Are Genuinely New?}
+
+\begin{theorem}[Primitiveness classification]
+Of the 7 operators in the 23-op extended set:
+\begin{enumerate}
+  \item \textbf{Algebraic shortcuts} (save $\geq1n$ in F16 via algebraic identity):
+    EEM, EED, LLA, LLS. Each saves exactly $1n$ by replacing a ``two-op-then-combine''
+    route with a ``combine-then-op'' route.
+  \item \textbf{Notational macros} (save $0n$ in F16; savings only in 23-op accounting):
+    EES, LLD, EEA. These operators cannot be computed more efficiently than their naive
+    4-node F16 expansion; calling them ``$1n$'' saves nodes only by definitional fiat
+    in the extended system.
+  \item \textbf{None are F16 primitives} (none are single elements of the 16-element orbit).
+\end{enumerate}
+\end{theorem}
+
+\begin{corollary}
+The PGC + AIT filter, as applied in Operator\_Taxonomy\_Beyond\_16.tex, verified that
+these operators are outside the F16 orbit and reduce 23-op node counts. It did \emph{not}
+verify that their savings are real in F16 terms. This corollary corrects that gap:
+EES, LLD, and EEA are ``genuine new operators'' in the sense that they are not in the F16 orbit,
+but they do not reduce F16 node counts at all. Their only benefit is definitional:
+accepting them as primitives in an extended hardware/software model.
+\end{corollary}
+
+\section{Which Claims Survive Scrutiny?}
+
+\subsection{Claims that are correct in F16 terms}
+
+\begin{itemize}
+  \item $e^x\cdot e^y = e^{x+y}$ is cheaper via add+exp ($3n$) than via two exps + mul ($4n$). \textbf{Real saving: $1n$.}
+  \item $e^x/e^y = e^{x-y}$ is cheaper via sub+exp ($3n$) than via two exps + div ($4n$). \textbf{Real saving: $1n$.}
+  \item $\ln(xy)$ is cheaper via mul+ln ($3n$) than via two lns + add ($4n$). \textbf{Real saving: $1n$.}
+  \item $\ln(x/y)$ is cheaper via div+ln ($3n$) than via two lns + sub ($4n$). \textbf{Real saving: $1n$.}
+  \item Boltzmann ratio $e^{-\beta E_j}/e^{-\beta E_i} = e^{-\beta(E_j-E_i)}$ saves $5n$ genuinely.
+\end{itemize}
+
+\subsection{Claims that hold only within the 23-op accounting system}
+
+\begin{itemize}
+  \item All savings attributed specifically to EES, EEA, LLD being ``$1n$'' primitives.
+  \item LSE(x,y) = $2n$: true in 23-op (EEA+ln), but $5n$ in F16.
+  \item Softplus = $2n$: true in 23-op, $4n$ in F16.
+  \item Partition function $7n$ per pair: true in 23-op, $10n$ in F16 (no improvement).
+  \item Quantum relative entropy $3n$: true in 23-op, $5n$ in F16 (only $1n$ saved via div-then-ln).
+  \item Mayer $f$-function $3n$: true in 23-op, $6n$ in F16.
+\end{itemize}
+
+\section{Revised Conclusion}
+
+The 7 extended operators are valid within a 23-operator extended primitive set,
+but their primitiveness claims must be stated precisely:
+
+\begin{enumerate}
+  \item \textbf{EEM, EED, LLA, LLS}: genuinely cheaper routes exist in F16 (1n savings each via algebraic identities). Elevating them to $1n$ primitives saves an additional $2n$ per use beyond the F16 shortcut---this additional savings is notational.
+  \item \textbf{EES, LLD, EEA}: no cheaper F16 route exists. The entire ``$1n$'' savings is notational, contingent on accepting an extended $\{$F16 $\cup$ \{EES, LLD, EEA\}$\}$ hardware primitive set.
+  \item \textbf{The SuperBEST v5.2 core table} (15n positive total) is unaffected: it counts only F16 primitives and the savings are genuine.
+  \item \textbf{SuperBEST v6--v8 extended tables} are correct within their stated accounting (23-op extended set) but overstate genuine F16 savings. The correct label for these tables is ``\emph{23-op notation count}'' not ``\emph{F16 node count}.''
+\end{enumerate}
+
+\begin{remark}[On whether notational savings are useful]
+A notational macro can be extremely useful in practice even if it saves no F16 nodes:
+if EEA is implemented as a single hardware instruction (fused multiply-add style),
+the $1n$ claim is physically real. The papers should state explicitly whether the
+23-op set is (a) a theoretical extension for cost accounting, or (b) a proposed
+real hardware/software primitive set. If (a), the savings are notational. If (b),
+they are genuine. This distinction was absent from SuperBEST v6--v8.
+\end{remark}
+
+\end{document}
