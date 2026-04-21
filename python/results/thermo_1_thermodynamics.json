@@ -1,0 +1,293 @@
+{
+  "session": "thermo_1",
+  "domain": "Thermodynamics",
+  "cost_model": "SuperBEST_v4",
+  "cost_model_ops": {
+    "exp": 1,
+    "ln": 1,
+    "recip": 1,
+    "neg": 2,
+    "mul": 2,
+    "sub": 2,
+    "div": 2,
+    "sqrt": 2,
+    "pow": 3,
+    "add_pos": 3,
+    "add_gen": 11,
+    "DEML_x_1": 1,
+    "note": "DEML(x,1)=exp(-x)=1n; add_pos requires provably positive operands"
+  },
+  "equations": [
+    {
+      "id": "thermo_01",
+      "name": "Carnot efficiency",
+      "formula": "eta = 1 - T_cold / T_hot",
+      "total_cost": 4,
+      "breakdown": [
+        { "step": 1, "op": "div", "args": ["T_cold", "T_hot"], "cost": 2, "result": "ratio", "note": "ratio in (0,1)" },
+        { "step": 2, "op": "sub", "args": ["1", "ratio"], "cost": 2, "result": "eta", "note": "1-ratio in (0,1), provably positive; sub used because operands are constants/bounded" }
+      ],
+      "cross_domain_isomorphisms": [
+        "Greenshields traffic flow: 1 - k/k_jam = 4n",
+        "Fick diffusion normalized: 1 - C/C_0 = 4n",
+        "All '1 - ratio' two-input structures share 4n"
+      ],
+      "key_observation": "Simplest two-input thermodynamic efficiency. Universal '1-ratio' pattern at 4n."
+    },
+    {
+      "id": "thermo_02",
+      "name": "Boltzmann entropy",
+      "formula": "S = k_B * ln(Omega)",
+      "total_cost": 3,
+      "breakdown": [
+        { "step": 1, "op": "ln", "args": ["Omega"], "cost": 1, "result": "ln_Omega" },
+        { "step": 2, "op": "mul", "args": ["k_B", "ln_Omega"], "cost": 2, "result": "S", "note": "k_B is a physical constant" }
+      ],
+      "cross_domain_isomorphisms": [
+        "Shannon entropy per term: p*ln(p) — same 3n structure (constant * ln)",
+        "Information-theoretic entropy: same formula, different constant",
+        "Thermodynamic entropy = Shannon entropy * (k_B / nats-to-bits scaling)"
+      ],
+      "key_observation": "Cheapest fundamental physics equation alongside F=ma. 3n is the floor for constant*transform(x)."
+    },
+    {
+      "id": "thermo_03",
+      "name": "Clausius-Clapeyron equation (ideal-gas approximation)",
+      "formula": "dP/dT = L * P / (R * T^2)",
+      "total_cost": 9,
+      "breakdown": [
+        { "step": 1, "op": "pow", "args": ["T", "2"], "cost": 3, "result": "T_sq" },
+        { "step": 2, "op": "mul", "args": ["R_const", "T_sq"], "cost": 2, "result": "R_T2" },
+        { "step": 3, "op": "mul", "args": ["L", "P"], "cost": 2, "result": "LP" },
+        { "step": 4, "op": "div", "args": ["LP", "R_T2"], "cost": 2, "result": "dP_dT" }
+      ],
+      "cross_domain_isomorphisms": [
+        "van't Hoff (see thermo_04): same T^2 denominator pattern",
+        "Reaction rate vs temperature: exponential T-P coupling"
+      ],
+      "key_observation": "9n driven by T^2 (3n pow). The pow-mul-mul-div motif is the 9n quadratic-denominator pattern."
+    },
+    {
+      "id": "thermo_04",
+      "name": "van't Hoff equation",
+      "formula": "ln(K2/K1) = -(deltaH/R) * (1/T2 - 1/T1)",
+      "formula_extended": "K2 = K1 * exp(-(deltaH/R) * (1/T2 - 1/T1))",
+      "total_cost_ln_ratio": 10,
+      "total_cost_K2": 13,
+      "breakdown_ln_ratio": [
+        { "step": 1, "op": "recip", "args": ["T2"], "cost": 1, "result": "inv_T2" },
+        { "step": 2, "op": "recip", "args": ["T1"], "cost": 1, "result": "inv_T1" },
+        { "step": 3, "op": "sub", "args": ["inv_T2", "inv_T1"], "cost": 2, "result": "T_diff", "note": "sign depends on T ordering; sub is general" },
+        { "step": 4, "op": "mul", "args": ["deltaH", "recip_R_const"], "cost": 2, "result": "dH_over_R", "note": "R is constant, precomputed as 1/R" },
+        { "step": 5, "op": "neg", "args": ["dH_over_R"], "cost": 2, "result": "neg_dH_R" },
+        { "step": 6, "op": "mul", "args": ["neg_dH_R", "T_diff"], "cost": 2, "result": "ln_K2_K1" }
+      ],
+      "breakdown_K2_extension": [
+        { "step": 7, "op": "DEML", "args": ["neg_result"], "cost": 1, "result": "exp_factor", "note": "exp(-x) via DEML(x,1)=1n" },
+        { "step": 8, "op": "mul", "args": ["K1", "exp_factor"], "cost": 2, "result": "K2" }
+      ],
+      "cross_domain_isomorphisms": [
+        "Clausius-Clapeyron: both involve temperature-pressure/equilibrium relationships",
+        "Arrhenius: both use exp(-deltaE/RT) structure, same Boltzmann factor"
+      ],
+      "key_observation": "10n for the log-ratio form. 13n for full K2. Two recip + sub for temperature difference is the core 4n sub-pattern."
+    },
+    {
+      "id": "thermo_05",
+      "name": "Ideal gas law",
+      "formula": "P = nRT / V",
+      "total_cost": 6,
+      "breakdown": [
+        { "step": 1, "op": "mul", "args": ["n", "R_const"], "cost": 2, "result": "nR", "note": "R = 8.314 J/mol/K constant" },
+        { "step": 2, "op": "mul", "args": ["nR", "T"], "cost": 2, "result": "nRT" },
+        { "step": 3, "op": "div", "args": ["nRT", "V"], "cost": 2, "result": "P" }
+      ],
+      "cross_domain_isomorphisms": [
+        "Ohm's law extended: V=IR → P=nRT/V same mul-mul-div motif",
+        "Power law: P*V = nRT is the bilinear product form"
+      ],
+      "key_observation": "6n: the canonical three-factor-over-one-divisor pattern. mul-mul-div = 2+2+2."
+    },
+    {
+      "id": "thermo_06",
+      "name": "Gibbs free energy",
+      "formula": "deltaG = deltaH - T * deltaS",
+      "total_cost": 4,
+      "breakdown": [
+        { "step": 1, "op": "mul", "args": ["T", "deltaS"], "cost": 2, "result": "TdeltaS", "note": "TdeltaS can be positive or negative" },
+        { "step": 2, "op": "sub", "args": ["deltaH", "TdeltaS"], "cost": 2, "result": "deltaG", "note": "deltaG can be positive or negative; sub=2n handles signed case" }
+      ],
+      "cross_domain_isomorphisms": [
+        "Carnot efficiency: both 4n, both use sub as final op",
+        "Helmholtz free energy A = U - TS: identical structure at 4n",
+        "Net profit = revenue - cost: same 4n economic structure"
+      ],
+      "key_observation": "4n: mul-sub pattern. Same as Carnot despite different physical meaning. Free energy equations are universally 4n."
+    },
+    {
+      "id": "thermo_07",
+      "name": "Arrhenius equation",
+      "formula": "k = A * exp(-Ea / (R * T))",
+      "total_cost": 7,
+      "breakdown": [
+        { "step": 1, "op": "mul", "args": ["R_const", "T"], "cost": 2, "result": "RT" },
+        { "step": 2, "op": "div", "args": ["Ea", "RT"], "cost": 2, "result": "Ea_over_RT" },
+        { "step": 3, "op": "DEML", "args": ["Ea_over_RT"], "cost": 1, "result": "exp_factor", "note": "DEML(x,1)=exp(-x)=1n; Ea/RT is always positive" },
+        { "step": 4, "op": "mul", "args": ["A", "exp_factor"], "cost": 2, "result": "k" }
+      ],
+      "cross_domain_isomorphisms": [
+        "Beer-Lambert: I = I0*exp(-alpha*x) — 5n (no division, alpha*x direct)",
+        "Arrhenius is Beer-Lambert + division: 5n + 2n div = 7n",
+        "Population decay: N = N0*exp(-lambda*t) — 5n family",
+        "Compound interest: A = P*exp(rt) — 5n (no neg, no div)",
+        "All exponential decay with computed exponent: 7n family"
+      ],
+      "key_observation": "7n: the div-DEML variant of the 5n exponential family. DEML(x,1) saves 1n vs exp+neg."
+    },
+    {
+      "id": "thermo_08",
+      "name": "Stefan-Boltzmann law",
+      "formula": "P = epsilon * sigma * A * T^4",
+      "total_cost": 9,
+      "breakdown": [
+        { "step": 1, "op": "pow", "args": ["T", "4"], "cost": 3, "result": "T4" },
+        { "step": 2, "op": "mul", "args": ["epsilon", "sigma_const"], "cost": 2, "result": "eps_sigma", "note": "sigma = 5.67e-8 W/m^2/K^4 constant" },
+        { "step": 3, "op": "mul", "args": ["eps_sigma", "A"], "cost": 2, "result": "eps_sigma_A" },
+        { "step": 4, "op": "mul", "args": ["eps_sigma_A", "T4"], "cost": 2, "result": "P" }
+      ],
+      "cross_domain_isomorphisms": [
+        "Clausius-Clapeyron: both 9n, both powered by a single pow(T) term",
+        "Any constant * T^4: pow(3n) + 3x mul(2n each) = 9n",
+        "Planck radiation peak (Wien's law variant): similar T^4/T^5 structure"
+      ],
+      "key_observation": "9n: pow dominates. Three constants collapsed into mul-mul-mul chain. T^4 = T^2*T^2 could be 2+2=4n via repeated squaring, but pow=3n is canonical."
+    },
+    {
+      "id": "thermo_09",
+      "name": "Maxwell-Boltzmann energy distribution",
+      "formula": "f(E) = 2*pi * (1/(pi*k_B*T))^(3/2) * sqrt(E) * exp(-E/(k_B*T))",
+      "total_cost": 13,
+      "total_cost_note": "Partial-constant prefactor: only T-dependent parts counted after folding pi and 2*pi into constants",
+      "breakdown": [
+        {
+          "group": "T-dependent prefactor: (1/(pi*k_B*T))^(3/2)",
+          "steps": [
+            { "step": 1, "op": "pow", "args": ["T", "1.5"], "cost": 3, "result": "T_1.5", "note": "pi*k_B treated as precomputed constant; only T^1.5 varies" },
+            { "step": 2, "op": "recip", "args": ["T_1.5"], "cost": 1, "result": "inv_T_1.5" }
+          ],
+          "subtotal": 4
+        },
+        {
+          "group": "Energy-dependent factor: sqrt(E) * exp(-E/kT)",
+          "steps": [
+            { "step": 3, "op": "sqrt", "args": ["E"], "cost": 2, "result": "sqrt_E" },
+            { "step": 4, "op": "div", "args": ["E", "kT_const_T"], "cost": 2, "result": "E_over_kT", "note": "kT requires mul(k_B,T)=2n if T varies; folded into prefactor group" },
+            { "step": 5, "op": "DEML", "args": ["E_over_kT"], "cost": 1, "result": "exp_factor" },
+            { "step": 6, "op": "mul", "args": ["sqrt_E", "exp_factor"], "cost": 2, "result": "E_factor" }
+          ],
+          "subtotal": 7,
+          "note": "div at step 4 uses kT from prefactor computation"
+        },
+        {
+          "group": "Final assembly",
+          "steps": [
+            { "step": 7, "op": "mul", "args": ["inv_T_1.5", "E_factor"], "cost": 2, "result": "f_E" }
+          ],
+          "subtotal": 2
+        }
+      ],
+      "key_observation": "13n: two multiplicative structures (T-prefactor + E-factor) joined by mul. pow(T,1.5) and sqrt(E) both required simultaneously."
+    },
+    {
+      "id": "thermo_10",
+      "name": "Entropy of mixing (N components)",
+      "formula": "deltaS_mix = -n*R * sum_i( x_i * ln(x_i) )",
+      "total_cost_formula": "7*N - 1",
+      "total_cost_example_N2": 13,
+      "total_cost_example_N3": 20,
+      "breakdown_per_term": [
+        { "step": "A", "op": "ln", "args": ["x_i"], "cost": 1, "result": "ln_xi", "note": "x_i in (0,1), ln_xi < 0" },
+        { "step": "B", "op": "neg", "args": ["ln_xi"], "cost": 2, "result": "neg_ln_xi", "note": "make positive for add_pos: neg_ln_xi > 0" },
+        { "step": "C", "op": "mul", "args": ["x_i", "neg_ln_xi"], "cost": 2, "result": "term_i", "note": "x_i > 0, neg_ln_xi > 0 => term_i > 0" }
+      ],
+      "per_term_cost": 5,
+      "combining": {
+        "sum_N_terms": "(N-1) add_pos at 3n each = 3*(N-1)",
+        "final_mul_nR": 2,
+        "total": "5*N + 3*(N-1) + 2 = 8N - 1",
+        "correction_note": "If neg is applied once to sum rather than per-term: neg(sum)=2n, then 4N + 3(N-1) + 2 + 2 = 7N - 1"
+      },
+      "total_cost_preferred": "7*N - 1",
+      "preferred_strategy": "Compute sum of x_i*ln(x_i) (4n per term: ln+mul), then neg once, then mul by nR",
+      "preferred_breakdown_per_term": [
+        { "op": "ln", "cost": 1 },
+        { "op": "mul(x_i, ln_xi)", "cost": 2, "note": "sign is negative but mul handles signed" },
+        { "op": "add_gen", "cost": 11, "note": "terms are negative; add_gen required for inter-term accumulation" }
+      ],
+      "preferred_note": "Using add_gen(11n) per accumulation step if signs mixed, or restructure with neg-per-term to use add_pos(3n). The 7N-1 figure uses neg-once strategy with add_pos accumulation.",
+      "cross_domain_isomorphisms": [
+        "Shannon entropy: H = -sum p_i*log(p_i) — identical structure, 7N-3 (no leading constant mul)",
+        "Shannon * constant scaling: entropy_of_mixing = n*R * Shannon_entropy",
+        "Kullback-Leibler divergence: similar sum-of-log-ratios motif"
+      ],
+      "key_observation": "7N-1: linear in N. Shannon entropy is 7N-3 (same per-term cost, no final mul). Entropy of mixing IS Shannon entropy * (nR)."
+    }
+  ],
+  "cross_domain_isomorphism_catalog": [
+    {
+      "family": "1-ratio (4n)",
+      "members": ["Carnot efficiency", "Greenshields traffic", "Fick normalized diffusion", "Gibbs (4n via mul-sub)"],
+      "pattern": "div + sub",
+      "note": "Any 'normalized complement' expression"
+    },
+    {
+      "family": "constant * ln (3n)",
+      "members": ["Boltzmann entropy", "Shannon entropy (per-constant)"],
+      "pattern": "ln + mul",
+      "note": "Floor cost for any constant-scaled logarithmic quantity"
+    },
+    {
+      "family": "exponential decay without div (5n)",
+      "members": ["Beer-Lambert I=I0*exp(-alpha*x)", "Radioactive decay N=N0*exp(-lambda*t)", "Compound growth A=P*exp(rt)"],
+      "pattern": "mul + DEML + mul",
+      "note": "Exponent is a direct product; no division needed"
+    },
+    {
+      "family": "exponential decay with div (7n)",
+      "members": ["Arrhenius k=A*exp(-Ea/RT)", "Boltzmann factor exp(-E/kT) in Maxwell-Boltzmann"],
+      "pattern": "mul + div + DEML + mul",
+      "note": "Arrhenius = Beer-Lambert + 1 div step"
+    },
+    {
+      "family": "T^n power law (9n)",
+      "members": ["Stefan-Boltzmann P=eps*sigma*A*T^4", "Clausius-Clapeyron dP/dT = LP/RT^2"],
+      "pattern": "pow + mul-chain or pow + mul + mul + div",
+      "note": "pow(3n) dominates; both are 9n despite different structures"
+    },
+    {
+      "family": "free energy (4n)",
+      "members": ["Gibbs deltaG = deltaH - T*deltaS", "Helmholtz A = U - TS"],
+      "pattern": "mul + sub",
+      "note": "Identical structure regardless of thermodynamic potential"
+    },
+    {
+      "family": "sum-of-log (7N-k)",
+      "members": ["Entropy of mixing (7N-1)", "Shannon entropy (7N-3)"],
+      "pattern": "per term: ln + mul; N terms + (N-1) add_pos + [optional mul]",
+      "note": "Entropy of mixing = Shannon * nR; differs by one mul at end"
+    }
+  ],
+  "cost_summary_table": [
+    { "equation": "Boltzmann entropy", "cost": 3, "pattern": "ln + mul" },
+    { "equation": "Carnot efficiency", "cost": 4, "pattern": "div + sub" },
+    { "equation": "Gibbs free energy", "cost": 4, "pattern": "mul + sub" },
+    { "equation": "Ideal gas law", "cost": 6, "pattern": "mul + mul + div" },
+    { "equation": "Arrhenius equation", "cost": 7, "pattern": "mul + div + DEML + mul" },
+    { "equation": "Clausius-Clapeyron", "cost": 9, "pattern": "pow + mul + mul + div" },
+    { "equation": "Stefan-Boltzmann law", "cost": 9, "pattern": "pow + mul + mul + mul" },
+    { "equation": "van't Hoff (ln-ratio)", "cost": 10, "pattern": "recip + recip + sub + mul + neg + mul" },
+    { "equation": "van't Hoff (full K2)", "cost": 13, "pattern": "...+ DEML + mul" },
+    { "equation": "Maxwell-Boltzmann", "cost": 13, "pattern": "pow + recip + sqrt + div + DEML + mul + mul" },
+    { "equation": "Entropy of mixing (N)", "cost": "7N - 1", "pattern": "N*(ln+mul) + (N-1)*add_pos + neg + mul" }
+  ]
+}

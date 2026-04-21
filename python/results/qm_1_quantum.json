@@ -1,0 +1,297 @@
+{
+  "title": "SuperBEST v4 Node Cost Analysis: Quantum Mechanics Equations",
+  "version": "v4",
+  "cost_model": {
+    "exp": "1n",
+    "ln": "1n",
+    "recip": "1n",
+    "neg": "2n",
+    "mul": "2n",
+    "sub": "2n",
+    "div": "2n",
+    "sqrt": "2n",
+    "pow": "3n",
+    "add_pos": "3n (both operands provably positive)",
+    "add_gen": "11n (general/signed)",
+    "DEML_x_1": "1n (= exp(-x), shorthand for DEML(x,1))"
+  },
+  "key_insight": "DEML(x,1) = exp(-x) costs 1n. The Boltzmann factor exp(-E/kT) becomes 1n after the division, making statistical mechanics structurally cheap. Fermi-Dirac and Bose-Einstein are EML-native.",
+  "equations": [
+    {
+      "id": "qm_01",
+      "name": "Boltzmann factor",
+      "formula": "exp(-E/kT)",
+      "domain": "statistical mechanics",
+      "cost_total": "5n (kT computed from scratch) | 3n (kT precomputed constant)",
+      "cost_breakdown": [
+        {"step": "mul(k, T)", "cost": "2n", "note": "compute kT denominator; skip if kT is a constant"},
+        {"step": "div(E, kT)", "cost": "2n", "note": "dimensionless exponent E/kT"},
+        {"step": "DEML(E/kT, 1) = exp(-E/kT)", "cost": "1n", "note": "EML identity: DEML(x,1) = exp(-x)"}
+      ],
+      "cross_domain_isomorphisms": [
+        "Beer-Lambert attenuation: I = I_0 * exp(-alpha*x) — same exp(-x) structure, 5n",
+        "Radioactive decay: N(t) = N_0 * exp(-lambda*t) — identical 5n pattern",
+        "RC discharge: V(t) = V_0 * exp(-t/RC) — same form, 5n",
+        "All are DEML(x,1) after one division"
+      ],
+      "notes": "The core primitive of statistical mechanics. With kT as a precomputed constant it reduces to 3n (div + DEML)."
+    },
+    {
+      "id": "qm_02",
+      "name": "Fermi-Dirac distribution",
+      "formula": "f(E) = 1 / (1 + exp((E - mu) / kT))",
+      "domain": "quantum statistical mechanics (fermions)",
+      "cost_total": "9n",
+      "cost_breakdown": [
+        {"step": "sub(E, mu)", "cost": "2n", "note": "energy above chemical potential"},
+        {"step": "div(result, kT)", "cost": "2n", "note": "kT precomputed; dimensionless argument"},
+        {"step": "exp(quotient)", "cost": "1n", "note": "EML primitive; positive or negative argument"},
+        {"step": "add_pos(1, exp_result)", "cost": "3n", "note": "both operands positive, use add_pos"},
+        {"step": "recip(sum)", "cost": "1n", "note": "1/denominator"}
+      ],
+      "cross_domain_isomorphisms": [
+        "Sigmoid / logistic function: sigma(x) = 1/(1+exp(-x)) — structurally identical, same 9n (with sign flip absorbed into sub)",
+        "ELO expected score: E_A = 1/(1+10^(delta/400)) — same form with base-10 exp, ~9n",
+        "Logistic regression output: p = 1/(1+exp(-w·x)) — same 9n after dot product",
+        "Softmax binary case: exp(x_1)/(exp(x_1)+exp(x_2)) reduces to Fermi-Dirac form"
+      ],
+      "notes": "The Fermi-Dirac distribution IS the physics sigmoid. The cross-domain isomorphism connects quantum statistics, neural networks, and probabilistic classifiers at the node-cost level."
+    },
+    {
+      "id": "qm_03",
+      "name": "Bose-Einstein distribution",
+      "formula": "n(E) = 1 / (exp((E - mu) / kT) - 1)",
+      "domain": "quantum statistical mechanics (bosons)",
+      "cost_total": "8n",
+      "cost_breakdown": [
+        {"step": "sub(E, mu)", "cost": "2n", "note": "energy above chemical potential"},
+        {"step": "div(result, kT)", "cost": "2n", "note": "dimensionless argument"},
+        {"step": "exp(quotient)", "cost": "1n", "note": "EML primitive"},
+        {"step": "sub(exp_result, 1)", "cost": "2n", "note": "exp((E-mu)/kT) > 1 for E > mu, so result is positive"},
+        {"step": "recip(sub_result)", "cost": "1n", "note": "1/denominator"}
+      ],
+      "cross_domain_isomorphisms": [
+        "No standard sigmoid isomorphism; the -1 (vs +1 in FD) is physically fundamental — marks the difference between fermion exclusion and boson bunching",
+        "Planck distribution prefactor uses this as its core kernel",
+        "Structure: recip(sub(exp(x), 1)) — a novel EML primitive pattern not found in classical ML"
+      ],
+      "notes": "One node cheaper than Fermi-Dirac (8n vs 9n) because sub costs 2n vs add_pos 3n. The sub(exp,1) pattern is the boson signature."
+    },
+    {
+      "id": "qm_04",
+      "name": "Planck spectral radiance",
+      "formula": "B(nu, T) = (2*h*nu^3 / c^2) * 1/(exp(h*nu/kT) - 1)",
+      "domain": "blackbody radiation",
+      "cost_total": "19n (with 2h/c^2 as precomputed constant)",
+      "cost_breakdown": [
+        {
+          "part": "prefactor 2h*nu^3/c^2",
+          "steps": [
+            {"step": "pow(nu, 3)", "cost": "3n", "note": "nu^3 frequency term"},
+            {"step": "mul(const_2h_over_c2, pow_result)", "cost": "2n", "note": "2h/c^2 is a physical constant, precomputed"}
+          ],
+          "subtotal": "5n"
+        },
+        {
+          "part": "Bose-Einstein kernel for photons (mu=0)",
+          "steps": [
+            {"step": "mul(h, nu)", "cost": "2n", "note": "photon energy E = h*nu"},
+            {"step": "div(h_nu, kT)", "cost": "2n", "note": "dimensionless argument; kT precomputed"},
+            {"step": "exp(h_nu_kT)", "cost": "1n", "note": "EML primitive"},
+            {"step": "sub(exp_result, 1)", "cost": "2n", "note": "Bose-Einstein denominator"},
+            {"step": "recip(sub_result)", "cost": "1n", "note": "1/(exp(x)-1)"}
+          ],
+          "subtotal": "8n (BE kernel) + 4n (h*nu/kT) = 12n total for photon BE factor"
+        },
+        {"step": "mul(prefactor, BE_factor)", "cost": "2n", "note": "final product"}
+      ],
+      "cross_domain_isomorphisms": [
+        "Planck = prefactor * Bose-Einstein(photons, mu=0)",
+        "The 1/(exp(x)-1) kernel appears in Riemann zeta function evaluations via Mellin transform",
+        "Stefan-Boltzmann law emerges by integrating Planck over all frequencies — the T^4 law is a consequence of the BE kernel"
+      ],
+      "notes": "Cost dominated by the frequency prefactor. The BE kernel itself is 8n; the photon energy computation adds 4n more."
+    },
+    {
+      "id": "qm_05",
+      "name": "Hydrogen atom energy levels",
+      "formula": "E_n = -13.6 eV / n^2",
+      "domain": "atomic physics",
+      "cost_total": "7n",
+      "cost_breakdown": [
+        {"step": "pow(n, 2)", "cost": "3n", "note": "n^2 where n is principal quantum number"},
+        {"step": "div(13.6_const, pow_result)", "cost": "2n", "note": "13.6 eV is the Rydberg constant in eV, treated as constant"},
+        {"step": "neg(result)", "cost": "2n", "note": "bound states have negative energy"}
+      ],
+      "cross_domain_isomorphisms": [
+        "Balmer series wavelengths: lambda = const / (1/n_f^2 - 1/n_i^2) — same pow+recip pattern",
+        "Kepler orbit energy: E = -G*M*m/(2a) — same recip structure for bound states",
+        "Rydberg formula generalizes to all one-electron atoms: E_n = -Z^2 * 13.6 eV / n^2"
+      ],
+      "notes": "Clean 7n computation. The negation (2n) reflects the physics: bound states must have E < 0."
+    },
+    {
+      "id": "qm_06",
+      "name": "de Broglie wavelength",
+      "formula": "lambda = h / (m*v)",
+      "domain": "wave-particle duality",
+      "cost_total": "4n (m,v given) | 2n (mv given directly)",
+      "cost_breakdown": [
+        {"step": "mul(m, v)", "cost": "2n", "note": "momentum p = mv; skip if momentum is the input"},
+        {"step": "div(h_const, mv)", "cost": "2n", "note": "h is Planck's constant, a precomputed constant"}
+      ],
+      "cross_domain_isomorphisms": [
+        "Any wavelength = speed/frequency formula: lambda = v/f — same 2n div pattern",
+        "Compton wavelength: lambda_C = h/(m*c) — same structure, c replaces v",
+        "Thermal de Broglie: lambda_th = h/sqrt(2*pi*m*kT) — adds sqrt+mul steps"
+      ],
+      "notes": "Minimal cost; essentially a single division once momentum is known."
+    },
+    {
+      "id": "qm_07",
+      "name": "Heisenberg uncertainty principle",
+      "formula": "Delta_x * Delta_p >= hbar/2",
+      "domain": "quantum mechanics",
+      "cost_total": "2n (to verify/check the inequality)",
+      "cost_breakdown": [
+        {"step": "mul(Delta_x, Delta_p)", "cost": "2n", "note": "compute the product to check against constant hbar/2"},
+        {"step": "hbar/2", "cost": "0n", "note": "pure constant — no computation needed at runtime"}
+      ],
+      "cross_domain_isomorphisms": [
+        "Bandwidth-time uncertainty in signal processing: Delta_t * Delta_f >= 1/(4*pi) — identical inequality structure",
+        "Entropic uncertainty relations in information theory",
+        "Fisher information / Cramer-Rao bound: Var(theta) >= 1/I(theta) — same product-vs-constant pattern"
+      ],
+      "notes": "This is an inequality, not a function evaluation. Runtime cost is just the product (2n) to compare against a known constant."
+    },
+    {
+      "id": "qm_08a",
+      "name": "Particle-in-a-box wavefunction",
+      "formula": "psi_n(x) = sqrt(2/L) * sin(n*pi*x/L)",
+      "domain": "quantum mechanics (infinite square well)",
+      "cost_total": "13n",
+      "cost_breakdown": [
+        {"step": "mul(n, pi_const)", "cost": "2n", "note": "n*pi; pi is constant"},
+        {"step": "div(result, L)", "cost": "2n", "note": "n*pi/L"},
+        {"step": "mul(x, n_pi_over_L)", "cost": "2n", "note": "argument n*pi*x/L"},
+        {"step": "sin(argument)", "cost": "1n", "note": "CEML primitive"},
+        {"step": "div(2_const, L)", "cost": "2n", "note": "2/L for normalization; 2 is constant"},
+        {"step": "sqrt(2_over_L)", "cost": "2n", "note": "normalization constant sqrt(2/L)"},
+        {"step": "mul(sqrt_norm, sin_result)", "cost": "2n", "note": "normalized wavefunction"}
+      ],
+      "cross_domain_isomorphisms": [
+        "Fourier sine series basis functions: same n*pi*x/L argument structure",
+        "Standing waves on a string: y_n(x,t) = A*sin(n*pi*x/L)*cos(omega_n*t) — same spatial factor",
+        "Acoustic resonances in pipes: same boundary condition math"
+      ],
+      "notes": "13n total. If L is fixed, sqrt(2/L) becomes a constant reducing to 9n (skip div+sqrt, keep only mul(const, sin))."
+    },
+    {
+      "id": "qm_08b",
+      "name": "Particle-in-a-box energy levels",
+      "formula": "E_n = n^2 * pi^2 * hbar^2 / (2*m*L^2)",
+      "domain": "quantum mechanics (infinite square well)",
+      "cost_total": "7n",
+      "cost_breakdown": [
+        {"step": "pow(n, 2)", "cost": "3n", "note": "n^2"},
+        {"step": "mul(n2, pi2_hbar2_const)", "cost": "2n", "note": "pi^2*hbar^2 is a precomputed constant"},
+        {"step": "div(result, const_2mL2)", "cost": "2n", "note": "2*m*L^2 treated as a single physical constant"}
+      ],
+      "cross_domain_isomorphisms": [
+        "Same n^2 scaling as hydrogen: E_n ~ 1/n^2 (H atom) vs E_n ~ n^2 (box) — inverse relationship reflects free vs confined",
+        "Rotational energy levels of a rigid rotor: E_J = J*(J+1)*hbar^2/(2I) — similar structure with pow"
+      ],
+      "notes": "Identical 7n cost to hydrogen energy levels. Both are quadratic-in-n patterns dominated by pow(n,2)=3n."
+    },
+    {
+      "id": "qm_09",
+      "name": "Canonical partition function",
+      "formula": "Z = sum_{i=1}^{N} exp(-E_i / kT)",
+      "domain": "statistical mechanics",
+      "cost_total": "6N - 3 nodes for N energy levels",
+      "cost_breakdown": [
+        {"step": "div(E_i, kT)", "cost": "2n per term", "note": "kT precomputed; N terms total"},
+        {"step": "DEML(E_i/kT, 1) = exp(-E_i/kT)", "cost": "1n per term", "note": "Boltzmann factor per level"},
+        {"step": "add_pos(term_i, term_{i+1})", "cost": "3n per addition", "note": "N-1 additions; all Boltzmann factors are positive"}
+      ],
+      "formula_cost": "N terms * 3n/term + (N-1) additions * 3n/add = 3N + 3(N-1) = 6N - 3",
+      "examples": [
+        {"N": 1, "cost": "3n"},
+        {"N": 2, "cost": "9n"},
+        {"N": 5, "cost": "27n"},
+        {"N": 10, "cost": "57n"}
+      ],
+      "cross_domain_isomorphisms": [
+        "Softmax denominator in neural networks: sum(exp(x_i)) — same structure, same cost formula",
+        "Normalizing constant in Boltzmann policy (RL): pi(a) = exp(Q(a)) / Z",
+        "Evidence in Bayesian inference: p(D) = sum_i p(D|theta_i)*p(theta_i) — same sum-of-exponentials pattern",
+        "All are 6N-3 for N options when using EML primitives"
+      ],
+      "notes": "Linear in N. The softmax denominator and partition function are the same computation — a deep ML/physics connection."
+    },
+    {
+      "id": "qm_10",
+      "name": "Maxwell-Boltzmann speed distribution",
+      "formula": "f(v) = 4*pi * (m/(2*pi*kT))^(3/2) * v^2 * exp(-m*v^2/(2*kT))",
+      "domain": "classical statistical mechanics",
+      "cost_total": "19n (partial constants assumed)",
+      "cost_breakdown": [
+        {
+          "part": "T-dependent prefactor (m/(2*pi*kT))^(3/2)",
+          "steps": [
+            {"step": "recip(T) or use T directly", "cost": "1n", "note": "1/T for T^(-3/2) factor"},
+            {"step": "pow(recip_T, 1.5)", "cost": "3n", "note": "T^(-3/2); absorb m/(2*pi*k) as constant multiplier"}
+          ],
+          "subtotal": "4n for T-dependent prefactor factor"
+        },
+        {
+          "part": "v^2 term",
+          "steps": [
+            {"step": "pow(v, 2)", "cost": "3n", "note": "v^2"}
+          ],
+          "subtotal": "3n"
+        },
+        {
+          "part": "Boltzmann exponent -m*v^2/(2*kT)",
+          "steps": [
+            {"step": "mul(m_const, v2)", "cost": "2n", "note": "m*v^2; m is a constant"},
+            {"step": "div(result, 2kT_const)", "cost": "2n", "note": "2kT precomputed"},
+            {"step": "DEML(mv2_2kT, 1) = exp(-m*v^2/(2*kT))", "cost": "1n", "note": "Boltzmann factor in v"}
+          ],
+          "subtotal": "5n (reusing v^2 from above: 2+2+1 = 5n additional)"
+        },
+        {"step": "mul(v2, exp_result)", "cost": "2n", "note": "v^2 * exp factor"},
+        {"step": "mul(T_prefactor_factor, v2_exp)", "cost": "2n", "note": "combine T-dependent and v-dependent parts"},
+        {"step": "mul(const_4pi_m_2pik_3/2, result)", "cost": "2n", "note": "final constant prefactor"}
+      ],
+      "cross_domain_isomorphisms": [
+        "Maxwell-Boltzmann is a chi distribution (k=3 degrees of freedom) scaled",
+        "Gaussian velocity distribution: each component v_x ~ exp(-m*v_x^2/2kT) — 5n per component, 3D product = 17n",
+        "Log-normal distribution has similar x^2 * exp(-x^2) envelope structure",
+        "Rayleigh distribution (2D): f(v) ~ v * exp(-v^2/(2*sigma^2)) — same pattern minus one pow dimension"
+      ],
+      "notes": "19n total. The v^2 can be shared between the polynomial prefactor and the Boltzmann exponent, saving one pow(v,2)=3n call."
+    }
+  ],
+  "summary_table": [
+    {"id": "qm_01", "name": "Boltzmann factor", "cost": "5n (3n if kT constant)", "isomorphism": "Beer-Lambert, RC decay, radioactive decay"},
+    {"id": "qm_02", "name": "Fermi-Dirac distribution", "cost": "9n", "isomorphism": "sigmoid, logistic regression, ELO score"},
+    {"id": "qm_03", "name": "Bose-Einstein distribution", "cost": "8n", "isomorphism": "novel; Planck kernel"},
+    {"id": "qm_04", "name": "Planck spectral radiance", "cost": "19n", "isomorphism": "integrates to Stefan-Boltzmann T^4"},
+    {"id": "qm_05", "name": "Hydrogen energy levels", "cost": "7n", "isomorphism": "Kepler orbit energy, Rydberg formula"},
+    {"id": "qm_06", "name": "de Broglie wavelength", "cost": "4n (2n if p given)", "isomorphism": "Compton wavelength, lambda=v/f"},
+    {"id": "qm_07", "name": "Heisenberg uncertainty (check)", "cost": "2n", "isomorphism": "bandwidth-time uncertainty, Cramer-Rao"},
+    {"id": "qm_08a", "name": "Particle-in-box wavefunction", "cost": "13n (9n if L constant)", "isomorphism": "Fourier sine basis, standing waves"},
+    {"id": "qm_08b", "name": "Particle-in-box energy", "cost": "7n", "isomorphism": "rigid rotor E_J; inverse of H-atom n^2 scaling"},
+    {"id": "qm_09", "name": "Partition function (N levels)", "cost": "6N-3 nodes", "isomorphism": "softmax denominator, Bayesian evidence"},
+    {"id": "qm_10", "name": "Maxwell-Boltzmann distribution", "cost": "19n", "isomorphism": "chi distribution, Gaussian velocity, Rayleigh 2D"}
+  ],
+  "global_observations": [
+    "The Boltzmann factor exp(-E/kT) = DEML(E/kT,1) is the fundamental 1n primitive after one division; it propagates cheapness across all of statistical mechanics.",
+    "Fermi-Dirac (9n) = sigmoid: the most important cross-domain isomorphism discovered. Quantum statistics and deep learning share identical node structure.",
+    "Bose-Einstein (8n) is one node cheaper than Fermi-Dirac due to sub(exp,1) costing less than add_pos(1,exp). The -1 vs +1 is a 1-node physical distinction.",
+    "Both particle-in-box (7n) and hydrogen (7n) energy levels cost identically, despite one scaling as n^2 and the other as 1/n^2.",
+    "Partition function cost is exactly 6N-3, matching softmax denominator — statistical mechanics and attention mechanisms are the same computation.",
+    "Maxwell-Boltzmann and Planck both reach 19n; they are the most expensive in this set due to polynomial-times-exponential structure."
+  ]
+}

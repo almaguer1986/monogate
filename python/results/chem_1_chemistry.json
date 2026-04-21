@@ -1,0 +1,271 @@
+{
+  "session": "chem_1_chemistry",
+  "cost_model": "SuperBEST_v4",
+  "cost_model_ops": {
+    "exp": 1,
+    "ln": 1,
+    "recip": 1,
+    "neg": 2,
+    "mul": 2,
+    "sub": 2,
+    "div": 2,
+    "sqrt": 2,
+    "pow": 3,
+    "add_pos": 3,
+    "add_gen": 11,
+    "DEML_x_1": 1
+  },
+  "note_DEML": "DEML(x,1) = exp(-x) costs 1n (single operator), cheaper than explicit neg(2n)+exp(1n)=3n",
+  "equations": [
+    {
+      "id": "chem_1_nernst",
+      "name": "Nernst Equation",
+      "formula": "E = E_std - (RT / nF) * ln(Q)",
+      "domain": "Electrochemistry",
+      "cost_total": 11,
+      "cost_breakdown": [
+        {"step": "mul(R, T)", "cost": 2, "note": "RT product"},
+        {"step": "mul(n, F)", "cost": 2, "note": "nF product"},
+        {"step": "div(RT, nF)", "cost": 2, "note": "thermal voltage factor RT/nF"},
+        {"step": "ln(Q)", "cost": 1, "note": "log of reaction quotient"},
+        {"step": "mul(RT_nF, ln_Q)", "cost": 2, "note": "scale log term"},
+        {"step": "sub(E_std, mul_result)", "cost": 2, "note": "subtract — sign is fixed (sub, not add_gen)"}
+      ],
+      "cost_subtotals": {
+        "RT_nF": 6,
+        "log_term": 3,
+        "final_sub": 2
+      },
+      "sign_note": "Uses sub(2n) not add_gen(11n) because the correction term is subtracted from E_std by definition",
+      "cross_domain": [
+        "Reaction free energy ΔG = ΔG° + RT·ln(Q) is the same equation via ΔG = -nFE",
+        "Nernst is 11n; ΔG form is 16n — difference is sub(2n) vs add_gen(11n)"
+      ]
+    },
+    {
+      "id": "chem_2_henderson_hasselbalch",
+      "name": "Henderson-Hasselbalch Equation",
+      "formula": "pH = pKa + log10([A-] / [HA])",
+      "domain": "Acid-Base Chemistry",
+      "cost_total_general": 16,
+      "cost_total_near_pKa": 8,
+      "cost_breakdown": [
+        {"step": "div([A-], [HA])", "cost": 2, "note": "concentration ratio"},
+        {"step": "ln(ratio)", "cost": 1, "note": "natural log of ratio"},
+        {"step": "div(ln_result, ln10_const)", "cost": 2, "note": "convert to log10; ln10 is a compile-time constant"},
+        {"step": "add_gen(pKa, log10_result)", "cost": 11, "note": "GENERAL: log10 term can be negative when [A-] < [HA]"},
+        {"step": "add_pos(pKa, log10_result) [near-pKa approx]", "cost": 3, "note": "NEAR-pKa: log10 ≈ 0, both terms positive in buffer range"}
+      ],
+      "cost_subtotals": {
+        "log10_computation": 3,
+        "addition_general": 11,
+        "addition_near_pKa": 3
+      },
+      "sign_note": "log10([A-]/[HA]) < 0 when [A-] < [HA], so add_gen required in general case; near pKa the log term is small and positive dominates",
+      "cross_domain": [
+        "pH definition: pH = -log10([H+]) = 5n",
+        "Henderson-Hasselbalch extends pH with a signed correction — hence 16n vs 5n"
+      ]
+    },
+    {
+      "id": "chem_3_equilibrium_constant",
+      "name": "Chemical Equilibrium Constant",
+      "formula": "K_eq = ([C]^c * [D]^d) / ([A]^a * [B]^b)  [for aA + bB <=> cC + dD]",
+      "domain": "Chemical Thermodynamics",
+      "cost_total": 18,
+      "reaction_stoichiometry": "2+2 (two reactants, two products)",
+      "cost_breakdown": [
+        {"step": "pow([C], c)", "cost": 3, "note": "product C raised to stoichiometric coefficient"},
+        {"step": "pow([D], d)", "cost": 3, "note": "product D raised to stoichiometric coefficient"},
+        {"step": "mul([C]^c, [D]^d)", "cost": 2, "note": "numerator product"},
+        {"step": "pow([A], a)", "cost": 3, "note": "reactant A raised to stoichiometric coefficient"},
+        {"step": "pow([B], b)", "cost": 3, "note": "reactant B raised to stoichiometric coefficient"},
+        {"step": "mul([A]^a, [B]^b)", "cost": 2, "note": "denominator product"},
+        {"step": "div(numerator, denominator)", "cost": 2, "note": "final ratio"}
+      ],
+      "cost_subtotals": {
+        "numerator_pows": 6,
+        "numerator_mul": 2,
+        "denominator_pows": 6,
+        "denominator_mul": 2,
+        "final_div": 2
+      },
+      "scaling_note": "Cost scales as 3p*pow + (p-1)*mul per side for p species; general formula: 8*(p+q)/2 + 2 for p products, q reactants",
+      "cross_domain": [
+        "Reaction quotient Q in Nernst/ΔG has the same structure",
+        "Activity product in solubility Ksp is a simpler special case (integer exponents only)"
+      ]
+    },
+    {
+      "id": "chem_4_rate_law",
+      "name": "Rate Law",
+      "formula": "r = k * [A]^m * [B]^n",
+      "domain": "Chemical Kinetics",
+      "cost_total": 10,
+      "cost_breakdown": [
+        {"step": "pow([A], m)", "cost": 3, "note": "concentration A to reaction order m"},
+        {"step": "pow([B], n)", "cost": 3, "note": "concentration B to reaction order n"},
+        {"step": "mul(k, pow_A)", "cost": 2, "note": "scale by rate constant"},
+        {"step": "mul(result, pow_B)", "cost": 2, "note": "multiply second concentration factor"}
+      ],
+      "cross_domain": [
+        "Same structure as power-law scaling in physics and economics",
+        "For integer orders (m,n ∈ {1,2}): pow(x,1)=0n (identity), pow(x,2)=mul(x,x)=2n — simplifies significantly"
+      ]
+    },
+    {
+      "id": "chem_5_michaelis_menten",
+      "name": "Michaelis-Menten Kinetics",
+      "formula": "v = Vmax * [S] / (Km + [S])",
+      "domain": "Enzyme Kinetics / Biochemistry",
+      "cost_total": 7,
+      "cost_breakdown": [
+        {"step": "add_pos(Km, [S])", "cost": 3, "note": "both Km and [S] are positive concentrations"},
+        {"step": "div([S], sum)", "cost": 2, "note": "saturation fraction"},
+        {"step": "mul(Vmax, div_result)", "cost": 2, "note": "scale by maximum velocity"}
+      ],
+      "cross_domain": [
+        "Structurally identical to Langmuir adsorption isotherm: θ = K[A]/(1 + K[A])",
+        "Same as Hill equation with n=1",
+        "Same cost (7n) as Arrhenius equation k = A*exp(-Ea/RT)",
+        "Universal saturating-response template: 7n"
+      ]
+    },
+    {
+      "id": "chem_6_beer_lambert",
+      "name": "Beer-Lambert Law",
+      "formula": "A = ε * c * l  (absorbance form)",
+      "formula_transmittance": "T = exp(-ε * c * l)  (transmittance form)",
+      "domain": "Spectroscopy / Analytical Chemistry",
+      "cost_total_absorbance": 4,
+      "cost_total_transmittance": 5,
+      "cost_breakdown_absorbance": [
+        {"step": "mul(ε, c)", "cost": 2, "note": "molar absorptivity times concentration"},
+        {"step": "mul(result, l)", "cost": 2, "note": "times path length"}
+      ],
+      "cost_breakdown_transmittance": [
+        {"step": "mul(ε, c)", "cost": 2, "note": "molar absorptivity times concentration"},
+        {"step": "mul(result, l)", "cost": 2, "note": "times path length — gives εcl"},
+        {"step": "DEML(εcl, 1)", "cost": 1, "note": "exp(-εcl) via single DEML operator"}
+      ],
+      "cross_domain": [
+        "Transmittance form (5n) is isomorphic to: radioactive decay [A](t)=A0*exp(-kt), RC discharge, first-order reaction, optical depth",
+        "Absorbance = -log(T) adds ln(T)=1n + neg=2n = 3n on top of transmittance = 8n total for A from I0,I"
+      ]
+    },
+    {
+      "id": "chem_7_pH_definition",
+      "name": "pH Definition",
+      "formula": "pH = -log10([H+])",
+      "domain": "Acid-Base Chemistry",
+      "cost_total": 5,
+      "cost_breakdown": [
+        {"step": "ln([H+])", "cost": 1, "note": "natural log of hydrogen ion concentration"},
+        {"step": "div(ln_result, ln10_const)", "cost": 2, "note": "convert to base-10 log; ln10 is constant"},
+        {"step": "neg(result)", "cost": 2, "note": "negate for pH sign convention"}
+      ],
+      "cross_domain": [
+        "Decibel: dB = 10*log10(P1/P2) — same log structure, 7n with mul",
+        "Richter scale: M = log10(A/A0) — same 5n structure",
+        "SNR in dB: 10*log10(signal/noise) — 7n",
+        "All log-ratio scales form the 5-7n family"
+      ]
+    },
+    {
+      "id": "chem_8_gibbs_helmholtz",
+      "name": "Gibbs-Helmholtz Equation",
+      "formula": "d(ΔG/T)/d(1/T) = ΔH  (equivalently: ΔG/T = -ΔH/T²·dT)",
+      "domain": "Chemical Thermodynamics",
+      "cost_total_ratio": 2,
+      "cost_total_derivative_form": 7,
+      "cost_breakdown_ratio": [
+        {"step": "div(ΔG, T)", "cost": 2, "note": "ΔG/T ratio — main observable form"}
+      ],
+      "cost_breakdown_derivative": [
+        {"step": "pow(T, 2)", "cost": 3, "note": "T squared"},
+        {"step": "div(ΔH, T_sq)", "cost": 2, "note": "ΔH/T²"},
+        {"step": "neg(result)", "cost": 2, "note": "negate for -ΔH/T²"}
+      ],
+      "cross_domain": [
+        "Used to extract ΔH from temperature-dependent equilibrium data (van't Hoff plots)",
+        "van't Hoff: d(ln K)/d(1/T) = -ΔH/R — same 7n structure plus ln(K)=1n = 8n total"
+      ]
+    },
+    {
+      "id": "chem_9_reaction_free_energy",
+      "name": "Reaction Free Energy",
+      "formula": "ΔG = ΔG° + RT * ln(Q)",
+      "domain": "Chemical Thermodynamics",
+      "cost_total": 16,
+      "cost_breakdown": [
+        {"step": "mul(R, T)", "cost": 2, "note": "thermal energy RT"},
+        {"step": "ln(Q)", "cost": 1, "note": "log of reaction quotient Q"},
+        {"step": "mul(RT, ln_Q)", "cost": 2, "note": "RT*ln(Q) correction term"},
+        {"step": "add_gen(ΔG°, RT_lnQ)", "cost": 11, "note": "GENERAL add: RT*ln(Q) can be positive or negative"}
+      ],
+      "cost_subtotals": {
+        "RT_lnQ_term": 5,
+        "final_add": 11
+      },
+      "sign_note": "RT*ln(Q) > 0 when Q > 1 (forward unfavorable), < 0 when Q < 1 (forward favorable) — sign not known at compile time",
+      "cross_domain": [
+        "Nernst equation E = E° - RT/(nF)*ln(Q) is the same physics via ΔG = -nFE",
+        "Nernst costs 11n (uses sub=2n), ΔG form costs 16n (uses add_gen=11n)",
+        "Cost difference of 5n = (add_gen - sub) = (11 - 2) + form overhead",
+        "Lesson: mathematically equivalent forms can have very different node costs"
+      ]
+    },
+    {
+      "id": "chem_10_first_order_decay",
+      "name": "Integrated First-Order Rate Law",
+      "formula": "[A](t) = [A]_0 * exp(-k * t)",
+      "domain": "Chemical Kinetics",
+      "cost_total": 5,
+      "cost_breakdown": [
+        {"step": "mul(k, t)", "cost": 2, "note": "rate constant times time"},
+        {"step": "DEML(kt, 1)", "cost": 1, "note": "exp(-kt) via single DEML operator — cheaper than neg(2n)+exp(1n)=3n"},
+        {"step": "mul([A]_0, exp_result)", "cost": 2, "note": "scale by initial concentration"}
+      ],
+      "cross_domain": [
+        "EXACT isomorphism (all 5n): radioactive decay N(t)=N0*exp(-λt), RC discharge V(t)=V0*exp(-t/RC), Beer-Lambert transmittance, population decay, optical attenuation",
+        "Universal exponential decay template: 5n",
+        "Half-life t_1/2 = ln(2)/k adds ln(2)=const, div=2n → 2n extra if needed"
+      ]
+    }
+  ],
+  "cost_summary": [
+    {"equation": "Nernst Equation", "cost": 11, "key_cross_domain": "= Reaction ΔG = -nFE (different form, 16n)"},
+    {"equation": "Henderson-Hasselbalch", "cost_general": 16, "cost_near_pKa": 8, "key_cross_domain": "Extends pH (5n) with signed log correction"},
+    {"equation": "Chemical Equilibrium Constant (2+2)", "cost": 18, "key_cross_domain": "Same structure as reaction quotient Q in Nernst/ΔG"},
+    {"equation": "Rate Law (2-species)", "cost": 10, "key_cross_domain": "Power-law scaling family"},
+    {"equation": "Michaelis-Menten", "cost": 7, "key_cross_domain": "= Langmuir isotherm = Hill (n=1) = Arrhenius (7n)"},
+    {"equation": "Beer-Lambert (absorbance)", "cost": 4, "key_cross_domain": "Transmittance form (5n) = first-order decay = RC discharge"},
+    {"equation": "Beer-Lambert (transmittance)", "cost": 5, "key_cross_domain": "Universal 5n exponential decay isomorphism"},
+    {"equation": "pH Definition", "cost": 5, "key_cross_domain": "= Richter scale = decibel (5-7n log-ratio family)"},
+    {"equation": "Gibbs-Helmholtz (ΔG/T form)", "cost": 2, "key_cross_domain": "Minimal form; derivative form is 7n"},
+    {"equation": "Reaction Free Energy ΔG", "cost": 16, "key_cross_domain": "= Nernst (11n) via ΔG=-nFE; add_gen vs sub drives 5n gap"},
+    {"equation": "First-Order Decay", "cost": 5, "key_cross_domain": "Universal 5n decay: radioactive, RC, optical, biological"}
+  ],
+  "key_observations": [
+    {
+      "title": "Nernst vs ΔG form cost gap",
+      "detail": "Nernst E = E° - RT/(nF)*ln(Q) costs 11n; ΔG = ΔG° + RT*ln(Q) costs 16n. Same physics (ΔG=-nFE), 5n difference. The Nernst form uses sub(2n); the ΔG form uses add_gen(11n). Mathematical form matters as much as physical content."
+    },
+    {
+      "title": "Universal 5n exponential decay",
+      "detail": "First-order decay, radioactive decay, RC discharge, Beer-Lambert transmittance, population decay — all share the template x0 * DEML(k*t, 1). Exact structural isomorphism at 5n."
+    },
+    {
+      "title": "7n saturating-response template",
+      "detail": "Michaelis-Menten, Langmuir adsorption, Hill (n=1), Arrhenius all cost 7n. add_pos(3n) + div(2n) + mul(2n) = 7n is the universal saturating-curve skeleton."
+    },
+    {
+      "title": "DEML saves 2n vs naive exp(-x)",
+      "detail": "Naive: neg(x)=2n + exp(result)=1n = 3n. DEML(x,1)=1n. Savings = 2n per exponential decay term."
+    },
+    {
+      "title": "add_gen dominates signed sums",
+      "detail": "Any equation with an addition where sign is unknown at compile time incurs add_gen=11n. Henderson-Hasselbalch and ΔG reaction free energy both pay this. Choosing a form that fixes the sign (like Nernst's subtraction) saves 9n."
+    }
+  ]
+}

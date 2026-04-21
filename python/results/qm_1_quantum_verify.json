@@ -1,0 +1,120 @@
+{
+  "passed": 16,
+  "failed": 0,
+  "skipped": 0,
+  "total": 16,
+  "tests": [
+    {
+      "test": "Boltzmann exp(-2.0)",
+      "expected": 0.1353352832366127,
+      "got": 0.1353352832366127,
+      "rel_err": 0.0,
+      "status": "PASS"
+    },
+    {
+      "test": "Fermi-Dirac (E-mu)/kT=2.0",
+      "expected": 0.11920292202211755,
+      "got": 0.11920292202211755,
+      "rel_err": 0.0,
+      "status": "PASS"
+    },
+    {
+      "test": "Bose-Einstein (E-mu)/kT=1.0",
+      "expected": 0.5819767068693265,
+      "got": 0.5819767068693265,
+      "rel_err": 0.0,
+      "status": "PASS"
+    },
+    {
+      "test": "Hydrogen E_n  n=1",
+      "expected": -13.6,
+      "got": -13.6,
+      "rel_err": 0.0,
+      "status": "PASS"
+    },
+    {
+      "test": "Hydrogen E_n  n=2",
+      "expected": -3.4,
+      "got": -3.4,
+      "rel_err": 0.0,
+      "status": "PASS"
+    },
+    {
+      "test": "Hydrogen E_n  n=3",
+      "expected": -1.511111111111111,
+      "got": -1.511111111111111,
+      "rel_err": 0.0,
+      "status": "PASS"
+    },
+    {
+      "test": "Partition Z (5 levels E_i=i*kT)",
+      "expected": 1.5713174316646532,
+      "got": 1.5713174316646532,
+      "rel_err": 0.0,
+      "status": "PASS"
+    },
+    {
+      "test": "Maxwell-Boltzmann normalization (N2, 300K)",
+      "expected": 1.0,
+      "got": 1.0,
+      "rel_err": 0.0,
+      "status": "PASS"
+    },
+    {
+      "test": "Maxwell-Boltzmann normalization (electron, 10000K)",
+      "expected": 1.0,
+      "got": 1.0,
+      "rel_err": 0.0,
+      "status": "PASS"
+    },
+    {
+      "test": "FD==sigmoid  x=-3.0",
+      "expected": 0.9525741268224334,
+      "got": 0.9525741268224334,
+      "rel_err": 0.0,
+      "status": "PASS"
+    },
+    {
+      "test": "FD==sigmoid  x=-1.0",
+      "expected": 0.7310585786300049,
+      "got": 0.7310585786300049,
+      "rel_err": 0.0,
+      "status": "PASS"
+    },
+    {
+      "test": "FD==sigmoid  x=+0.0",
+      "expected": 0.5,
+      "got": 0.5,
+      "rel_err": 0.0,
+      "status": "PASS"
+    },
+    {
+      "test": "FD==sigmoid  x=+1.0",
+      "expected": 0.2689414213699951,
+      "got": 0.2689414213699951,
+      "rel_err": 0.0,
+      "status": "PASS"
+    },
+    {
+      "test": "FD==sigmoid  x=+2.0",
+      "expected": 0.11920292202211755,
+      "got": 0.11920292202211755,
+      "rel_err": 0.0,
+      "status": "PASS"
+    },
+    {
+      "test": "FD==sigmoid  x=+3.0",
+      "expected": 0.04742587317756678,
+      "got": 0.04742587317756678,
+      "rel_err": 0.0,
+      "status": "PASS"
+    },
+    {
+      "test": "de Broglie lambda (1 eV electron)",
+      "expected": 1.2264e-09,
+      "got": 1.2264259661581492e-09,
+      "rel_err": 2.1172666462155777e-05,
+      "status": "PASS"
+    }
+  ]
+}

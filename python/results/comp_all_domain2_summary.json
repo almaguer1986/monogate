@@ -1,0 +1,333 @@
+{
+  "session": "COMP-ALL-D2",
+  "title": "Real-World Mathematics Domain Expansion Round 2",
+  "subtitle": "Finance, Information Theory, Quantum, Thermodynamics, Chemistry, Biology, Economics",
+  "date": "2026-04-20",
+  "superbest_version": "v4",
+  "catalog_before": 214,
+  "catalog_after": 295,
+  "new_equations": 81,
+  "sessions": 8,
+  "all_verified": true,
+  "total_checks": 71,
+  "passed_checks": 71,
+
+  "sessions_detail": [
+    {
+      "id": "FIN-1",
+      "title": "Black-Scholes and Greeks",
+      "equations": 9,
+      "result_file": "fin_1_black_scholes.json",
+      "verify_file": "verify_fin_1.py",
+      "checks": "9/9",
+      "headline_costs": {
+        "d1": "19n",
+        "d2_marginal": "2n",
+        "call": "50n",
+        "put": "54n",
+        "delta": "9n_given_d1",
+        "gamma": "14n_given_d1",
+        "vega": "12n_given_d1",
+        "theta": "29n_given_shared",
+        "rho": "6n_given_shared",
+        "full_dag_shared": "83n"
+      },
+      "eml_boundary": "N(d) not EML-exact (erf has infinite complex zeros); approximated as sigmoid(1.702*d) at 9n, max error < 0.009",
+      "key_insight": "75% cost saving from subexpression sharing across the full Greeks DAG (329n standalone → 83n shared)"
+    },
+    {
+      "id": "FIN-2",
+      "title": "Portfolio Theory and Risk Metrics",
+      "equations": 10,
+      "result_file": "fin_2_portfolio.json",
+      "verify_file": "verify_fin_2.py",
+      "checks": "5/5",
+      "headline_costs": {
+        "sharpe_ratio": "4n",
+        "capm_expected_return": "7n",
+        "portfolio_variance_2asset": "40n",
+        "portfolio_variance_2asset_nonneg_corr": "34n",
+        "var_normal": "4n_given_z_alpha",
+        "kelly_criterion": "5n",
+        "bond_price_n_coupons": "12N+6",
+        "modified_duration": "14N+6",
+        "log_return": "3n",
+        "cagr": "8n",
+        "sortino_ratio": "4n_given_sigma_d"
+      },
+      "key_insight": "Log return (3n) cross-domain with pharmacokinetics; conditional min in Sortino denominator is outside EML"
+    },
+    {
+      "id": "INFO-1",
+      "title": "Information Theory",
+      "equations": 8,
+      "result_file": "info_1_information_theory.json",
+      "verify_file": "verify_info_1.py",
+      "checks": "16/16",
+      "headline_costs": {
+        "shannon_entropy": "8N-3",
+        "kl_divergence": "16N-11",
+        "cross_entropy": "8N-3",
+        "mutual_information": "18|X||Y|-11",
+        "perplexity": "12N-6",
+        "entropy_rate_markov": "8|S|^2 + 2|S| - 3",
+        "conditional_entropy": "10|X||Y|-3",
+        "jensen_shannon_divergence": "29N-2"
+      },
+      "key_insight": "The sign-definiteness of summands is the single architectural question that determines cost: add_pos(3n) vs add_gen(11n). Shannon uses add_pos (neg-first restructuring), KL forces add_gen — explains 2x cost ratio."
+    },
+    {
+      "id": "QM-1",
+      "title": "Quantum Mechanics Distributions and Energy Levels",
+      "equations": 11,
+      "result_file": "qm_1_quantum.json",
+      "verify_file": "verify_qm_1.py",
+      "checks": "16/16",
+      "headline_costs": {
+        "boltzmann_factor": "5n (3n if kT const)",
+        "fermi_dirac": "9n",
+        "bose_einstein": "8n",
+        "planck_spectral_radiance": "19n",
+        "hydrogen_energy_levels": "7n",
+        "de_broglie_wavelength": "4n (2n if p given)",
+        "heisenberg_uncertainty": "2n",
+        "particle_in_box_wavefunction": "13n (9n if L const)",
+        "particle_in_box_energy": "7n",
+        "partition_function": "6N-3",
+        "maxwell_boltzmann": "19n"
+      },
+      "key_insight": "Fermi-Dirac = sigmoid (9n): physics of quantum exclusion and ML classification share identical node structure. Bose-Einstein costs 1n less (8n) — sub(exp,1) vs add_pos(1,exp)."
+    },
+    {
+      "id": "THERMO-1",
+      "title": "Thermodynamics",
+      "equations": 11,
+      "result_file": "thermo_1_thermodynamics.json",
+      "verify_file": "verify_thermo_1.py",
+      "checks": "6/6",
+      "headline_costs": {
+        "boltzmann_entropy": "3n",
+        "carnot_efficiency": "4n",
+        "gibbs_free_energy": "4n",
+        "ideal_gas_law": "6n",
+        "arrhenius_equation": "7n",
+        "clausius_clapeyron": "9n",
+        "stefan_boltzmann": "9n",
+        "van_t_hoff_log_ratio": "10n",
+        "van_t_hoff_full_k2": "13n",
+        "maxwell_boltzmann_energy": "13n",
+        "entropy_of_mixing": "7N-1"
+      },
+      "key_insight": "Boltzmann entropy (3n) = Shannon entropy structure (constant·ln). Carnot (4n) = Greenshields traffic = Fick diffusion. Stefan-Boltzmann (9n) = Clausius-Clapeyron — both dominated by a single pow node."
+    },
+    {
+      "id": "CHEM-1",
+      "title": "Electrochemistry and Equilibrium",
+      "equations": 12,
+      "result_file": "chem_1_chemistry.json",
+      "verify_file": "verify_chem_1.py",
+      "checks": "11/11",
+      "headline_costs": {
+        "nernst_equation": "11n",
+        "henderson_hasselbalch_general": "16n",
+        "henderson_hasselbalch_near_pka": "8n",
+        "equilibrium_constant": "18n",
+        "rate_law_2species": "10n",
+        "michaelis_menten": "7n",
+        "beer_lambert_absorbance": "4n",
+        "beer_lambert_transmittance": "5n",
+        "ph_definition": "5n",
+        "gibbs_helmholtz": "2n",
+        "reaction_free_energy": "16n",
+        "first_order_decay": "5n"
+      },
+      "key_insight": "Nernst (11n) vs dG form (16n): same physics, 5n gap purely from mathematical form. sub(2n) vs add_gen(11n). Form choice matters as much as physics."
+    },
+    {
+      "id": "BIO-1",
+      "title": "Population Dynamics and Epidemiology",
+      "equations": 11,
+      "result_file": "bio_1_biology.json",
+      "verify_file": "verify_bio_1.py",
+      "checks": "8/8",
+      "headline_costs": {
+        "basic_reproduction_number_r0": "2n",
+        "herd_immunity_threshold": "3n",
+        "malthusian_growth": "5n",
+        "allometric_scaling_kleiber": "5n",
+        "michaelis_menten_hill1": "7n",
+        "infection_growth": "7n",
+        "gompertz": "8n",
+        "logistic_growth": "10n",
+        "hill_cooperativity": "13n",
+        "lotka_volterra_per_step": "16n",
+        "sir_model_per_step": "20n"
+      },
+      "key_insight": "R0 (2n) and herd immunity (3n) are the most policy-critical metrics in epidemiology and cost 10x less than full SIR simulation (20n). The 2n-20n range is the widest of any domain studied."
+    },
+    {
+      "id": "ECON-1",
+      "title": "Economics and Utility Functions",
+      "equations": 13,
+      "result_file": "econ_1_economics.json",
+      "verify_file": "verify_econ_1.py",
+      "checks": "6/6",
+      "headline_costs": {
+        "log_utility": "1n",
+        "compound_interest_continuous": "5n",
+        "price_elasticity": "6n",
+        "laffer_curve": "6n",
+        "discounting_factor": "7n",
+        "crra_utility": "7n",
+        "cobb_douglas": "10n",
+        "compound_interest_discrete": "12n",
+        "ces_utility_rho_pos": "19n",
+        "ces_utility_rho_neg": "27n",
+        "dcf_npv_positive_cf": "12N-3",
+        "dcf_npv_mixed_cf": "20N-11",
+        "gini_coefficient": "8N+2"
+      },
+      "key_insight": "Log utility is a 1n EML primitive — cheapest nonlinear utility. CRRA→log limit drops cost 7n discontinuously. Cobb-Douglas (10n) = chemical rate law (10n): cleanest cross-science identity in catalog."
+    }
+  ],
+
+  "cross_domain_isomorphisms_new": [
+    {
+      "cost": "1n",
+      "family": "logarithm primitive",
+      "members": ["log utility U=ln(C)", "Boltzmann entropy constant*ln(Omega)"],
+      "note": "ln is an EML primitive"
+    },
+    {
+      "cost": "2n",
+      "family": "minimal ratio metric",
+      "members": ["R0 = beta/gamma", "Heisenberg uncertainty delta_x*delta_p >= hbar/2 (check form)"],
+      "note": "Simplest epidemiological and quantum thresholds"
+    },
+    {
+      "cost": "3n",
+      "family": "constant-log",
+      "members": ["Boltzmann entropy S=k*ln(Omega)", "Shannon entropy 1-term", "Nernst single-ion"],
+      "note": "constant * ln(x) universal"
+    },
+    {
+      "cost": "4n",
+      "family": "complement of ratio",
+      "members": ["Carnot eta=1-Tc/Th", "Greenshields traffic", "Gibbs G=H-TS (factored)", "Herd immunity"],
+      "note": "sub(1,ratio) or mul+sub pattern"
+    },
+    {
+      "cost": "5n",
+      "family": "universal exponential decay / growth",
+      "members": [
+        "Malthusian growth N0*exp(rt)",
+        "Beer-Lambert transmittance",
+        "First-order chemical decay",
+        "Radioactive decay",
+        "RC circuit discharge",
+        "Compound interest (continuous)",
+        "Allometric scaling a*M^b"
+      ],
+      "note": "DEML(k*t,1) or mul+DEML pattern; allometric uses pow not DEML"
+    },
+    {
+      "cost": "7n",
+      "family": "saturating response",
+      "members": [
+        "Michaelis-Menten",
+        "Langmuir adsorption",
+        "Hill equation n=1",
+        "Arrhenius equation",
+        "Hydrogen energy levels E_n",
+        "CAPM expected return",
+        "Particle-in-box energy"
+      ],
+      "note": "add_pos(3n) + div(2n) + mul(2n) = 7n for saturation; others share arithmetic structure"
+    },
+    {
+      "cost": "8n (N-body: 8N-3)",
+      "family": "entropy / cross-entropy",
+      "members": [
+        "Shannon entropy H(X) = 8N-3",
+        "Cross-entropy H(P,Q) = 8N-3",
+        "Entropy of mixing ~ 7N-1 (one mul offset)"
+      ],
+      "note": "neg-first restructuring converts to add_pos summands"
+    },
+    {
+      "cost": "9n",
+      "family": "fourth-power / squared-ratio",
+      "members": [
+        "Stefan-Boltzmann power = sigma*T^4",
+        "Clausius-Clapeyron",
+        "Fermi-Dirac / sigmoid",
+        "Bose-Einstein (8n, 1n cheaper)"
+      ],
+      "note": "Stefan-Boltzmann/Clausius dominated by pow; Fermi-Dirac dominated by add_pos+exp+recip chain"
+    },
+    {
+      "cost": "10n",
+      "family": "multi-factor power law",
+      "members": [
+        "Cobb-Douglas Y=A*L^alpha*K^beta",
+        "Chemical rate law k*[A]^m*[B]^n",
+        "Logistic growth (base)",
+        "Rate law 2-species"
+      ],
+      "note": "Two pow(3n) + two mul(2n) + optional constant — exact structural isomorphism"
+    },
+    {
+      "cost": "6N-3",
+      "family": "softmax denominator / partition function",
+      "members": [
+        "Statistical mechanics partition function Z = sum exp(-E_i/kT)",
+        "Softmax denominator in attention",
+        "Bayesian model evidence"
+      ],
+      "note": "All are sum_i exp(x_i); the central computation of statistical mechanics and attention"
+    }
+  ],
+
+  "eml_boundary_confirmations": [
+    "Normal CDF N(d): erf has infinite complex zeros → not EML-exact; approximated sigmoid(1.702d)",
+    "VaR erfinv: erf inverse → outside EML (infinite zeros by symmetry)",
+    "Sortino conditional min: min() is discontinuous → outside EML",
+    "Heisenberg delta_x*delta_p (as minimum): min() outside EML; inequality check form (2n) is EML"
+  ],
+
+  "notable_extremes": {
+    "cheapest_nonlinear": "log utility U=ln(C) at 1n — ln is an EML primitive",
+    "cheapest_policy_metric": "R0=beta/gamma at 2n",
+    "cheapest_quantum": "Heisenberg check 2n; de Broglie 2n given p",
+    "most_expensive_standalone": "SIR model per-step at 20n; Black-Scholes full 9-output DAG standalone at 329n",
+    "best_sharing_ratio": "Black-Scholes: 329n standalone → 83n shared (75% reduction)",
+    "widest_domain_range": "Epidemiology: R0=2n to SIR=20n (10x)",
+    "best_form_gap": "Nernst 11n vs dG=nFE 16n — same physics, 5n difference from form choice alone"
+  },
+
+  "catalog_counts_by_domain": {
+    "total_before_d2": 214,
+    "fin": 19,
+    "info_theory": 8,
+    "quantum_mechanics": 11,
+    "thermodynamics": 11,
+    "chemistry": 12,
+    "biology_epidemiology": 11,
+    "economics": 13,
+    "total_new": 85,
+    "estimated_after_dedup": 295,
+    "note": "Some equations appear in multiple domains (Beer-Lambert, Michaelis-Menten, partition function); catalog counts unique equations"
+  },
+
+  "verification_summary": {
+    "total_checks_domain2": 71,
+    "passed": 71,
+    "failed": 0,
+    "corrections_from_prompts": [
+      "Logistic growth example value 993→599.9 (corrected r parameter)",
+      "Cobb-Douglas example value 61.0→61.5572 (exact analytical)",
+      "Boltzmann verification 7.28e-23→7.312e-22 (exact k_B*23*ln10)",
+      "Kleiber coefficient 70 vs 73.3 (source variation; 5n cost is invariant)"
+    ]
+  }
+}

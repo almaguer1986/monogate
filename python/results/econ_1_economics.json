@@ -1,0 +1,344 @@
+{
+  "session": "econ_1_economics",
+  "title": "SuperBEST v4 Node Costs — Economics Equations",
+  "cost_model": {
+    "exp": 1,
+    "ln": 1,
+    "recip": 1,
+    "neg": 2,
+    "mul": 2,
+    "sub": 2,
+    "div": 2,
+    "sqrt": 2,
+    "pow": 3,
+    "add_pos": 3,
+    "add_gen": 11,
+    "note": "DEML(x,1) = exp(-x) = 1n"
+  },
+  "equations": [
+    {
+      "id": "econ_01",
+      "name": "Cobb-Douglas Production Function",
+      "formula": "Y = A * L^alpha * K^beta",
+      "domain": "macroeconomics / production theory",
+      "total_cost": 10,
+      "breakdown": [
+        {"op": "pow(L, alpha)", "cost": 3, "note": "L > 0, alpha in (0,1)"},
+        {"op": "pow(K, beta)", "cost": 3, "note": "K > 0, beta in (0,1)"},
+        {"op": "mul(A, pow_L)", "cost": 2},
+        {"op": "mul(result, pow_K)", "cost": 2}
+      ],
+      "assumptions": ["L > 0", "K > 0", "A > 0", "alpha > 0", "beta > 0"],
+      "cross_domain_isomorphisms": [
+        {
+          "domain": "chemistry",
+          "equation": "rate = k * [A]^m * [B]^n",
+          "cost": 10,
+          "note": "Identical structure: coefficient * reactant_power * reactant_power"
+        },
+        {
+          "domain": "physics",
+          "equation": "power law scaling P = C * x^a * y^b",
+          "cost": 10,
+          "note": "Any bivariate power law has this 10n structure"
+        }
+      ]
+    },
+    {
+      "id": "econ_02",
+      "name": "CES Utility Function",
+      "formula": "U = (alpha * x^rho + (1-alpha) * y^rho)^(1/rho)",
+      "domain": "microeconomics / consumer theory",
+      "total_cost_conservative": 19,
+      "total_cost_safe": 27,
+      "breakdown_add_pos": [
+        {"op": "pow(x, rho)", "cost": 3},
+        {"op": "mul(alpha, pow_x)", "cost": 2, "subtotal": 5},
+        {"op": "pow(y, rho)", "cost": 3},
+        {"op": "sub(1, alpha)", "cost": 2},
+        {"op": "mul(sub_result, pow_y)", "cost": 2, "subtotal": 7},
+        {"op": "add_pos(alpha_xrho, 1malpha_yrho)", "cost": 3, "note": "valid when rho > 0 and x,y > 0"},
+        {"op": "recip(rho)", "cost": 1},
+        {"op": "pow(sum, recip_rho)", "cost": 3}
+      ],
+      "breakdown_add_gen": [
+        {"op": "pow(x, rho)", "cost": 3},
+        {"op": "mul(alpha, pow_x)", "cost": 2, "subtotal": 5},
+        {"op": "pow(y, rho)", "cost": 3},
+        {"op": "sub(1, alpha)", "cost": 2},
+        {"op": "mul(sub_result, pow_y)", "cost": 2, "subtotal": 7},
+        {"op": "add_gen(alpha_xrho, 1malpha_yrho)", "cost": 11, "note": "required when rho < 0, powers can be negative"},
+        {"op": "recip(rho)", "cost": 1},
+        {"op": "pow(sum, recip_rho)", "cost": 3}
+      ],
+      "special_cases": [
+        {
+          "limit": "rho -> 1 (perfect substitutes)",
+          "formula": "U = alpha*x + (1-alpha)*y",
+          "cost": 7,
+          "breakdown": "sub(1,alpha)=2 + mul(alpha,x)=2 + mul(1malpha,y)=2 + add_pos=3 - 2 (share sub) => 2+2+2+2+mul(sub,y)=2 => sub=2, mul=2, mul=2, add_pos=3 = 9 ... simplified: sub(1,alpha)=2 + 2 muls=4 + add_pos=3 => but we already have sub, so 2+2+2+3=9... see note",
+          "note": "sub(1,alpha)=2n, mul(alpha,x)=2n, mul(1malpha,y)=2n, add_pos=3n => 9n total. Correction from 7n: 9n."
+        },
+        {
+          "limit": "rho -> 0 (Cobb-Douglas)",
+          "formula": "U = x^alpha * y^(1-alpha)",
+          "cost": 10,
+          "breakdown": "pow(x,alpha)=3 + sub(1,alpha)=2 + pow(y,1malpha)=3 + mul=2 => 10n. Same as Cobb-Douglas production."
+        },
+        {
+          "limit": "rho -> -inf (Leontief)",
+          "formula": "U = min(x, y)",
+          "cost": null,
+          "note": "min() is not differentiable, not representable as EML expression"
+        }
+      ]
+    },
+    {
+      "id": "econ_03",
+      "name": "Log Utility",
+      "formula": "U = ln(C)",
+      "domain": "microeconomics / consumer theory / macroeconomics",
+      "total_cost": 1,
+      "breakdown": [
+        {"op": "ln(C)", "cost": 1, "note": "ln is an EML primitive"}
+      ],
+      "assumptions": ["C > 0"],
+      "significance": "Cheapest utility function. Log utility is a single EML primitive node. Widely used in macro (CRRA limit as gamma->1), finance (Kelly criterion), information theory (entropy).",
+      "cross_domain_isomorphisms": [
+        {
+          "domain": "information theory",
+          "equation": "H = -sum p_i * ln(p_i)",
+          "note": "Shannon entropy uses ln as primitive; per-term cost is ln=1 + mul=2 + neg=2 = 5n before summation"
+        },
+        {
+          "domain": "thermodynamics",
+          "equation": "S = k_B * ln(Omega)",
+          "cost": 1,
+          "note": "Boltzmann entropy is also a single ln node (k_B is constant)"
+        }
+      ]
+    },
+    {
+      "id": "econ_04",
+      "name": "CRRA Utility (Constant Relative Risk Aversion)",
+      "formula": "U = C^(1-gamma) / (1-gamma)  [gamma != 1]",
+      "domain": "microeconomics / decision theory / macroeconomics",
+      "total_cost": 7,
+      "breakdown": [
+        {"op": "sub(1, gamma)", "cost": 2, "note": "result can be negative if gamma > 1"},
+        {"op": "pow(C, 1_minus_gamma)", "cost": 3, "note": "C > 0 required"},
+        {"op": "div(pow_result, sub_result)", "cost": 2, "note": "sub_result is same node reused"}
+      ],
+      "assumptions": ["C > 0", "gamma != 1"],
+      "limit_note": "As gamma -> 1, CRRA -> log utility (1n). The limit is 7x cheaper in node cost.",
+      "cross_domain_isomorphisms": [
+        {
+          "domain": "physics",
+          "equation": "power law potential V(r) = V_0 * r^n / n",
+          "cost": 7,
+          "note": "Same structure: pow(r,n)=3 + div by n=2 + mul V_0=2 = 7n"
+        }
+      ]
+    },
+    {
+      "id": "econ_05",
+      "name": "Price Elasticity of Demand",
+      "formula": "epsilon = (dQ/dP) * (P/Q)",
+      "formula_arc": "epsilon = (deltaQ/Q) / (deltaP/P)",
+      "domain": "microeconomics / demand theory",
+      "total_cost_arc": 6,
+      "total_cost_point": "4n + derivative_cost",
+      "breakdown_arc": [
+        {"op": "div(deltaQ, Q)", "cost": 2, "note": "percentage change in quantity"},
+        {"op": "div(deltaP, P)", "cost": 2, "note": "percentage change in price"},
+        {"op": "div(ratio_Q, ratio_P)", "cost": 2}
+      ],
+      "breakdown_point": [
+        {"op": "div(P, Q)", "cost": 2},
+        {"op": "mul(dQ_dP, div_result)", "cost": 2, "note": "dQ/dP from derivative, not counted here"}
+      ],
+      "sign_note": "epsilon < 0 for normal goods; result is signed so no add_gen issue here (pure division chain)."
+    },
+    {
+      "id": "econ_06",
+      "name": "Laffer Curve (Parabolic)",
+      "formula": "T = t * (1-t) * Y_base",
+      "domain": "public finance / tax theory",
+      "total_cost": 6,
+      "breakdown": [
+        {"op": "sub(1, t)", "cost": 2, "note": "t in (0,1)"},
+        {"op": "mul(t, sub_result)", "cost": 2},
+        {"op": "mul(result, Y_base)", "cost": 2}
+      ],
+      "revenue_maximizing_rate": {
+        "t_star": 0.5,
+        "cost": 0,
+        "note": "t* = 0.5 is a constant, zero computational cost"
+      },
+      "cross_domain_isomorphisms": [
+        {
+          "domain": "physics",
+          "equation": "P = I * (EMF - I*R) = EMF*I - R*I^2 (power in circuit with back-EMF)",
+          "note": "Parabolic in I; same t*(1-t) structure after normalization"
+        },
+        {
+          "domain": "biology",
+          "equation": "logistic growth rate r*N*(1 - N/K)",
+          "note": "Same parabolic structure: coefficient * x * (1-x/scale)"
+        }
+      ]
+    },
+    {
+      "id": "econ_07",
+      "name": "Discounted Cash Flow (DCF / Present Value)",
+      "formula": "PV = sum_{t=1}^{N} CF_t / (1+r)^t",
+      "domain": "finance / investment theory",
+      "cost_per_period": 9,
+      "total_cost_positive_cf": "12N - 3",
+      "total_cost_mixed_cf": "20N - 11",
+      "breakdown_per_period": [
+        {"op": "add_pos(1, r)", "cost": 3, "note": "r > 0 always"},
+        {"op": "pow(1_plus_r, t)", "cost": 3},
+        {"op": "recip(pow_result)", "cost": 1},
+        {"op": "mul(CF_t, recip)", "cost": 2}
+      ],
+      "summation_cost": {
+        "positive_CF": {"op": "add_pos", "cost_each": 3, "total_additions": "N-1", "formula": "3*(N-1)"},
+        "mixed_CF": {"op": "add_gen", "cost_each": 11, "total_additions": "N-1", "formula": "11*(N-1)"}
+      },
+      "discounting_factor_building_block": {
+        "formula": "1 / (1+r)^t",
+        "cost": 7,
+        "breakdown": "add_pos(1,r)=3 + pow=3 + recip=1 = 7n",
+        "significance": "Core building block of all time-value-of-money calculations"
+      },
+      "cross_domain_isomorphisms": [
+        {
+          "domain": "finance",
+          "equation": "bond price P = sum coupon/(1+r)^t + face/(1+r)^N",
+          "cost_formula": "12N + 6",
+          "note": "Nearly identical to DCF with positive CFs (12N-3); extra terms for face value"
+        }
+      ]
+    },
+    {
+      "id": "econ_08",
+      "name": "Gini Coefficient (Discrete)",
+      "formula": "G = (2 * sum_i i*y_i) / (N * sum_i y_i) - (N+1)/N",
+      "domain": "welfare economics / inequality measurement",
+      "total_cost": "8N + 2",
+      "breakdown": [
+        {"op": "mul(i, y_i) for each i", "cost": "2 per term = 2N total"},
+        {"op": "add_pos chain for sum i*y_i", "cost": "3*(N-1) = 3N-3", "note": "y_i > 0 assumed"},
+        {"op": "subtotal sum_i_yi", "cost": "5N - 3"},
+        {"op": "add_pos chain for sum y_i", "cost": "3*(N-1) = 3N-3"},
+        {"op": "subtotal sum_yi", "cost": "3N - 3"},
+        {"op": "div(sum_i_yi, N_const)", "cost": 2},
+        {"op": "div(sum_yi, N_const)", "cost": 2},
+        {"op": "mul(2, first_div)", "cost": 2},
+        {"op": "div(numerator, denominator)", "cost": 2},
+        {"op": "sub(result, N1_over_N_const)", "cost": 2}
+      ],
+      "total_verification": "(5N-3) + (3N-3) + 2 + 2 + 2 + 2 + 2 = 8N + 2",
+      "assumptions": ["y_i > 0 (incomes are positive)", "(N+1)/N precomputed as constant"],
+      "note": "Linear algebra operations not counted; formula assumes sorted incomes y_1 <= y_2 <= ... <= y_N"
+    },
+    {
+      "id": "econ_09",
+      "name": "Net Present Value (NPV)",
+      "formula": "NPV = sum_{t=1}^{N} CF_t/(1+r)^t - C_0",
+      "domain": "finance / capital budgeting",
+      "total_cost_positive_cf": "12N - 1",
+      "total_cost_mixed_cf": "20N - 9",
+      "breakdown": [
+        {"op": "DCF sum (positive CF)", "cost": "12N - 3"},
+        {"op": "sub(PV_sum, C_0)", "cost": 2}
+      ],
+      "note": "NPV = DCF + one subtraction. C_0 > 0 (initial investment), PV_sum sign depends on cash flows."
+    },
+    {
+      "id": "econ_10",
+      "name": "Compound Interest",
+      "formula": "A = P * (1 + r/n)^(n*t)",
+      "domain": "finance / time value of money",
+      "total_cost": 12,
+      "breakdown": [
+        {"op": "div(r, n)", "cost": 2, "note": "periodic rate"},
+        {"op": "add_pos(1, r_n)", "cost": 3, "note": "1 + r/n > 1 always"},
+        {"op": "mul(n, t)", "cost": 2, "note": "total compounding periods"},
+        {"op": "pow(sum, n_times_t)", "cost": 3},
+        {"op": "mul(P, pow_result)", "cost": 2}
+      ],
+      "special_case_continuous": {
+        "formula": "A = P * exp(r*t)",
+        "cost": 5,
+        "breakdown": [
+          {"op": "mul(r, t)", "cost": 2},
+          {"op": "exp(rt)", "cost": 1},
+          {"op": "mul(P, exp_result)", "cost": 2}
+        ],
+        "note": "Continuous compounding collapses 12n -> 5n. Same as population growth P*exp(r*t)."
+      },
+      "cross_domain_isomorphisms": [
+        {
+          "domain": "biology",
+          "equation": "N(t) = N_0 * exp(r*t) (continuous population growth)",
+          "cost": 5,
+          "note": "Continuous compounding = exponential population growth, identical 5n structure"
+        },
+        {
+          "domain": "physics",
+          "equation": "radioactive decay N(t) = N_0 * exp(-lambda*t)",
+          "cost": 5,
+          "note": "neg + mul + exp = 2+2+1=5n. Same as continuous compounding with negative rate."
+        }
+      ]
+    }
+  ],
+  "key_observations": [
+    {
+      "observation": "Log utility is the cheapest utility function at 1n — it is an EML primitive",
+      "detail": "U = ln(C) costs 1n. CRRA costs 7n. CES costs 19-27n. The macroeconomic preference for log utility (Ramsey model, Kelly criterion) has a direct cost-complexity justification."
+    },
+    {
+      "observation": "Cobb-Douglas (10n) = Chemical rate law (10n)",
+      "detail": "Y = A*L^alpha*K^beta and rate = k*[A]^m*[B]^n are mathematically identical. Different science, same EML structure. Isomorphism class: coefficient * power1 * power2."
+    },
+    {
+      "observation": "DCF with positive CFs (12N-3) ≈ Bond pricing (12N+6)",
+      "detail": "Bond pricing adds face value term but shares the same per-period discounting structure. The discounting factor 1/(1+r)^t costs exactly 7n and is the universal time-value building block."
+    },
+    {
+      "observation": "Continuous compounding collapses 12n -> 5n",
+      "detail": "Discrete compound interest A = P*(1+r/n)^(nt) costs 12n. The continuous limit A = P*exp(rt) costs 5n — a 2.4x complexity reduction. Shared with population growth and radioactive decay."
+    },
+    {
+      "observation": "CRRA limit: as gamma->1, cost drops from 7n to 1n",
+      "detail": "CRRA utility with gamma=1 is exactly log utility. The limit is 7x cheaper. This is the deepest cost discontinuity in standard utility functions."
+    },
+    {
+      "observation": "CES special cases span 9n-27n depending on rho",
+      "detail": "rho->1 (perfect substitutes): 9n. rho->0 (Cobb-Douglas): 10n. General CES: 19n (add_pos) or 27n (add_gen). The add_gen penalty (11n vs 3n) dominates when rho<0."
+    },
+    {
+      "observation": "Discounting factor 1/(1+r)^t = 7n is the universal time-value building block",
+      "detail": "add_pos(1,r)=3 + pow=3 + recip=1 = 7n. Every DCF, NPV, bond price, annuity formula contains this subexpression."
+    }
+  ],
+  "cost_summary_table": [
+    {"equation": "Log Utility U=ln(C)", "cost": "1n", "cross_domain": "Boltzmann entropy S=k_B*ln(Omega)"},
+    {"equation": "Compound Interest (continuous)", "cost": "5n", "cross_domain": "Population growth N_0*exp(rt)"},
+    {"equation": "Discounting factor 1/(1+r)^t", "cost": "7n", "cross_domain": "Universal time-value building block"},
+    {"equation": "CRRA Utility C^(1-g)/(1-g)", "cost": "7n", "cross_domain": "Power law potential V=V_0*r^n/n"},
+    {"equation": "Price Elasticity (arc)", "cost": "6n", "cross_domain": "Pure ratio chain"},
+    {"equation": "Laffer Curve t*(1-t)*Y", "cost": "6n", "cross_domain": "Logistic growth rate"},
+    {"equation": "Cobb-Douglas Y=A*L^a*K^b", "cost": "10n", "cross_domain": "Chemical rate law k*[A]^m*[B]^n"},
+    {"equation": "Compound Interest (discrete)", "cost": "12n", "cross_domain": "Bond compounding factor"},
+    {"equation": "CES Utility (add_pos)", "cost": "19n", "cross_domain": "None direct"},
+    {"equation": "CES Utility (add_gen)", "cost": "27n", "cross_domain": "None direct"},
+    {"equation": "DCF PV (positive CF, N periods)", "cost": "12N-3", "cross_domain": "Bond pricing 12N+6"},
+    {"equation": "NPV (positive CF, N periods)", "cost": "12N-1", "cross_domain": "DCF + subtraction"},
+    {"equation": "DCF PV (mixed CF, N periods)", "cost": "20N-11", "cross_domain": "General cash flow series"},
+    {"equation": "Gini Coefficient (N points)", "cost": "8N+2", "cross_domain": "Weighted sum ratio"}
+  ]
+}

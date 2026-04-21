@@ -1,0 +1,296 @@
+{
+  "session": "fin_2_portfolio",
+  "title": "SuperBEST v4 — Portfolio Theory & Risk Metrics: Exact Node Costs",
+  "version": "v4",
+  "date": "2026-04-20",
+  "cost_table": {
+    "exp":     { "cost": 1,  "note": "e^x" },
+    "ln":      { "cost": 1,  "note": "natural log" },
+    "recip":   { "cost": 1,  "note": "1/x" },
+    "neg":     { "cost": 2,  "note": "unary negation" },
+    "mul":     { "cost": 2,  "note": "multiplication" },
+    "sub":     { "cost": 2,  "note": "subtraction (signed)" },
+    "div":     { "cost": 2,  "note": "division" },
+    "sqrt":    { "cost": 2,  "note": "square root" },
+    "pow":     { "cost": 3,  "note": "x^y (general power)" },
+    "add_pos": { "cost": 3,  "note": "addition, both operands provably positive" },
+    "add_gen": { "cost": 11, "note": "addition, general / signed operands" }
+  },
+  "equations": [
+    {
+      "id": "fin2_01",
+      "name": "Sharpe Ratio",
+      "formula": "S = (R_p - R_f) / σ_p",
+      "total_cost": 4,
+      "breakdown": [
+        { "op": "sub(R_p, R_f)",      "cost": 2, "note": "excess return — signed; R_p - R_f can be negative" },
+        { "op": "div(excess, σ_p)",   "cost": 2, "note": "σ_p assumed precomputed and positive" }
+      ],
+      "assumptions": [
+        "σ_p is precomputed (e.g., from portfolio variance formula fin2_03)",
+        "Result can be negative (bad Sharpe); signed output"
+      ],
+      "cross_domain": null
+    },
+    {
+      "id": "fin2_02",
+      "name": "CAPM Expected Return",
+      "formula": "E(R_i) = R_f + β_i · (E(R_m) - R_f)",
+      "total_cost": 7,
+      "breakdown": [
+        { "op": "sub(E_Rm, R_f)",              "cost": 2, "note": "market risk premium; signed" },
+        { "op": "mul(β_i, market_premium)",    "cost": 2, "note": "beta-weighted premium" },
+        { "op": "add_pos(R_f, beta_term)",     "cost": 3, "note": "R_f > 0, beta_term > 0 for positive β — add_pos applies" }
+      ],
+      "assumptions": [
+        "β_i > 0 (standard market-correlated asset)",
+        "If β < 0 (inverse/hedge asset): beta_term < 0, must use add_gen → cost becomes 15n"
+      ],
+      "conditional_cost": {
+        "β_positive": 7,
+        "β_negative": 15
+      },
+      "cross_domain": null
+    },
+    {
+      "id": "fin2_03",
+      "name": "Portfolio Variance (2-asset)",
+      "formula": "σ²_p = w1²σ1² + 2·w1·w2·ρ·σ1·σ2 + w2²σ2²",
+      "total_cost": 40,
+      "total_cost_positive_rho": 34,
+      "breakdown": [
+        {
+          "group": "Term 1: w1²σ1²",
+          "steps": [
+            { "op": "pow(w1, 2)",       "cost": 3 },
+            { "op": "pow(σ1, 2)",       "cost": 3 },
+            { "op": "mul(w1sq, σ1sq)",  "cost": 2 }
+          ],
+          "subtotal": 8
+        },
+        {
+          "group": "Term 3: w2²σ2²",
+          "steps": [
+            { "op": "pow(w2, 2)",       "cost": 3 },
+            { "op": "pow(σ2, 2)",       "cost": 3 },
+            { "op": "mul(w2sq, σ2sq)",  "cost": 2 }
+          ],
+          "subtotal": 8
+        },
+        {
+          "group": "Cross term: 2·w1·w2·ρ·σ1·σ2",
+          "steps": [
+            { "op": "mul(2, w1)",       "cost": 2 },
+            { "op": "mul(result, w2)",  "cost": 2 },
+            { "op": "mul(result, ρ)",   "cost": 2 },
+            { "op": "mul(result, σ1)",  "cost": 2 },
+            { "op": "mul(result, σ2)",  "cost": 2 }
+          ],
+          "subtotal": 10
+        },
+        { "op": "add_pos(term1, term3)",        "cost": 3,  "note": "both are squares — provably ≥ 0; add_pos valid" },
+        { "op": "add_gen(t1_plus_t3, cross)",   "cost": 11, "note": "cross term ∈ [-1, 1] range when ρ < 0 — signed; must use add_gen" }
+      ],
+      "notes": [
+        "If ρ ≥ 0 is guaranteed by domain assumption: replace add_gen with add_pos → saves 8n, total = 34n",
+        "Extends linearly to N-asset case: O(N²) cross terms dominate"
+      ],
+      "cross_domain": null
+    },
+    {
+      "id": "fin2_04",
+      "name": "Value at Risk (Normal Approximation)",
+      "formula": "VaR = μ - z_α · σ",
+      "total_cost": 4,
+      "breakdown": [
+        { "op": "mul(z_α, σ)",     "cost": 2, "note": "z_α is a precomputed constant (e.g., 1.645 for 95% CI)" },
+        { "op": "sub(μ, product)", "cost": 2, "note": "signed result" }
+      ],
+      "assumptions": [
+        "z_α treated as a precomputed constant — erfinv (normal quantile) is outside the EML closure",
+        "z_α = 1.645 (95%), 2.326 (99%), 1.282 (90%)",
+        "Result is a loss threshold; signed output expected"
+      ],
+      "eml_boundary_note": "Normal inverse CDF (erfinv) cannot be computed in EML without approximation. z_α must be injected as a constant or approximated via polynomial — not a native EML primitive.",
+      "cross_domain": null
+    },
+    {
+      "id": "fin2_05",
+      "name": "Kelly Criterion (Simplified Continuous)",
+      "formula": "f* = μ / σ²",
+      "total_cost": 5,
+      "breakdown": [
+        { "op": "pow(σ, 2)",    "cost": 3, "note": "variance denominator" },
+        { "op": "div(μ, σ²)",   "cost": 2, "note": "optimal fraction; signed if μ < 0 (short position)" }
+      ],
+      "assumptions": [
+        "Simplified log-utility Kelly; full formula includes μ - r_f in numerator",
+        "σ > 0 required for div validity"
+      ],
+      "cross_domain": null
+    },
+    {
+      "id": "fin2_06",
+      "name": "Bond Price (Coupon Bond)",
+      "formula": "P = Σ_{t=1}^{N} C/(1+r)^t + F/(1+r)^N",
+      "total_cost_formula": "12N + 6",
+      "total_cost_example": { "N": 10, "cost": 126 },
+      "breakdown": {
+        "per_coupon_term": {
+          "steps": [
+            { "op": "add_pos(1, r)",              "cost": 3, "note": "1 > 0, r > 0 → add_pos valid" },
+            { "op": "pow(1+r, t)",                "cost": 3, "note": "discount factor base; t is integer index" },
+            { "op": "recip(pow_result)",           "cost": 1, "note": "discount factor = (1+r)^{-t}" },
+            { "op": "mul(C, recip)",              "cost": 2, "note": "present value of coupon t" }
+          ],
+          "subtotal_per_term": 9
+        },
+        "coupon_sum_accumulation": {
+          "formula": "N × 9n + (N-1) × add_pos",
+          "note": "All PV(coupon) terms are positive; (N-1) add_pos operations to sum them",
+          "cost": "9N + 3(N-1) = 12N - 3"
+        },
+        "face_value_term": {
+          "steps": [
+            { "op": "pow(1+r, N)",       "cost": 3, "note": "(1+r)^N — reuses add_pos result if cached" },
+            { "op": "recip(pow_result)", "cost": 1 },
+            { "op": "mul(F, recip)",     "cost": 2 }
+          ],
+          "subtotal": 6,
+          "note": "add_pos(1,r) shared with coupon computation — cost 3n paid once"
+        },
+        "final_add": {
+          "op": "add_pos(coupon_sum, FV_term)",
+          "cost": 3,
+          "note": "Both positive; add_pos valid"
+        },
+        "total_breakdown": "12N - 3 + 6 + 3 = 12N + 6"
+      },
+      "cross_domain": "Coupon term structure (add_pos → pow → recip → mul = 9n) is isomorphic to population growth discounting term (N_0 · e^{-λt} motif) in pharmacokinetics/epidemiology. Same DAG pattern, different domain labels."
+    },
+    {
+      "id": "fin2_07",
+      "name": "Modified Duration",
+      "formula": "D_mod = D_mac / (1 + r/m)",
+      "total_cost_formula": "14N + 6",
+      "breakdown": {
+        "macaulay_duration": {
+          "formula": "D_mac = Σ [t · PV(CF_t)] / P",
+          "per_term": {
+            "steps": [
+              { "op": "bond_pv_term (from fin2_06)", "cost": 9,  "note": "PV(CF_t) for each coupon" },
+              { "op": "mul(t, pv_t)",                "cost": 2,  "note": "time-weighted PV; t is a scalar constant per term" }
+            ],
+            "subtotal": 11
+          },
+          "accumulation": "N × 11n + (N-1) × 3 add_pos = 14N - 3",
+          "divide_by_P": { "op": "div(sum, P)", "cost": 2 },
+          "D_mac_total": "14N - 1"
+        },
+        "modified_duration_adjustment": {
+          "steps": [
+            { "op": "div(r, m)",             "cost": 2, "note": "periodic rate" },
+            { "op": "add_pos(1, r/m)",       "cost": 3, "note": "both positive" },
+            { "op": "div(D_mac, 1 + r/m)",   "cost": 2, "note": "final scaling" }
+          ],
+          "subtotal": 7
+        },
+        "total": "14N - 1 + 7 = 14N + 6"
+      },
+      "note": "Assumes bond price P is precomputed from fin2_06 (otherwise add 12N+6 to total)",
+      "cross_domain": null
+    },
+    {
+      "id": "fin2_08",
+      "name": "Log Return",
+      "formula": "r_t = ln(P_t / P_{t-1})",
+      "total_cost": 3,
+      "breakdown": [
+        { "op": "div(P_t, P_{t-1})", "cost": 2, "note": "price ratio; positive by domain assumption (prices > 0)" },
+        { "op": "ln(ratio)",         "cost": 1, "note": "ln is a native EML primitive — 1n" }
+      ],
+      "note": "ln is deeply EML-native. Log returns are the most cost-efficient return measure in the EML framework.",
+      "cross_domain": "Identical DAG to pharmacokinetic half-life computation: ln(C_t / C_0) where C is drug concentration. 3n motif appears across biology, physics (radioactive decay), and finance."
+    },
+    {
+      "id": "fin2_09",
+      "name": "CAGR (Compound Annual Growth Rate)",
+      "formula": "CAGR = (V_f / V_i)^(1/n) - 1",
+      "total_cost": 8,
+      "breakdown": [
+        { "op": "div(V_f, V_i)",        "cost": 2, "note": "growth ratio; positive by domain (values > 0)" },
+        { "op": "recip(n)",             "cost": 1, "note": "1/n exponent — recip is 1n" },
+        { "op": "pow(ratio, recip_n)",  "cost": 3, "note": "n-th root via general power" },
+        { "op": "sub(pow_result, 1)",   "cost": 2, "note": "subtract 1 to get net growth rate" }
+      ],
+      "cross_domain": "CAGR = geometric mean of growth factors. Same pow(ratio, recip_n) motif appears in fractal dimension estimation (box-counting: D = ln(N)/ln(1/r) rewritten as ratio^(1/n)) and in geometric mean of biological fitness metrics."
+    },
+    {
+      "id": "fin2_10",
+      "name": "Sortino Ratio",
+      "formula": "S_d = (R_p - R_f) / σ_d",
+      "total_cost_given_sigma_d": 4,
+      "breakdown": [
+        { "op": "sub(R_p, R_f)",    "cost": 2, "note": "excess return — signed" },
+        { "op": "div(excess, σ_d)", "cost": 2, "note": "σ_d assumed precomputed" }
+      ],
+      "sigma_d_computation_note": "σ_d (downside deviation) requires: for each return r_t, compute min(r_t, 0)² and average. The min() operation is a conditional selection — not a pure EML arithmetic primitive. This requires either: (a) a ReLU-like approximation via smooth max, or (b) external preprocessing to mask negative returns before entering the EML graph. σ_d is NOT computable in closed-form EML without approximation or preprocessing.",
+      "eml_boundary": true,
+      "cross_domain": null
+    }
+  ],
+  "summary_table": [
+    { "id": "fin2_01", "name": "Sharpe Ratio",                   "cost": "4n",        "cost_note": "given σ_p" },
+    { "id": "fin2_02", "name": "CAPM Expected Return",           "cost": "7n",        "cost_note": "β > 0; 15n if β < 0" },
+    { "id": "fin2_03", "name": "Portfolio Variance (2-asset)",   "cost": "40n",       "cost_note": "34n if ρ ≥ 0 guaranteed" },
+    { "id": "fin2_04", "name": "Value at Risk (Normal)",         "cost": "4n",        "cost_note": "z_α precomputed constant; erfinv outside EML" },
+    { "id": "fin2_05", "name": "Kelly Criterion (Simplified)",   "cost": "5n",        "cost_note": null },
+    { "id": "fin2_06", "name": "Bond Price (N coupons)",         "cost": "12N + 6n",  "cost_note": "126n at N=10" },
+    { "id": "fin2_07", "name": "Modified Duration",              "cost": "14N + 6n",  "cost_note": "P precomputed; 26N+12 from scratch" },
+    { "id": "fin2_08", "name": "Log Return",                     "cost": "3n",        "cost_note": "most EML-efficient return measure" },
+    { "id": "fin2_09", "name": "CAGR",                           "cost": "8n",        "cost_note": null },
+    { "id": "fin2_10", "name": "Sortino Ratio",                  "cost": "4n",        "cost_note": "given σ_d; σ_d itself requires conditional logic outside EML" }
+  ],
+  "cross_domain_connections": [
+    {
+      "motif": "ln(ratio) — 3n",
+      "instances": [
+        "fin2_08: Log Return = ln(P_t / P_{t-1})",
+        "pharmacokinetics: half-life = ln(2) / k; ln(C_t/C_0)",
+        "physics: radioactive decay rate measurement",
+        "information theory: entropy H = -Σ p·ln(p) (per term: 3n + neg)"
+      ]
+    },
+    {
+      "motif": "add_pos → pow → recip → mul — 9n discount term",
+      "instances": [
+        "fin2_06: bond coupon PV = C · (1+r)^{-t}",
+        "epidemiology/pharmacology: N_0 · e^{-λt} present-value analog",
+        "physics: geometric attenuation per layer"
+      ]
+    },
+    {
+      "motif": "pow(ratio, recip_n) — 6n geometric mean kernel",
+      "instances": [
+        "fin2_09: CAGR = (V_f/V_i)^{1/n} - 1",
+        "fractal geometry: box-counting dimension D = log(N)/log(1/r)",
+        "biology: geometric mean fitness across generations",
+        "statistics: geometric mean of ratios"
+      ]
+    }
+  ],
+  "eml_boundary_cases": [
+    {
+      "name": "Normal Quantile (erfinv)",
+      "used_in": "VaR (fin2_04)",
+      "verdict": "Outside EML closure. Must inject z_α as a precomputed constant.",
+      "workaround": "Polynomial approximation of erfinv (Abramowitz & Stegun) — adds ~10-20n per evaluation with bounded error"
+    },
+    {
+      "name": "Conditional selection / min(r, 0)",
+      "used_in": "Sortino σ_d (fin2_10)",
+      "verdict": "min() is not a pure EML arithmetic node. Requires smooth approximation (softmin) or external preprocessing.",
+      "workaround": "Smooth approximation: min(x,0) ≈ (x - |x|)/2; |x| = sqrt(x²) = sqrt(pow(x,2)) → 3+2+2 = 7n per return, then square (3n) → 10n per return"
+    }
+  ]
+}

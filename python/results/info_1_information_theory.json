@@ -1,0 +1,367 @@
+{
+  "session": "INFO-1",
+  "title": "Information Theory — SuperBEST v4 Cost Analysis",
+  "version": "SuperBEST v4",
+  "date": "2026-04-20",
+  "operator_costs": {
+    "exp": 1,
+    "ln": 1,
+    "recip": 1,
+    "neg": 2,
+    "mul": 2,
+    "sub": 2,
+    "div": 2,
+    "sqrt": 2,
+    "pow": 3,
+    "add_pos": 3,
+    "add_gen": 11,
+    "constants_and_parameters": 0
+  },
+  "key_insight": "Information theory is built on p * ln(p) — ln costs 1n, mul costs 2n. The critical question per equation is whether terms are sign-definite (unlocking add_pos=3n) or can be individually negative (requiring add_gen=11n). This single sign question is the primary cost driver across the entire domain.",
+  "equations": [
+    {
+      "id": 1,
+      "name": "Shannon Entropy",
+      "expression": "H(X) = -sum_i p_i * ln(p_i)",
+      "domain": "Information theory, statistical physics, ML",
+      "n_dependence": "O(N), N = number of outcomes",
+      "cost_formula": "8N - 3",
+      "sign_analysis": {
+        "p_i_range": "(0, 1]",
+        "ln_p_i_range": "(-inf, 0]",
+        "p_i_times_ln_p_i_range": "(-inf, 0]",
+        "neg_p_i_times_ln_p_i_range": "[0, +inf)",
+        "verdict": "Restructure as sum of -p_i*ln(p_i): each term non-negative => add_pos=3n"
+      },
+      "breakdown": {
+        "strategy": "Compute neg(ln(p_i)) first, then mul, yielding positive terms. Sum with add_pos.",
+        "per_term": [
+          {"op": "ln(p_i)",            "cost": 1, "note": "1n — ln is a 1-node primitive"},
+          {"op": "neg(ln_pi)",         "cost": 2, "note": "2n — flip sign, result >= 0"},
+          {"op": "mul(p_i, neg_ln_pi)","cost": 2, "note": "2n — term = p_i*(-ln p_i) >= 0"}
+        ],
+        "per_term_total": "5n",
+        "N_terms_total": "5N",
+        "additions": "(N-1) * add_pos = 3(N-1)  [all terms non-negative]",
+        "grand_total": "5N + 3(N-1) = 8N - 3"
+      },
+      "spot_checks": {
+        "N=2_binary":  {"formula": "8*2-3 = 13n",   "example": "H(0.5,0.5) = ln(2) = 0.693 nats"},
+        "N=256_byte":  {"formula": "8*256-3 = 2045n","example": "H(uniform 256) = ln(256) = 5.545 nats"},
+        "N=1000":      {"formula": "8*1000-3 = 7997n"}
+      },
+      "rejected_strategy": {
+        "description": "Compute p_i*ln(p_i) directly (negative terms), sum with add_gen, then negate",
+        "cost": "3N + 11(N-1) + 2 = 14N - 9",
+        "why_worse": "14N-9 vs 8N-3: add_gen (11n) vs add_pos (3n) for N-1 additions"
+      }
+    },
+    {
+      "id": 2,
+      "name": "KL Divergence",
+      "expression": "D_KL(P||Q) = sum_i p_i * ln(p_i / q_i)",
+      "domain": "Information theory, Bayesian inference, variational methods",
+      "n_dependence": "O(N), N = number of outcomes",
+      "cost_formula": "16N - 11",
+      "sign_analysis": {
+        "single_term_sign": "p_i*ln(p_i/q_i) can be positive (p_i > q_i) or negative (p_i < q_i)",
+        "global_sum_sign": "D_KL >= 0 (Gibbs inequality), but individual terms are mixed sign",
+        "verdict": "Cannot use add_pos at term level — must use add_gen=11n for all N-1 additions"
+      },
+      "breakdown": {
+        "per_term": [
+          {"op": "div(p_i, q_i)",           "cost": 2, "note": "2n — ratio p_i/q_i > 0"},
+          {"op": "ln(div_result)",           "cost": 1, "note": "1n — ln of ratio; can be +/-"},
+          {"op": "mul(p_i, ln_ratio)",       "cost": 2, "note": "2n — term can be +/-"}
+        ],
+        "per_term_total": "5n",
+        "N_terms_total": "5N",
+        "additions": "(N-1) * add_gen = 11(N-1)  [mixed-sign terms]",
+        "grand_total": "5N + 11(N-1) = 16N - 11"
+      },
+      "spot_checks": {
+        "N=2":   {"formula": "16*2-11 = 21n",   "example": "D_KL([0.4,0.6]||[0.5,0.5]) = 0.02014"},
+        "N=10":  {"formula": "16*10-11 = 149n"},
+        "N=256": {"formula": "16*256-11 = 4085n"}
+      },
+      "cost_vs_shannon": "Exactly 2x Shannon minus constant: (16N-11) vs (8N-3). The doubling comes entirely from add_gen (11n) replacing add_pos (3n), costing 8 extra per addition."
+    },
+    {
+      "id": 3,
+      "name": "Cross-Entropy Loss",
+      "expression": "H(P,Q) = -sum_i p_i * ln(q_i)",
+      "domain": "ML training loss, information theory, maximum likelihood",
+      "n_dependence": "O(N), N = number of classes",
+      "cost_formula": "8N - 3",
+      "sign_analysis": {
+        "q_i_range": "(0, 1]",
+        "ln_q_i_range": "(-inf, 0]",
+        "neg_ln_q_i_range": "[0, +inf)",
+        "p_i_times_neg_ln_q_i_range": "[0, +inf)",
+        "verdict": "Each term p_i * (-ln q_i) >= 0 — same structure as Shannon entropy => add_pos"
+      },
+      "breakdown": {
+        "per_term": [
+          {"op": "ln(q_i)",             "cost": 1, "note": "1n — log of predicted probability"},
+          {"op": "neg(ln_qi)",          "cost": 2, "note": "2n — flip sign; result >= 0 since ln(q)<=0"},
+          {"op": "mul(p_i, neg_ln_qi)", "cost": 2, "note": "2n — term = p_i*(1/ln(q_i)) >= 0"}
+        ],
+        "per_term_total": "5n",
+        "N_terms_total": "5N",
+        "additions": "(N-1) * add_pos = 3(N-1)  [all terms non-negative, no outer neg needed]",
+        "grand_total": "5N + 3(N-1) = 8N - 3"
+      },
+      "spot_checks": {
+        "N=2":    {"formula": "8*2-3 = 13n"},
+        "N=10":   {"formula": "8*10-3 = 77n"},
+        "N=1000": {"formula": "8*1000-3 = 7997n"}
+      },
+      "structural_isomorphism": "H(P,Q) and H(P,P)=H(P) have identical EML cost (8N-3). The ML cross-entropy loss is the same formula as Shannon entropy with the predicted distribution substituted for the true distribution. Zero cost difference."
+    },
+    {
+      "id": 4,
+      "name": "Mutual Information",
+      "expression": "I(X;Y) = sum_xy p(x,y) * ln(p(x,y) / (p(x)*p(y)))",
+      "domain": "Information theory, feature selection, causal inference",
+      "n_dependence": "O(|X|*|Y|), double sum over joint distribution",
+      "cost_formula": "18|X||Y| - 11",
+      "sign_analysis": {
+        "single_term_sign": "p(x,y)*ln(p(x,y)/(p(x)p(y))) can be positive or negative individually",
+        "global_sum_sign": "I(X;Y) >= 0, but individual cells are mixed sign",
+        "verdict": "add_gen required for all |X||Y|-1 additions"
+      },
+      "breakdown": {
+        "per_cell": [
+          {"op": "mul(p_x, p_y)",           "cost": 2, "note": "2n — product of marginals (denominator)"},
+          {"op": "div(p_xy, mul_result)",    "cost": 2, "note": "2n — p(x,y) / (p(x)*p(y))"},
+          {"op": "ln(div_result)",           "cost": 1, "note": "1n — log pointwise mutual information"},
+          {"op": "mul(p_xy, ln_result)",     "cost": 2, "note": "2n — weighted by joint probability"}
+        ],
+        "per_cell_total": "7n",
+        "total_cells": "|X|*|Y|",
+        "N_cells_total": "7*|X|*|Y|",
+        "additions": "(|X||Y|-1) * add_gen = 11(|X||Y|-1)  [mixed sign terms]",
+        "grand_total": "7|X||Y| + 11(|X||Y|-1) = 18|X||Y| - 11"
+      },
+      "spot_checks": {
+        "binary_2x2":  {"formula": "18*4-11 = 61n",    "note": "binary X and Y"},
+        "3x3":         {"formula": "18*9-11 = 151n"},
+        "10x10":       {"formula": "18*100-11 = 1789n"}
+      }
+    },
+    {
+      "id": 5,
+      "name": "Perplexity",
+      "expression": "PP(P) = exp(-1/N * sum_i ln(p_i))",
+      "domain": "Language model evaluation, information theory",
+      "n_dependence": "O(N), N = sequence length or vocabulary",
+      "cost_formula": "12N - 6",
+      "sign_analysis": {
+        "ln_p_i_range": "(-inf, 0]",
+        "all_terms_sign": "All ln(p_i) <= 0",
+        "sum_sign": "sum ln(p_i) <= 0",
+        "note": "Sum of same-sign (negative) values still requires add_gen — sign uniformity alone is insufficient; add_pos requires positivity"
+      },
+      "breakdown": {
+        "steps": [
+          {"op": "ln(p_i) for each i",    "cost_total": "N * 1 = N",         "note": "N evaluations of ln"},
+          {"op": "(N-1) additions of negative values", "cost_total": "(N-1)*11", "note": "add_gen: values are negative, not positive"},
+          {"op": "neg(sum)",              "cost": 2,   "note": "negate the negative sum to get positive"},
+          {"op": "div(neg_sum, N)",       "cost": 2,   "note": "divide by N (1/N average)"},
+          {"op": "exp(result)",           "cost": 1,   "note": "exponentiate to get perplexity"}
+        ],
+        "grand_total": "N + 11(N-1) + 2 + 2 + 1 = 12N - 6"
+      },
+      "spot_checks": {
+        "N=10":   {"formula": "12*10-6 = 114n",    "example": "PP(uniform 10) = 10 exactly"},
+        "N=100":  {"formula": "12*100-6 = 1194n",  "example": "PP(uniform 100) = 100 exactly"},
+        "N=1000": {"formula": "12*1000-6 = 11994n", "example": "LM evaluation over 1000-token context"}
+      },
+      "cost_insight": "Perplexity costs 12N-6 vs Shannon's 8N-3 for N terms. The 4N-3 overhead comes from: (a) losing add_pos (negative ln values force add_gen, costing 8n extra per addition), and (b) the additional neg+div+exp steps. The add_gen dominance is the key bottleneck."
+    },
+    {
+      "id": 6,
+      "name": "Entropy Rate (Markov Chain)",
+      "expression": "H = -sum_i mu_i * sum_j P_ij * ln(P_ij)",
+      "domain": "Information theory, stochastic processes, ergodic theory",
+      "n_dependence": "O(|S|^2), |S| = number of states",
+      "cost_formula": "8|S|^2 + 2|S| - 3",
+      "sign_analysis": {
+        "inner_H_i": "Shannon entropy of row i — each inner term is non-negative",
+        "mu_i_times_H_i": "non-negative (mu_i >= 0, H_i >= 0)",
+        "outer_sum": "sum of non-negative values => add_pos"
+      },
+      "breakdown": {
+        "inner_loop": {
+          "description": "For each state i, compute H_i = Shannon entropy of transition row P_ij",
+          "cost_per_state": "8|S| - 3  [Shannon entropy formula with N=|S|]",
+          "number_of_states": "|S|"
+        },
+        "outer_mul": {
+          "op": "mul(mu_i, H_i)",
+          "cost": 2,
+          "note": "per state"
+        },
+        "outer_sum": {
+          "op": "(|S|-1) * add_pos",
+          "cost_total": "3(|S|-1)",
+          "note": "mu_i*H_i >= 0 for all i => add_pos"
+        },
+        "grand_total": "|S|*(8|S|-3+2) + (|S|-1)*3 = |S|*(8|S|-1) + 3|S|-3 = 8|S|^2 + 2|S| - 3"
+      },
+      "spot_checks": {
+        "S=2":  {"formula": "8*4+4-3 = 33n"},
+        "S=3":  {"formula": "8*9+6-3 = 75n"},
+        "S=10": {"formula": "8*100+20-3 = 817n"},
+        "S=20": {"formula": "8*400+40-3 = 3237n"}
+      }
+    },
+    {
+      "id": 7,
+      "name": "Conditional Entropy",
+      "expression": "H(Y|X) = -sum_x sum_y p(x,y) * ln(p(y|x))",
+      "domain": "Information theory, channel capacity, decision trees",
+      "n_dependence": "O(|X|*|Y|), double sum",
+      "cost_formula": "10|X||Y| - 3",
+      "sign_analysis": {
+        "p_y_given_x_range": "(0, 1]",
+        "ln_p_y_given_x_range": "(-inf, 0]",
+        "neg_ln_range": "[0, +inf)",
+        "term_p_xy_times_neg_ln": "[0, +inf)",
+        "verdict": "All |X||Y| terms are non-negative => add_pos for full sum"
+      },
+      "breakdown": {
+        "per_pair": [
+          {"op": "div(p_xy, p_x)",           "cost": 2, "note": "2n — compute p(y|x) = p(x,y)/p(x)"},
+          {"op": "ln(p_y_given_x)",           "cost": 1, "note": "1n — log conditional probability"},
+          {"op": "neg(ln_result)",            "cost": 2, "note": "2n — flip sign; result >= 0"},
+          {"op": "mul(p_xy, neg_ln)",         "cost": 2, "note": "2n — weighted by joint probability; term >= 0"}
+        ],
+        "per_pair_total": "7n",
+        "total_pairs": "|X|*|Y|",
+        "N_pairs_total": "7*|X|*|Y|",
+        "additions": "(|X||Y|-1) * add_pos = 3(|X||Y|-1)  [all terms non-negative]",
+        "grand_total": "7|X||Y| + 3(|X||Y|-1) = 10|X||Y| - 3"
+      },
+      "spot_checks": {
+        "2x2":   {"formula": "10*4-3 = 37n"},
+        "3x3":   {"formula": "10*9-3 = 87n"},
+        "10x10": {"formula": "10*100-3 = 997n"}
+      },
+      "comparison_with_mi": "Conditional entropy (10|X||Y|-3) is cheaper than mutual information (18|X||Y|-11) despite similar structure. The key difference: H(Y|X) terms are always non-negative (add_pos=3n), while I(X;Y) terms are mixed sign (add_gen=11n). This 8n-per-addition gap drives the cost difference."
+    },
+    {
+      "id": 8,
+      "name": "Jensen-Shannon Divergence",
+      "expression": "JSD(P||Q) = H((P+Q)/2) - (H(P) + H(Q))/2",
+      "domain": "Information theory, distributional distance, generative models",
+      "n_dependence": "O(N), N = number of outcomes",
+      "cost_formula": "29N - 2",
+      "breakdown": {
+        "step_1_mixture": {
+          "description": "Compute M_i = (p_i + q_i)/2 for each i",
+          "ops": [
+            {"op": "add(p_i, q_i)",    "cost": 3, "note": "add_pos: both p_i, q_i >= 0"},
+            {"op": "mul(sum, 0.5)",    "cost": 2, "note": "multiply by constant 1/2"}
+          ],
+          "cost_per_i": "5n",
+          "cost_total": "5N"
+        },
+        "step_2_H_M": {
+          "description": "Shannon entropy of mixture M",
+          "cost": "8N - 3"
+        },
+        "step_3_H_P": {
+          "description": "Shannon entropy of P",
+          "cost": "8N - 3"
+        },
+        "step_4_H_Q": {
+          "description": "Shannon entropy of Q",
+          "cost": "8N - 3"
+        },
+        "step_5_average_entropy": [
+          {"op": "add(H_P, H_Q)",        "cost": 3, "note": "add_pos: both entropies >= 0"},
+          {"op": "div(H_P_plus_H_Q, 2)", "cost": 2, "note": "divide by 2"}
+        ],
+        "step_6_subtract": {
+          "op": "sub(H_M, avg_H)",
+          "cost": 2,
+          "note": "sub=2n always; result JSD >= 0 by convexity of entropy"
+        },
+        "grand_total": "5N + (8N-3) + (8N-3) + (8N-3) + 3 + 2 + 2 = 29N - 2"
+      },
+      "spot_checks": {
+        "N=2":    {"formula": "29*2-2 = 56n",    "example": "JSD([1,0]||[0,1]) = ln(2) = 0.693 nats"},
+        "N=4":    {"formula": "29*4-2 = 114n"},
+        "N=10":   {"formula": "29*10-2 = 288n"},
+        "N=256":  {"formula": "29*256-2 = 7422n"}
+      },
+      "cost_insight": "JSD = 3 Shannon evaluations + mixture computation. The 29N-2 cost vs Shannon's 8N-3 reflects the 3x structural overhead. JSD is bounded: 0 <= JSD <= ln(2), making it a superior distance metric to KL (unbounded) at 3.6x its cost."
+    }
+  ],
+  "cross_domain_isomorphisms": {
+    "title": "Information Theory / Physics / ML Isomorphisms",
+    "isomorphisms": [
+      {
+        "name": "Shannon = Boltzmann entropy",
+        "IT_form":      "H(X) = -sum_i p_i * ln(p_i)",
+        "physics_form": "S = -k_B * sum_i p_i * ln(p_i)",
+        "EML_cost": "8N - 3 (k_B is a free constant parameter)",
+        "note": "Identical formula; k_B just scales the result by a free constant. Zero EML cost difference."
+      },
+      {
+        "name": "KL divergence = free energy difference",
+        "IT_form":      "D_KL(P||Q) = sum_i p_i * ln(p_i/q_i)",
+        "physics_form": "Delta_F / k_B*T = D_KL(P_nonequil || P_equil)",
+        "EML_cost": "16N - 11",
+        "note": "KL divergence from equilibrium measures thermodynamic free energy cost of non-equilibrium distribution."
+      },
+      {
+        "name": "Cross-entropy loss = Shannon cross-entropy",
+        "ML_form":      "L = -sum_i y_i * log(p_i)  [ML loss]",
+        "IT_form":      "H(P,Q) = -sum_i p_i * ln(q_i)  [IT]",
+        "EML_cost": "8N - 3",
+        "note": "Identical formula; ML training minimizes Shannon cross-entropy. Cost is the same whether viewed as ML or IT."
+      },
+      {
+        "name": "Perplexity = partition function analog",
+        "IT_form":      "PP = exp(-1/N * sum ln p_i) = exp(H)  [for uniform]",
+        "physics_form": "Z = sum_i exp(-E_i/k_BT)  [partition function]",
+        "note": "Both are exponentials of sums of log-probabilities/energies. PP measures average surprise; Z measures accessible states.",
+        "EML_cost_PP":  "12N - 6",
+        "EML_cost_Z_N": "4N - 3  [Boltzmann factors via add_pos, see CHEM-2]"
+      },
+      {
+        "name": "Mutual information = channel capacity core",
+        "IT_form":      "C = max_{p(x)} I(X;Y)",
+        "note": "I(X;Y) is the per-distribution cost (18|X||Y|-11); optimization over input distribution adds additional structure."
+      }
+    ]
+  },
+  "summary_table": {
+    "columns": ["id", "equation", "cost_formula", "N=10_cost", "key_sign_insight"],
+    "rows": [
+      [1, "Shannon entropy H(X)",          "8N - 3",           77,    "neg-first => each term positive => add_pos"],
+      [2, "KL divergence D_KL(P||Q)",      "16N - 11",         149,   "terms individually signed => add_gen; 2x Shannon"],
+      [3, "Cross-entropy loss H(P,Q)",     "8N - 3",           77,    "identical to Shannon: -p*ln(q) >= 0 termwise"],
+      [4, "Mutual info I(X;Y)",            "18|X||Y| - 11",    1789,  "extra mul for marginals; add_gen (signed terms)"],
+      [5, "Perplexity PP",                 "12N - 6",          114,   "neg ln values => add_gen dominates"],
+      [6, "Entropy rate H(Markov)",        "8|S|^2 + 2|S| - 3",817,  "quadratic: inner Shannon loop per state"],
+      [7, "Conditional entropy H(Y|X)",   "10|X||Y| - 3",     997,   "div for p(y|x) but terms positive => add_pos"],
+      [8, "JSD(P||Q)",                     "29N - 2",          288,   "3 Shannon evals + mixture; most expensive per-N"]
+    ],
+    "note_N10": "For equations 4, 6, 7: N=10 means |X|=|Y|=10 (100 cells/pairs) or |S|=10 states"
+  },
+  "eml_domain_assessment": {
+    "verdict": "Information theory is the most EML-native applied domain after pure mathematics",
+    "rationale": [
+      "Core primitive is p*ln(p): ln=1n + mul=2n = 3n per weighted log term",
+      "Shannon entropy 8N-3 is among the lowest costs for any N-term statistical formula",
+      "Cross-entropy ML loss is structurally identical to IT entropy: zero overhead for ML training",
+      "The dominant cost driver is sign structure, not computational complexity",
+      "Nearly all costs collapse to 8N-3 (positive terms) or 16N-11 (signed terms)",
+      "The 8n factor difference between add_pos and add_gen is the main architectural lever"
+    ],
+    "design_principle": "The central optimization question for any information-theoretic formula: are the summands sign-definite? If yes, 3n/addition; if no, 11n/addition. Restructuring formulas to expose positive terms is the primary cost reduction strategy."
+  }
+}
