@@ -7,7 +7,7 @@ date: 2026-04-22
 
 # Hyperbolic Functions Preserve ELC (And Why Trig Doesn't)
 
-**Tier: THEOREM** (Lean-verified, 0 sorries)
+**Tier: THEOREM** (proved)
 
 The ELC field — the set of real numbers expressible as finite trees of
 `exp`, `ln`, and arithmetic — has a strange asymmetry with respect to the
@@ -101,14 +101,8 @@ The 3-4-5 right triangle, hiding inside a hyperbolic identity at a
 specific rational-log input. For $n = 3$: $(8/6, 10/6)$, giving
 $10^2 - 8^2 = 6^2$. For every integer $n$ the construction continues.
 
-All three are Lean-verified numerical statements:
-
-```lean
-theorem sinh_log_two : Real.sinh (Real.log 2) = 3 / 4
-theorem cosh_log_two : Real.cosh (Real.log 2) = 5 / 4
-theorem pythagorean_triple_at_log_two :
-    (Real.cosh (Real.log 2)) ^ 2 - (Real.sinh (Real.log 2)) ^ 2 = 1
-```
+All three follow from direct substitution into the hyperbolic
+definitions, using $e^{\ln 2} = 2$.
 
 ---
 
@@ -125,24 +119,14 @@ post on [Tier-0 functions](/blog/tier-0-functions).
 
 ---
 
-## Lean proof
+## Proof
 
-```lean
-theorem sinh_as_exp_arithmetic (x : ℝ) :
-    Real.sinh x = (Real.exp x - Real.exp (-x)) / 2 := by
-  rw [Real.sinh_eq]
-
-theorem cosh_as_exp_arithmetic (x : ℝ) :
-    Real.cosh x = (Real.exp x + Real.exp (-x)) / 2 := by
-  rw [Real.cosh_eq]
-
-theorem tanh_as_sinh_div_cosh (x : ℝ) :
-    Real.tanh x = Real.sinh x / Real.cosh x := by
-  rw [Real.tanh_eq_sinh_div_cosh]
-```
-
-Source: [HyperbolicPreservation.lean](https://github.com/almaguer1986/monogate-lean)
-(7 theorems total, including the numerical 3-4-5 witnesses).
+Each identity is a standard definition of the hyperbolic function in terms
+of $e^x$ and $e^{-x}$ — textbook facts, not new mathematics. The content
+of the theorem is the structural observation: because these expressions
+use only `exp` and arithmetic, composing with an ELC input keeps the
+result in ELC. A Lean 4 formalization is in preparation in a separate
+research repository.
 
 ---
 

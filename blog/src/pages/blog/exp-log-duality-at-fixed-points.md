@@ -1,13 +1,13 @@
 ---
 layout: ../../layouts/Base.astro
 title: "The Exp-Log Duality at Fixed Points"
-description: "Every repelling fixed point of exp is an attracting fixed point of log on its branch, with reciprocal multipliers. Proved in Lean 4."
+description: "Every repelling fixed point of exp is an attracting fixed point of log on its branch, with reciprocal multipliers."
 date: 2026-04-22
 ---
 
 # The Exp-Log Duality at Fixed Points
 
-**Tier: THEOREM** (Lean-verified, 0 sorries)
+**Tier: THEOREM** (proved)
 
 The complex exponential $\exp(z)$ has no real fixed points — the equation
 $\exp(z) = z$ has no real solution — but on $\mathbb{C}$ it has
@@ -86,32 +86,24 @@ witness for strictness.
 
 ---
 
-## Lean proof
+## Proof
 
-The theorem is machine-verified in Lean 4, 0 sorries:
+A one-line consequence of the chain rule applied to inverse pairs.
+Since $\exp(z) = z$, we have $\exp'(z) = \exp(z) = z$. In the slit plane,
+$\log$ is differentiable with $\log'(z) = 1/z$. Therefore
 
-```lean
-theorem exp_log_multiplier_product_at_fixed_point
-    {z : ℂ} (hz : Complex.exp z = z) (hdom : z ∈ Complex.slitPlane) :
-    deriv Complex.exp z * deriv Complex.log z = 1 := by
-  have hne : z ≠ 0 := exp_fixed_point_ne_zero hz
-  rw [deriv_exp_at, deriv_log_at hdom, hz]
-  field_simp
-```
+$$
+\exp'(z) \cdot \log'(z) = z \cdot \frac{1}{z} = 1.
+$$
 
-Source: [EMLDuality.lean](https://github.com/almaguer1986/monogate-lean)
-(4 theorems total, including `exp_fixed_point_multiplier_equals_z` and
-`log_multiplier_at_exp_fixed_point`).
+The non-vanishing of $z$ is automatic: $\exp(z) = z$ combined with the
+standard fact $\exp \neq 0$ forces $z \neq 0$.
+
+A Lean 4 formalization is in preparation in a separate research repository.
 
 ---
 
 ## Reproduce
-
-```bash
-git clone https://github.com/almaguer1986/monogate-lean
-cd monogate-lean
-lake build MonogateEML.EMLDuality
-```
 
 Numerical iteration (Python):
 
