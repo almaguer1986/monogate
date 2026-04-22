@@ -80,6 +80,19 @@ const OP_FNS = {
   },
 };
 
+// Build a blended operator (1 − t)·op1 + t·op2, linearly interpolating both
+// real and imaginary parts at every iteration step. t=0 ⇒ op1, t=1 ⇒ op2.
+// A uniform in-between gives a continuous fractal morph between the two
+// operators' Mandelbrot sets.
+function makeBlendedOp(op1, op2, t) {
+  const s = 1 - t;
+  return (zr, zi, cr, ci) => {
+    const [r1, i1] = op1(zr, zi, cr, ci);
+    const [r2, i2] = op2(zr, zi, cr, ci);
+    return [s * r1 + t * r2, s * i1 + t * i2];
+  };
+}
+
 // Returns -1 if the point never escapes. Otherwise a smooth-coloring value.
 function iterate(op, cr, ci, maxIter, escapeR) {
   let zr = 0;
@@ -255,6 +268,9 @@ export default function FractalStudio() {
   const iterGridRef = useRef(null); // Float32Array of iteration counts per pixel
 
   const [op, setOp] = useState("EML");
+  const [op2, setOp2] = useState("DEML");
+  const [morphOn, setMorphOn] = useState(false);
+  const [morphT, setMorphT] = useState(0.5);
   const [palette, setPalette] = useState("deep");
   const [maxIter, setMaxIter] = useState(80);
   const [view, setView] = useState(DEFAULT_VIEW);
@@ -278,12 +294,18 @@ export default function FractalStudio() {
   const lockedToneMapRef = useRef(new Map());   // id → {osc, gain}
   const lastHoverFreqRef = useRef(0);
 
+  // Current iteration operator: optionally blended with op2 via slider t.
+  const activeOpFn = useCallback(() => {
+    if (!morphOn) return OP_FNS[op];
+    return makeBlendedOp(OP_FNS[op], OP_FNS[op2], morphT);
+  }, [op, op2, morphOn, morphT]);
+
   // ── Render loop ───────────────────────────────────────────────────────────
   const render = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
-    const opFn = OP_FNS[op];
+    const opFn = activeOpFn();
     const { xMin, xMax, yMin, yMax } = view;
     const renderId = ++renderRef.current;
 
@@ -327,14 +349,14 @@ export default function FractalStudio() {
       }
     }
     renderChunk();
-  }, [view, op, palette, maxIter]);
+  }, [view, op, op2, morphOn, morphT, palette, maxIter, activeOpFn]);
 
   useEffect(() => { render(); }, [render]);
 
-  // Re-tune locked tones when op/palette/maxIter changes (same points, new iters)
+  // Re-tune locked tones when op/maxIter/morph changes (same points, new iters)
   useEffect(() => {
     if (!audioRef.current || lockedPoints.length === 0) return;
-    const opFn = OP_FNS[op];
+    const opFn = activeOpFn();
     setLockedPoints((prev) => prev.map((lp) => {
       const it = iterate(opFn, lp.cr, lp.ci, maxIter, ESCAPE_R);
       const freq = iterToFreq(it, maxIter);
@@ -345,9 +367,9 @@ export default function FractalStudio() {
       }
       return { ...lp, iter: it, freq };
     }));
-    // Only depends on op/maxIter — changing palette doesn't alter iters.
+    // Only depends on op/maxIter/morph — changing palette doesn't alter iters.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [op, maxIter]);
+  }, [op, op2, morphOn, morphT, maxIter]);
 
   // Master volume follow-through
   useEffect(() => {
@@ -450,7 +472,7 @@ export default function FractalStudio() {
       return grid[py * W + px];
     }
     const [cr, ci] = pxToComplex(px, py);
-    return iterate(OP_FNS[op], cr, ci, maxIter, ESCAPE_R);
+    return iterate(activeOpFn(), cr, ci, maxIter, ESCAPE_R);
   }
 
   // ── Interaction handlers ─────────────────────────────────────────────────
@@ -508,7 +530,7 @@ export default function FractalStudio() {
       const it = iterAtPixel(px, py);
       playHover(iterToFreq(it, maxIter));
     }
-  }, [dragStart, view, mode, maxIter, op]);
+  }, [dragStart, view, mode, maxIter, op, op2, morphOn, morphT]);
 
   const handleMouseUp = useCallback((e) => {
     const ds = dragStart;
@@ -555,7 +577,7 @@ export default function FractalStudio() {
     }
     if (lockedPoints.length >= MAX_LOCKED) return;
     const [cr, ci] = pxToComplex(px, py);
-    const it = iterate(OP_FNS[op], cr, ci, maxIter, ESCAPE_R);
+    const it = iterate(activeOpFn(), cr, ci, maxIter, ESCAPE_R);
     const freq = iterToFreq(it, maxIter);
     const audio = ensureAudio();
     if (!audio) return;
@@ -616,7 +638,7 @@ export default function FractalStudio() {
     rafId = requestAnimationFrame(step);
     return () => cancelAnimationFrame(rafId);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mode, isPlaying, bpm, loop, op, maxIter, view]);
+  }, [mode, isPlaying, bpm, loop, op, op2, morphOn, morphT, maxIter, view]);
 
   function scheduleColumn(px) {
     const audio = audioRef.current;
@@ -630,7 +652,7 @@ export default function FractalStudio() {
         it = grid[py * W + px];
       } else {
         const [cr, ci] = pxToComplex(px, py);
-        it = iterate(OP_FNS[op], cr, ci, maxIter, ESCAPE_R);
+        it = iterate(activeOpFn(), cr, ci, maxIter, ESCAPE_R);
       }
       if (it < 0) continue;                      // points-in-set: silent
       if (it >= maxIter - 1) continue;           // ignore escape-cap pixels
@@ -670,7 +692,11 @@ export default function FractalStudio() {
       <header style={S.header}>
         <span style={S.brand}>monogate</span>
         <span style={S.subBrand}>fractal studio</span>
-        <span style={S.formula}>z → {OPERATORS[op].formula}</span>
+        <span style={S.formula}>
+          {morphOn
+            ? `z → (1−t)·${OPERATORS[op].formula} + t·${OPERATORS[op2].formula}`
+            : `z → ${OPERATORS[op].formula}`}
+        </span>
       </header>
 
       <div style={S.topBar}>
@@ -705,8 +731,80 @@ export default function FractalStudio() {
           </button>
         ))}
         <div style={{ flex: 1 }} />
+        <button
+          onClick={() => setMorphOn((v) => !v)}
+          style={{
+            ...S.palBtn,
+            background: morphOn ? "rgba(252,203,82,0.18)" : "transparent",
+            color: morphOn ? "#fccb52" : "rgba(255,255,255,0.35)",
+            borderColor: morphOn ? "#fccb52" : "rgba(255,255,255,0.08)",
+            fontWeight: morphOn ? 600 : 400,
+          }}
+        >
+          morph {morphOn ? "on" : "off"}
+        </button>
         <ModeToggle mode={mode} setMode={setMode} />
       </div>
+
+      {morphOn && (
+        <div style={S.morphBar}>
+          <span style={S.morphLabel}>
+            morph: {OPERATORS[op].name} → {OPERATORS[op2].name}
+          </span>
+          <div style={S.divider} />
+          <span style={S.morphLabel}>op2</span>
+          {Object.entries(OPERATORS).map(([key, val]) => (
+            <button
+              key={key}
+              onClick={() => setOp2(key)}
+              style={{
+                ...S.opBtn,
+                background: op2 === key ? val.color : "rgba(255,255,255,0.04)",
+                color: op2 === key ? "#08080c" : "rgba(255,255,255,0.5)",
+                border: op2 === key ? "none" : "1px solid rgba(255,255,255,0.08)",
+                fontWeight: op2 === key ? 600 : 400,
+                opacity: op === key ? 0.4 : 1,
+              }}
+              disabled={op === key}
+              title={op === key ? "op1 and op2 must differ" : ""}
+            >
+              {val.name}
+            </button>
+          ))}
+          <div style={S.divider} />
+          <span style={S.morphLabel}>t = {morphT.toFixed(2)}</span>
+          <input
+            type="range"
+            min={0}
+            max={1}
+            step={0.01}
+            value={morphT}
+            onChange={(e) => setMorphT(parseFloat(e.target.value))}
+            style={{ ...S.slider, flex: 1, minWidth: 120 }}
+          />
+          <button
+            onClick={() => setMorphT(0)}
+            style={S.btn}
+            title="snap to op1"
+          >
+            ←
+          </button>
+          <button
+            onClick={() => setMorphT(0.5)}
+            style={S.btn}
+            title="snap to middle"
+          >
+            ½
+          </button>
+          <button
+            onClick={() => setMorphT(1)}
+            style={S.btn}
+            title="snap to op2"
+          >
+            →
+          </button>
+        </div>
+      )}
 
       <div style={S.canvasWrap}>
         <canvas
@@ -766,9 +864,15 @@ export default function FractalStudio() {
 
         <div style={S.gradientBar}>
           <div>
-            <div style={S.formulaBig}>z → {OPERATORS[op].formula}</div>
+            <div style={S.formulaBig}>
+              {morphOn
+                ? `z → (1−t)·${OPERATORS[op].formula} + t·${OPERATORS[op2].formula}`
+                : `z → ${OPERATORS[op].formula}`}
+            </div>
             <div style={S.formulaSub}>
-              The {OPERATORS[op].name} Mandelbrot set
+              {morphOn
+                ? `${OPERATORS[op].name} → ${OPERATORS[op2].name} · t = ${morphT.toFixed(2)}`
+                : `The ${OPERATORS[op].name} Mandelbrot set`}
               {mode === "audio" && lockedPoints.length > 0 && (
                 <span style={{ marginLeft: 12, color: opColor }}>
                   · chord cost: {chordCost}n ({lockedPoints.length}/{MAX_LOCKED})
@@ -947,6 +1051,17 @@ const S = {
   topBar: {
     display: "flex", gap: 6, padding: "12px 24px",
     flexWrap: "wrap", alignItems: "center",
+  },
+  morphBar: {
+    display: "flex", gap: 6, padding: "0 24px 12px",
+    flexWrap: "wrap", alignItems: "center",
+    borderBottom: "1px solid rgba(252,203,82,0.10)",
+    marginBottom: 8,
+  },
+  morphLabel: {
+    fontSize: 10, color: "rgba(252,203,82,0.6)",
+    letterSpacing: "0.08em", textTransform: "uppercase",
+    fontFamily: FONT, marginRight: 2,
   },
   opBtn: {
     borderRadius: 4, padding: "5px 12px", fontSize: 12,
