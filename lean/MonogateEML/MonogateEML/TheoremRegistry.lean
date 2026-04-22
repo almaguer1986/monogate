@@ -18,7 +18,7 @@ explicitly marked [SORRY] / [CONJECTURE].
 -/
 
 /-- The canonical proved theorem count. Change ONLY when a new Lean proof is added. -/
-def PROVED_COUNT : ℕ := 24
+def PROVED_COUNT : ℕ := 25
 
 /-!
 ## Proved Theorems (24 total)
@@ -163,6 +163,14 @@ A non-zero depth-≤-1 real EML tree has finitely many zeros in any closed bound
 Lean: InfiniteZerosBarrier.lean (depth1_finite_zeros_real) — 0 sorries (moved from EMLDepth.lean)
 Status: [PROVED] — Session 6 sprint
 
+### T_EML_WFP_ANALYTIC — Well-formed EML trees are analytic on (0, ∞)
+Every EML tree satisfying WellFormedPos (all log arguments evaluate to positive reals)
+is real-analytic on (0, ∞). WFP is necessary: ceml(const 0, var) at x > e gives 1 - log x < 0,
+which is not in slitPlane, so the slit-plane MapsTo fails without WFP.
+Under WFP: t2.evalReal x > 0 means (t2.eval ↑x).re > 0, so t2.eval ↑x ∈ slitPlane. ✓
+Lean: InfiniteZerosBarrier.lean (eml_tree_analytic, eml_tree_eval_analyticOnNhd) — 0 sorries
+Status: [PROVED] — slit-plane sorry closed via WellFormedPos condition
+
 ---
 
 ## Formal Conjectures (NOT counted in PROVED_COUNT)
@@ -190,10 +198,10 @@ Exact cost = 6 is open. The gap [2,6] is the remaining question.
 
 ## FOOTER INSTRUCTION
 
-Update footers to say "24 theorems" (was 21; sprint added 3 new results).
-New additions: T_RLOG_ANALYTIC, T_EML_DEPTH1_ANALYTIC, T91 (depth1_finite_zeros_real).
+Update footers to say "25 theorems" (was 24; slit-plane sorry closed via WellFormedPos).
+New addition: T_EML_WFP_ANALYTIC (eml_tree_analytic under WellFormedPos — 0 sorries).
 Do not increase this number without adding a corresponding Lean proof.
 -/
 
 -- Sanity check: PROVED_COUNT matches the list above
-example : PROVED_COUNT = 24 := rfl
+example : PROVED_COUNT = 25 := rfl

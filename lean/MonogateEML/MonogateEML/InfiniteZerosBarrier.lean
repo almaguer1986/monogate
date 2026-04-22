@@ -27,31 +27,38 @@ Part B (0 sorry — analytic_finite_zeros_compact):
   A non-zero AnalyticOnNhd function on [a,b] has finitely many zeros.
   Proved via Bolzano-Weierstrass + AnalyticOnNhd identity theorem.
 
-Part C (1 sorry — eml_tree_analytic):
-  Every EML tree is AnalyticOnNhd on (0,∞).
-  Proof by induction on t (via helper `eml_tree_eval_analyticOnNhd` for ℝ→ℂ analyticity):
-  - const: constant → analyticOnNhd_const
-  - var:   ofRealCLM → CLM analyticity
-  - ceml:  exp part uses ih1 + restrictScalars of analyticOnNhd_cexp
-           log part cases on t2:
-             - const c: log(c) is constant → analytic (0 sorry)
-             - var:     log(↑x) for x > 0 → ↑x ∈ slitPlane, analytic (0 sorry)
-             - ceml:    1 sorry — cannot prove t2.eval ↑x ∈ slitPlane for all trees
+Part C (0 sorry — eml_tree_analytic):
+  Every well-formed EML tree is AnalyticOnNhd on (0,∞).
+  Well-formedness (WellFormedPos) requires all log arguments to evaluate to positive reals.
+  This condition is necessary: ceml(const 0, var) at x > e gives 1 - log x < 0 ∉ slitPlane.
+  Under WFP: t2.evalReal x > 0 means (t2.eval ↑x).re > 0, so t2.eval ↑x ∈ slitPlane. ✓
 
 Part C' (0 sorry — eml_tree_analytic_depth_le_1):
-  Every EML tree of depth ≤ 1 is AnalyticOnNhd on (0,∞).
+  Every EML tree of depth ≤ 1 is AnalyticOnNhd on (0,∞), without WFP hypothesis.
   Proved by explicit case analysis — the ceml/ceml branch is unreachable at depth ≤ 1.
 
-Part D (1 sorry — sin_not_in_eml):
+Part D (2 sorry — sin_not_in_eml, sin_not_in_real_EML_k):
   sin ∉ EML_k. Needs quantitative zero-count bound (o-minimal theory).
+  These are genuine open mathematical challenges requiring o-minimal structure theory.
 
-## Sorry census: 2 remaining
-  1. eml_tree_eval_analyticOnNhd, ceml/ceml log sub-case: MapsTo t2.eval (Ioi 0) slitPlane
-     (This sorry is not reachable for depth ≤ 1 trees; eml_tree_analytic_depth_le_1 is sorry-free)
+## Sorry census: 2 remaining (both genuine open math)
+  1. sin_not_in_eml: quantitative zero bound (o-minimal, depth-k generalization)
   2. sin_not_in_real_EML_k: quantitative zero bound (o-minimal)
 -/
 
 open Real Filter Set Complex
+
+-- ===================================================================
+-- WellFormedPos: the domain condition under which eml_tree_analytic holds
+-- ===================================================================
+
+/-- A tree is well-formed at x ∈ (0, ∞) if every log argument evaluates to a positive real.
+    This is necessary to avoid the branch cut of Complex.log.
+    Counterexample without WFP: ceml(const 0, var) at x > e gives 1 - log x < 0 ∉ slitPlane. -/
+def EMLTree.WellFormedPos : EMLTree → ℝ → Prop
+  | .const _, _ => True
+  | .var,     _ => True
+  | .ceml t1 t2, x => t1.WellFormedPos x ∧ t2.WellFormedPos x ∧ 0 < t2.evalReal x
 
 -- ===================================================================
 -- Part A: sin(x) has infinitely many zeros (0 sorry)
@@ -104,17 +111,23 @@ lemma analytic_finite_zeros_compact (f : ℝ → ℝ) (a b : ℝ) (hab : a < b)
 -- ===================================================================
 
 open EMLTree in
-/-- Helper: x ↦ t.eval (↑x : ℂ) is real-analytic (ℝ → ℂ) on (0, ∞).
+/-- Helper: x ↦ t.eval (↑x : ℂ) is real-analytic (ℝ → ℂ) on (0, ∞), under WellFormedPos.
+
+WellFormedPos ensures all log arguments evaluate to positive reals, avoiding Complex.log's
+branch cut on ℝ≤0. Under WFP: t2.evalReal x > 0 means (t2.eval ↑x).re > 0, hence
+t2.eval ↑x ∈ slitPlane (since slitPlane = {z | 0 < z.re ∨ z.im ≠ 0}).
 
 Induction on t:
 - const c: constant function → analyticOnNhd_const
 - var:     ofRealCLM ∘ id, a CLM → ContinuousLinearMap.analyticOnNhd
 - ceml t1 t2: exp part via ih1 + restrictScalars of analyticOnNhd_cexp (entire).
               log part cases on t2:
-                const c → log(c) constant, analytic everywhere
-                var     → log(↑x) analytic on (0,∞) since ↑x ∈ slitPlane for x > 0
-                ceml    → 1 sorry: need to show t2.eval (↑x) ∈ slitPlane for x ∈ (0,∞) -/
-private lemma eml_tree_eval_analyticOnNhd (t : EMLTree) :
+                const c → log(c) constant, analytic everywhere (0 sorry)
+                var     → log(↑x) analytic on (0,∞) since ↑x ∈ slitPlane for x > 0 (0 sorry)
+                ceml    → slit-plane follows from WFP: (hwf x hx).2.2 gives t2.evalReal x > 0
+                          = (t2.eval ↑x).re > 0, so t2.eval ↑x ∈ slitPlane (0 sorry) -/
+private lemma eml_tree_eval_analyticOnNhd (t : EMLTree)
+    (hwf : ∀ x ∈ Set.Ioi 0, t.WellFormedPos x) :
     AnalyticOnNhd ℝ (fun x : ℝ => t.eval (↑x : ℂ)) (Set.Ioi 0) := by
   induction t with
   | const c =>
@@ -128,11 +141,14 @@ private lemma eml_tree_eval_analyticOnNhd (t : EMLTree) :
     exact Complex.ofRealCLM.analyticOnNhd _
   | ceml t1 t2 ih1 ih2 =>
     simp only [EMLTree.eval]
+    -- Extract per-component WFP witnesses
+    have hwf1 : ∀ x ∈ Set.Ioi 0, t1.WellFormedPos x := fun x hx => (hwf x hx).1
+    have hwf2 : ∀ x ∈ Set.Ioi 0, t2.WellFormedPos x := fun x hx => (hwf x hx).2.1
     apply AnalyticOnNhd.sub
     · -- exp(t1.eval ↑x): Complex.exp is ℂ-analytic (entire) → ℝ-analytic via restrictScalars
       have hcexp : AnalyticOnNhd ℝ (Complex.exp : ℂ → ℂ) Set.univ :=
         analyticOnNhd_cexp.restrictScalars
-      exact hcexp.comp ih1 (Set.mapsTo_univ _ _)
+      exact hcexp.comp (ih1 hwf1) (Set.mapsTo_univ _ _)
     · -- log(t2.eval ↑x): case split on t2 to resolve slit-plane membership
       -- Shared: Complex.log is ℝ-analytic on slitPlane (via restrictScalars of ℂ-analyticity)
       have hclog : AnalyticOnNhd ℝ (Complex.log : ℂ → ℂ) Complex.slitPlane :=
@@ -152,27 +168,31 @@ private lemma eml_tree_eval_analyticOnNhd (t : EMLTree) :
             ext x; simp [Complex.ofRealCLM_apply]
           rw [heq]; exact Complex.ofRealCLM.analyticOnNhd _
         exact hclog.comp hofr hmaps
-      | ceml t1' t2' _ih1' _ih2' =>
-        -- For nested ceml trees, we need t2'.eval ↑x in slitPlane — genuine gap
-        -- The function t2 = ceml t1' t2' produces complex values that may not
-        -- land in the slit plane for all x > 0. A full proof requires tracking
-        -- that every subtree's log argument avoids ℝ≤0 ∪ {0}, which is not
-        -- derivable from the induction hypothesis alone without extra structure.
+      | ceml t1' t2' =>
+        -- Slit-plane membership follows from WellFormedPos:
+        -- (hwf x hx).2.2 : t2.evalReal x > 0
+        -- Since t2 = ceml t1' t2', this is (ceml t1' t2').evalReal x > 0.
+        -- By definition, evalReal t x = (t.eval ↑x).re, so (t2.eval ↑x).re > 0.
+        -- slitPlane = {z | 0 < z.re ∨ z.im ≠ 0}, so re > 0 implies membership.
         have hmaps : Set.MapsTo (fun x : ℝ => (EMLTree.ceml t1' t2').eval (↑x : ℂ))
-            (Set.Ioi 0) Complex.slitPlane := by
-          sorry
-        exact hclog.comp ih2 hmaps
+            (Set.Ioi 0) Complex.slitPlane := fun x hx => by
+          have hpos : 0 < (EMLTree.ceml t1' t2').evalReal x := (hwf x hx).2.2
+          simp only [EMLTree.evalReal] at hpos
+          exact Complex.mem_slitPlane.mpr (Or.inl hpos)
+        exact hclog.comp (ih2 hwf2) hmaps
 
 open EMLTree in
-/-- Every real EML tree function is real-analytic on (0, ∞).
+/-- Every well-formed real EML tree function is real-analytic on (0, ∞).
+
+Requires WellFormedPos: all log arguments must evaluate to positive reals on (0,∞).
+This is necessary — without it the ceml/ceml slit-plane condition can fail.
 
 Derived from `eml_tree_eval_analyticOnNhd` (ℝ→ℂ analyticity of t.eval ∘ (↑·))
-by composing with Complex.reCLM (continuous ℝ-linear map ℂ →L[ℝ] ℝ).
-
-Note: 1 sorry remains in the ceml/ceml log sub-case of the helper lemma. -/
-lemma eml_tree_analytic (t : EMLTree) :
+by composing with Complex.reCLM (continuous ℝ-linear map ℂ →L[ℝ] ℝ). (0 sorry) -/
+lemma eml_tree_analytic (t : EMLTree)
+    (hwf : ∀ x ∈ Set.Ioi 0, t.WellFormedPos x) :
     AnalyticOnNhd ℝ t.evalReal (Set.Ioi 0) := by
-  have hcomplex := eml_tree_eval_analyticOnNhd t
+  have hcomplex := eml_tree_eval_analyticOnNhd t hwf
   have heq : t.evalReal = Complex.reCLM ∘ (fun x : ℝ => t.eval (↑x : ℂ)) := by
     ext x; simp [EMLTree.evalReal, Complex.reCLM]
   rw [heq]
