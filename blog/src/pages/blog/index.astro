@@ -2,6 +2,8 @@
 import Base from '../../layouts/Base.astro';
 
 const posts = [
+  { href: '/blog/exp-log-duality-at-fixed-points', title: 'The Exp-Log Duality at Fixed Points', tag: 'theorem', date: '2026-04-22', desc: 'Every fixed point of exp is repelling under exp-iteration and attracting under log-iteration on its matching branch. Multipliers multiply to exactly 1. Lean-verified.' },
+  { href: '/blog/hyperbolic-preserves-elc', title: 'Hyperbolic Functions Preserve ELC (And Why Trig Doesn\'t)', tag: 'theorem', date: '2026-04-22', desc: 'sinh, cosh, tanh map ELC inputs to ELC outputs. sin, cos, tan don\'t — the Infinite Zeros Barrier forbids it. With a 3-4-5 Pythagorean triple hiding at x=ln(2). Lean-verified.' },
   { href: '/blog/add-gen-2n', title: 'General Addition in 2 Nodes: The Last Gap Closes', tag: 'theorem', date: '2026-04-20', desc: 'add(x,y) = lediv(x, deml(y,1)) costs exactly 2 nodes for all real x,y. General-domain addition drops from 11n to 2n. SuperBEST v5: 18n total, 75.3% savings. The two-tier add table is gone.' },
   { href: '/blog/cost-of-everything', title: 'The SuperBEST Cost of Everything', tag: 'observation', date: '2026-04-20', desc: 'From Google\'s PageRank to your GPS to the NFL passer rating — every equation has a node count. ETA=2n (the cheapest), Haversine=28n (most-evaluated outdoor formula), RS syndrome=2037n (most expensive). 9 sessions, 57 new equations, 214 total.' },
   { href: '/blog/recip-one-node', title: 'recip(x) Is 1 Node — ELSb Closes the Gap', tag: 'theorem', date: '2026-04-20', desc: 'ELSb(0, x) = exp(0 − ln(x)) = 1/x in one node. SuperBEST v4: 18 nodes total, 75.3% savings. The reciprocal was never a division problem.' },
