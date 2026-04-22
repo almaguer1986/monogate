@@ -1,0 +1,221 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath,amssymb,amsthm,hyperref,booktabs,xcolor}
+\usepackage[margin=1in]{geometry}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+\definecolor{proved}{RGB}{50,150,50}
+\definecolor{sorry}{RGB}{180,50,50}
+\definecolor{open}{RGB}{120,120,180}
+
+\title{\textbf{Infinite Zeros Barrier (T01) --- Verification Status}\\[0.4em]
+\large Machine-Verified Components and Remaining Gaps}
+\author{Arturo R.\ Almaguer}
+\date{2026-04-21}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This paper documents the exact Lean 4 verification status of the Infinite Zeros Barrier
+theorem (T01) as of 2026-04-21.
+Three new sorry-free theorems were added this session, reducing the active sorry count from 4 to 3.
+The key new result is \texttt{eml\_tree\_analytic\_depth\_le\_1} (0 sorry), which proves
+real analyticity on $(0,\infty)$ for all depth-$\leq 1$ EML trees via a 6-case explicit
+analysis, circumventing the mathematically justified obstruction in the full
+\texttt{eml\_tree\_analytic} proof.
+The \texttt{depth1\_finite\_zeros\_real} lemma (CEML-T91) is now fully proved (0 sorry)
+using this new result together with \texttt{analytic\_finite\_zeros\_compact}.
+\end{abstract}
+
+%──────────────────────────────────────────────────────────────────────────────
+\section{Theorem Statement}
+
+\begin{theorem}[T01 — Infinite Zeros Barrier (partial)]
+Let $t : \texttt{EMLTree}$ with $t.\texttt{depth} \leq 1$.  For any $a < b$ with $a > 0$,
+if $t.\texttt{evalReal}$ is not identically zero on $[a,b]$, then
+\[
+  \{x \in [a,b] \mid t.\texttt{evalReal}(x) = 0\}
+\]
+is finite.
+Since $\sin(n\pi) = 0$ for all $n \in \mathbb{Z}$ (infinite zeros),
+$\sin$ is not representable by any depth-$\leq 1$ real EML tree.
+\end{theorem}
+
+%──────────────────────────────────────────────────────────────────────────────
+\section{Verified Components (0 sorry)}
+
+\subsection{Part A: sin has infinitely many zeros}
+
+\begin{lemma}[\texttt{sin\_has\_infinitely\_many\_zeros}]
+$\{x \in \mathbb{R} \mid \sin x = 0\}$ is infinite.
+\end{lemma}
+\begin{proof}
+The map $n \mapsto n\pi$ is injective ($\pi \neq 0$) and $\sin(n\pi) = 0$ for all $n \in \mathbb{Z}$.
+\textbf{Status}: \textcolor{proved}{Proved, 0 sorry.}
+\end{proof}
+
+\subsection{Part B: analytic\_finite\_zeros\_compact}
+
+\begin{lemma}[\texttt{analytic\_finite\_zeros\_compact}]
+Let $f : \mathbb{R} \to \mathbb{R}$ be \texttt{AnalyticOnNhd} on $[a,b]$ with $a < b$,
+and suppose $\exists x_1 \in (a,b),\, f(x_1) \neq 0$.
+Then $\{x \in [a,b] \mid f(x) = 0\}$ is finite.
+\end{lemma}
+\begin{proof}
+If infinite, Bolzano-Weierstrass (\texttt{Set.Infinite.exists\_accPt\_of\_subset\_isCompact})
+gives an accumulation point $x_0 \in [a,b]$.  Then $f$ is frequently zero near $x_0$
+in the punctured neighborhood, so \texttt{AnalyticOnNhd.eqOn\_zero\_of\_preconnected\_of\_frequently\_eq\_zero}
+forces $f \equiv 0$ on $[a,b]$, contradicting the hypothesis.
+\textbf{Status}: \textcolor{proved}{Proved, 0 sorry.}
+\end{proof}
+
+\subsection{Part C': Real.log is analytic on $(0,\infty)$}
+
+\begin{lemma}[\texttt{real\_log\_analyticOnNhd\_pos}]
+$\texttt{AnalyticOnNhd}\;\mathbb{R}\;\mathbb{R}.\log\;(0,\infty)$.
+\end{lemma}
+\begin{proof}
+\textbf{Key fact}: \texttt{Complex.log\_ofReal\_re} gives $(\texttt{Complex.log}\;\uparrow x).\texttt{re} = \mathbb{R}.\log\;x$
+for all $x \in \mathbb{R}$.
+\begin{enumerate}
+  \item \texttt{Complex.log} is $\mathbb{R}$-analytic on \texttt{slitPlane} via
+        $\texttt{analyticAt\_clog}.\texttt{restrictScalars}$.
+  \item $\uparrow(\cdot) : \mathbb{R} \to \mathbb{C}$ (ofRealCLM) maps $(0,\infty)$ into
+        \texttt{slitPlane} since $x > 0$ implies $(\uparrow x).\texttt{re} = x > 0$.
+  \item Composition and \texttt{reCLM} give analyticity of
+        $x \mapsto (\texttt{Complex.log}\;\uparrow x).\texttt{re}$.
+  \item \texttt{AnalyticOnNhd.congr} + \texttt{Complex.log\_ofReal\_re} converts to $\mathbb{R}.\log$.
+\end{enumerate}
+\textbf{Status}: \textcolor{proved}{Proved, 0 sorry. NEW this session.}
+\end{proof}
+
+\subsection{Part C': Depth-$\leq 1$ EML trees are analytic on $(0,\infty)$}
+
+\begin{lemma}[\texttt{eml\_tree\_analytic\_depth\_le\_1}]
+Let $t : \texttt{EMLTree}$ with $t.\texttt{depth} \leq 1$.
+Then $\texttt{AnalyticOnNhd}\;\mathbb{R}\;t.\texttt{evalReal}\;(0,\infty)$.
+\end{lemma}
+\begin{proof}
+By explicit case analysis on $t$.  For depth $\leq 1$, any $\texttt{ceml}\;t_1\;t_2$ satisfies
+$t_1.\texttt{depth} = 0$ and $t_2.\texttt{depth} = 0$ (by \texttt{omega} from the depth constraint).
+Depth-0 trees are exactly \texttt{const} and \texttt{var}, so there are 6 cases:
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+$t$ & $t.\texttt{evalReal}\;x$ & Analyticity source \\
+\midrule
+\texttt{const c} & $c.\texttt{re}$ & \texttt{analyticOnNhd\_const} \\
+\texttt{var} & $x$ & \texttt{analyticOnNhd\_id} \\
+\texttt{ceml (const c1) (const c2)} & $(e^{c_1}).\texttt{re} - (\log c_2).\texttt{re}$ & const \\
+\texttt{ceml var (const c2)} & $e^x - (\log c_2).\texttt{re}$ & \texttt{analyticOnNhd\_rexp} + const \\
+\texttt{ceml (const c1) var} & $(e^{c_1}).\texttt{re} - \log x$ & const + \texttt{real\_log\_analyticOnNhd\_pos} \\
+\texttt{ceml var var} & $e^x - \log x$ & exp + log \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The \texttt{ceml/ceml} branch is unreachable (would require both $t_1$ and $t_2$ to have depth $\geq 1$,
+contradicting $t_1.\texttt{depth} = 0$ and $t_2.\texttt{depth} = 0$).
+The equality lemmas use \texttt{Complex.exp\_ofReal\_re} and \texttt{Complex.log\_ofReal\_re}.
+
+\textbf{Status}: \textcolor{proved}{Proved, 0 sorry. NEW this session.}
+\end{proof}
+
+\subsection{Part C'': CEML-T91 — Depth-1 finite zeros}
+
+\begin{lemma}[\texttt{depth1\_finite\_zeros\_real} — CEML-T91]
+Let $t : \texttt{EMLTree}$ with $t.\texttt{depth} \leq 1$, $0 < a < b$,
+and $\exists x \in (a,b),\, t.\texttt{evalReal}(x) \neq 0$.
+Then $\{x \in [a,b] \mid t.\texttt{evalReal}(x) = 0\}$ is finite.
+\end{lemma}
+\begin{proof}
+Since $a > 0$, $[a,b] \subseteq (0,\infty)$.
+Apply \texttt{eml\_tree\_analytic\_depth\_le\_1} to get analyticity on $[a,b]$.
+Apply \texttt{analytic\_finite\_zeros\_compact}.
+
+\textbf{Status}: \textcolor{proved}{Proved, 0 sorry. Was sorry in EMLDepth.lean; now proved (moved to InfiniteZerosBarrier.lean).}
+\end{proof}
+
+%──────────────────────────────────────────────────────────────────────────────
+\section{Remaining Sorries (3 active)}
+
+\subsection{Sorry 1: eml\_tree\_analytic ceml/ceml log case}
+
+\textbf{Statement attempted}: $\forall x \in (0,\infty),\;
+  (\texttt{ceml}\;t_1'\;t_2').\texttt{eval}\;\uparrow x \in \texttt{slitPlane}$.
+
+\textbf{Obstruction}: This is \emph{mathematically false}.
+Counterexample: $(\texttt{ceml}\;(\texttt{const}\;0)\;(\texttt{const}\;e)).\texttt{eval}\;\uparrow x
+= e^0 - \log e = 1 - 1 = 0 \notin \texttt{slitPlane}$ for all $x$.
+
+\textbf{Resolution}: The full \texttt{eml\_tree\_analytic} (for \emph{all} trees) is false.
+The correct theorem is \texttt{eml\_tree\_analytic\_depth\_le\_1} (proved, 0 sorry).
+The sorry in \texttt{eml\_tree\_eval\_analyticOnNhd} is now dead code for depth $\leq 1$ inputs.
+For deeper trees, a valid theorem would need to restrict to subtrees whose log arguments
+stay positive, i.e., track domain conditions inductively.
+
+\subsection{Sorry 2: sin\_not\_in\_eml (quantitative zero bound)}
+
+\textbf{Statement}: $\forall k\;(t : \texttt{EMLTree}),\; t.\texttt{depth} \leq k \to
+  \neg\,(\forall x,\; t.\texttt{evalReal}\;x = \sin x)$.
+
+\textbf{Blocker}: Requires showing EML-$k$ trees have $\leq B(k)$ zeros on $\mathbb{R}$
+for some computable bound $B(k)$.  This requires o-minimal structure theory
+($\mathbb{R}_{\exp}$ is o-minimal).  Not achievable with current Mathlib tools.
+
+\subsection{Sorry 3: sin\_not\_in\_real\_EML\_k (T48)}
+
+\textbf{Statement}: $(x \mapsto \sin(x.\texttt{re})) \notin \texttt{EML\_k}\;k$.
+
+\textbf{Blocker}: Depends on Sorry 2.  The proof strategy would use:
+depth1\_finite\_zeros\_real (now proved) + induction on depth for the quantitative bound,
+then contradict with sin's infinite zeros.
+
+%──────────────────────────────────────────────────────────────────────────────
+\section{Summary: Verification Status}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Component & Status & Sorry count \\
+\midrule
+sin has infinitely many zeros (T01a) & \textcolor{proved}{Proved} & 0 \\
+Analytic non-zero → finitely many zeros & \textcolor{proved}{Proved} & 0 \\
+Real.log analytic on $(0,\infty)$ & \textcolor{proved}{Proved (NEW)} & 0 \\
+Depth $\leq 1$ EML trees analytic & \textcolor{proved}{Proved (NEW)} & 0 \\
+Depth-1 finite zeros (T91) & \textcolor{proved}{Proved (NEW, was sorry)} & 0 \\
+\midrule
+eml\_tree\_analytic (all trees) & \textcolor{sorry}{Sorry (obstruction: false as stated)} & 1 \\
+sin\_not\_in\_eml (T01 Part D) & \textcolor{sorry}{Sorry (o-minimal)} & 1 \\
+sin\_not\_in\_real\_EML\_k (T48) & \textcolor{sorry}{Sorry (needs T01 Part D)} & 1 \\
+\midrule
+\textbf{Total sorry count} & & \textbf{3 (was 4)} \\
+\textbf{PROVED\_COUNT} & & \textbf{24 (was 21)} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{What remains to reach full T01 verification}
+
+\begin{enumerate}
+  \item \textbf{Depth-$k$ analyticity} (medium-hard): Formalize a correct version of
+        $\texttt{eml\_tree\_analytic}$ restricted to trees where all log arguments stay positive,
+        or track domain conditions inductively.  This unblocks the full T01 for all finite depths.
+  \item \textbf{Quantitative zero bound} (hard, requires o-minimal theory):
+        Prove $|\{x \in [a,b] \mid t.\texttt{evalReal}(x) = 0\}| \leq B(k)$ for depth-$k$ trees.
+        This is the genuine mathematical barrier.
+  \item \textbf{sin\_not\_in\_real\_EML\_k} (follows from 1+2): If 1 and 2 are proved,
+        T48 follows directly.
+\end{enumerate}
+
+The first sorry (eml\_tree\_analytic ceml/ceml) is an engineering challenge with a known
+obstruction; the second and third sorries are genuine mathematical challenges.
+
+\end{document}

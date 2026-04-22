@@ -1,0 +1,226 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath,amssymb,amsthm,hyperref,booktabs,xcolor,enumitem}
+\usepackage[margin=1in]{geometry}
+
+\newtheorem{theorem}{Theorem}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+\definecolor{high}{RGB}{180,50,50}
+\definecolor{med}{RGB}{180,130,30}
+\definecolor{low}{RGB}{80,130,80}
+
+\title{\textbf{Open Conjecture Prioritization: Post-Verification Sprint}\\[0.4em]
+\large After 24 Verified Theorems + Depth-1 Analyticity}
+\author{Arturo R.\ Almaguer}
+\date{2026-04-21}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+After completing 24 Lean-verified theorems (3 new this session: Real.log analyticity,
+depth-1 EML analyticity, CEML-T91 depth-1 finite zeros), and finding the exact
+mathematical obstruction in \texttt{eml\_tree\_analytic} (the ceml/ceml slit-plane sorry
+is false as stated), we re-rank all remaining open conjectures.
+The new \#1 priority is \textbf{sin\_not\_in\_eml\_depth0} (30-min Lean task),
+followed by depth-2 impossibility formalization.
+The full \texttt{eml\_tree\_analytic} for all trees is demoted — it requires
+a domain-tracking reformulation that changes the theorem statement.
+\end{abstract}
+
+%──────────────────────────────────────────────────────────────────────────────
+\section{Current Verified Count and Sorry Structure}
+
+\subsection{Fully Lean-Verified (24 theorems, 0 sorry each)}
+\begin{enumerate}[noitemsep]
+  \item SB(neg/add/sub/mul/div) $\geq 2$ — 5 lower bounds
+  \item exp/mul/pow/recip/sqrt node counts — 5 upper bounds
+  \item v5.1 overcounting correction (16n → 15n)
+  \item Euler Gateway, Euler Identity, EML-0 $\subsetneq$ EML-1
+  \item sin has infinitely many zeros
+  \item \texttt{analytic\_finite\_zeros\_compact}
+  \item TheoremRegistry rfl check
+  \item \textbf{[NEW]} \texttt{real\_log\_analyticOnNhd\_pos}
+  \item \textbf{[NEW]} \texttt{eml\_tree\_analytic\_depth\_le\_1}
+  \item \textbf{[NEW]} \texttt{depth1\_finite\_zeros\_real} (T91)
+\end{enumerate}
+
+\subsection{Sorry'd (3 genuine open steps)}
+
+\begin{center}
+\begin{tabular}{llll}
+\toprule
+ID & Theorem & Sorry type & Effort \\
+\midrule
+C1 & \texttt{eml\_tree\_eval\_analyticOnNhd} ceml/ceml & False as stated (obstruction found) & reformulate \\
+C2 & \texttt{sin\_not\_in\_eml} & O-minimal theory & months \\
+C3 & \texttt{sin\_not\_in\_real\_EML\_k} & depends on C2 & months \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Key finding}: The ceml/ceml sorry (C1) is NOT an engineering gap — it is a mathematical
+obstruction. The statement $\forall x > 0,\; (\texttt{ceml}\;t_1'\;t_2').\texttt{eval}\;\uparrow x
+\in \texttt{slitPlane}$ is \emph{false} (counterexample:
+$\texttt{ceml}(\texttt{const}\;0)(\texttt{const}\;e) \equiv 0 \notin \texttt{slitPlane}$).
+The correct response is to reformulate the theorem, not to try to prove the sorry.
+
+%──────────────────────────────────────────────────────────────────────────────
+\section{Ranked Open Items}
+
+\subsection{\textcolor{high}{Priority 1 — \texttt{sin\_not\_in\_eml\_depth0} [30 min, 0 sorry]}}
+
+\textbf{Statement}: No depth-0 EML tree represents $\sin$.
+
+\textbf{Why first}: Zero effort. Depth-0 trees are constants. $\sin(0) = 0 \neq 1 = \sin(\pi/2)$,
+so $\sin$ is non-constant and cannot be represented. Immediate Lean proof by \texttt{linarith}.
+
+\textbf{Impact}: Closes depth-0 case of sin impossibility. Lifts sorry count at no cost.
+
+---
+
+\subsection{\textcolor{high}{Priority 2 — Depth-2 sin impossibility [2–4h, no new math]}}
+
+\textbf{Statement}: No depth-$\leq 2$ real EML tree represents $\sin$.
+
+\textbf{Strategy}: For depth-2 trees $\texttt{ceml}(t_1, t_2)$ where $t_1, t_2$ have depth $\leq 1$:
+\begin{itemize}
+  \item On any interval $[a,b]$ avoiding zeros of $t_2$, both $t_1$ and $\log|t_2|$ are analytic.
+  \item Their difference $(t_1 - \log \circ |t_2|)$ is analytic, so has finitely many zeros by
+        \texttt{analytic\_finite\_zeros\_compact}.
+  \item Taking $N \to \infty$ intervals gives a bound.
+\end{itemize}
+
+\textbf{Difficulty}: Formalizing $\log \circ |f|$ for analytic $f$ with finitely many zeros.
+Requires tracking zero-free intervals of $t_2$ (which are finite in number by T91).
+
+\textbf{Impact}: Closes depth-2 case. Gives a pattern that may generalize to depth $k$ inductively.
+
+---
+
+\subsection{\textcolor{med}{Priority 3 — CONJ\_BOUNDARY\_DECIDABLE}}
+
+\textbf{Statement}: SC + EDB $\Rightarrow$ ELC-membership is decidable.
+
+\textbf{Status}: The EDB positive-domain part ($B^+(n) = n$) is conceptually proved.
+General EDB requires the quantitative zero bound $Z(n)$ for EML trees on $\mathbb{R}$,
+which is the same obstruction as C2 (o-minimal structure).
+
+\textbf{Impact}: Landmark theorem. Requires C2 first.
+
+---
+
+\subsection{\textcolor{med}{Priority 4 — Reformulate eml\_tree\_analytic}}
+
+\textbf{Statement (reformulated)}: Every real EML tree is analytic on $(0,\infty)$ \emph{restricted
+to the domain where all log arguments are positive}.
+
+\textbf{Why needed}: The current sorry is mathematically correct to be there.
+The right theorem tracks a domain predicate $D(t, x)$ through the tree structure:
+\[
+  D(\texttt{ceml}(t_1, t_2), x) \;:\iff\; D(t_1, x) \;\wedge\; D(t_2, x) \;\wedge\; t_2.\texttt{evalReal}(x) > 0.
+\]
+On this domain, every subtree's log argument is positive, so the slit-plane sorry evaporates.
+
+\textbf{Lean sketch}:
+\begin{verbatim}
+def EMLTree.positiveDomain : EMLTree → Set ℝ
+  | .const c  => Set.univ   -- constant, no log
+  | .var      => Set.univ   -- variable, no log
+  | .ceml t1 t2 =>
+    t1.positiveDomain ∩ t2.positiveDomain ∩ {x | 0 < t2.evalReal x}
+
+lemma eml_tree_analytic_pos_domain (t : EMLTree) :
+    AnalyticOnNhd ℝ t.evalReal t.positiveDomain
+\end{verbatim}
+
+\textbf{Effort}: 2–3h Lean.  \textbf{Impact}: Gives the right theorem for the EDB application.
+
+---
+
+\subsection{\textcolor{low}{Priority 5 — CONJ\_TRIG\_DEPTH\_TOWER L1}}
+
+\textbf{Statement}: $\sin(1) \notin \varepsilon(\mathbb{R})$ (unconditional).
+
+\textbf{Status}: Open. The AIL argument closes $\tan(1) \notin \varepsilon(\mathbb{R})$ (proved),
+but $\sin(1)$ requires a different approach since sin is not a ratio of exp values.
+
+---
+
+\subsection{\textcolor{low}{Priority 6 — GAIL}}
+
+\textbf{Statement}: $\alpha \notin \varepsilon(\mathbb{R}) \Rightarrow \sin(\alpha) \notin \varepsilon(\mathbb{R})$.
+
+\textbf{Status}: Unconditionally open. Follows from Schanuel's Conjecture.
+
+---
+
+\subsection{\textcolor{low}{Priority 7 — eml\_tree\_analytic (fully general)}}
+
+\textbf{Statement}: Every EML tree is analytic on $\mathbb{R} \setminus Z_t$ where $Z_t$ is
+a computable finite set (the zeros of log arguments).
+
+\textbf{Status}: Requires the zero-count bound for log arguments (hence o-minimal theory).
+Demoted from its previous \#1 position — the correct formulation is Priority 4 (pos\_domain version).
+
+%──────────────────────────────────────────────────────────────────────────────
+\section{Concrete Attack Plan: Priority 1 (30 min)}
+
+Add to \texttt{InfiniteZerosBarrier.lean}:
+
+\begin{verbatim}
+-- sin cannot be represented by a depth-0 EML tree
+theorem sin_not_in_eml_depth0 :
+    ∀ t : EMLTree, t.depth = 0 →
+      ¬ (∀ x : ℝ, t.evalReal x = Real.sin x) := by
+  intro t ht hsin
+  cases t with
+  | const c =>
+    have h0 := hsin 0
+    have hpi := hsin (Real.pi / 2)
+    simp [EMLTree.evalReal, EMLTree.eval,
+          Real.sin_zero, Real.sin_pi_div_two] at h0 hpi
+    linarith
+  | var =>
+    have h0 := hsin 0
+    have hpi := hsin (Real.pi / 2)
+    simp [EMLTree.evalReal, EMLTree.eval,
+          Real.sin_zero, Real.sin_pi_div_two] at h0 hpi
+    linarith [Real.pi_pos]
+  | ceml _ _ => simp [EMLTree.depth] at ht
+\end{verbatim}
+
+This is sorry-free and would bring PROVED\_COUNT to 25.
+
+%──────────────────────────────────────────────────────────────────────────────
+\section{Summary}
+
+\begin{center}
+\begin{tabular}{lllll}
+\toprule
+Priority & ID & Statement & Effort & Next step \\
+\midrule
+1 & DEPTH0-SIN & sin not in EML-0 & 30min & write proof \\
+2 & DEPTH2-SIN & sin not in EML-2 & 2–4h & formalize |f| approach \\
+3 & DECIDABLE & SC+EDB → decidable & months & needs C2 \\
+4 & POS-ANALYTIC & eml\_tree\_analytic on positiveDomain & 2–3h & reformulate \\
+5 & TRIG-L1 & sin(1) $\notin$ $\varepsilon(\mathbb{R})$ & open & new tool \\
+6 & GAIL & sin preserves non-ELC & open & SC needed \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Immediate recommended actions} (in order):
+\begin{enumerate}
+  \item Prove \texttt{sin\_not\_in\_eml\_depth0} (Priority 1, 30 min, closes depth-0).
+  \item Reformulate \texttt{eml\_tree\_analytic} as \texttt{eml\_tree\_analytic\_pos\_domain}
+        (Priority 4, no new math, unblocks EDB construction).
+  \item Document the o-minimal barrier as the current mathematical frontier for T01.
+\end{enumerate}
+
+This would bring PROVED\_COUNT from 24 to 25, and provide the right formulation for
+the EDB paper (which uses \texttt{eml\_tree\_analytic} on positive-valued subtrees only).
+
+\end{document}

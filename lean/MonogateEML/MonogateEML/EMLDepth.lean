@@ -95,7 +95,7 @@ theorem exp_not_constant : ¬ (∃ c : ℂ, ∀ x, expTree.eval x = c) := by
   linarith [Real.exp_one_gt_d9]
 
 -- ============================================================
--- 5. sin(x) Real Barrier (CEML-T48) — Skeleton with sorry
+-- 5. Real Restriction
 -- ============================================================
 
 /-- Real restriction: a real EML tree takes real inputs to real outputs
@@ -113,26 +113,6 @@ lemma var_tree_evalReal (x : ℝ) :
     EMLTree.var.evalReal x = x := by
   simp [EMLTree.evalReal, EMLTree.eval]
 
-/-- CEML-T91 (depth-1 barrier lemma — sorry):
-    A non-zero real depth-1 EML tree has finitely many zeros in any bounded interval.
-    This follows from eml_tree_analytic + analytic_finite_zeros_compact.
-
-    Note: the hypothesis hne (non-zero on (a,b)) is required — without it the statement
-    is FALSE (consider the constant-zero tree). -/
-lemma depth1_finite_zeros_real (t : EMLTree) (ht : t.depth ≤ 1) (a b : ℝ) (hab : a < b)
-    (hpos : a > 0)
-    (hne : ∃ x ∈ Set.Ioo a b, t.evalReal x ≠ 0) :
-    Set.Finite {x ∈ Set.Icc a b | t.evalReal x = 0} := by
-  -- Use eml_tree_analytic (t is analytic on (0,∞)) + analytic_finite_zeros_compact
-  -- eml_tree_analytic gives AnalyticOnNhd ℝ t.evalReal (Ioi 0)
-  -- Since Icc a b ⊆ Ioi 0 (as a > 0), restrict to get AnalyticOnNhd on Icc a b
-  sorry
-  -- Proof:
-  -- have hanal := (MonogateEML.InfiniteZerosBarrier.eml_tree_analytic t).mono
-  --   (Set.Icc_subset_Ioi.mpr hpos)
-  -- exact MonogateEML.InfiniteZerosBarrier.analytic_finite_zeros_compact
-  --   t.evalReal a b hab hanal hne
-
 /-- sin is not monotone on [0, 2π]. -/
 lemma sin_not_monotone_full :
     ¬ Monotone (fun x : ℝ => Real.sin x) := by
@@ -142,36 +122,18 @@ lemma sin_not_monotone_full :
   rw [Real.sin_pi_div_two, Real.sin_pi] at h1
   linarith
 
-/-- CEML-T48: sin(x) ∉ EML-k(ℝ) for any finite k.
-    Main theorem — sorry pending finite-zeros induction. -/
-theorem sin_not_in_real_EML_k (k : ℕ) :
-    (fun x : ℂ => ↑(Real.sin x.re) : ℂ → ℂ) ∉ EML_k k := by
-  sorry  -- Full proof strategy:
-         -- 1. Every depth-k real ceml tree has finitely many zeros in any bounded interval
-         --    (depth1_finite_zeros_real + induction: ceml(t1,t2) zeroes are determined by
-         --     exp(t1.re) = log|t2|, which has finitely many solutions if t1,t2 have finitely many)
-         -- 2. sin(nπ) = 0 for all n ∈ ℤ — infinitely many zeros in any interval [a, a+2π·N]
-         -- 3. Contradiction: EML_k trees cannot match a function with infinitely many zeros
-
 -- ============================================================
 -- 6. Sorry Census
 -- ============================================================
 
 /-
-SORRY CENSUS (current):
-  1. depth1_finite_zeros_real — depends on eml_tree_analytic (InfiniteZerosBarrier.lean)
-     Location: EMLDepth.lean, lemma depth1_finite_zeros_real
-     Status: NON-BLOCKING once eml_tree_analytic is proved
-     Path: Use eml_tree_analytic.mono + analytic_finite_zeros_compact (now proved)
+SORRY CENSUS (current — this file):
+  0 sorries in EMLDepth.lean.
 
-  2. sin_not_in_real_EML_k — finite zeros induction (HARD)
-     Location: EMLDepth.lean, theorem sin_not_in_real_EML_k
-     Status: BLOCKING — needs depth1_finite_zeros_real + induction
-     Path: Prove by induction that EML_k functions have finitely many zeros,
-           then contradict with sin's infinite zeros.
-
-Total sorries: 2
-Blocking sorries: 1 (sin_not_in_real_EML_k depends on depth1_finite_zeros_real)
+  depth1_finite_zeros_real and sin_not_in_real_EML_k have been moved to
+  InfiniteZerosBarrier.lean to avoid circular imports.
+  depth1_finite_zeros_real is now proved (0 sorry) in InfiniteZerosBarrier.lean.
+  sin_not_in_real_EML_k remains sorry'd (o-minimal theory needed) there.
 -/
 
 -- ============================================================

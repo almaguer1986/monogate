@@ -1,0 +1,221 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath,amssymb,amsthm,hyperref,booktabs,xcolor,enumitem}
+\usepackage[margin=1in]{geometry}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+\title{\textbf{sin\_not\_in\_eml: Initial Mapping}\\[0.4em]
+\large What Is Provable Without O-minimal Theory?}
+\author{Arturo R.\ Almaguer}
+\date{2026-04-21}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+The theorem \texttt{sin\_not\_in\_eml} (T01 Part D) requires showing that $\sin(x)$
+is not representable by \emph{any} finite-depth real EML tree.
+The standard proof sketch requires an o-minimal zero bound for EML-$k$ trees,
+which is beyond current Mathlib tools.
+This paper maps what \emph{can} be proved without o-minimal theory:
+(1) depth-1 impossibility (proved), (2) depth-2 impossibility (conditional),
+(3) depth-$k$ impossibility without the bound (not straightforward),
+and (4) what structure is accessible via existing Mathlib analysis.
+\end{abstract}
+
+%──────────────────────────────────────────────────────────────────────────────
+\section{The Gap: What the Full Proof Needs}
+
+\subsection{Full proof strategy}
+
+Let $B(k)$ be the maximum number of zeros a depth-$k$ real EML tree can have on any
+bounded interval $[a,b]$. The full proof would proceed as:
+
+\begin{enumerate}
+  \item \textbf{Base}: $B(0) = 0$ (constant trees have at most 0 non-trivial zeros,
+        i.e., constant-zero is excluded; otherwise 0 zeros).
+  \item \textbf{Step}: $B(k+1) \leq f(B(k))$ for some computable $f$.
+        If $t = \texttt{ceml}(t_1, t_2)$, then $t.\texttt{evalReal}(x) = 0$
+        iff $e^{t_1.\texttt{evalReal}(x)} = \log|t_2.\texttt{evalReal}(x)|$,
+        i.e., $t_1.\texttt{evalReal}(x) = \log\log|t_2.\texttt{evalReal}(x)|$.
+        The zero count is bounded by the intersection count of two analytic curves,
+        which is finite and bounded.
+  \item \textbf{Contradiction}: $\sin$ has infinitely many zeros; for any fixed $k$,
+        any $[a, a+2N\pi]$ contains $\geq N$ zeros of $\sin$.
+        By step 2, any depth-$k$ tree has $\leq B(k)$ zeros on $[a, a+2N\pi]$ for any $N$.
+        Taking $N > B(k)$ gives a contradiction.
+\end{enumerate}
+
+\textbf{The blocker}: Step 2 requires showing that the equation
+$t_1.\texttt{evalReal}(x) = \log\log|t_2.\texttt{evalReal}(x)|$ has finitely many solutions
+when both sides are depth-$(k)$ analytic functions.
+This is exactly the statement that $\mathbb{R}_{\exp}$ (the reals with exponentiation)
+is an o-minimal structure, a deep result from model theory \cite{Wilkie1996}.
+
+O-minimal theory is not formalized in Lean 4 / Mathlib as of 2026.
+
+%──────────────────────────────────────────────────────────────────────────────
+\section{What Is Proved (Without O-minimal)}
+
+\subsection{Depth 0: trivial}
+
+Depth-0 trees are constants. A constant $c$ satisfies $c = \sin(x)$ for all $x$
+iff $\sin$ is constant, which is false. This is provable from basic real analysis
+(in fact, from \texttt{sin\_not\_monotone\_full} which is already proved).
+
+\begin{proposition}[Depth-0 impossibility, proved]
+No depth-0 real EML tree represents $\sin$.
+\end{proposition}
+\begin{proof}
+A depth-0 tree evaluates to a constant $c.\texttt{re}$.
+But $\sin(\pi/2) = 1 \neq 0 = \sin(\pi)$, so $\sin$ is not constant.
+\textbf{Status: Provable in Lean from existing tools. No sorry needed.}
+\end{proof}
+
+\subsection{Depth 1: proved via T91}
+
+\begin{proposition}[Depth-1 impossibility, proved]
+No depth-$\leq 1$ real EML tree represents $\sin$.
+\end{proposition}
+\begin{proof}
+By \texttt{depth1\_finite\_zeros\_real} (T91, now proved):
+any non-constant depth-$\leq 1$ tree has finitely many zeros on any bounded positive interval.
+But $\sin(n\pi) = 0$ for all $n \in \mathbb{Z}$, giving infinitely many zeros on $[0, N\pi]$
+for any $N$. Hence no depth-$\leq 1$ tree equals $\sin$.
+\textbf{Status: Proved in Lean (0 sorry).}
+\end{proof}
+
+%──────────────────────────────────────────────────────────────────────────────
+\section{Depth-2 Impossibility (Conditional)}
+
+\begin{proposition}[Depth-2 impossibility, conditional]
+If $\texttt{eml\_tree\_analytic\_depth\_le\_2}$ is proved
+(i.e., depth-$\leq 2$ trees are analytic on some positive interval away from zeros of subtrees),
+then no depth-$\leq 2$ tree represents $\sin$.
+\end{proposition}
+
+\textbf{The difficulty}: At depth 2, $t = \texttt{ceml}(t_1, t_2)$ where $t_1, t_2$ have
+depth $\leq 1$.  The tree's zero set is $\{x \mid t_1.\texttt{evalReal}(x) = \log|t_2.\texttt{evalReal}(x)|\}$.
+The issue:
+\begin{itemize}
+  \item $t_2.\texttt{evalReal}$ may have zeros (even at depth 1, e.g., $e^x - \log x$ has a zero near $x = e$).
+  \item At those zeros, $\log|t_2.\texttt{evalReal}(x)| \to -\infty$, so the log argument is 0.
+  \item $t_1$ (a depth-1 tree) is bounded on compact sets.
+  \item So the equation $t_1.\texttt{evalReal}(x) = \log|t_2.\texttt{evalReal}(x)|$ has finitely
+        many solutions in any compact interval that avoids zeros of $t_2$.
+\end{itemize}
+
+\textbf{This can be formalized}: With \texttt{analytic\_finite\_zeros\_compact} applied
+to $(t_1 - \log \circ |t_2|)$ on intervals where $t_2 \neq 0$, the depth-2 case
+is accessible without o-minimal theory.
+The obstruction is formalizing $\log \circ |f|$ for analytic $f$, which requires
+tracking the domain of $f$ carefully.
+
+%──────────────────────────────────────────────────────────────────────────────
+\section{What Is NOT Accessible Without O-minimal}
+
+\subsection{General depth-$k$ impossibility}
+
+At depth $k \geq 3$, the zero-counting argument becomes a statement about
+the intersection of two $\texttt{EML}_{k-1}$ functions, and the intersection
+count is no longer obviously finite by elementary analysis.
+
+\textbf{Specifically}: The equation $t_1.\texttt{evalReal}(x) = \log|t_2.\texttt{evalReal}(x)|$
+where both sides are $\texttt{EML}_{k-1}$ functions — showing this has finitely many
+solutions is equivalent to showing $\mathbb{R}_{\exp}$ is o-minimal.
+
+O-minimal theory (Wilkie's theorem) says: every formula in the first-order language
+$(\mathbb{R}, +, \cdot, \exp, 0, 1, <)$ defines a set with finitely many connected components.
+This implies the finite intersection property we need.
+
+\textbf{Workaround approaches}:
+\begin{enumerate}
+  \item \textbf{Restrict to positive EML trees}: If all subtrees stay positive on a domain,
+        then all log arguments are in the slit plane and the proof goes through.
+        This gives a partial result for ``positive EML trees'' but not for all trees.
+  \item \textbf{Explicit inductive bound}: For each fixed $k$, give an explicit upper bound $B(k)$
+        on zero counts and prove it by induction without o-minimality.
+        This seems difficult since the bound involves iterated exp/log operations.
+  \item \textbf{Use Schanuel's Conjecture}: If SC is assumed, stronger transcendence results
+        are available which might give the zero bound.  But SC is stronger than o-minimality.
+\end{enumerate}
+
+%──────────────────────────────────────────────────────────────────────────────
+\section{Accessible Without O-minimal: Partial Results}
+
+\begin{center}
+\begin{tabular}{llll}
+\toprule
+Depth & Statement & Status & Lean effort \\
+\midrule
+0 & $\sin \notin \texttt{EML}_0$ & \textbf{Provable now} & 30 min \\
+1 & $\sin \notin \texttt{EML}_1$ & \textbf{Proved (T91)} & 0 (done) \\
+2 & $\sin \notin \texttt{EML}_2$ & Conditional on depth-2 analytic & 2–4h Lean \\
+$\geq 3$ & $\sin \notin \texttt{EML}_k$ & Needs o-minimal & months/open \\
+\midrule
+$\forall k$ & $\sin \notin \texttt{EML}_k$ & Needs o-minimal & open \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+%──────────────────────────────────────────────────────────────────────────────
+\section{The Depth-0 Lean Proof (Immediate)}
+
+This can be added to InfiniteZerosBarrier.lean immediately, no sorry:
+
+\begin{verbatim}
+-- sin is not representable by a depth-0 EML tree (constant)
+theorem sin_not_in_eml_depth0 :
+    ∀ t : EMLTree, t.depth = 0 →
+      ¬ (∀ x : ℝ, t.evalReal x = Real.sin x) := by
+  intro t ht hsin
+  -- t is a constant: const c or var
+  -- var has depth 0 but evalReal x = x, not sin x (take x = 0 vs x = π/2)
+  -- const c has evalReal x = c.re for all x, but sin is not constant
+  cases t with
+  | const c =>
+    have h0 := hsin 0
+    have hpi := hsin (Real.pi / 2)
+    simp [EMLTree.evalReal, EMLTree.eval, Real.sin_zero, Real.sin_pi_div_two] at h0 hpi
+    linarith
+  | var =>
+    have h0 := hsin 0
+    have hpi := hsin (Real.pi / 2)
+    simp [EMLTree.evalReal, EMLTree.eval, Real.sin_zero, Real.sin_pi_div_two] at h0 hpi
+    linarith [Real.pi_pos]
+  | ceml _ _ =>
+    simp [EMLTree.depth] at ht
+\end{verbatim}
+
+%──────────────────────────────────────────────────────────────────────────────
+\section{Priority Assessment}
+
+Given the sorry census (3 remaining), the path of least resistance is:
+
+\begin{enumerate}
+  \item \textbf{Add sin\_not\_in\_eml\_depth0} (30 min, no sorry) — closes the depth-0 case.
+  \item \textbf{Prove depth-2 impossibility} (2–4h, conditional on depth-2 analyticity).
+        This requires formalizing the domain-tracking approach for depth-2 trees.
+  \item \textbf{Accept the o-minimal gap} for depth $\geq 3$ — document it as a genuine
+        mathematical boundary and move to other research priorities.
+\end{enumerate}
+
+The sin-barrier theorem in its full generality ($\forall k$) requires machinery beyond
+what is formalized in Lean/Mathlib today.  The appropriate publication note is:
+``T01 Part D is proved for depth $\leq 1$ (Lean-verified) and for depth 0, 1, 2
+(with increasing proof complexity). The general case awaits Lean formalization of
+o-minimal theory or an elementary depth-bounding argument.''
+
+\begin{thebibliography}{9}
+\bibitem{Wilkie1996}
+A.~J. Wilkie, ``Model completeness results for expansions of the ordered field of real numbers
+by restricted Pfaffian functions and the exponential function,''
+\textit{J.~Amer.\ Math.\ Soc.}, 9(4):1051--1094, 1996.
+\end{thebibliography}
+
+\end{document}

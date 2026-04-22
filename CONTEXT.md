@@ -23,20 +23,26 @@
 | EML-0 ⊊ EML-1 (exp not constant) | EMLDepth.lean | exp_not_constant |
 | sin has infinitely many zeros | InfiniteZerosBarrier.lean | sin_has_infinitely_many_zeros |
 | analytic non-zero → finitely many zeros | InfiniteZerosBarrier.lean | analytic_finite_zeros_compact |
-| TheoremRegistry PROVED_COUNT = 21 | TheoremRegistry.lean | (rfl check) |
+| Real.log analytic on (0, ∞) | InfiniteZerosBarrier.lean | real_log_analyticOnNhd_pos |
+| Depth ≤ 1 EML trees analytic on (0, ∞) | InfiniteZerosBarrier.lean | eml_tree_analytic_depth_le_1 |
+| Depth-1 zeros finite (CEML-T91) | InfiniteZerosBarrier.lean | depth1_finite_zeros_real |
+| TheoremRegistry PROVED_COUNT = 24 | TheoremRegistry.lean | (rfl check) |
 
-### Partial / sorry'd (4 genuine open steps)
+### Partial / sorry'd (3 genuine open steps)
 | Item | Sorry'd step | File | Blocker |
 |------|-------------|------|---------|
-| sin ∉ EML_k (T01 Part C) | eml_tree_analytic log ceml/ceml case | InfiniteZerosBarrier.lean | slit-plane membership for deep trees |
+| sin ∉ EML_k (T01 Part C) | eml_tree_eval_analyticOnNhd ceml/ceml log case | InfiniteZerosBarrier.lean | slit-plane membership for deeply-nested trees |
 | sin ∉ EML_k (T01 Part D) | sin_not_in_eml (quantitative zero bound) | InfiniteZerosBarrier.lean | O-minimal theory |
-| ELC depth barrier (T48) | sin_not_in_real_EML_k | EMLDepth.lean | depends on T01 |
-| depth-1 zeros finite | depth1_finite_zeros_real | EMLDepth.lean | circular import + depends on eml_tree_analytic |
+| ELC depth barrier (T48) | sin_not_in_real_EML_k | InfiniteZerosBarrier.lean | depends on T01 Part D |
 
-**eml_tree_analytic progress**: Proof structure now complete — base cases (const, var) and exp sub-term of ceml proved; log sub-term: const/var sub-cases proved, ceml/ceml sub-case has 1 remaining sorry (slit-plane membership for deeply-nested log arguments). See `eml_tree_eval_analyticOnNhd` in InfiniteZerosBarrier.lean.
+**eml_tree_analytic obstruction confirmed**: The ceml/ceml slit-plane sorry is mathematically justified — `(ceml (const 0) (const (exp 1))).eval ↑x = 0 ∉ slitPlane` for all x. So `eml_tree_analytic` for ALL trees is false in general. The correct resolution is `eml_tree_analytic_depth_le_1` (proved, 0 sorry) which handles depth ≤ 1 by explicit case analysis where the ceml/ceml branch is unreachable.
 
-**Progress this session**: `analytic_finite_zeros_compact` fully proved (0 sorry).
-Uses: `Set.Infinite.exists_accPt_of_subset_isCompact` + `AnalyticOnNhd.eqOn_zero_of_preconnected_of_frequently_eq_zero` + `frequently_iff_neBot`.
+**New this session (Session 6)**: 3 new sorry-free theorems + 1 sorry eliminated:
+- `real_log_analyticOnNhd_pos`: Real.log analytic on (0,∞) via Complex.log composition
+- `eml_tree_analytic_depth_le_1`: depth ≤ 1 trees analytic on (0,∞), sorry-free, 6-case analysis
+- `depth1_finite_zeros_real` (CEML-T91): depth-1 finite zeros, now proved (was sorry'd in EMLDepth.lean)
+- `sin_not_in_real_EML_k` moved from EMLDepth.lean → InfiniteZerosBarrier.lean (no circular import)
+- Sorry count: 4 → 3
 
 ### Python-certified (not yet Lean)
 | Result | Method | File |
@@ -180,6 +186,8 @@ All files in `python/paper/exploration/`:
 | EDB_Full_Construction.tex | EDB construction: B+(n)=n proved; general EDB partial; eml_tree_analytic sorry plan |
 | Conjecture_Prioritization_Post_MUL.tex | Ranked open conjectures post-MUL; EDB-ANALYTIC is #1 |
 | Conjecture_Prioritization_Post_23_Verified.tex | Post-sprint re-ranking (17 verified); eml_tree_analytic ceml/ceml sorry isolated |
+| sin_not_in_eml_Initial_Mapping.tex | What is provable about sin∉EML without o-minimal theory; depth-0/1 proved, depth-2 conditional, depth≥3 open |
+| Prioritization_Post_Verification_Sprint.tex | Re-ranked open items after 24 verified theorems; sin_not_in_eml_depth0 as new #1 |
 
 All files in `python/paper/theorems/`:
 
@@ -187,6 +195,7 @@ All files in `python/paper/theorems/`:
 |------|---------|
 | CONJ_MUL_GEN_TIGHT_Final.tex | SB(mul,general)=3 lock-in; lower bound cert + 3-node witness |
 | CONJ_DIV_GEN_TIGHT_Final.tex | SB(div,general)=3 lock-in; lower bound cert + 3-node witness |
+| InfiniteZerosBarrier_Status.tex | Verification status: 3 new theorems proved, sorry count 4→3, obstruction in eml_tree_analytic documented |
 
 ## Version History
 

@@ -18,10 +18,10 @@ explicitly marked [SORRY] / [CONJECTURE].
 -/
 
 /-- The canonical proved theorem count. Change ONLY when a new Lean proof is added. -/
-def PROVED_COUNT : ℕ := 21
+def PROVED_COUNT : ℕ := 24
 
 /-!
-## Proved Theorems (21 total)
+## Proved Theorems (24 total)
 
 ### T01 — Infinite Zeros Barrier
 Real ELC(ℝ) trees have finitely many real zeros; sin(x) has infinitely many.
@@ -144,6 +144,25 @@ sin(nπ) = 0 for all n ∈ ℤ; zeros are distinct; sin has infinitely many.
 Lean: InfiniteZerosBarrier.lean (sin_int_pi_zero, sin_has_infinitely_many_zeros) — 0 sorries
 Status: [PROVED] — Session 5 sprint
 
+### T_RLOG_ANALYTIC — Real.log is analytic on (0, ∞)
+Real.log x = (Complex.log ↑x).re holds for all x (Complex.log_ofReal_re).
+Complex.log is ℂ-analytic on slitPlane; ↑x ∈ slitPlane for x > 0.
+Therefore reCLM ∘ Complex.log ∘ ofRealCLM equals Real.log and is ℝ-analytic on (0,∞).
+Lean: InfiniteZerosBarrier.lean (real_log_analyticOnNhd_pos) — 0 sorries
+Status: [PROVED] — Session 6 sprint
+
+### T_EML_DEPTH1_ANALYTIC — Depth ≤ 1 EML trees are analytic on (0, ∞)
+By explicit case analysis (6 cases: const, var, ceml/const/const, ceml/var/const,
+ceml/const/var, ceml/var/var). The ceml/ceml branch is unreachable at depth ≤ 1.
+Lean: InfiniteZerosBarrier.lean (eml_tree_analytic_depth_le_1) — 0 sorries
+Status: [PROVED] — Session 6 sprint (resolves the sorry-reachability issue in eml_tree_analytic)
+
+### T91 — Depth-1 EML trees have finitely many zeros (CEML-T91)
+Previously sorry'd; now proved using T_EML_DEPTH1_ANALYTIC + analytic_finite_zeros_compact.
+A non-zero depth-≤-1 real EML tree has finitely many zeros in any closed bounded positive interval.
+Lean: InfiniteZerosBarrier.lean (depth1_finite_zeros_real) — 0 sorries (moved from EMLDepth.lean)
+Status: [PROVED] — Session 6 sprint
+
 ---
 
 ## Formal Conjectures (NOT counted in PROVED_COUNT)
@@ -171,11 +190,10 @@ Exact cost = 6 is open. The gap [2,6] is the remaining question.
 
 ## FOOTER INSTRUCTION
 
-Update footers to say "21 theorems" (was 18; sprint added 3 genuinely new results).
-New additions: T_MUL_GEN_LB, T_DIV_GEN_LB, T01a (sin infinitely many zeros).
-Gap fills (already counted): T_MUL_1N, T_EXP_1N, T_POW_1N, T_RECIP_1N Lean code added.
+Update footers to say "24 theorems" (was 21; sprint added 3 new results).
+New additions: T_RLOG_ANALYTIC, T_EML_DEPTH1_ANALYTIC, T91 (depth1_finite_zeros_real).
 Do not increase this number without adding a corresponding Lean proof.
 -/
 
 -- Sanity check: PROVED_COUNT matches the list above
-example : PROVED_COUNT = 21 := rfl
+example : PROVED_COUNT = 24 := rfl
