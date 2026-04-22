@@ -136,6 +136,36 @@ const GAMES = [
     desc: "Fourier synthesis where every harmonic is one complex EML node: Im(eml(i·2πft,1))=sin(2πft). A sine wave costs 1 node. A violin costs 12. Adjust harmonic amplitudes with sliders, watch the waveform and spectrum update live, then play the sound.",
     color: "#5ec47a", icon: "♫", phase: "Harmonics", teaches: "The EML-Fourier identity and how timbre complexity maps to node count",
   },
+  {
+    id: "em-cost", title: "EM Cost Calculator", status: "play", category: "experience",
+    tagline: "How many F16 nodes does each EM formula cost?",
+    desc: "Six canonical electromagnetism formulas with interactive per-operator cost breakdowns. Planck radiation is 14n entirely inside ELC (no trig needed). Poynting-via-double-angle costs 14n vs 10n for the direct form — identities can INFLATE cost. Plus a ~30-entry cross-domain catalog with search and filter; full 315+ equation catalog links to blog posts.",
+    color: "#4facfe", icon: "∑", phase: "Measurement", teaches: "F16-node accounting: where thermal physics is cheap and where identities backfire",
+  },
+  {
+    id: "conjugacy", title: "Conjugacy Viewer", status: "play", category: "experience",
+    tagline: "Two cobwebs, one dynamics.",
+    desc: "Side-by-side cobweb diagrams for the EAL self-map f(x)=exp(x)+ln(x) and the EXL self-map g(y)=exp(y)·ln(y). Slider sets x₀; play steps both orbits in sync. Orbits on the right are the exp-image of orbits on the left — the conjugacy made visible. Fixed points at 0.344 and 1.411, shared multiplier 4.3164206…. Lean: SelfMapConjugacy.lean.",
+    color: "#a18cd1", icon: "⇌", phase: "Dynamics", teaches: "Topological conjugacy: why different maps can share every dynamical invariant",
+  },
+  {
+    id: "mandelbrot-grid", title: "Mandelbrot Grid", status: "play", category: "experience",
+    tagline: "All 16 F16 sets side by side.",
+    desc: "A comparison grid of all 16 F16 Mandelbrot-analogues, rendered tile-by-tile. Area and box-counting dimension (from the Session C 300×300 sweep) under each tile. Green border = complete family (exp(+z)), amber = approx family (exp(−z)). Sort by name, area, or box-dim; filter by family.",
+    color: "#5ec47a", icon: "▣", phase: "Fractal", teaches: "How the 16 F16 operators partition into two families and how area/dimension differs between them",
+  },
+  {
+    id: "julia-gallery", title: "Julia Set Gallery", status: "play", category: "experience",
+    tagline: "40 Julia sets, 4 exceptions.",
+    desc: "Eight F16 operators × five c-values = 40 Julia sets, rendered tile-by-tile. Click any tile to expand. The exceptions: EXL/DEXL at c=1 and EDL/DEDL at c=0 give full-fill Julias (Fatou = ℂ). DEAL at c=−0.5+0.5i degenerates to dust (0% connected). EAL at c=2+i is entirely empty. The rest are the canonical Mandelbrot-neighborhood Julias.",
+    color: "#7af0c8", icon: "❈", phase: "Fractal", teaches: "Where Julia connectedness breaks — the 4 exceptional operators-on-c pairs",
+  },
+  {
+    id: "bifurcation", title: "Bifurcation Viewer", status: "play", category: "experience",
+    tagline: "Where the multiplicative operators fall into chaos.",
+    desc: "Real-slice parameter sweeps for 8 F16 operators. Iterate z_{n+1}=op(z_n, c) from z_0=0 for each c ∈ [−3,3]; plot the tail. EAL/EML/EDL collapse to period-2 bands. EXL and DEXL show chaotic sweeps; DEXL carries a period-3 Sharkovskii fingerprint — by the theorem, every other period is there too. Hover → audio on the current c.",
+    color: "#0fd38d", icon: "∿", phase: "Dynamics", teaches: "Which F16 operators are chaotic and why period 3 implies everything else",
+  },
 ];
 
 const STATUS_CONFIG = {

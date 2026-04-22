@@ -22,6 +22,11 @@ import EMLSynth from "./eml-synth";
 import FractalStudio from "./fractal-studio";
 import ZenGarden from "./zen-garden";
 import EMLSynthesizer from "./eml-synthesizer";
+import BifurcationViewer from "./bifurcation-viewer";
+import JuliaGallery from "./julia-gallery";
+import MandelbrotGrid from "./mandelbrot-grid";
+import ConjugacyViewer from "./conjugacy-viewer";
+import EmCostCalculator from "./em-cost-calculator";
 
 function BackButton() {
   const nav = useNavigate();
@@ -82,6 +87,11 @@ export default function GamesApp() {
         <Route path="/fractal-explorer" element={<Navigate to="/fractal-studio" replace />} />
         <Route path="/zen-garden" element={<Game><ZenGarden /></Game>} />
         <Route path="/eml-synthesizer" element={<Game><EMLSynthesizer /></Game>} />
+        <Route path="/bifurcation" element={<Game><BifurcationViewer /></Game>} />
+        <Route path="/julia-gallery" element={<Game><JuliaGallery /></Game>} />
+        <Route path="/mandelbrot-grid" element={<Game><MandelbrotGrid /></Game>} />
+        <Route path="/conjugacy" element={<Game><ConjugacyViewer /></Game>} />
+        <Route path="/em-cost" element={<Game><EmCostCalculator /></Game>} />
       </Routes>
     </BrowserRouter>
   );

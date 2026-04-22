@@ -10,6 +10,7 @@
 // the same operator.
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import { ORBIT_BY_OP, SHARKOVSKII_OPS } from "./orbit-data.js";
 
 // ─── Operator definitions ────────────────────────────────────────────────────
 
@@ -287,6 +288,9 @@ export default function FractalStudio() {
   const [loop, setLoop] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
   const [scanX, setScanX] = useState(0);
+  const [orbitPlayback, setOrbitPlayback] = useState(false);
+  const [orbitStep, setOrbitStep] = useState(0);
+  const oscCanvasRef = useRef(null);
 
   // Audio refs (not state; we don't want re-renders on every oscillator tick)
   const audioRef = useRef(null);
@@ -600,6 +604,8 @@ export default function FractalStudio() {
   const SEQ_ROWS = 8;
   const scanRef = useRef(0);
   const lastScheduledColRef = useRef(-1);
+  const orbitIdxRef = useRef(0);
+  const lastScheduledOrbitRef = useRef(-1);
 
   useEffect(() => {
     if (mode !== "sequencer" || !isPlaying) return;
@@ -607,30 +613,66 @@ export default function FractalStudio() {
     let rafId = 0;
     let last = performance.now();
     lastScheduledColRef.current = -1;
+    lastScheduledOrbitRef.current = -1;
+
+    // Orbit dataset (present only for the 8 F16 operators we sampled).
+    const orbit = orbitPlayback ? ORBIT_BY_OP[op] : null;
 
     function step(now) {
       const dt = (now - last) / 1000;
       last = now;
-      // One beat = one column of W pixels divided by BPM-derived column rate.
-      // At 120 BPM with W=680, one full sweep in 4 beats = 2 sec.
-      const pxPerSec = (W / 4) * (bpm / 60);
-      scanRef.current += pxPerSec * dt;
-      if (scanRef.current >= W) {
-        if (loop) {
-          scanRef.current = 0;
-          lastScheduledColRef.current = -1;
-        } else {
-          scanRef.current = W;
-          setIsPlaying(false);
-        }
-      }
-      setScanX(scanRef.current);
 
-      // Schedule any new integer columns we've crossed.
-      const targetCol = Math.floor(scanRef.current);
-      if (targetCol > lastScheduledColRef.current) {
-        scheduleColumn(targetCol);
-        lastScheduledColRef.current = targetCol;
+      if (orbit) {
+        // Orbit playback: step through 256 orbit samples at BPM-derived rate.
+        // At 120 BPM, one full orbit loop ≈ 4 seconds (~16 samples/sec).
+        const samplesPerSec = (orbit.re.length / 4) * (bpm / 120);
+        orbitIdxRef.current += samplesPerSec * dt;
+        if (orbitIdxRef.current >= orbit.re.length) {
+          if (loop) {
+            orbitIdxRef.current = 0;
+            lastScheduledOrbitRef.current = -1;
+          } else {
+            orbitIdxRef.current = orbit.re.length - 1;
+            setIsPlaying(false);
+          }
+        }
+        const floatIdx = orbitIdxRef.current;
+        const intIdx = Math.floor(floatIdx);
+        setOrbitStep(intIdx);
+
+        // Visual: scan line = x-position mapped from orbit Re value in its range.
+        const [reLo, reHi] = orbit.re_range;
+        const span = Math.max(reHi - reLo, 1e-9);
+        const reNow = orbit.re[Math.min(intIdx, orbit.re.length - 1)] ?? 0;
+        const px = ((reNow - reLo) / span) * W;
+        setScanX(Math.max(0, Math.min(W - 1, px)));
+
+        if (intIdx > lastScheduledOrbitRef.current) {
+          scheduleOrbitSample(orbit, intIdx);
+          lastScheduledOrbitRef.current = intIdx;
+        }
+      } else {
+        // One beat = one column of W pixels divided by BPM-derived column rate.
+        // At 120 BPM with W=680, one full sweep in 4 beats = 2 sec.
+        const pxPerSec = (W / 4) * (bpm / 60);
+        scanRef.current += pxPerSec * dt;
+        if (scanRef.current >= W) {
+          if (loop) {
+            scanRef.current = 0;
+            lastScheduledColRef.current = -1;
+          } else {
+            scanRef.current = W;
+            setIsPlaying(false);
+          }
+        }
+        setScanX(scanRef.current);
+
+        // Schedule any new integer columns we've crossed.
+        const targetCol = Math.floor(scanRef.current);
+        if (targetCol > lastScheduledColRef.current) {
+          scheduleColumn(targetCol);
+          lastScheduledColRef.current = targetCol;
+        }
       }
 
       rafId = requestAnimationFrame(step);
@@ -638,7 +680,27 @@ export default function FractalStudio() {
     rafId = requestAnimationFrame(step);
     return () => cancelAnimationFrame(rafId);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mode, isPlaying, bpm, loop, op, op2, morphOn, morphT, maxIter, view]);
+  }, [mode, isPlaying, bpm, loop, op, op2, morphOn, morphT, maxIter, view, orbitPlayback]);
+
+  function scheduleOrbitSample(orbit, idx) {
+    const audio = audioRef.current;
+    if (!audio) return;
+    const re = orbit.re[idx];
+    const im = orbit.im[idx];
+    if (!Number.isFinite(re) || !Number.isFinite(im)) return;
+    // Map magnitude to frequency over a 2-octave range (220Hz..880Hz).
+    const mag = Math.hypot(re, im);
+    const [reLo, reHi] = orbit.re_range;
+    const [imLo, imHi] = orbit.im_range;
+    const magMax = Math.max(
+      Math.hypot(reLo, imLo), Math.hypot(reLo, imHi),
+      Math.hypot(reHi, imLo), Math.hypot(reHi, imHi), 1e-6
+    );
+    const t = Math.min(mag / magMax, 1);
+    const freq = 220 * Math.pow(4, t);
+    const when = audio.ctx.currentTime + 0.02;
+    scheduleNote(audio, when, freq, 0.14, 0.05);
+  }
 
   function scheduleColumn(px) {
     const audio = audioRef.current;
@@ -669,9 +731,85 @@ export default function FractalStudio() {
     ensureAudio();
     scanRef.current = 0;
     lastScheduledColRef.current = -1;
+    orbitIdxRef.current = 0;
+    lastScheduledOrbitRef.current = -1;
     setScanX(0);
+    setOrbitStep(0);
     setIsPlaying(true);
   }
+
+  // ── Oscilloscope: draw the orbit trace whenever orbit playback is on ─────
+  useEffect(() => {
+    if (mode !== "sequencer" || !orbitPlayback) return;
+    const canvas = oscCanvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    const orbit = ORBIT_BY_OP[op];
+    if (!orbit) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      return;
+    }
+    const CW = canvas.width;
+    const CH = canvas.height;
+    ctx.clearRect(0, 0, CW, CH);
+
+    // Background panel
+    ctx.fillStyle = "rgba(8,8,12,0.82)";
+    ctx.fillRect(0, 0, CW, CH);
+    ctx.strokeStyle = "rgba(255,255,255,0.1)";
+    ctx.strokeRect(0.5, 0.5, CW - 1, CH - 1);
+
+    // Axes
+    const cx = CW / 2;
+    const cy = CH / 2;
+    ctx.strokeStyle = "rgba(255,255,255,0.08)";
+    ctx.beginPath();
+    ctx.moveTo(0, cy); ctx.lineTo(CW, cy);
+    ctx.moveTo(cx, 0); ctx.lineTo(cx, CH);
+    ctx.stroke();
+
+    const [reLo, reHi] = orbit.re_range;
+    const [imLo, imHi] = orbit.im_range;
+    const rePad = Math.max((reHi - reLo) * 0.1, 0.1);
+    const imPad = Math.max((imHi - imLo) * 0.1, 0.1);
+    const reMin = reLo - rePad, reMax = reHi + rePad;
+    const imMin = imLo - imPad, imMax = imHi + imPad;
+    const toX = (r) => ((r - reMin) / (reMax - reMin)) * CW;
+    const toY = (i) => CH - ((i - imMin) / (imMax - imMin)) * CH;
+
+    // Static trace of the full orbit (faded)
+    ctx.strokeStyle = OPERATORS[op].color + "55";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (let i = 0; i < orbit.re.length; i++) {
+      const x = toX(orbit.re[i]);
+      const y = toY(orbit.im[i]);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    // Active segment up to current orbit step (solid, bright)
+    const cur = Math.min(orbitStep, orbit.re.length - 1);
+    const TAIL = 48;
+    const tailStart = Math.max(0, cur - TAIL);
+    ctx.strokeStyle = OPERATORS[op].color;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    for (let i = tailStart; i <= cur; i++) {
+      const x = toX(orbit.re[i]);
+      const y = toY(orbit.im[i]);
+      if (i === tailStart) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    // Current point
+    const px = toX(orbit.re[cur]);
+    const py = toY(orbit.im[cur]);
+    ctx.fillStyle = OPERATORS[op].color;
+    ctx.beginPath();
+    ctx.arc(px, py, 3.5, 0, Math.PI * 2);
+    ctx.fill();
+  }, [mode, orbitPlayback, orbitStep, op]);
 
   // ── Misc actions ─────────────────────────────────────────────────────────
   const resetView = () => { setHistory((h) => [...h, view]); setView(DEFAULT_VIEW); };
@@ -860,6 +998,38 @@ export default function FractalStudio() {
           />
         )}
 
+        {/* Orbit oscilloscope overlay (Sequencer + orbit-playback only) */}
+        {mode === "sequencer" && orbitPlayback && ORBIT_BY_OP[op] && (
+          <div style={S.oscWrap}>
+            <div style={S.oscHeader}>
+              <span style={{ color: opColor, fontWeight: 600 }}>orbit</span>
+              <span style={S.oscMeta}>
+                {ORBIT_BY_OP[op].formula} · c={ORBIT_BY_OP[op].c[0]}
+                {ORBIT_BY_OP[op].c[1] >= 0 ? "+" : ""}
+                {ORBIT_BY_OP[op].c[1]}i
+              </span>
+              {SHARKOVSKII_OPS.includes(op) && (
+                <span style={S.sharkBadge}>Sharkovskii · period 3</span>
+              )}
+              {ORBIT_BY_OP[op].period && ORBIT_BY_OP[op].period > 1 &&
+                !SHARKOVSKII_OPS.includes(op) && (
+                <span style={S.periodBadge}>
+                  period {ORBIT_BY_OP[op].period}
+                </span>
+              )}
+            </div>
+            <canvas
+              ref={oscCanvasRef}
+              width={260}
+              height={140}
+              style={S.oscCanvas}
+            />
+            <div style={S.oscFoot}>
+              step {orbitStep} / {ORBIT_BY_OP[op].re.length}
+            </div>
+          </div>
+        )}
+
         {rendering && <div style={{ ...S.renderTag, color: opColor }}>rendering...</div>}
 
         <div style={S.gradientBar}>
@@ -965,6 +1135,26 @@ export default function FractalStudio() {
               loop {loop ? "↻" : "→"}
             </button>
             <button
+              onClick={() => {
+                setOrbitPlayback((v) => !v);
+                orbitIdxRef.current = 0;
+                lastScheduledOrbitRef.current = -1;
+                setOrbitStep(0);
+              }}
+              disabled={!ORBIT_BY_OP[op]}
+              style={{
+                ...S.btn,
+                background: orbitPlayback ? "rgba(255,255,255,0.12)" : "transparent",
+                color: orbitPlayback ? "#e8e8f0" : "rgba(255,255,255,0.4)",
+                opacity: ORBIT_BY_OP[op] ? 1 : 0.35,
+              }}
+              title={ORBIT_BY_OP[op]
+                ? "Drive tones from the operator's real orbit instead of the scan line"
+                : "No embedded orbit for this operator"}
+            >
+              orbit {orbitPlayback ? "on" : "off"}
+            </button>
+            <button
               onClick={toggleSequencer}
               style={{
                 ...S.btn,
@@ -1017,7 +1207,7 @@ function ModeToggle({ mode, setMode }) {
 const HINT_BY_MODE = {
   visual: "scroll to zoom · drag to pan · 8 operators · 4 palettes",
   audio: "hover to hear · click to lock · up to 6 tones · drag to pan",
-  sequencer: "scan line sweeps the fractal · BPM sets the tempo · switch operators mid-play",
+  sequencer: "scan line or orbit drives tones · BPM sets the tempo · DEXL/DEXN carry period-3 Sharkovskii chaos",
 };
 
 // ─── Inline styles ───────────────────────────────────────────────────────────
@@ -1072,6 +1262,44 @@ const S = {
     cursor: "pointer", textTransform: "capitalize", border: "1px solid",
   },
   divider: { width: 1, height: 20, background: "rgba(255,255,255,0.08)", margin: "0 4px" },
+
+  oscWrap: {
+    position: "absolute",
+    right: 12, bottom: 46,
+    background: "rgba(8,8,12,0.82)",
+    border: "1px solid rgba(255,255,255,0.08)",
+    borderRadius: 6,
+    padding: "8px 10px",
+    pointerEvents: "none",
+    fontSize: 10,
+    lineHeight: 1.3,
+    minWidth: 260,
+  },
+  oscHeader: {
+    display: "flex", alignItems: "center", gap: 8,
+    marginBottom: 6, flexWrap: "wrap",
+  },
+  oscMeta: { color: "rgba(255,255,255,0.45)", fontSize: 9 },
+  oscCanvas: { display: "block", borderRadius: 3 },
+  oscFoot: { marginTop: 6, color: "rgba(255,255,255,0.35)", fontSize: 9 },
+  sharkBadge: {
+    background: "#f87171",
+    color: "#08080c",
+    fontSize: 9,
+    fontWeight: 700,
+    padding: "2px 6px",
+    borderRadius: 3,
+    letterSpacing: "0.04em",
+  },
+  periodBadge: {
+    background: "rgba(252,203,82,0.18)",
+    color: "#fccb52",
+    fontSize: 9,
+    fontWeight: 600,
+    padding: "2px 6px",
+    borderRadius: 3,
+    border: "1px solid rgba(252,203,82,0.4)",
+  },
 
   modeToggleWrap: {
     display: "flex", border: "1px solid rgba(255,255,255,0.1)",
