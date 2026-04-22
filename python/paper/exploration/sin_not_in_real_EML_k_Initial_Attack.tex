@@ -1,0 +1,229 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath,amssymb,amsthm,hyperref,booktabs,xcolor,enumitem}
+\usepackage[margin=1in]{geometry}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\definecolor{proved}{RGB}{40,120,40}
+\definecolor{open}{RGB}{160,50,50}
+\definecolor{partial}{RGB}{160,120,0}
+
+\title{\textbf{Exploration: \texttt{sin\_not\_in\_real\_EML\_k}}\\[0.4em]
+\large Initial Attack: Structural and Analytic Obstructions\\
+\normalsize (Second Remaining Sorry)}
+\author{Arturo R.\ Almaguer}
+\date{2026-04-21}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We explore the second remaining sorry in \texttt{InfiniteZerosBarrier.lean}:
+\texttt{sin\_not\_in\_real\_EML\_k}, which states that the function
+$z \mapsto \sin(z.\mathtt{re})$ is not in $\mathrm{EML}_k$ (the set of complex
+EML tree functions of depth $\leq k$) for any finite $k$.
+We map the relationship between this sorry and \texttt{sin\_not\_in\_eml},
+identify early structural obstructions provable without o-minimal theory,
+and characterize exactly where o-minimality enters.
+\end{abstract}
+
+%──────────────────────────────────────────────────────────────────────────────
+\section{The Target Sorry}
+
+\begin{verbatim}
+theorem sin_not_in_real_EML_k (k : N) :
+    (fun x : C => (Real.sin x.re : C)) NOT in EML_k k := by
+  sorry
+\end{verbatim}
+
+Here $\mathrm{EML}_k$ is the set of $\mathbb{C} \to \mathbb{C}$ functions:
+\[
+  \mathrm{EML}_k = \{f : \mathbb{C} \to \mathbb{C} \mid \exists t : \mathtt{EMLTree},\ t.\mathtt{depth} \leq k \land \forall x,\ f(x) = t.\mathtt{eval}(x)\}.
+\]
+The target function is $F(z) = \sin(z.\mathtt{re})$ — real sine applied to the real part of $z$.
+
+%──────────────────────────────────────────────────────────────────────────────
+\section{Relation to sin\_not\_in\_eml}
+
+\begin{lemma}[Reduction]\label{lem:reduction}
+\texttt{sin\_not\_in\_eml} implies \texttt{sin\_not\_in\_real\_EML\_k}.
+\end{lemma}
+
+\begin{proof}
+Suppose $F \in \mathrm{EML}_k$, i.e., there exists $t$ with $t.\mathtt{depth} \leq k$
+and $F(z) = t.\mathtt{eval}(z)$ for all $z \in \mathbb{C}$.
+Restrict to real inputs: for $x \in \mathbb{R}$, $F(\uparrow\!x) = \sin(x)$.
+And $t.\mathtt{eval}(\uparrow\!x) = \uparrow(t.\mathtt{evalReal}(x))$ when the
+tree is real-valued on real inputs (\textbf{see gap below}).
+If we can equate the real parts, $t.\mathtt{evalReal}(x) = \sin(x)$ for all $x \in \mathbb{R}$.
+This contradicts \texttt{sin\_not\_in\_eml}. \qed (modulo the gap)
+\end{proof}
+
+\subsection{The Reduction Gap}
+
+The step ``$t.\mathtt{eval}(\uparrow\!x) = \uparrow(t.\mathtt{evalReal}(x))$'' requires
+that on real inputs, $t$ produces real outputs. This holds when $t$ has real constants
+and real log arguments everywhere. It is not automatic for trees with complex constants.
+
+Specifically, $t.\mathtt{evalReal}(x) = (t.\mathtt{eval}(\uparrow\!x)).\mathtt{re}$
+by definition. So $t.\mathtt{eval}(\uparrow\!x) = \uparrow(t.\mathtt{evalReal}(x))$
+requires $(t.\mathtt{eval}(\uparrow\!x)).\mathtt{im} = 0$.
+
+\begin{remark}[When real-valuedness holds]
+If all constants in $t$ are real ($c \in \mathbb{R}$) and all log arguments are
+positive reals on $\mathbb{R}_{>0}$, then by induction, $t.\mathtt{eval}(\uparrow\!x)$
+is real for all $x > 0$. This follows from:
+\begin{itemize}[noitemsep]
+  \item $\mathtt{const}\ c$: $c \in \mathbb{R}$ means $c.\mathtt{im} = 0$.
+  \item $\mathtt{var}$: $\uparrow\!x$ is real.
+  \item $\mathtt{ceml}\ t_1\ t_2$: if $t_1, t_2$ produce reals and $t_2 > 0$,
+    then $\exp(\text{real}) - \ln(\text{positive real})$ is real.
+\end{itemize}
+\end{remark}
+
+%──────────────────────────────────────────────────────────────────────────────
+\section{Structural Obstructions Provable Now}
+
+\subsection{Obstruction 1: $F$ is not complex-analytic}
+
+\begin{proposition}[\textcolor{proved}{Provable now}]\label{prop:not-analytic}
+$F(z) = \sin(z.\mathtt{re})$ is \emph{not} complex-analytic at any point.
+\end{proposition}
+
+\begin{proof}
+$F(x + iy) = \sin(x)$ depends only on the real part. By the Cauchy-Riemann equations,
+if $F$ were analytic, $\partial_x \sin(x) = \cos(x)$ would equal $\partial_y 0 = 0$,
+requiring $\cos(x) = 0$ for all $x$ — contradiction. \qed
+\end{proof}
+
+\begin{corollary}[\textcolor{proved}{Provable now}]\label{cor:not-holomorphic}
+If any $t \in \mathrm{EML}_k$ computes only entire (holomorphic everywhere) functions,
+then $F \notin \mathrm{EML}_k$ immediately.
+\end{corollary}
+
+\textbf{Key question}: Are all EML tree functions entire?
+\begin{itemize}[noitemsep]
+  \item \texttt{const}, \texttt{var}: entire.
+  \item $\mathtt{ceml}\ t_1\ t_2$: $\exp(t_1.\mathtt{eval})$ is entire (comp of entire).
+    $\log(t_2.\mathtt{eval})$ is analytic only where $t_2 \neq 0$ and $t_2 \notin \mathbb{R}_{\leq 0}$.
+\end{itemize}
+
+So EML trees are NOT entire in general (log introduces branch cuts).
+The Corollary \ref{cor:not-holomorphic} does not immediately apply.
+
+\subsection{Obstruction 2: Restriction to the real line}
+
+\begin{proposition}[\textcolor{proved}{Provable now — modulo depth-1 result}]
+$F \notin \mathrm{EML}_1$.
+\end{proposition}
+
+\begin{proof}
+If $t \in \mathrm{EML}_1$ with $t.\mathtt{eval} = F$ everywhere on $\mathbb{C}$,
+then in particular $t.\mathtt{eval}(\uparrow\!x) = F(\uparrow\!x) = \uparrow(\sin(x))$
+for all real $x$. Taking real parts: $t.\mathtt{evalReal}(x) = \sin(x)$.
+But $t$ has depth $\leq 1$, and $\sin \notin \mathrm{EML}_1(\mathbb{R})$
+(Proposition 2 of \texttt{sin\_not\_in\_eml\_o\_minimal\_Start.tex}).
+Contradiction. \qed (modulo the real-part extraction step for depth-1 complex trees)
+\end{proof}
+
+\subsection{Obstruction 3: Infinite zeros on the real slice}
+
+\begin{proposition}[\textcolor{partial}{Partial — needs general zero-count bound}]
+For any $t$ with $t.\mathtt{eval} = F$:
+$\{x \in \mathbb{R} \mid t.\mathtt{evalReal}(x) = 0\}$ is infinite.
+\end{proposition}
+
+\begin{proof}
+$t.\mathtt{evalReal}(x) = F(\uparrow\!x).\mathtt{re} = \sin(x).\mathtt{re} = \sin(x)$.
+$\sin(n\pi) = 0$ for all $n \in \mathbb{Z}$, giving infinitely many real zeros. \qed
+\end{proof}
+
+If we additionally prove that any EML tree has finitely many zeros on $\mathbb{R}$
+(the depth-$k$ version of \texttt{depth1\_finite\_zeros\_real}), contradiction follows.
+That depth-$k$ version is the same o-minimal gap as in \texttt{sin\_not\_in\_eml}.
+
+%──────────────────────────────────────────────────────────────────────────────
+\section{The Core Common Difficulty}
+
+Both remaining sorries reduce to the same statement:
+
+\begin{center}
+\fbox{\begin{minipage}{0.85\linewidth}
+\textbf{Key Lemma} (not yet proved for general $k$):
+For any $t : \mathtt{EMLTree}$ with $t.\mathtt{depth} \leq k$,
+the zero set of $t.\mathtt{evalReal}$ is finite on any bounded interval.
+\end{minipage}}
+\end{center}
+
+For depth $\leq 1$: \textcolor{proved}{proved} (\texttt{depth1\_finite\_zeros\_real}, 0 sorry).
+For general $k$: \textcolor{open}{open} (needs o-minimal theory or depth-by-depth analysis).
+
+%──────────────────────────────────────────────────────────────────────────────
+\section{What Changes Between the Two Sorries}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Aspect & \texttt{sin\_not\_in\_eml} & \texttt{sin\_not\_in\_real\_EML\_k} \\
+\midrule
+Domain of $t$ & $\mathbb{R} \to \mathbb{R}$ (real) & $\mathbb{C} \to \mathbb{C}$ (complex) \\
+Target function & $\sin : \mathbb{R} \to \mathbb{R}$ & $z \mapsto \sin(z.\mathtt{re})$ \\
+Proof by reduction & No (direct) & Yes (restrict to $\mathbb{R}$) \\
+Additional gap & WFP derivation & Real-part extraction \\
+Core difficulty & Same & Same \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\texttt{sin\_not\_in\_real\_EML\_k} is logically weaker: it follows from
+\texttt{sin\_not\_in\_eml} once we establish that for trees equaling $F$ on $\mathbb{C}$,
+the real restriction equals $\sin$ on $\mathbb{R}$. This restriction step is cleaner
+for the special case of trees with real constants.
+
+%──────────────────────────────────────────────────────────────────────────────
+\section{Near-Term Action Plan}
+
+\begin{enumerate}
+  \item \textbf{Prove $F \notin \mathrm{EML}_1$ in Lean} (provable now):
+    Use depth-1 real restriction + \texttt{depth1\_finite\_zeros\_real}.
+
+  \item \textbf{Prove $F \notin \mathrm{EML}_2$ by case analysis}:
+    Enumerate all depth-$\leq 2$ tree shapes. Each produces a function with
+    finitely many real zeros; $\sin$ does not. More cases but still formalizable.
+
+  \item \textbf{Factor out the common Key Lemma}:
+    State \texttt{EML\_depth\_k\_finite\_zeros} as a standalone sorry
+    that, once proved, gives both \texttt{sin\_not\_in\_eml} and
+    \texttt{sin\_not\_in\_real\_EML\_k} immediately.
+
+  \item \textbf{Long-term}: Formalize Khovanskii bound or Wilkie's theorem.
+\end{enumerate}
+
+%──────────────────────────────────────────────────────────────────────────────
+\section{Summary}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Claim & Status & Path \\
+\midrule
+$F \notin \mathrm{EML}_1$ & \textcolor{proved}{Provable now} & Real restriction + depth-1 \\
+$F \notin \mathrm{EML}_2$ & \textcolor{partial}{Feasible} & Case analysis \\
+$F \notin \mathrm{EML}_k$ (all $k$) & \textcolor{open}{Open} & O-minimal theory \\
+$F$ not complex-analytic & \textcolor{proved}{Proved} & Cauchy-Riemann \\
+Real zeros of $t$ equal real zeros of $\sin$ & \textcolor{proved}{Provable} & Real restriction \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The sorry is not an engineering gap. It is a genuine mathematical gap in the same
+class as \texttt{sin\_not\_in\_eml}, sharing the same core lemma about zero-count
+bounds. Both will be resolved together once the depth-$k$ zero-finiteness result
+is established.
+
+\end{document}

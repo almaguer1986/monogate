@@ -1,0 +1,220 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath,amssymb,amsthm,hyperref,booktabs,xcolor,enumitem,listings}
+\usepackage[margin=1in]{geometry}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\definecolor{proved}{RGB}{40,120,40}
+\definecolor{open}{RGB}{160,50,50}
+\definecolor{codeblue}{RGB}{30,60,140}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{codeblue},
+  breaklines=true,
+  frame=single
+}
+
+\title{\textbf{T\_EML\_WFP\_ANALYTIC: Lock Document}\\[0.4em]
+\large Well-Formed EML Trees are Real-Analytic on $(0,\infty)$\\
+\normalsize Theorem 25 of the EML Verification Sprint}
+\author{Arturo R.\ Almaguer}
+\date{2026-04-21}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We state, prove, and lock \textbf{T\_EML\_WFP\_ANALYTIC}: every EML tree satisfying the
+\emph{WellFormedPos} condition is real-analytic on $(0,\infty)$.
+This closes the final Lean engineering sorry in \texttt{InfiniteZerosBarrier.lean} (the
+slit-plane membership gap in the ceml/ceml case), bringing the total machine-verified
+theorem count from 24 to \textbf{25}, with exactly 2 genuine open mathematical sorries
+remaining --- both requiring o-minimal structure theory.
+\end{abstract}
+
+%──────────────────────────────────────────────────────────────────────────────
+\section{The Slit-Plane Obstruction}
+
+The proof that every EML tree is real-analytic on $(0,\infty)$ proceeds by lifting
+to $\mathbb{C}$: show $x \mapsto t.\mathtt{eval}(\uparrow\!x)$ is $\mathbb{R} \to \mathbb{C}$
+analytic, then extract the real part via $\mathtt{reCLM}$.
+
+For a node $\mathtt{ceml}(t_1, t_2)$, the log argument is $t_2.\mathtt{eval}(\uparrow\!x)$.
+$\mathtt{Complex.log}$ is $\mathbb{C}$-analytic on the \emph{slit plane}
+$\mathbb{C}_{\mathrm{slit}} = \{z \in \mathbb{C} \mid 0 < z.\mathtt{re} \lor z.\mathtt{im} \neq 0\}$
+(the plane minus the closed negative real axis, including zero).
+For the proof to go through, we need
+\[
+  t_2.\mathtt{eval}(\uparrow\!x) \in \mathbb{C}_{\mathrm{slit}}
+  \quad \forall x \in (0,\infty).
+\]
+When $t_2$ is a leaf (\texttt{const} or \texttt{var}), this is immediate.
+When $t_2$ is itself a $\mathtt{ceml}$ node, it was a sorry.
+
+\subsection{Why the claim is false without extra structure}
+
+\begin{remark}[Counterexample]
+Let $t_2 = \mathtt{ceml}(\mathtt{const}\ 0,\ \mathtt{var})$. Then
+\[
+  t_2.\mathtt{evalReal}(x) = e^0 - \ln x = 1 - \ln x.
+\]
+For $x > e$, this is negative, hence $t_2.\mathtt{eval}(\uparrow\!x) = 1 - \ln x < 0$
+is a non-positive real, \emph{not} in $\mathbb{C}_{\mathrm{slit}}$.
+So the slit-plane MapsTo fails without additional conditions on $t_2$.
+\end{remark}
+
+%──────────────────────────────────────────────────────────────────────────────
+\section{WellFormedPos: The Necessary Condition}
+
+\begin{definition}[WellFormedPos]
+An EML tree $t$ is \emph{well-formed at} $x \in (0,\infty)$, written
+$t.\mathtt{WellFormedPos}(x)$, if every log argument in $t$ evaluates to a positive real:
+\[
+\begin{aligned}
+  \mathtt{const}\ c,\ x &\mapsto \top \\
+  \mathtt{var},\ x &\mapsto \top \\
+  \mathtt{ceml}\ t_1\ t_2,\ x &\mapsto t_1.\mathtt{WFP}(x)
+    \land t_2.\mathtt{WFP}(x)
+    \land 0 < t_2.\mathtt{evalReal}(x).
+\end{aligned}
+\]
+\end{definition}
+
+In Lean 4:
+\begin{lstlisting}
+def EMLTree.WellFormedPos : EMLTree -> Real -> Prop
+  | .const _, _ => True
+  | .var,     _ => True
+  | .ceml t1 t2, x =>
+      t1.WellFormedPos x /\ t2.WellFormedPos x /\ 0 < t2.evalReal x
+\end{lstlisting}
+
+\subsection{Why WFP closes the sorry}
+
+Under WFP for the outer node $\mathtt{ceml}\ t_1\ t_2$, we have
+$0 < t_2.\mathtt{evalReal}(x)$ as a hypothesis. Since
+$t_2.\mathtt{evalReal}(x) = (t_2.\mathtt{eval}(\uparrow\!x)).\mathtt{re}$
+by definition, we get $(t_2.\mathtt{eval}(\uparrow\!x)).\mathtt{re} > 0$.
+Since $\mathbb{C}_{\mathrm{slit}} = \{z \mid 0 < z.\mathtt{re} \lor z.\mathtt{im} \neq 0\}$,
+the left disjunct holds and $t_2.\mathtt{eval}(\uparrow\!x) \in \mathbb{C}_{\mathrm{slit}}$. $\square$
+
+%──────────────────────────────────────────────────────────────────────────────
+\section{The Theorems}
+
+\begin{lemma}[eml\_tree\_eval\_analyticOnNhd, 0 sorry]
+Let $t : \mathtt{EMLTree}$ and suppose
+$\forall x \in (0,\infty),\ t.\mathtt{WellFormedPos}(x)$.
+Then $x \mapsto t.\mathtt{eval}(\uparrow\!x)$ is $\mathbb{R} \to \mathbb{C}$ real-analytic
+on $(0,\infty)$.
+
+\begin{proof}
+By induction on $t$.
+\begin{itemize}[noitemsep]
+  \item \texttt{const} $c$: constant, analytic trivially.
+  \item \texttt{var}: $\mathtt{ofRealCLM}$, a continuous $\mathbb{R}$-linear map, analytic.
+  \item $\mathtt{ceml}\ t_1\ t_2$: extract WFP components.
+    \begin{itemize}[noitemsep]
+      \item \emph{exp part}: $\mathtt{Complex.exp}$ is entire; compose with IH for $t_1$.
+      \item \emph{log part}: case split on $t_2$.
+        \begin{itemize}[noitemsep]
+          \item $\mathtt{const}$: log of a constant is constant, analytic.
+          \item $\mathtt{var}$: $\uparrow\!x \in \mathbb{C}_{\mathrm{slit}}$ for $x > 0$
+            (by $\mathtt{Complex.ofReal\_mem\_slitPlane}$).
+          \item $\mathtt{ceml}$: WFP gives $0 < t_2.\mathtt{evalReal}(x)$,
+            hence $(t_2.\mathtt{eval}\ \uparrow\!x).\mathtt{re} > 0$,
+            hence $t_2.\mathtt{eval}\ \uparrow\!x \in \mathbb{C}_{\mathrm{slit}}$.
+            Apply $\mathtt{hclog.comp}\ (\mathtt{ih2}\ \mathtt{hwf2})\ \mathtt{hmaps}$. \qed
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{proof}
+\end{lemma}
+
+\begin{theorem}[\textbf{T\_EML\_WFP\_ANALYTIC}, 0 sorry]\label{thm:main}
+Let $t : \mathtt{EMLTree}$ and suppose
+$\forall x \in (0,\infty),\ t.\mathtt{WellFormedPos}(x)$.
+Then $t.\mathtt{evalReal}$ is real-analytic on $(0,\infty)$.
+
+\begin{proof}
+By the lemma above, $x \mapsto t.\mathtt{eval}(\uparrow\!x)$ is analytic.
+Since $t.\mathtt{evalReal} = \mathtt{reCLM} \circ (x \mapsto t.\mathtt{eval}(\uparrow\!x))$
+(by definition of $\mathtt{evalReal}$), and $\mathtt{reCLM} : \mathbb{C} \to \mathbb{R}$
+is a continuous $\mathbb{R}$-linear map (hence analytic), the composition is analytic. $\square$
+\end{proof}
+\end{theorem}
+
+In Lean 4:
+\begin{lstlisting}
+lemma eml_tree_analytic (t : EMLTree)
+    (hwf : forall x in Set.Ioi 0, t.WellFormedPos x) :
+    AnalyticOnNhd R t.evalReal (Set.Ioi 0) := by
+  have hcomplex := eml_tree_eval_analyticOnNhd t hwf
+  have heq : t.evalReal = Complex.reCLM o (fun x : R => t.eval (x : C)) := by
+    ext x; simp [EMLTree.evalReal, Complex.reCLM]
+  rw [heq]
+  exact (Complex.reCLM.analyticOnNhd Set.univ).comp hcomplex (Set.mapsTo_univ _ _)
+\end{lstlisting}
+
+%──────────────────────────────────────────────────────────────────────────────
+\section{Relation to Existing Results}
+
+\begin{corollary}[eml\_tree\_analytic\_depth\_le\_1, 0 sorry — no WFP needed]
+Every EML tree of depth $\leq 1$ is real-analytic on $(0,\infty)$, without a WFP
+hypothesis.
+\end{corollary}
+
+\begin{proof}
+At depth $\leq 1$, any $\mathtt{ceml}\ t_1\ t_2$ node has $t_2$ of depth 0 (leaf only),
+so the ceml/ceml branch is unreachable. Explicit 6-case analysis suffices. $\square$
+\end{proof}
+
+The WFP condition is strictly necessary for the general case:
+trees with complex constants or nested ceml nodes can produce non-slit-plane
+log arguments. T\_EML\_WFP\_ANALYTIC is the correct general statement.
+
+%──────────────────────────────────────────────────────────────────────────────
+\section{Remaining Open Sorries}
+
+\textcolor{open}{\textbf{Two genuine open mathematical sorries remain. Both require o-minimal
+structure theory (Wilkie 1996).}}
+
+\begin{enumerate}
+  \item \textbf{sin\_not\_in\_eml}: $\forall k,\ \forall t : \mathtt{EMLTree},\ t.\mathtt{depth} \leq k \Rightarrow t.\mathtt{evalReal} \neq \sin$. \\
+    Requires: every EML-$k$ tree has finitely many zeros on any bounded interval. \\
+    This is true because every EML tree is definable in $\mathbb{R}_{\exp}$, which is
+    o-minimal (Wilkie, 1996 — not formalized in Mathlib).
+
+  \item \textbf{sin\_not\_in\_real\_EML\_k}: The complex function $z \mapsto \sin(z.\mathtt{re})$
+    is not in any $\mathtt{EML\_k}$. Follows from (1) by restriction to $\mathbb{R}$.
+\end{enumerate}
+
+Neither sorry is an engineering gap. Both are blocked by the absence of
+$\mathbb{R}_{\exp}$ o-minimality in Mathlib.
+
+%──────────────────────────────────────────────────────────────────────────────
+\section{Verification Record}
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Item & Value \\
+\midrule
+Build & \textcolor{proved}{\texttt{lake build → Build completed successfully}} \\
+New theorem & T\_EML\_WFP\_ANALYTIC (\texttt{eml\_tree\_analytic}) \\
+New predicate & \texttt{EMLTree.WellFormedPos} \\
+PROVED\_COUNT & 25 (was 24) \\
+Sorry count & 2 (was 3) \\
+Closed sorry & ceml/ceml slit-plane MapsTo in \texttt{eml\_tree\_eval\_analyticOnNhd} \\
+Remaining sorries & \texttt{sin\_not\_in\_eml}, \texttt{sin\_not\_in\_real\_EML\_k} \\
+Commit & e902b2a7 \\
+Date & 2026-04-21 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\end{document}

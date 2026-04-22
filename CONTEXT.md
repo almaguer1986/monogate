@@ -4,7 +4,7 @@
 
 **Build status**: `lake build → Build completed successfully` (all files, 0 errors).
 
-### Fully Lean-verified (0 sorries)
+### Fully Lean-verified (0 sorries) — 25 theorems
 | Theorem | Lean file | Lean theorem |
 |---------|-----------|--------------|
 | SB(neg) ≥ 2 | NegLowerBound.lean | SB_neg_ge_two |
@@ -26,23 +26,24 @@
 | Real.log analytic on (0, ∞) | InfiniteZerosBarrier.lean | real_log_analyticOnNhd_pos |
 | Depth ≤ 1 EML trees analytic on (0, ∞) | InfiniteZerosBarrier.lean | eml_tree_analytic_depth_le_1 |
 | Depth-1 zeros finite (CEML-T91) | InfiniteZerosBarrier.lean | depth1_finite_zeros_real |
-| TheoremRegistry PROVED_COUNT = 24 | TheoremRegistry.lean | (rfl check) |
+| **[NEW] WFP EML trees analytic on (0, ∞)** | InfiniteZerosBarrier.lean | eml_tree_analytic (under WellFormedPos) |
+| TheoremRegistry PROVED_COUNT = 25 | TheoremRegistry.lean | (rfl check) |
 
-### Partial / sorry'd (3 genuine open steps)
+**WellFormedPos condition** (`EMLTree.WellFormedPos`): A tree is WFP at x ∈ (0,∞) if all log arguments evaluate to positive reals. This is a necessary condition — the slit-plane claim is false without it (counterexample: `ceml(const 0, var)` at x > e gives 1 − log x < 0, which is ∉ slitPlane). Under WFP, `t2.evalReal x > 0` means `(t2.eval ↑x).re > 0`, hence `t2.eval ↑x ∈ slitPlane`. ✓
+
+### Partial / sorry'd (2 genuine open steps — both require o-minimal structure theory)
 | Item | Sorry'd step | File | Blocker |
 |------|-------------|------|---------|
-| sin ∉ EML_k (T01 Part C) | eml_tree_eval_analyticOnNhd ceml/ceml log case | InfiniteZerosBarrier.lean | slit-plane membership for deeply-nested trees |
-| sin ∉ EML_k (T01 Part D) | sin_not_in_eml (quantitative zero bound) | InfiniteZerosBarrier.lean | O-minimal theory |
-| ELC depth barrier (T48) | sin_not_in_real_EML_k | InfiniteZerosBarrier.lean | depends on T01 Part D |
+| sin ∉ EML_k (T01 Part D) | sin_not_in_eml (quantitative zero bound) | InfiniteZerosBarrier.lean | O-minimal theory (Wilkie 1996) |
+| ELC depth barrier (T48) | sin_not_in_real_EML_k | InfiniteZerosBarrier.lean | Depends on sin_not_in_eml |
 
-**eml_tree_analytic obstruction confirmed**: The ceml/ceml slit-plane sorry is mathematically justified — `(ceml (const 0) (const (exp 1))).eval ↑x = 0 ∉ slitPlane` for all x. So `eml_tree_analytic` for ALL trees is false in general. The correct resolution is `eml_tree_analytic_depth_le_1` (proved, 0 sorry) which handles depth ≤ 1 by explicit case analysis where the ceml/ceml branch is unreachable.
+Both remaining sorries require that every EML-k tree has at most finitely many zeros on any bounded interval. This follows from o-minimality of ℝ_exp (Wilkie's theorem, 1996), which is not yet formalized in Mathlib. Until then, the partial result `eml_tree_analytic` (under WFP) + `depth1_finite_zeros_real` stand as the verified foundations.
 
-**New this session (Session 6)**: 3 new sorry-free theorems + 1 sorry eliminated:
-- `real_log_analyticOnNhd_pos`: Real.log analytic on (0,∞) via Complex.log composition
-- `eml_tree_analytic_depth_le_1`: depth ≤ 1 trees analytic on (0,∞), sorry-free, 6-case analysis
-- `depth1_finite_zeros_real` (CEML-T91): depth-1 finite zeros, now proved (was sorry'd in EMLDepth.lean)
-- `sin_not_in_real_EML_k` moved from EMLDepth.lean → InfiniteZerosBarrier.lean (no circular import)
-- Sorry count: 4 → 3
+**New this session**: Slit-plane sorry closed via WellFormedPos condition.
+- `EMLTree.WellFormedPos`: new predicate — log arguments must be positive reals on (0,∞)
+- `eml_tree_analytic`: now proved under WFP (0 sorries); slit-plane MapsTo closed
+- `T_EML_WFP_ANALYTIC`: added to TheoremRegistry; PROVED_COUNT 24 → 25
+- Sorry count: 3 → 2
 
 ### Python-certified (not yet Lean)
 | Result | Method | File |
@@ -159,8 +160,10 @@ Smallest subfield of ℝ closed under exp and ln. Countable. Contains all algebr
 
 | ID | Statement | Status |
 |----|-----------|--------|
-| EDB-ANALYTIC | eml_tree_analytic ceml/ceml log sorry | Partially proved — ceml/ceml slit-plane step remains |
-| CONJ_BOUNDARY_DECIDABLE | SC + EDB ⟹ ELC-membership decidable | Conditional; EDB missing zero-count bound |
+| SIN_NOT_IN_EML | sin ∉ EML_k for any finite k | Open — requires o-minimal theory (Wilkie 1996) or alternative proof strategy |
+| CONJ_DIV_GEN_TIGHT_LEAN | SB(div,general) = 3 — Lean skeleton | Python-certified; Lean encoding not yet started |
+| CONJ_MUL_GEN_TIGHT_LEAN | SB(mul,general) = 3 — Lean skeleton | Partial Lean skeleton (native_decide blocked by noncomputable) |
+| CONJ_BOUNDARY_DECIDABLE | SC + EDB ⟹ ELC-membership decidable | Conditional; EDB zero-count bound needs o-minimal |
 | CONJ_TRIG_DEPTH_TOWER | Tower s₀=1, s₁=sin(1), s₂=sin(sin(1)),… algebraically independent over ε(ℝ) | Open; L1 unconditional, L2 needs GAIL, L3/L4 needs SC |
 | GAIL | If α ∉ ε(ℝ), then sin(α) ∉ ε(ℝ) | Open unconditionally; follows from Schanuel |
 
@@ -177,6 +180,16 @@ All files in `python/paper/exploration/`:
 | SuperBEST_v8_Quantum_Physics_Integration.tex | Quantum/physics extended table (Layer 2, labeled) |
 | Quantum_Costs_Final_23.tex | Quantum operator costs (23-op layer; F16 corrections in F16_Only audit) |
 | SpecialFunctions_Physics_Final_Audit.tex | erf, Bessel, Airy, lgamma, Boltzmann, Mayer f |
+| sin_not_in_eml_o_minimal_Start.tex | O-minimal theory map for sin_not_in_eml: what's provable now vs needs Wilkie |
+| sin_not_in_real_EML_k_Initial_Attack.tex | Structural obstructions for sin_not_in_real_EML_k; reduction to common Key Lemma |
+| Prioritization_Post_25_Verified.tex | Post-25 prioritization; #1 = CONJ_DIV_GEN_TIGHT Lean skeleton |
+
+All files in `python/paper/theorems/`:
+
+| File | Content |
+|------|---------|
+| Verified_21_Theorems_Public_Note.tex | Public record of 21 machine-verified theorems (historical) |
+| T_EML_WFP_ANALYTIC_Lock.tex | Lock document for T_EML_WFP_ANALYTIC (theorem #25); WFP analyticity proof |
 | Trig_Depth_Tower_Investigation.tex | Four-level conjecture hierarchy for sin-tower |
 | Boundary_Decidability_Schanuel_Link.tex | SC+EDB⟹CBD; converse partial SC |
 | ELC_Boundary_Layer.tex | Three-tier theorem; shell functions; 18 classification examples |

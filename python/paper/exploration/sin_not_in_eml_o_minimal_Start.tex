@@ -1,0 +1,235 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath,amssymb,amsthm,hyperref,booktabs,xcolor,enumitem}
+\usepackage[margin=1in]{geometry}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{proposition}[theorem]{Proposition}
+
+\definecolor{proved}{RGB}{40,120,40}
+\definecolor{open}{RGB}{160,50,50}
+\definecolor{partial}{RGB}{160,120,0}
+
+\title{\textbf{Exploration: \texttt{sin\_not\_in\_eml} via O-Minimal Theory}\\[0.4em]
+\large What is already provable vs.\ what genuinely needs o-minimality}
+\author{Arturo R.\ Almaguer}
+\date{2026-04-21}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We map out the proof landscape for the sorry
+\texttt{sin\_not\_in\_eml}: $\sin \notin \mathrm{EML}_k$ for any finite $k$.
+We identify which steps can already be handled with Mathlib's current tools
+(analyticity, Bolzano-Weierstrass, identity theorem) versus what genuinely
+requires o-minimal structure theory (Wilkie 1996, not yet in Mathlib).
+The key gap is a depth-$k$ induction for the zero-finiteness lemma
+that cannot be closed without the o-minimality of $\mathbb{R}_{\exp}$.
+\end{abstract}
+
+%──────────────────────────────────────────────────────────────────────────────
+\section{The Target Sorry}
+
+\begin{verbatim}
+theorem sin_not_in_eml (k : N) :
+    forall t : EMLTree, t.depth <= k ->
+      NOT (forall x : R, t.evalReal x = Real.sin x) := by
+  sorry
+\end{verbatim}
+
+Equivalently: no finite EML tree computes $\sin(x)$ everywhere on $\mathbb{R}$.
+
+%──────────────────────────────────────────────────────────────────────────────
+\section{The Standard Proof Strategy}
+
+The natural proof structure has four steps:
+
+\begin{enumerate}
+  \item \textbf{[PROVED]} $\sin$ has infinitely many zeros:
+    $\sin(n\pi) = 0$ for all $n \in \mathbb{Z}$, and these are distinct.
+    (\texttt{sin\_has\_infinitely\_many\_zeros}, 0 sorry.)
+
+  \item \textbf{[PROVED under WFP]} Every well-formed EML tree is real-analytic on $(0,\infty)$.
+    (\texttt{eml\_tree\_analytic}, 0 sorry, under \texttt{WellFormedPos}.)
+
+  \item \textbf{[PROVED]} A non-zero analytic function on a compact interval has finitely many zeros.
+    (\texttt{analytic\_finite\_zeros\_compact}, 0 sorry.)
+
+  \item \textbf{[OPEN]} Combining: if $t.\mathtt{evalReal} = \sin$, derive a contradiction.
+\end{enumerate}
+
+Step 4 requires connecting Steps 1--3. The difficulty lies in Step 2: WFP
+is a hypothesis we need to \emph{derive} from the assumption
+$t.\mathtt{evalReal} = \sin$, not assume.
+
+%──────────────────────────────────────────────────────────────────────────────
+\section{The WFP Gap}
+
+\subsection{Can WFP be derived from evalReal = sin?}
+
+Suppose $t.\mathtt{evalReal}(x) = \sin(x)$ for all $x \in \mathbb{R}$.
+
+\textbf{What we know}: $\sin(x)$ is a real-valued, real-analytic function.
+The outer-most node of $t$ computes
+\[
+  t.\mathtt{evalReal}(x) = \bigl(\exp(t_1.\mathtt{eval}(\uparrow\!x)) -
+  \log(t_2.\mathtt{eval}(\uparrow\!x))\bigr).\mathtt{re} = \sin(x).
+\]
+\textbf{What we cannot easily extract}: Whether $t_2.\mathtt{evalReal}(x) > 0$ for all $x > 0$.
+
+The subtree $t_2$ computes some intermediate expression. From $\sin(x)$ alone, we
+cannot determine the sign of $t_2$'s output without knowing the tree structure in detail.
+There is no general principle saying ``if the composed result is real-valued and
+equals sin, then all log arguments are positive.''
+
+\textbf{Conclusion}: WFP cannot be derived from the equality assumption alone without
+additional case analysis on the tree structure (which is exactly what o-minimality
+avoids needing).
+
+%──────────────────────────────────────────────────────────────────────────────
+\section{What IS Already Provable in Lean}
+
+\begin{proposition}[\textcolor{proved}{Provable now}]\label{prop:depth1}
+$\sin \notin \mathrm{EML}_1(\mathbb{R})$: no depth-$\leq 1$ EML tree computes $\sin$.
+\end{proposition}
+
+\begin{proof}[Proof sketch]
+At depth $\leq 1$, the tree $t$ has one of:
+\begin{itemize}[noitemsep]
+  \item \texttt{const c}: $t.\mathtt{evalReal}(x) = c.\mathtt{re}$ is constant; $\sin$ is not.
+  \item \texttt{var}: $t.\mathtt{evalReal}(x) = x$; $\sin(x) \neq x$ for large $x$.
+  \item $\mathtt{ceml}(\mathtt{var}, \mathtt{var})$: gives $e^x - \ln x$, not $\sin$.
+  \item $\mathtt{ceml}(\mathtt{var}, \mathtt{const}\ c)$: gives $e^x - c$, not $\sin$.
+  \item $\mathtt{ceml}(\mathtt{const}\ c, \mathtt{var})$: gives $c - \ln x$, not $\sin$.
+  \item $\mathtt{ceml}(\mathtt{const}\ c_1, \mathtt{const}\ c_2)$: constant, not $\sin$.
+\end{itemize}
+In each case, the function is analytic on $(0,\infty)$ (proved by
+\texttt{eml\_tree\_analytic\_depth\_le\_1}) and has finitely many zeros
+(\texttt{depth1\_finite\_zeros\_real}). Since $\sin$ has infinitely many zeros,
+equality is impossible. \qed
+\end{proof}
+
+\textbf{Status}: This proof is fully formalizable in Lean with existing tools.
+It relies only on \texttt{eml\_tree\_analytic\_depth\_le\_1} (0 sorry) +
+\texttt{analytic\_finite\_zeros\_compact} (0 sorry) + \texttt{sin\_has\_infinitely\_many\_zeros} (0 sorry).
+The only missing piece is a small Lean proof connecting these three results for each depth-1 case.
+
+\begin{proposition}[\textcolor{proved}{Provable now}]\label{prop:wfp}
+If $t$ satisfies WFP on $(a,b) \subset (0,\infty)$ and $t.\mathtt{evalReal} \neq 0$
+on $(a,b)$, then $t.\mathtt{evalReal}$ has at most finitely many zeros on $[a,b]$.
+\end{proposition}
+
+\begin{proof}
+By \texttt{eml\_tree\_analytic} (under WFP) + \texttt{analytic\_finite\_zeros\_compact}. \qed
+\end{proof}
+
+%──────────────────────────────────────────────────────────────────────────────
+\section{The O-Minimal Approach}
+
+\subsection{O-minimality of $\mathbb{R}_{\exp}$}
+
+\begin{theorem}[Wilkie, 1996]
+The structure $(\mathbb{R},\ +,\ \cdot,\ \exp,\ <,\ 0,\ 1)$ is o-minimal.
+\end{theorem}
+
+An o-minimal structure satisfies: every definable subset of $\mathbb{R}$ is a
+finite union of points and open intervals.
+
+\subsection{Consequence for EML trees}
+
+Every EML tree function $f = t.\mathtt{evalReal}$ is \emph{definable} in
+$\mathbb{R}_{\exp}$: it is built from $\exp$ and $\ln$ (which are $\mathbb{R}_{\exp}$-definable)
+by arithmetic operations. Therefore:
+
+\begin{corollary}[from Wilkie]
+For any EML tree $t$, the zero set $\{x \in \mathbb{R} \mid t.\mathtt{evalReal}(x) = 0\}$
+is a finite union of points and intervals. In particular, on any bounded interval,
+there are at most finitely many zeros.
+\end{corollary}
+
+This is exactly what \texttt{sin\_not\_in\_eml} needs for depth-$k$ trees.
+Combined with $\sin$ having infinitely many zeros, the proof is immediate.
+
+\subsection{What is NOT in Mathlib}
+
+The key gap is:
+\begin{itemize}[noitemsep]
+  \item Wilkie's theorem is not formalized in Mathlib 4.
+  \item There is no general notion of ``definable in $\mathbb{R}_{\exp}$'' in Mathlib.
+  \item The o-minimal structure theory library does not exist for Lean 4.
+\end{itemize}
+
+Formalizing Wilkie's theorem is a major research project (estimated years of effort).
+
+%──────────────────────────────────────────────────────────────────────────────
+\section{Alternative Paths (not o-minimal)}
+
+\subsection{Path A: Induction on depth using WFP as extra hypothesis}
+
+Formulate a strengthened induction:
+\begin{verbatim}
+theorem sin_not_in_eml_wfp (k : N) :
+    forall t : EMLTree, t.depth <= k ->
+    (forall x > 0, t.WellFormedPos x) ->
+    NOT (forall x : R, t.evalReal x = Real.sin x)
+\end{verbatim}
+
+Under WFP, the proof goes through: analyticity + finitely many zeros + sin's infinity.
+\textbf{The remaining gap}: prove the original (without WFP hypothesis) from this.
+Requires showing: if any tree computes $\sin$, it must satisfy WFP. This is unclear.
+
+\subsection{Path B: Khovanskii's fewnomials (analytic geometry)}
+
+Khovanskii (1991) gives explicit upper bounds on the number of zeros of \emph{Pfaffian functions}.
+EML trees are Pfaffian functions (exp and log are solutions of algebraic differential equations).
+The Khovanskii bound gives: an EML tree of depth $k$ has at most $B(k)$ zeros on any bounded interval,
+where $B(k)$ is a computable function.
+
+This is weaker than full o-minimality and might be more formalizable, but still requires
+significant differential algebra machinery not in Mathlib.
+
+\subsection{Path C: Direct depth-by-depth case analysis}
+
+For each fixed $k$, prove $\sin \notin \mathrm{EML}_k$ by case analysis. Already done for $k \leq 1$
+(Proposition \ref{prop:depth1}). Depth 2 is feasible but involves many cases.
+This approach does not generalize to arbitrary $k$ without o-minimality.
+
+%──────────────────────────────────────────────────────────────────────────────
+\section{Summary: Provable Now vs.\ Needs O-minimal}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Statement & Status & Tool needed \\
+\midrule
+$\sin$ has infinitely many zeros & \textcolor{proved}{Proved} & Lean arithmetic \\
+WFP trees analytic (T\_EML\_WFP\_ANALYTIC) & \textcolor{proved}{Proved} & Mathlib analyticity \\
+Analytic $\Rightarrow$ finitely many zeros & \textcolor{proved}{Proved} & Bolzano + identity thm \\
+$\sin \notin \mathrm{EML}_1$ & \textcolor{proved}{Provable now} & Depth-1 case analysis \\
+$\sin \notin \mathrm{EML}_k$ (fixed $k$) & \textcolor{partial}{Feasible} & Increasing case analysis \\
+$\sin \notin \mathrm{EML}_k$ (all $k$) & \textcolor{open}{Open} & O-minimal theory \\
+Khovanskii bound for EML trees & \textcolor{open}{Open} & Differential algebra \\
+Wilkie's theorem in Lean & \textcolor{open}{Long-term} & Major project \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+%──────────────────────────────────────────────────────────────────────────────
+\section{Recommended Next Step}
+
+The highest-leverage short-term action is \textbf{Path C for depth 2}: prove
+$\sin \notin \mathrm{EML}_2$ by Lean case analysis. This:
+\begin{itemize}[noitemsep]
+  \item Exercises the induction infrastructure
+  \item Produces a publishable partial result (together with depth 1)
+  \item Does not depend on o-minimality
+  \item Can be formalized in Lean 4 with current Mathlib tools
+\end{itemize}
+
+The full general theorem ($\sin \notin \mathrm{EML}_k$ for all $k$) remains genuinely
+open pending Mathlib o-minimality formalization.
+
+\end{document}

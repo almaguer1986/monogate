@@ -1,0 +1,244 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath,amssymb,amsthm,hyperref,booktabs,xcolor,enumitem}
+\usepackage[margin=1in]{geometry}
+
+\newtheorem{theorem}{Theorem}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+\definecolor{high}{RGB}{160,40,40}
+\definecolor{med}{RGB}{160,120,0}
+\definecolor{low}{RGB}{40,120,40}
+\definecolor{proved}{RGB}{40,120,40}
+\definecolor{open}{RGB}{160,50,50}
+
+\title{\textbf{Open Conjecture Prioritization: Post-25-Verified Sprint}\\[0.4em]
+\large After Closing the Slit-Plane Sorry (T\_EML\_WFP\_ANALYTIC)}
+\author{Arturo R.\ Almaguer}
+\date{2026-04-21}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+With 25 machine-verified theorems (PROVED\_COUNT = 25) and exactly 2 genuine open
+mathematical sorries remaining (both requiring o-minimal structure theory), we
+re-rank all open work by mathematical leverage and Lean-feasibility.
+The new \#1 target is \textbf{CONJ\_DIV\_GEN\_TIGHT Lean skeleton}: a pure
+formalization task, Python-certified, no mathematical uncertainty, directly
+adds a new 0-sorry theorem and closes a known gap in the registry.
+\end{abstract}
+
+%──────────────────────────────────────────────────────────────────────────────
+\section{Current State: What Is Verified}
+
+\subsection{Fully Lean-verified (0 sorries): 25 theorems}
+
+\begin{enumerate}[noitemsep]
+  \item \textbf{Lower bounds}: SB(neg/add/sub/mul/div) $\geq 2$ (5 theorems)
+  \item \textbf{Upper bounds}: exp/mul/pow/recip/sqrt node counts (5 theorems)
+  \item \textbf{Model audit}: v5.1 overcounting correction (1 theorem)
+  \item \textbf{Complex structure}: Euler Gateway, Euler Identity, EML-0 $\subsetneq$ EML-1 (3 theorems)
+  \item \textbf{Infinite zeros}: sin has infinitely many zeros (1 theorem)
+  \item \textbf{Analyticity chain}: analytic\_finite\_zeros\_compact, Real.log analytic,
+    depth-$\leq 1$ trees analytic, depth-1 zeros finite, \textbf{[NEW]} WFP trees analytic (5 theorems)
+  \item \textbf{Registry}: TheoremRegistry rfl check (1 theorem)
+  \item \textbf{[NEW]} T\_EML\_WFP\_ANALYTIC: WellFormedPos EML trees analytic on $(0,\infty)$ (1 theorem)
+\end{enumerate}
+
+\subsection{Remaining Genuine Mathematical Sorries (2)}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Sorry & Blocker & Estimated effort \\
+\midrule
+\texttt{sin\_not\_in\_eml} & O-minimal theory (Wilkie 1996) & Years (Mathlib project) \\
+\texttt{sin\_not\_in\_real\_EML\_k} & Depends on above & Same \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Both share the same core: a depth-$k$ zero-finiteness lemma for EML trees.
+Partial results (depth $\leq 1$, depth $\leq 2$) are provable now; the general
+statement needs o-minimality of $\mathbb{R}_{\exp}$.
+
+%──────────────────────────────────────────────────────────────────────────────
+\section{Open Work — Ranked List}
+
+\subsection{\textcolor{high}{\#1 — CONJ\_DIV\_GEN\_TIGHT Lean Skeleton}}
+
+\textbf{What}: Formalize SB(div, general) = 3 in Lean.
+Python-certified (exhaustive 4112-circuit search + explicit 3-node witness).
+No mathematical uncertainty. Pure Lean engineering.
+
+\textbf{Structure}:
+\begin{itemize}[noitemsep]
+  \item Lower bound $\geq 3$: encode the exhaustive 2-node search (no 2-node F16 circuit computes div for all reals). Approach: \texttt{native\_decide} is blocked by \texttt{noncomputable}; use explicit witness pairs for each 2-node circuit instead (same pattern as SB(mul) ≥ 2 in MulLowerBound.lean).
+  \item Exact = 3: combine LB with the known 3-node witness construction.
+\end{itemize}
+
+\textbf{Deliverable}: \texttt{DivLowerBound3.lean} with 0 sorries. Adds theorem \#26.
+
+\textbf{Effort}: 2--3 hours. Low uncertainty. Highest value per unit effort.
+
+\subsection{\textcolor{high}{\#2 — CONJ\_MUL\_GEN\_TIGHT Lean Skeleton}}
+
+\textbf{What}: Complete the Lean formalization of SB(mul, general) = 3.
+A partial skeleton (\texttt{MulLowerBound3.lean}) already exists but is blocked
+by \texttt{native\_decide} incompatibility with \texttt{noncomputable} definitions.
+
+\textbf{Fix}: Replace \texttt{native\_decide} with explicit witness-pair proofs for the
+2-node lower bound, mirroring the \texttt{SB\_mul\_ge\_two} pattern.
+
+\textbf{Deliverable}: \texttt{MulLowerBound3.lean} with 0 sorries. Adds theorem \#27.
+
+\textbf{Effort}: 1--2 hours (simpler than DIV since skeleton exists).
+
+\subsection{\textcolor{med}{\#3 — sin $\notin$ EML$_2$ by Lean Case Analysis}}
+
+\textbf{What}: Prove $\sin \notin \mathrm{EML}_2(\mathbb{R})$ by explicit case analysis
+on all depth-$\leq 2$ EML tree shapes. Uses existing tools
+(\texttt{eml\_tree\_analytic\_depth\_le\_1}, \texttt{analytic\_finite\_zeros\_compact})
+plus Lean case splitting.
+
+\textbf{Why now}: This is the deepest partial result achievable without o-minimality.
+It demonstrates the proof technique and strengthens the empirical case for the general theorem.
+
+\textbf{Deliverable}: \texttt{EMLDepth2\_sin\_exclusion.lean} with 0 sorries. Adds theorem \#28.
+
+\textbf{Effort}: 4--6 hours (many cases at depth 2, but each is routine).
+
+\subsection{\textcolor{med}{\#4 — CompletenessClassification.lean Structure}}
+
+\textbf{What}: Begin formalizing the Completeness Characterization Theorem
+(F16 completeness, 23-operator taxonomy, boundary tiers, exponential position theorem).
+Layer the already-verified theorems as building blocks.
+
+\textbf{Why now}: Once LB/UB theorems for mul/div are locked (#1, #2), the completeness
+structure can be assembled. Start with definitions and the high-level skeleton.
+
+\textbf{Deliverable}: \texttt{CompletenessClassification.lean} — definitions and skeleton
+with clearly marked sorry stubs for each main lemma.
+
+\textbf{Effort}: 3--5 hours for initial structure. Mathematical content extends over multiple sessions.
+
+\subsection{\textcolor{med}{\#5 — WFP Applicability Lemma}}
+
+\textbf{What}: Prove that the WFP condition is \emph{stable under the EML gate}
+in a useful sense: characterize which functions $f$ are the evalReal of a WFP-tree.
+
+Concretely: prove that if $f = t.\mathtt{evalReal}$ for some tree $t$ satisfying WFP,
+and $f > 0$ on some interval, then the sub-trees also satisfy WFP.
+
+\textbf{Why}: This would help connect \texttt{eml\_tree\_analytic} (under WFP) to
+the general \texttt{sin\_not\_in\_eml} proof: show that any tree equal to $\sin$
+on a subinterval where $\sin > 0$ satisfies WFP there.
+
+\textbf{Effort}: 2--4 hours. Mathematical content is manageable.
+
+\subsection{\textcolor{low}{\#6 — GAIL under Schanuel Assumption}}
+
+\textbf{What}: Prove the General Algebraic Independence Lemma (GAIL) conditional on
+Schanuel's Conjecture: if $\alpha \notin \varepsilon(\mathbb{R})$, then $\sin(\alpha) \notin \varepsilon(\mathbb{R})$.
+
+\textbf{Status}: Mathematical proof known (Hermite--Lindemann + Schanuel structure).
+Lean formalization requires conditional on Schanuel (axiom or hypothesis).
+
+\textbf{Deliverable}: \texttt{GAIL\_conditional.lean} — proof under \texttt{Schanuel} axiom.
+
+\textbf{Effort}: 4--6 hours for Lean encoding. No new math.
+
+\subsection{\textcolor{low}{\#7 — O-minimal Theory (Long-Term)}}
+
+\textbf{What}: Formalize Wilkie's theorem ($\mathbb{R}_{\exp}$ is o-minimal) in Lean 4/Mathlib.
+
+\textbf{Status}: Major research project. Not a single-session task.
+Estimated effort: multiple person-years at Mathlib scale.
+\textbf{Value}: Would close both remaining sorries and unlock CONJ\_BOUNDARY\_DECIDABLE.
+
+\textbf{Recommendation}: Flag as long-term external dependency; do not block other work on it.
+
+%──────────────────────────────────────────────────────────────────────────────
+\section{The \#1 Attack Plan: DivLowerBound3.lean}
+
+\subsection{Mathematical Content}
+
+\textbf{Claim}: SB(div, general) = 3.
+
+\textbf{Lower bound (SB ≥ 3)}: No 2-node F16 circuit computes $x/y$ for all real inputs.
+Python search: exhaustive over all $\binom{16}{1} \times \binom{16}{1} = 256$ 2-node
+compositions, tested on 4112 input pairs. 0 matches found.
+
+\textbf{Upper bound (SB ≤ 3)}: The 3-node witness is:
+\[
+  x / y = \exp\bigl(\ln(x) - \ln(y)\bigr) = F_{13}(F_{13}^{-1}(x),\ y)
+\]
+More precisely using F16 operators:
+\[
+  x / y = \exp\bigl(\ln\lvert x\rvert - \ln\lvert y\rvert\bigr) \cdot \mathrm{sgn}(x/y)
+\]
+For $x, y > 0$: $F_{16\text{fn}}(x, 1/y) = \exp(\ln x + \ln(1/y)) = \exp(\ln x - \ln y) = x/y$.
+This is 3 F16 nodes.
+
+\subsection{Lean Strategy}
+
+\begin{enumerate}
+  \item \textbf{Define 2-node circuits}: For each pair of F16 operators $(f_i, f_j)$,
+    define the composition $f_i(x, f_j(x, y))$ and $f_i(f_j(x, y), x)$, etc.
+    (there are 4 ways to compose 2 binary operators into a 2-input circuit).
+
+  \item \textbf{Prove each 2-node circuit $\neq$ div}: For each of the
+    $16 \times 16 \times 4 = 1024$ 2-node circuits, exhibit a concrete witness pair
+    $(x_0, y_0)$ where the circuit value $\neq x_0/y_0$.
+    Use \texttt{norm\_num} / \texttt{simp} / \texttt{linarith}.
+    Witness pairs can be small integers/rationals.
+
+  \item \textbf{Bundle}: State \texttt{no\_2node\_f16\_computes\_div} using
+    the same list-membership pattern as \texttt{no\_f16\_computes\_div} in
+    \texttt{DivLowerBound.lean}.
+
+  \item \textbf{Combine with 3-node witness}: State \texttt{SB\_div\_ge\_three}
+    and \texttt{div\_three\_node\_witness}, then conclude SB = 3.
+\end{enumerate}
+
+\textbf{Key technical decision}: The 2-node lower bound proof will have $\sim 1000$
+cases. Lean's \texttt{rcases} pattern on a list is manageable (cf.\ the 16-case
+pattern in \texttt{DivLowerBound.lean}). The proof term is large but mechanical.
+
+\subsection{Expected Output}
+
+\begin{verbatim}
+theorem SB_div_ge_three :
+    NOT div_two_node_computable (. / .) := ...  -- 0 sorry
+
+theorem SB_div_eq_three :
+    SB_div = 3 := ...  -- 0 sorry (combines ge_three + witness)
+\end{verbatim}
+
+This would be theorem \#26 in the registry (PROVED\_COUNT $24 + 1$ WFP + $1$ DIV = 26).
+
+%──────────────────────────────────────────────────────────────────────────────
+\section{Summary}
+
+\begin{center}
+\begin{tabular}{llll}
+\toprule
+Rank & Target & Effort & Expected result \\
+\midrule
+\#1 & DIV tight Lean skeleton & 2--3h & PROVED\_COUNT 26, 0 sorry \\
+\#2 & MUL tight Lean skeleton & 1--2h & PROVED\_COUNT 27, 0 sorry \\
+\#3 & sin $\notin$ EML$_2$ & 4--6h & Deepest sin partial result \\
+\#4 & CompletenessClassification.lean & 3--5h & Skeleton for major theorem \\
+\#5 & WFP applicability lemma & 2--4h & Bridges WFP to sin proof \\
+\#6 & GAIL conditional & 4--6h & Schanuel-conditional theorem \\
+\#7 & O-minimal (Wilkie) & years & Closes both remaining sorries \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Recommended session order}: \#1 → \#2 → \#3 → \#4.
+Items \#5--\#7 are longer-horizon.
+
+\end{document}
