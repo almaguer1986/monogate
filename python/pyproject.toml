@@ -31,6 +31,8 @@ Paper      = "https://arxiv.org/abs/2603.21852"
 
 [tool.setuptools.packages.find]
 where = ["."]
+include = ["monogate*"]
+exclude = ["monogate.frontiers*"]
 
 [tool.setuptools.package-data]
 monogate = ["data/*.json", "_routing.pkl"]
