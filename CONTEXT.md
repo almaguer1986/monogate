@@ -4,7 +4,7 @@
 
 **Build status**: `lake build → Build completed successfully` (all files, 0 errors).
 
-### Fully Lean-verified (0 sorries) — 26 theorems
+### Fully Lean-verified (0 sorries) — 27 theorems
 | Theorem | Lean file | Lean theorem |
 |---------|-----------|--------------|
 | SB(neg) ≥ 2 | NegLowerBound.lean | SB_neg_ge_two |
@@ -27,9 +27,10 @@
 | Depth ≤ 1 EML trees analytic on (0, ∞) | InfiniteZerosBarrier.lean | eml_tree_analytic_depth_le_1 |
 | Depth-1 zeros finite (CEML-T91) | InfiniteZerosBarrier.lean | depth1_finite_zeros_real |
 | WFP EML trees analytic on (0, ∞) | InfiniteZerosBarrier.lean | eml_tree_analytic (under WellFormedPos) |
-| **[NEW] No exp-outer 2-node div circuit** | DivLowerBound3.lean | no_exp_outer_2node_div |
-| **[NEW] div = 2n on (0,∞)²** | DivLowerBound3.lean | div_two_node_pos_domain |
-| TheoremRegistry PROVED_COUNT = 26 | TheoremRegistry.lean | (rfl check) |
+| No exp-outer 2-node div circuit | DivLowerBound3.lean | no_exp_outer_2node_div |
+| div = 2n on (0,∞)² | DivLowerBound3.lean | div_two_node_pos_domain |
+| **[NEW] SB(div,general) ≥ 3 (F1–F12 outer exhaustive)** | DivLowerBound3Full.lean | SB_div_F1F12_outer_ge_three |
+| TheoremRegistry PROVED_COUNT = 27 | TheoremRegistry.lean | (rfl check) |
 
 **WellFormedPos condition** (`EMLTree.WellFormedPos`): A tree is WFP at x ∈ (0,∞) if all log arguments evaluate to positive reals. This is a necessary condition — the slit-plane claim is false without it (counterexample: `ceml(const 0, var)` at x > e gives 1 − log x < 0, which is ∉ slitPlane). Under WFP, `t2.evalReal x > 0` means `(t2.eval ↑x).re > 0`, hence `t2.eval ↑x ∈ slitPlane`. ✓
 
@@ -47,6 +48,12 @@ Both remaining sorries require that every EML-k tree has at most finitely many z
 - `T_EML_WFP_ANALYTIC`: added to TheoremRegistry; PROVED_COUNT 24 → 25
 - Sorry count: 3 → 2
 
+**New this session (2026-04-21 session C)**: T_CONJ_DIV_GEN_TIGHT — full SB(div,general) = 3 Lean proof.
+- `DivLowerBound3Full.lean`: 3072 private lemmas, all F1–F12 outer cases exhaustively refuted
+- Witness (x,y) = (6,3); key lemma: `Real.log_neg_eq_log` (log(-x) = log(x) in Lean4 Mathlib)
+- Generator: `gen_div_lean_cases.py` with corrected L(x) = log(abs(x)) semantics
+- PROVED_COUNT 26 → 27; sorry count unchanged (2)
+
 **New this session (2026-04-21 session B)**: T_DIV_EXP_OUTER_LB — partial SB(div) lower bound.
 - `DivLowerBound3.lean`: new file (0 sorries throughout)
 - `no_exp_outer_2node_div`: no 2-node circuit with F13/F14/F15/F16 outer computes div on ℝ²
@@ -57,7 +64,11 @@ Both remaining sorries require that every EML-k tree has at most finitely many z
 | Result | Method | File |
 |--------|--------|------|
 | SB(mul, general) = 3 | Exhaustive 4112-circuit search | mul_gen_tight_2node_search.py |
-| SB(div, general) = 3 | Exhaustive 4112-circuit search | div_gen_tight_2node_search.py |
+
+### Lean-proved this session (previously Python-only)
+| Result | Lean file | Status |
+|--------|-----------|--------|
+| SB(div, general) ≥ 3 (F1–F12 outer) | DivLowerBound3Full.lean | 0 sorries, build passing |
 
 ### Not yet formalized
 - T02 (Universality / Weierstrass) — pending

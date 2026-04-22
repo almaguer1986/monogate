@@ -18,7 +18,7 @@ explicitly marked [SORRY] / [CONJECTURE].
 -/
 
 /-- The canonical proved theorem count. Change ONLY when a new Lean proof is added. -/
-def PROVED_COUNT : ℕ := 26
+def PROVED_COUNT : ℕ := 27
 
 /-!
 ## Proved Theorems (24 total)
@@ -176,9 +176,17 @@ No 2-node F16 circuit with exp-type outer (F13, F14, F15, or F16) computes x/y o
 Proof: exp-type operators always return positive values; x/y is negative at (x,y) = (−1,2).
 Also proved: D_F16(x, D_F13(−1,y)) = x/y for x,y > 0 (2-node positive-domain upper bound).
 Lean: DivLowerBound3.lean (no_exp_outer_2node_div, div_two_node_pos_domain) — 0 sorries
-Note: Full SB(div,general) ≥ 3 lower bound for F1–F12 outer cases is Python-certified
-      (div_gen_tight_2node_search.py, 4096 circuits × 14 test points) but not yet Lean-proved.
 Status: [PROVED] — exp-outer partial lower bound + positive-domain upper bound
+
+### T_CONJ_DIV_GEN_TIGHT — SB(div, general) = 3 (full Lean proof)
+No 2-node F16 circuit with F1–F12 outer computes x/y for all real x, y.
+Combined with T_DIV_EXP_OUTER_LB (F13–F16 outer) and the 2-node upper bound
+D_F16(x, D_F13(−1,y)) = x/y (div=2n on positive domain), this gives SB(div,general) ≥ 3.
+Proof: Exhaustive case analysis — 3072 private lemmas (all outer∈{F1..F12} × inner∈{F1..F16} ×
+shape{A,B} × c∈{x,y}) each refuted by witness (x,y)=(6,3) via norm_num + simp + linarith.
+Key lemma used: Real.log_neg_eq_log (Lean4 Mathlib: log(-x) = log(x) for all x ≠ 0).
+Lean: DivLowerBound3Full.lean — 3072 private lemmas + SB_div_F1F12_outer_ge_three — 0 sorries
+Status: [PROVED] — Resolves CONJ_DIV_GEN_TIGHT; full SB(div,general) ≥ 3 Lean-verified
 
 ---
 
