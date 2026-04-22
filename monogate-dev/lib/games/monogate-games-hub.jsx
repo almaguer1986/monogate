@@ -119,10 +119,10 @@ const GAMES = [
     color: "#A78BFA", icon: "♩", phase: "Sound", teaches: "EML as a generative musical instrument",
   },
   {
-    id: "fractal-explorer", title: "Fractal Explorer", status: "play", category: "experience",
-    tagline: "Eight operators. Eight different universes.",
-    desc: "Real-plane escape-time fractals for all 8 EML-family operators: EML, EAL, EMN, EXL, EDL, DEML, POW, LEX. Click to zoom, shift-click to zoom out. The EML operator produces the Devaney exponential family — boundary dimension 1.716. EAL, DEML, and EMN generate entirely different geometry.",
-    color: "#e8a020", icon: "◈", phase: "Fractal", teaches: "How operator structure determines fractal geometry",
+    id: "fractal-studio", title: "Fractal Studio", status: "play", category: "experience",
+    tagline: "See it. Hear it. Play it.",
+    desc: "The complex-plane Mandelbrot set for 8 EML-family operators, now playable. Visual mode is a classical fractal explorer — scroll to zoom, drag to pan, 4 palettes. Audio mode turns the fractal into an instrument: hover to hear the iteration count as pitch, click to lock up to 6 tones into a chord. Sequencer mode sweeps a scan line across the fractal — the boundary becomes a musical score. Reverb toggle, BPM control, operator-swapping mid-play.",
+    color: "#e8a020", icon: "◈", phase: "Fractal", teaches: "How operator structure determines fractal geometry — and what that geometry sounds like",
   },
   {
     id: "eml-synthesizer", title: "EML Synthesizer", status: "play", category: "experience",
