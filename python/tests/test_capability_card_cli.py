@@ -224,3 +224,74 @@ def test_publish_does_not_reference_removed_capcard_site(capsys: pytest.CaptureF
 def test_main_requires_a_mode():
     with pytest.raises(SystemExit):
         cc.main([])
+
+
+# ---------------------------------------------------------------------------
+# v3 schema + neural-capability + Adam re-audit
+# ---------------------------------------------------------------------------
+
+def test_capcard_version_is_v3(canonical_card):
+    status, _ = cc._assert_capcard_v3(canonical_card)
+    assert status == "PASS"
+
+
+def test_capcard_version_rejects_v2(mutable_card):
+    mutable_card["capcard_version"] = "2.0.0"
+    status, _ = cc._assert_capcard_v3(mutable_card)
+    assert status == "FAIL"
+
+
+def test_verification_lean_counts_present(canonical_card):
+    v = canonical_card["verification"]
+    assert v.get("lean_clean_files") == 11
+    assert v.get("lean_partial_files") == 1
+    assert v.get("lean_sorries_total") == 2
+
+
+def test_verification_lean_counts_assertion_passes(canonical_card):
+    status, _ = cc._assert_verification_lean_counts(canonical_card)
+    assert status == "PASS"
+
+
+def test_verification_lean_counts_rejects_regression(mutable_card):
+    mutable_card["verification"]["lean_sorries_total"] = 5
+    status, _ = cc._assert_verification_lean_counts(mutable_card)
+    assert status == "FAIL"
+
+
+def test_neural_capabilities_softplus_adam_rmsnorm(canonical_card):
+    status, msg = cc._assert_neural_capabilities(canonical_card)
+    assert status == "PASS", msg
+
+
+def test_neural_capabilities_detects_missing_softplus(mutable_card):
+    mutable_card["capabilities"] = [
+        c for c in mutable_card["capabilities"]
+        if c.get("id") != "activation.softplus"
+    ]
+    status, _ = cc._assert_neural_capabilities(mutable_card)
+    assert status == "FAIL"
+
+
+def test_adam_31n_assertion(canonical_card):
+    """Post-NN-13 re-audit: Adam must be 31n, not the original 37n."""
+    status, msg = cc._assert_adam_31n(canonical_card)
+    assert status == "PASS", msg
+
+
+def test_adam_31n_rejects_reverted_37n(mutable_card):
+    adam = cc._find_capability(mutable_card, "optimizer.adam")
+    adam["neural_metrics"]["optimizer_nodes_per_param_per_step"] = 37
+    status, _ = cc._assert_adam_31n(mutable_card)
+    assert status == "FAIL"
+
+
+def test_schema_requires_capcard_v3_pattern():
+    schema = cc._load_schema()
+    pat = schema["properties"]["capcard_version"].get("pattern")
+    assert pat == r"^3\.\d+\.\d+$"
+
+
+def test_v3_schema_id_is_canonical():
+    schema = cc._load_schema()
+    assert schema["$id"] == "https://monogate.org/schemas/capcard/v3.json"

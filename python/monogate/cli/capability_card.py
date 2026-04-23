@@ -30,7 +30,8 @@ import monogate
 
 REPO_SLUG = "almaguer1986/monogate"
 LEAN_REPO_SLUG = "almaguer1986/monogate-lean"
-SCHEMA_URL = "https://monogate.org/schemas/capcard/v2.json"
+SCHEMA_URL = "https://monogate.org/schemas/capcard/v3.json"
+CAPCARD_SCHEMA_VERSION = "3"  # major version the CLI targets
 
 _REPO_ROOT = Path(__file__).parent.parent.parent.parent
 _CARD_PATH = _REPO_ROOT / "capability_card_public.json"
@@ -38,6 +39,7 @@ _SCHEMA_PATH = Path(__file__).parent.parent / "capability_card_schema.json"
 _PYTHON_DIR = Path(__file__).parent.parent.parent
 
 _SEMVER_RE = re.compile(r"^\d+\.\d+\.\d+(?:[.+-].*)?$")
+_CAPCARD_V3_RE = re.compile(r"^3\.\d+\.\d+$")
 
 
 # ---------------------------------------------------------------------------
@@ -210,9 +212,15 @@ def _summary(card: dict[str, Any]) -> None:
     benches = card.get("benchmarks", [])
     proofs = card.get("proofs", [])
     ver = card.get("verification", {})
+    n_lean_clean = ver.get("lean_clean_files")
+    n_lean_partial = ver.get("lean_partial_files")
+    n_lean_sorries = ver.get("lean_sorries_total")
+    print(f"  capcard:      v{card.get('capcard_version', '?')}")
     print(f"  capabilities: {len(caps)}")
     print(f"  benchmarks:   {len(benches)}")
     print(f"  proofs:       {len(proofs)} ({sum(1 for p in proofs if p.get('sorries', 1) == 0)} with 0 sorries)")
+    if n_lean_clean is not None:
+        print(f"  lean files:   {n_lean_clean} clean + {n_lean_partial or 0} partial ({n_lean_sorries or 0} sorries total)")
     print(f"  test_count:   {ver.get('test_count', '?')}")
     print(f"  last_verified: {ver.get('last_verified', '?')}")
 
@@ -402,11 +410,81 @@ def _assert_core_capabilities(card: dict[str, Any]) -> tuple[str, str]:
     return "PASS", f"core capabilities present ({len(required)})"
 
 
+# ── v3 assertions ──────────────────────────────────────────────────────────
+
+def _assert_capcard_v3(card: dict[str, Any]) -> tuple[str, str]:
+    ver = card.get("capcard_version", "")
+    if not _CAPCARD_V3_RE.match(str(ver)):
+        return "FAIL", f"capcard_version={ver!r} — CLI targets v3.x.x"
+    return "PASS", f"capcard_version: {ver}"
+
+
+def _assert_verification_lean_counts(card: dict[str, Any]) -> tuple[str, str]:
+    """v3 requires verification.lean_clean_files + lean_partial_files + lean_sorries_total."""
+    v = card.get("verification", {})
+    clean = v.get("lean_clean_files")
+    partial = v.get("lean_partial_files")
+    sorries = v.get("lean_sorries_total")
+    if None in (clean, partial, sorries):
+        return "FAIL", "verification: lean_clean_files / lean_partial_files / lean_sorries_total required in v3"
+    if clean < 11:
+        return "FAIL", f"verification: lean_clean_files={clean} < 11"
+    if partial > 1:
+        return "FAIL", f"verification: lean_partial_files={partial} > 1 — unexpected partial file"
+    if sorries > 2:
+        return "FAIL", f"verification: lean_sorries_total={sorries} > 2 — regression vs last audit"
+    return "PASS", f"verification: lean {clean} clean + {partial} partial ({sorries} sorries)"
+
+
+def _assert_neural_capabilities(card: dict[str, Any]) -> tuple[str, str]:
+    """v3: softplus / sigmoid / adam / rmsnorm tool_function capabilities carry neural_metrics."""
+    required = {
+        "activation.softplus": {"forward_nodes": 1},
+        "activation.sigmoid":  {"forward_nodes": 5},
+        "optimizer.adam":      {"optimizer_nodes_per_param_per_step": 31},
+        "norm.rmsnorm":        {"forward_nodes": 4097},
+    }
+    missing: list[str] = []
+    mismatch: list[str] = []
+    for cap_id, expected in required.items():
+        cap = _find_capability(card, cap_id)
+        if cap is None:
+            missing.append(cap_id)
+            continue
+        nm = cap.get("neural_metrics") or {}
+        for k, want in expected.items():
+            got = nm.get(k)
+            if got != want:
+                mismatch.append(f"{cap_id}.neural_metrics.{k} = {got!r} (expected {want!r})")
+    if missing:
+        return "FAIL", f"v3 neural capabilities missing: {missing}"
+    if mismatch:
+        return "FAIL", "; ".join(mismatch)
+    return "PASS", "v3 neural caps: softplus=1n, sigmoid=5n, Adam=31n, RMSNorm=4097n"
+
+
+def _assert_adam_31n(card: dict[str, Any]) -> tuple[str, str]:
+    """Explicit check that the post-NN-13 re-audit value propagated."""
+    adam = _find_capability(card, "optimizer.adam")
+    if adam is None:
+        return "FAIL", "optimizer.adam capability missing"
+    nm = adam.get("neural_metrics") or {}
+    n = nm.get("optimizer_nodes_per_param_per_step")
+    em = adam.get("eml_metrics") or {}
+    sb = em.get("superbest_nodes")
+    if n != 31:
+        return "FAIL", f"Adam per-param-per-step = {n!r}, expected 31 (post-NN-13 re-audit)"
+    if sb is not None and sb != 31:
+        return "FAIL", f"Adam eml_metrics.superbest_nodes = {sb!r}, expected 31"
+    return "PASS", "Adam re-audit: 31n per param per step (post-NN-13)"
+
+
 BenchmarkFn = Callable[[], tuple[str, str]]
 
 
 def _run_benchmarks(card: dict[str, Any]) -> tuple[bool, list[tuple[str, str]]]:
     checks: list[BenchmarkFn] = [
+        lambda: _assert_capcard_v3(card),
         _assert_exp_identity,
         _assert_abs_identity,
         lambda: _assert_version_consistency(card),
@@ -416,7 +494,10 @@ def _run_benchmarks(card: dict[str, Any]) -> tuple[bool, list[tuple[str, str]]]:
         lambda: _assert_taxonomy(card),
         lambda: _assert_catalog_315(card),
         lambda: _assert_lean_proofs(card),
+        lambda: _assert_verification_lean_counts(card),
         lambda: _assert_core_capabilities(card),
+        lambda: _assert_neural_capabilities(card),
+        lambda: _assert_adam_31n(card),
     ]
     results: list[tuple[str, str]] = []
     for fn in checks:
