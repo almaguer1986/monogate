@@ -156,14 +156,14 @@
       "undefined_ops": [],
       "excluded_from_sum": []
     },
-    "positive_headline": "15n / 79.5% savings (positive domain, pow=1n + sqrt=1n via EPL/ELMl, mul=2n)",
+    "positive_headline": "14n / 80.8% savings (positive domain, exp=ln=mul=recip=pow=sqrt=1n via UpperBounds.lean; mul_pos reconciled + sqrt reconciled to 1n)",
     "general_headline": "22n / 69.9% savings (general domain, mul=6n via neg/mul/neg, pow=3n)",
     "savings_positive": {
       "naive_total": 73,
-      "superbest_positive_total": 15,
-      "savings_n": 58,
-      "savings_pct": "79.5%",
-      "formula": "(73 - 15) / 73 = 58/73 = 0.7945... â‰ˆ 79.5%"
+      "superbest_positive_total": 14,
+      "savings_n": 59,
+      "savings_pct": "80.8%",
+      "formula": "(73 - 14) / 73 = 59/73 = 0.8082... â‰ˆ 80.8%"
     },
     "savings_general": {
       "naive_total": 73,
@@ -415,8 +415,8 @@
     "catalogs": [
       {
         "catalog": "Core arithmetic (9 ops)",
-        "layer1": "79.5%",
-        "layer2": "79.5%"
+        "layer1": "80.8%",
+        "layer2": "80.8%"
       },
       {
         "catalog": "ML functions (6 items)",

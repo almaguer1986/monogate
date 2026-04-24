@@ -3,7 +3,7 @@
   "id": "ai.capcard.monogate",
   "name": "Monogate",
   "type": "library",
-  "description": "One binary gate, eml(x, y) = exp(x) − ln(y), generates every elementary function as a finite tree (Odrzywołek 2026). Ships with the 16-operator F16 taxonomy (8 exactly complete, 1 approximately complete, 7 incomplete), the SuperBEST routing table at 15 nodes / 79.5% savings on the positive-domain arithmetic set, a cost theory with zero prediction error across 315 catalogued equations, and 10 machine-verified Lean 4 proofs (0 sorries each) in the companion monogate-lean repository.",
+  "description": "One binary gate, eml(x, y) = exp(x) − ln(y), generates every elementary function as a finite tree (Odrzywołek 2026). Ships with the 16-operator F16 taxonomy (8 exactly complete, 1 approximately complete, 7 incomplete), the SuperBEST routing table at 14 nodes / 80.8% savings on the positive-domain arithmetic set, a cost theory with zero prediction error across 315 catalogued equations, and 10 machine-verified Lean 4 proofs (0 sorries each) in the companion monogate-lean repository.",
   "version": "2.3.0",
   "license": "MIT",
   "homepage": "https://monogate.org",
@@ -31,24 +31,24 @@
     },
     {
       "id": "routing.superbest_v5",
-      "name": "SuperBEST Routing (v5.2, positive domain)",
+      "name": "SuperBEST Routing (v5.3, positive domain)",
       "category": "cost_theory",
-      "description": "A canonical node-cost table for the 10 positive-domain arithmetic primitives (exp, ln, neg, add, sub, mul, div, recip, pow, sqrt) totalling 15 F16 nodes vs 73 naive, a 79.5% saving. Every per-op cost is proved exact, either structurally or by exhaustive F16 search (with a corresponding Lean 4 lower bound for add, sub, mul, div and upper bounds for exp, mul, pow, recip, sqrt).",
+      "description": "A canonical node-cost table for the 10 positive-domain arithmetic primitives (exp, ln, neg, add, sub, mul, div, recip, pow, sqrt) totalling 14 F16 nodes vs 73 naive, an 80.8% saving. Every per-op cost is proved exact, either structurally or by exhaustive F16 search (with a corresponding Lean 4 lower bound for add, sub, mul, div and upper bounds for exp, mul, pow, recip, sqrt — the latter reconciling sqrt at 1n via F13(1/2, x)).",
       "status": "proven_machine_verified",
       "constraints": {
         "domain": "x, y ∈ (0, ∞)",
-        "total_nodes": 15,
+        "total_nodes": 14,
         "naive_total": 73,
-        "savings_percent": 79.5
+        "savings_percent": 80.8
       },
       "eml_metrics": {
-        "superbest_nodes": 15,
+        "superbest_nodes": 14,
         "naive_nodes": 73,
-        "savings_percent": 79.5,
+        "savings_percent": 80.8,
         "elc_class": "inside",
         "verified_by": "lean4",
-        "lean_file": "MonogateEML/ModelAudit.lean",
-        "lean_theorem": "superbest_v51_total_overcounted"
+        "lean_file": "MonogateEML/UpperBounds.lean",
+        "lean_theorem": "sqrt_one_node_positive'"
       },
       "tags": ["superbest", "routing", "cost", "positive_domain"]
     },
@@ -370,14 +370,14 @@
       "name": "SuperBEST Routing Table",
       "capability_ref": "routing.superbest_v5",
       "metric": "total_nodes_and_savings",
-      "value": 15,
+      "value": 14,
       "unit": "F16 nodes (positive domain)",
       "direction": "lower_is_better",
       "reproducibility": {
-        "command": "python -c \"from monogate.superbest import superbest_summary; print(superbest_summary())\"",
+        "command": "python -c \"from monogate.superbest import superbest_summary; print(superbest_summary(positive_domain=True))\"",
         "deterministic": true
       },
-      "notes": "Prints the full v5.2 table. Positive domain: 15n total, 79.5% savings vs 73n naive. General domain: reported alongside for reference."
+      "notes": "Prints the full v5.3 table. Positive domain: 14n total, 80.8% savings vs 73n naive (sqrt reconciled to 1n via UpperBounds.lean). General domain: reported alongside for reference."
     },
     {
       "id": "bench.cost_prediction",
@@ -492,8 +492,8 @@
     },
     {
       "id": "lean.model_audit",
-      "name": "SuperBEST v5.1 → v5.2 Correction",
-      "statement": "sqrt = 1n (not 2n), mul = 1n positive domain (not 2n); the corrected v5.2 total is 15n vs 73n naive (79.5% savings).",
+      "name": "SuperBEST v5.1 → v5.3 Correction",
+      "statement": "sqrt = 1n (not 2n), mul = 1n positive domain (not 2n); the corrected v5.3 total is 14n vs 73n naive (80.8% savings).",
       "status": "proven_machine_verified",
       "proof_method": "Explicit 1-node constructions via F13 and F16fn applied to positive-domain closure.",
       "lean_file": "MonogateEML/ModelAudit.lean",

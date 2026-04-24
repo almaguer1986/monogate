@@ -12,7 +12,7 @@ const lock = superbest.taxonomy_lock;
 
 <Base
   title="SuperBEST — Optimal EML Routing Table"
-  description="Minimum node counts for every arithmetic primitive in the EML/F16 operator family. Taxonomy locked at 23 operators. Layer 1 (F16): 15n / 79.5%. Layer 2 (23-op): 40% aggregate."
+  description="Minimum node counts for every arithmetic primitive in the EML/F16 operator family. Taxonomy locked at 23 operators. Layer 1 (F16): 14n / 80.8%. Layer 2 (23-op): 40% aggregate."
 >
   <div class="meta">
     <span>SuperBEST {superbest.version}</span>
@@ -219,7 +219,7 @@ const lock = superbest.taxonomy_lock;
   <div class="notes-block">
     <h2>Key results</h2>
     <ul>
-      <li><strong>Core table locked:</strong> 15n / 79.5% savings (positive domain) — canonical, unaffected by extended operators</li>
+      <li><strong>Core table locked:</strong> 14n / 80.8% savings (positive domain) — canonical, unaffected by extended operators</li>
       <li><strong>LSE corrected:</strong> ln(e^x+e^y) = 4n in F16 (corrected from 5n); 2n in 23-op via EEA+ln</li>
       <li><strong>Taxonomy closed:</strong> exactly 23 operators exist; CONJ_NO_OP_24 is now a proved theorem</li>
       <li><strong>softplus = 2n</strong> in both layers via EML(x,1/e)+ln (Category B: genuine F16)</li>

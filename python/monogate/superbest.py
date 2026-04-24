@@ -3,18 +3,26 @@ SuperBEST Router — Dynamic Per-Operation Operator Selection
 Finds the minimum-node operator for each arithmetic primitive in an expression tree.
 
 Author: Monogate Research
-Version: v5.2 (2026-04-22) — Lean-confirmed floor, matches CapCard v2.3.0
+Version: v5.3 (2026-04-23) — sqrt positive 2n -> 1n reconciliation
 
-Canonical headlines (agrees with capability_card_public.json v2.3.0):
+Canonical headlines (library-level; public capcard sync pending user review):
   - Positive domain (10 ops: exp, ln, neg, add, sub, mul, div, recip, pow, sqrt):
-        15n / 79.5% savings vs 73n naive
+        14n / 80.8% savings vs 73n naive
   - General domain (8 ops: exp, ln, mul, div, neg, add, sub, abs):
         16n / 74.2% savings vs 62n naive
 
+v5.2 -> v5.3 change (2026-04-23):
+  - sqrt positive: 2n -> 1n
+        Reconciles library with UpperBounds.lean theorem `sqrt_one_node_positive'`
+        (F13(1/2, x) = exp((1/2)*log(x)) = sqrt(x) for x > 0 — single F16 node).
+        v5.2 had retained the older 2-node construction EML(0.5*EXL(0,x), 1);
+        the Lean 0-sorry proof establishes the 1-node EPL form as canonical.
+  - positive headline: 15n/79.5% -> 14n/80.8%
+  - general headline unchanged (sqrt is not part of the 8-op general basket).
+
 v5.1 -> v5.2 changes (2026-04-22):
   - mul positive: 2n -> 1n         (UpperBounds.lean one-node F16 construction)
-  - mul general:  6n -> 3n         (Python exact: neg(mul(neg(x), y)) not required;
-                                    3n direct construction via DEML/EXL shell)
+  - mul general:  6n -> 3n         (Python exact: 3n direct construction via DEML/EXL shell)
   - div general:  2n -> 3n         (DivLowerBound3Full.lean: SB(div, general) >= 3)
   - abs entry:    new  abs=2n      (2-node EPL construction, symmetric in both domains)
   - pow naive:    15 -> 3          (aligns per-op naive sums with CapCard 73n/62n baselines)
@@ -25,12 +33,12 @@ v5.1 retained (unchanged):
   - pow positive: 1n (EPL/ELMl direct: exp(n*ln(x)) = x^n)
   - add = 2n for ALL reals via LEdiv(x, DEML(y,1)) = x + y (ADD-T1)
   - sub = 2n via LEdiv(x, EML(y,1))
-  - sqrt positive = 2n via EML(0.5*EXL(0,x), 1)
   - neg = 2n via EXL(0, DEML(x,1))
 
 References:
-  capability_card_public.json  (canonical totals and per-op claims)
-  MonogateEML/UpperBounds.lean (1-node positive bounds for exp, mul, pow, recip, sqrt)
+  capability_card_public.json  (canonical totals and per-op claims; public sync pending)
+  MonogateEML/UpperBounds.lean (1-node positive bounds for exp, mul, pow, recip, sqrt;
+                                sqrt_one_node_positive' theorem, line 76, 0 sorries)
   MonogateEML/DivLowerBound3Full.lean (SB(div, general) >= 3)
   ADD_T1_General_Addition_2n.tex
 """
@@ -42,13 +50,16 @@ import re
 # Canonical v5.2 headline constants (agree with capability_card_public.json)
 # ---------------------------------------------------------------------------
 
-# The card's "routing.superbest_v5" capability:
-#   constraints.total_nodes       = 15  (positive, 10 ops)
-#   constraints.naive_total       = 73
-#   constraints.savings_percent   = 79.5
-SUPERBEST_V52_POS_TOTAL = 15
-SUPERBEST_V52_POS_NAIVE = 73
-SUPERBEST_V52_POS_SAVINGS_PCT = 79.5
+# v5.3 library-level totals (public capcard sync pending user review):
+#   positive, 10 ops: total_nodes = 14, naive_total = 73, savings = 80.8%
+# Legacy alias names (V52_*) retained for back-compat imports.
+SUPERBEST_V53_POS_TOTAL = 14
+SUPERBEST_V53_POS_NAIVE = 73
+SUPERBEST_V53_POS_SAVINGS_PCT = 80.8
+# Back-compat aliases (callers importing V52_* still resolve to current totals).
+SUPERBEST_V52_POS_TOTAL = SUPERBEST_V53_POS_TOTAL
+SUPERBEST_V52_POS_NAIVE = SUPERBEST_V53_POS_NAIVE
+SUPERBEST_V52_POS_SAVINGS_PCT = SUPERBEST_V53_POS_SAVINGS_PCT
 
 # Recomputed 2026-04-22 for the 8-op general-domain table.
 SUPERBEST_V52_GEN_TOTAL = 16
@@ -88,7 +99,7 @@ NAIVE_COSTS: dict[str, int] = {
     "cos": 13,
 }
 
-# Positive-domain v5.2 costs. Sum over SUPERBEST_V52_POS_OPS = 15n.
+# Positive-domain v5.3 costs. Sum over SUPERBEST_V52_POS_OPS = 14n.
 SUPERBEST_COSTS_POS: dict[str, int] = {
     "exp": 1,
     "ln": 1,
@@ -99,7 +110,7 @@ SUPERBEST_COSTS_POS: dict[str, int] = {
     "div": 2,   # v5.2: DivLowerBound3 2-node positive construction
     "recip": 1,
     "pow": 1,   # v5.1 retained: EPL/ELMl direct
-    "sqrt": 2,
+    "sqrt": 1,  # v5.3: UpperBounds.lean sqrt_one_node_positive' — F13(1/2, x) (was 2n)
     "abs": 2,
     "sin": 1,   # via complex EML
     "cos": 1,
@@ -149,8 +160,8 @@ SUPERBEST_TABLE: dict[str, dict] = {
             "note": "2 nodes for ALL reals via ADD-T1"},
     "sub": {"operator": "Mixed(EML/LEdiv)", "nodes": 2, "domain": "all x, y",
             "construction": "lediv(x, eml(y, 1))"},
-    "sqrt": {"operator": "Mixed(EXL/EML)", "nodes": 2, "domain": "x > 0",
-             "construction": "eml(0.5*exl(0, x), 1)"},
+    "sqrt": {"operator": "EPL (F13)", "nodes": 1, "domain": "x > 0",
+             "construction": "epl(1/2, x) = exp((1/2)*ln(x)) (UpperBounds.lean)"},
     "neg": {"operator": "Mixed(EXL/DEML)", "nodes": 2, "domain": "all x",
             "construction": "exl(0, deml(x, 1))"},
     "recip": {"operator": "ELSb", "nodes": 1, "domain": "x != 0",
@@ -267,7 +278,7 @@ def superbest_summary(positive_domain: bool = False) -> str:
     """Return a human-readable v5.2 routing table summary.
 
     Args:
-        positive_domain: If True, show the 10-op positive table (15n / 79.5%).
+        positive_domain: If True, show the 10-op positive table (14n / 80.8%).
                          If False (default), show the 8-op general table (16n / 74.2%).
     """
     if positive_domain:

@@ -342,12 +342,12 @@ def _assert_superbest_card(card: dict[str, Any]) -> tuple[str, str]:
     if cap is None:
         return "FAIL", "superbest card: routing.superbest_v5 missing"
     c = cap.get("constraints", {})
-    expect = {"total_nodes": 15, "naive_total": 73, "savings_percent": 79.5}
+    expect = {"total_nodes": 14, "naive_total": 73, "savings_percent": 80.8}
     for k, v in expect.items():
         got = c.get(k)
         if got != v:
             return "FAIL", f"superbest card: {k}={got!r} expected {v!r}"
-    return "PASS", "superbest card: 15n / 79.5% / 73 naive"
+    return "PASS", "superbest card: 14n / 80.8% / 73 naive"
 
 
 def _assert_superbest_package(card: dict[str, Any]) -> tuple[str, str]:

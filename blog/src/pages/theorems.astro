@@ -127,7 +127,7 @@ const results: Result[] = [
     lean: { file: 'DivLowerBound.lean', theorem: 'SB_div_ge_two', status: 'verified' } },
   { id: 'T_SUPERBEST_UB', tier: 'THEOREM', name: 'SuperBEST Upper Bounds — 5 Positive-Domain Identities (Lean)',
     session: 'Lean Sprint 2026-04-21', category: 'Core Algebra',
-    statement: 'Lean-verified (0 sorries): exp(x)=F1(x,1) (1n); exp(ln x+ln y)=xy for x,y>0 (1n); exp(n·ln x)=xⁿ for x>0 (1n); exp(−ln x)=1/x for x>0 (1n); exp(½·ln x)=√x for x>0 (1n). SuperBEST v5.2 positive total: 15n (savings 79.5%).',
+    statement: 'Lean-verified (0 sorries): exp(x)=F1(x,1) (1n); exp(ln x+ln y)=xy for x,y>0 (1n); exp(n·ln x)=xⁿ for x>0 (1n); exp(−ln x)=1/x for x>0 (1n); exp(½·ln x)=√x for x>0 (1n). SuperBEST v5.3 positive total: 14n (savings 80.8%).',
     evidence: 'Lean 4, 0 sorries. UpperBounds.lean + ModelAudit.lean. Mathlib: Real.exp_add, Real.exp_log, Real.rpow_def_of_pos, Real.sqrt_eq_rpow.',
     lean: { file: 'UpperBounds.lean', theorem: 'superbest_positive_one_node_ops', status: 'verified' } },
   { id: 'T_EULER_LEAN', tier: 'THEOREM', name: 'Euler Gateway + Euler Identity + Depth Hierarchy (Lean)',

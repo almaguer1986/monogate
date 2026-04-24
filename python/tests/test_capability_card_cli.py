@@ -92,7 +92,7 @@ def test_abs_identity_assertion_passes():
     assert status == "PASS"
 
 
-def test_superbest_card_claims_15n_79_5(canonical_card):
+def test_superbest_card_claims_14n_80_8(canonical_card):
     status, msg = cc._assert_superbest_card(canonical_card)
     assert status == "PASS", msg
 

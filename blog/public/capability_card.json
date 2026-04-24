@@ -3,7 +3,7 @@
   "id": "ai.capcard.monogate",
   "name": "Monogate",
   "type": "library",
-  "description": "One binary gate, eml(x, y) = exp(x) − ln(y), generates every elementary function as a finite tree (Odrzywołek 2026). Ships with the 16-operator F16 taxonomy (8 exactly complete, 1 approximately complete, 7 incomplete), the SuperBEST routing table at 15 nodes / 79.5% savings on the positive-domain arithmetic set, a cost theory with zero prediction error across 315 catalogued equations, and 10 machine-verified Lean 4 proofs (0 sorries each) in the companion monogate-lean repository.",
+  "description": "One binary gate, eml(x, y) = exp(x) − ln(y), generates every elementary function as a finite tree (Odrzywołek 2026). Ships with the 16-operator F16 taxonomy (8 exactly complete, 1 approximately complete, 7 incomplete), the SuperBEST routing table at 14 nodes / 80.8% savings on the positive-domain arithmetic set, a cost theory with zero prediction error across 315 catalogued equations, and 10 machine-verified Lean 4 proofs (0 sorries each) in the companion monogate-lean repository.",
   "version": "2.3.0",
   "license": "MIT",
   "homepage": "https://monogate.org",
@@ -16,9 +16,11 @@
     "pypi": "https://pypi.org/project/monogate/"
   },
   "authors": [
-    { "name": "Monogate Research", "role": "creator" }
+    {
+      "name": "Monogate Research",
+      "role": "creator"
+    }
   ],
-
   "capabilities": [
     {
       "id": "universality.eml",
@@ -26,31 +28,42 @@
       "category": "scientific_claim",
       "description": "eml(x, y) = exp(x) − ln(y) together with the constant 1 generates every elementary function as a finite binary tree (Odrzywołek 2026, arXiv:2603.21852).",
       "status": "proven",
-      "constraints": { "source": "arXiv:2603.21852" },
-      "tags": ["universality", "operator", "foundation"]
+      "constraints": {
+        "source": "arXiv:2603.21852"
+      },
+      "tags": [
+        "universality",
+        "operator",
+        "foundation"
+      ]
     },
     {
       "id": "routing.superbest_v5",
-      "name": "SuperBEST Routing (v5.2, positive domain)",
+      "name": "SuperBEST Routing (v5.3, positive domain)",
       "category": "cost_theory",
-      "description": "A canonical node-cost table for the 10 positive-domain arithmetic primitives (exp, ln, neg, add, sub, mul, div, recip, pow, sqrt) totalling 15 F16 nodes vs 73 naive, a 79.5% saving. Every per-op cost is proved exact, either structurally or by exhaustive F16 search (with a corresponding Lean 4 lower bound for add, sub, mul, div and upper bounds for exp, mul, pow, recip, sqrt).",
+      "description": "A canonical node-cost table for the 10 positive-domain arithmetic primitives (exp, ln, neg, add, sub, mul, div, recip, pow, sqrt) totalling 14 F16 nodes vs 73 naive, an 80.8% saving. Every per-op cost is proved exact, either structurally or by exhaustive F16 search (with a corresponding Lean 4 lower bound for add, sub, mul, div and upper bounds for exp, mul, pow, recip, sqrt — the latter reconciling sqrt at 1n via F13(1/2, x)).",
       "status": "proven_machine_verified",
       "constraints": {
         "domain": "x, y ∈ (0, ∞)",
-        "total_nodes": 15,
+        "total_nodes": 14,
         "naive_total": 73,
-        "savings_percent": 79.5
+        "savings_percent": 80.8
       },
       "eml_metrics": {
-        "superbest_nodes": 15,
+        "superbest_nodes": 14,
         "naive_nodes": 73,
-        "savings_percent": 79.5,
+        "savings_percent": 80.8,
         "elc_class": "inside",
         "verified_by": "lean4",
-        "lean_file": "MonogateEML/ModelAudit.lean",
-        "lean_theorem": "superbest_v51_total_overcounted"
+        "lean_file": "MonogateEML/UpperBounds.lean",
+        "lean_theorem": "sqrt_one_node_positive'"
       },
-      "tags": ["superbest", "routing", "cost", "positive_domain"]
+      "tags": [
+        "superbest",
+        "routing",
+        "cost",
+        "positive_domain"
+      ]
     },
     {
       "id": "taxonomy.sixteen_operators",
@@ -58,8 +71,18 @@
       "category": "taxonomy",
       "description": "Complete classification of all 16 binary exp-ln operators of the form h(exp(±x), ln(±y)) into three completeness classes: 8 exactly complete (including EML, EDL, EXL, EAL and sign variants), 1 approximately complete (EMN, doubly-exponential residual), and 7 incomplete (DEML-family with structural barriers).",
       "status": "proven",
-      "constraints": { "operators_count": 16, "complete": 8, "approximate": 1, "incomplete": 7 },
-      "tags": ["taxonomy", "F16", "completeness", "operator_family"]
+      "constraints": {
+        "operators_count": 16,
+        "complete": 8,
+        "approximate": 1,
+        "incomplete": 7
+      },
+      "tags": [
+        "taxonomy",
+        "F16",
+        "completeness",
+        "operator_family"
+      ]
     },
     {
       "id": "completeness.exp_position",
@@ -67,8 +90,15 @@
       "category": "scientific_claim",
       "description": "An exp-ln binary operator is exactly complete if and only if it contains exp(+x) with no domain restriction on self-composition. exp(−x) implies incompleteness via six distinct mechanisms (slope, domain collapse, dead constant, doubly-exponential residual). LEX is an exp(+x) instance whose self-composition domain collapses, showing the 'no domain restriction' clause is non-vacuous.",
       "status": "proven",
-      "constraints": { "forward_cases_proved": 8, "reverse_cases_proved": 7 },
-      "tags": ["completeness", "structure", "exp_position"]
+      "constraints": {
+        "forward_cases_proved": 8,
+        "reverse_cases_proved": 7
+      },
+      "tags": [
+        "completeness",
+        "structure",
+        "exp_position"
+      ]
     },
     {
       "id": "barrier.infinite_zeros",
@@ -80,7 +110,12 @@
         "parts_proved_lean": "A (sin zeros), B (analytic finite zeros on compacts), C and C' (EML trees analytic on (0, ∞))",
         "parts_open": "quantitative depth-k zero-count bound — requires o-minimal structure theory not yet in Mathlib"
       },
-      "tags": ["barrier", "sin", "impossibility", "lean_partial"]
+      "tags": [
+        "barrier",
+        "sin",
+        "impossibility",
+        "lean_partial"
+      ]
     },
     {
       "id": "characterization.elc_real",
@@ -88,7 +123,11 @@
       "category": "scientific_claim",
       "description": "The class ELC(ℝ) of real numbers expressible as finite EML trees over algebraic constants coincides with the non-oscillatory elementary constants: algebraic over ℚ(e, logs of algebraics), closed under exp/log/arithmetic, but excluding genuinely-oscillatory values such as sin(q) for generic rational q. The characterization places the EML framework inside the classical transcendence hierarchy.",
       "status": "proven",
-      "tags": ["elc", "characterization", "transcendence"]
+      "tags": [
+        "elc",
+        "characterization",
+        "transcendence"
+      ]
     },
     {
       "id": "cost.decomposition",
@@ -96,8 +135,15 @@
       "category": "cost_theory",
       "description": "For any expression E, Cost(E) = NaiveCost(E) − SharingDiscount(E) − PatternBonus(E) with all three terms non-negative. The decomposition is unique under canonical sharing and greedy pattern matching, proved gap-free in R2_Decomposition_Theorem, and verified with zero prediction error across the 315-equation public catalog.",
       "status": "proven",
-      "constraints": { "catalog_size": 315, "prediction_error": 0 },
-      "tags": ["cost", "decomposition", "verified"]
+      "constraints": {
+        "catalog_size": 315,
+        "prediction_error": 0
+      },
+      "tags": [
+        "cost",
+        "decomposition",
+        "verified"
+      ]
     },
     {
       "id": "barrier.i_unconstruct",
@@ -105,8 +151,14 @@
       "category": "scientific_claim",
       "description": "Under strict principal-branch semantics, the imaginary unit i is not constructible from {eml, 1} at any finite depth. Lean-verified; nearest depth-6 approach is |T − i| ≥ 4.76×10⁻⁶.",
       "status": "proven",
-      "constraints": { "nearest_approach_depth_6": 4.76e-6 },
-      "tags": ["i", "unconstructibility", "lean_verified"]
+      "constraints": {
+        "nearest_approach_depth_6": 4.76e-06
+      },
+      "tags": [
+        "i",
+        "unconstructibility",
+        "lean_verified"
+      ]
     },
     {
       "id": "lower_bound.add",
@@ -114,7 +166,11 @@
       "category": "lower_bound",
       "description": "No single F16 operator computes x + y for all real x, y. Together with the explicit 2-node construction lediv(x, deml(y, 1)) = x + y, this fixes SB(add) = 2 on all of ℝ².",
       "status": "proven",
-      "tags": ["add", "lower_bound", "lean_verified"]
+      "tags": [
+        "add",
+        "lower_bound",
+        "lean_verified"
+      ]
     },
     {
       "id": "lower_bound.sub",
@@ -122,7 +178,11 @@
       "category": "lower_bound",
       "description": "No single F16 operator computes x − y for all real x, y. Combined with lediv(x, eml(y, 1)) = x − y this fixes SB(sub) = 2.",
       "status": "proven",
-      "tags": ["sub", "lower_bound", "lean_verified"]
+      "tags": [
+        "sub",
+        "lower_bound",
+        "lean_verified"
+      ]
     },
     {
       "id": "lower_bound.mul",
@@ -130,7 +190,11 @@
       "category": "lower_bound",
       "description": "No single F16 operator computes x · y for all real x, y. Derivative obstruction: ∂op/∂x always carries an exp(x) factor. At positive domain the 1-node construction exp(ln x + ln y) achieves the bound; general domain needs ≥ 2.",
       "status": "proven",
-      "tags": ["mul", "lower_bound", "lean_verified"]
+      "tags": [
+        "mul",
+        "lower_bound",
+        "lean_verified"
+      ]
     },
     {
       "id": "lower_bound.div",
@@ -138,23 +202,35 @@
       "category": "lower_bound",
       "description": "No single F16 operator computes x / y for all real x, y. The extended DivLowerBound3 development rules out all exp-type outer-node 2-node circuits and exhibits the 2-node positive-domain construction.",
       "status": "proven",
-      "tags": ["div", "lower_bound", "lean_verified"]
+      "tags": [
+        "div",
+        "lower_bound",
+        "lean_verified"
+      ]
     },
     {
       "id": "upper_bound.f16_positive",
       "name": "F16 Positive-Domain 1-Node Constructions (Lean)",
       "category": "upper_bound",
-      "description": "On the positive real domain, exp, mul, pow, recip, and sqrt each have an explicit F16 single-node construction. These five 1-node results collectively supersede the v5.1 SuperBEST table's over-counted 16n and establish the corrected v5.2 total of 15n.",
+      "description": "On the positive real domain, exp, mul, pow, recip, and sqrt each have an explicit F16 single-node construction. These five 1-node results collectively supersede the v5.1 SuperBEST table's over-counted 16n and establish the corrected v5.3 total of 14n.",
       "status": "proven_machine_verified",
       "eml_metrics": {
         "superbest_nodes": 1,
         "elc_class": "inside",
-        "operator_family": ["EML", "EPL", "ELSb"],
+        "operator_family": [
+          "EML",
+          "EPL",
+          "ELSb"
+        ],
         "verified_by": "lean4",
         "lean_file": "MonogateEML/UpperBounds.lean",
         "lean_theorem": "superbest_positive_one_node_ops"
       },
-      "tags": ["upper_bound", "superbest", "lean_verified"]
+      "tags": [
+        "upper_bound",
+        "superbest",
+        "lean_verified"
+      ]
     },
     {
       "id": "hierarchy.depth_strict",
@@ -162,7 +238,11 @@
       "category": "scientific_claim",
       "description": "EML-0 ⊊ EML-1: the class of depth-0 constructible values is strictly smaller than depth-1. Witnessed by exp(x), which is depth-1 and not constant. Lean-verified via exp_not_constant using Real.exp_one_gt_d9.",
       "status": "proven",
-      "tags": ["depth", "hierarchy", "lean_verified"]
+      "tags": [
+        "depth",
+        "hierarchy",
+        "lean_verified"
+      ]
     },
     {
       "id": "bridge.euler_gateway",
@@ -170,7 +250,12 @@
       "category": "scientific_claim",
       "description": "ceml(ix, 1) = exp(ix) for all real x. One complex EML node recovers the Euler exponential and therefore sin(x) = Im(ceml(ix, 1)) at machine precision. This is the complex-domain counterpart to the Infinite Zeros Barrier: the real-domain obstruction vanishes in ℂ.",
       "status": "proven",
-      "tags": ["euler", "complex", "lean_verified", "bridge"]
+      "tags": [
+        "euler",
+        "complex",
+        "lean_verified",
+        "bridge"
+      ]
     },
     {
       "id": "duality.exp_log_fixed_points",
@@ -178,7 +263,12 @@
       "category": "scientific_claim",
       "description": "At any fixed point z of exp on the slit plane (exp(z) = z), the product of derivatives deriv(exp)(z) · deriv(log)(z) equals 1. Consequently every Lambert fixed point z_k* = −W_k(−1) is exp-repelling (|mult| = |z_k*| > 1) and log-attracting on its matching branch (|mult| = 1/|z_k*| < 1).",
       "status": "proven",
-      "tags": ["duality", "lambert", "lean_verified", "complex"]
+      "tags": [
+        "duality",
+        "lambert",
+        "lean_verified",
+        "complex"
+      ]
     },
     {
       "id": "preservation.hyperbolic",
@@ -186,7 +276,11 @@
       "category": "scientific_claim",
       "description": "sinh, cosh and tanh are explicit arithmetic combinations of exp(±x), so the hyperbolic shell-1 composition is closed on ELC(ℝ). Contrasts sharply with sin/cos/tan which do not preserve ELC (a consequence of the Infinite Zeros Barrier). Includes the 3-4-5 Pythagorean witness at x = ln 2.",
       "status": "proven",
-      "tags": ["hyperbolic", "preservation", "lean_verified"]
+      "tags": [
+        "hyperbolic",
+        "preservation",
+        "lean_verified"
+      ]
     },
     {
       "id": "primitive.add_2n",
@@ -194,7 +288,11 @@
       "category": "construction",
       "description": "add(x, y) = lediv(x, deml(y, 1)) achieves x + y in exactly 2 F16 nodes for all real x, y — no domain restriction. Collapses the earlier two-tier add accounting into a single universal 2n entry.",
       "status": "proven",
-      "tags": ["add", "construction", "superbest"]
+      "tags": [
+        "add",
+        "construction",
+        "superbest"
+      ]
     },
     {
       "id": "primitive.neg_2n",
@@ -202,7 +300,11 @@
       "category": "construction",
       "description": "neg(x) = exl(0, deml(x, 1)) achieves −x in exactly 2 F16 nodes for all real x. Proved optimal by exhaustive 1-node search.",
       "status": "proven",
-      "tags": ["neg", "construction", "superbest"]
+      "tags": [
+        "neg",
+        "construction",
+        "superbest"
+      ]
     },
     {
       "id": "primitive.sub_2n",
@@ -210,17 +312,28 @@
       "category": "construction",
       "description": "sub(x, y) = lediv(x, eml(y, 1)) achieves x − y in exactly 2 F16 nodes for all real x, y. Lower bound shown in SubLowerBound.lean.",
       "status": "proven",
-      "tags": ["sub", "construction", "superbest"]
+      "tags": [
+        "sub",
+        "construction",
+        "superbest"
+      ]
     },
-
     {
       "id": "catalog.equations_315",
       "name": "315-Equation Cost Catalog",
       "category": "empirical_dataset",
       "description": "315 equations catalogued across 15 quantitative domains (physics, chemistry, biology, finance, information theory, statistics, geometry, …) with exact SuperBEST node counts and zero prediction error between the catalog entries and the Cost Decomposition formula.",
       "status": "empirically_confirmed",
-      "constraints": { "catalog_size": 315, "domains": 15, "prediction_error": 0 },
-      "tags": ["catalog", "cost", "empirical"]
+      "constraints": {
+        "catalog_size": 315,
+        "domains": 15,
+        "prediction_error": 0
+      },
+      "tags": [
+        "catalog",
+        "cost",
+        "empirical"
+      ]
     },
     {
       "id": "empirical.isomorphism_families",
@@ -228,8 +341,14 @@
       "category": "empirical_dataset",
       "description": "13 cross-domain isomorphism families identified — distinct equations that share the same SuperBEST node count and the same compound-pattern signature despite coming from unrelated physical contexts. Evidence for cost as a domain-independent structural invariant.",
       "status": "empirically_confirmed",
-      "constraints": { "families_identified": 13 },
-      "tags": ["isomorphism", "cross_domain", "empirical"]
+      "constraints": {
+        "families_identified": 13
+      },
+      "tags": [
+        "isomorphism",
+        "cross_domain",
+        "empirical"
+      ]
     },
     {
       "id": "empirical.cost_distribution",
@@ -237,18 +356,33 @@
       "category": "empirical_dataset",
       "description": "Empirically, the distribution of node counts across the 315-equation catalog is well fit by a log-normal law with R² = 0.84. No analytic derivation yet — reported as an empirical regularity.",
       "status": "empirically_confirmed",
-      "constraints": { "fit": "log_normal", "r_squared": 0.84 },
-      "tags": ["distribution", "empirical", "statistics"]
+      "constraints": {
+        "fit": "log_normal",
+        "r_squared": 0.84
+      },
+      "tags": [
+        "distribution",
+        "empirical",
+        "statistics"
+      ]
     },
-
     {
       "id": "conjecture.boundary_decidable",
       "name": "Conjectural Boundary Decidability (CBD)",
       "category": "conjecture",
       "description": "Conditional on Schanuel's conjecture plus an Effective Depth Bound, ELC membership is decidable. Unconditionally decidable: the narrower bounded-depth F16 equality problem (no Schanuel required), via Baker's theorem + adaptive precision.",
       "status": "conjecture",
-      "constraints": { "conditional_on": ["Schanuel", "EDB"] },
-      "tags": ["decidability", "schanuel", "conjecture"]
+      "constraints": {
+        "conditional_on": [
+          "Schanuel",
+          "EDB"
+        ]
+      },
+      "tags": [
+        "decidability",
+        "schanuel",
+        "conjecture"
+      ]
     },
     {
       "id": "conjecture.trig_tower",
@@ -256,7 +390,11 @@
       "category": "conjecture",
       "description": "The tower sin(sin(sin(…sin(1)…))) has a conjectured specific EML depth behaviour tied to the 2ⁿ zero-count bound. Iteration properties (period-2 attractor of exp∘sin, Lyapunov λ ≈ −0.775) confirmed numerically; exact membership in ELC at deep iteration remains open.",
       "status": "conjecture",
-      "tags": ["trig", "tower", "conjecture"]
+      "tags": [
+        "trig",
+        "tower",
+        "conjecture"
+      ]
     },
     {
       "id": "conjecture.no_op24",
@@ -264,9 +402,12 @@
       "category": "conjecture",
       "description": "The 23-operator extended census (F16 + 7 algebraic shortcuts: LLA, LLS, LLD, EEA, EES, EEM, EED) is conjecturally the complete list of binary h(exp(±x), ln(±y)) primitives satisfying the PGC + AIT criteria. No 'operator #24' exists within the binary framework.",
       "status": "conjecture",
-      "tags": ["taxonomy", "closure", "conjecture"]
+      "tags": [
+        "taxonomy",
+        "closure",
+        "conjecture"
+      ]
     },
-
     {
       "id": "activation.softplus",
       "name": "Softplus activation",
@@ -281,8 +422,12 @@
         "naive_nodes": 5,
         "savings_percent": 80.0,
         "elc_class": "inside",
-        "operator_family": ["LEAd"],
-        "pattern_bonus": ["LEAd"],
+        "operator_family": [
+          "LEAd"
+        ],
+        "pattern_bonus": [
+          "LEAd"
+        ],
         "verified_by": "lean4",
         "lean_file": "MonogateEML/UpperBounds.lean",
         "lean_theorem": "superbest_positive_one_node_ops"
@@ -292,47 +437,73 @@
         "backward_nodes": 5,
         "normalization": "none"
       },
-      "tags": ["activation", "elc_interior", "1_node_primitive"]
+      "tags": [
+        "activation",
+        "elc_interior",
+        "1_node_primitive"
+      ]
     },
     {
       "id": "activation.sigmoid",
       "name": "Sigmoid activation",
       "category": "tool_function",
-      "description": "σ(x) = exp(x) / (1 + exp(x)). Cheapest construction uses EAL(x, e) = exp(x) + 1 then divides; 5n forward via SuperBEST.",
+      "description": "σ(x) = 1/(1+exp(-x)). TREE cost 6n (strict, no subexpression sharing). DAG cost 5n via σ(x) = exp(x)/(1+exp(x)) with shared exp(x). The 5n number is only valid when the compiler shares exp(x) across numerator and denominator; publish the 6n tree number whenever the semantics is not stated.",
       "status": "empirically_confirmed",
       "eml_metrics": {
-        "superbest_nodes": 5,
-        "superbest_nodes_general": 5,
+        "superbest_nodes": 6,
+        "cost_tree": 6,
+        "cost_dag": 5,
+        "cost_semantics_default": "tree",
+        "superbest_nodes_general": 6,
         "naive_nodes": 19,
-        "savings_percent": 73.7,
+        "savings_percent": 68.4,
         "elc_class": "inside",
-        "operator_family": ["EAL"],
-        "verified_by": "python_exact"
+        "operator_family": [
+          "EAL"
+        ],
+        "verified_by": "python_exact",
+        "cost_notes": "TREE: neg(2) + exp(1) + add(2) + recip(1) = 6. DAG: exp(1) + add(2) + div(2) = 5 with exp shared."
       },
       "neural_metrics": {
-        "forward_nodes": 5,
+        "forward_nodes": 6,
+        "forward_nodes_dag": 5,
         "backward_nodes": 4
       },
-      "tags": ["activation", "elc_interior"]
+      "tags": [
+        "activation",
+        "elc_interior",
+        "cost_semantics_labelled"
+      ]
     },
     {
       "id": "optimizer.adam",
       "name": "Adam optimizer step (v5.2 re-audit)",
       "category": "tool_function",
-      "description": "Kingma + Ba 2014 adaptive-moment optimiser. Per parameter per step. Re-audited 2026-04-22 (NN-13): amortising the bias-correction scalars 1-β₁ᵗ and 1-β₂ᵗ across all parameters drops the m_hat and v_hat chains from 5n+5n to 2n+2n, yielding 31n per param per step instead of the original 37n. This is a -16% optimizer-cost correction.",
+      "description": "Kingma + Ba 2014 adaptive-moment optimiser. Per parameter per step. STRICT cost is 37n per param (every parameter pays for its own bias-correction factor pow+sub+div). AMORTIZED cost is 31n per param when the scalars 1-β₁ᵗ and 1-β₂ᵗ are precomputed once per step and shared across every parameter; m_hat and v_hat then each collapse to a single mul by a scalar (2n instead of 5n). Amortized cost is the right number for N >= 2 params; for N=1 use the strict count.",
       "status": "empirically_confirmed",
       "eml_metrics": {
-        "superbest_nodes": 31,
+        "superbest_nodes": 37,
+        "cost_strict": 37,
+        "cost_amortized": 31,
+        "cost_semantics_default": "strict",
+        "amortization_break_even_n_params": 2,
         "elc_class": "inside",
-        "verified_by": "python_exact"
+        "verified_by": "python_exact",
+        "cost_notes": "STRICT (tree): m=8 + v=10 + m_hat=5 + v_hat=5 + theta=9 = 37. AMORTIZED: m_hat and v_hat drop to 2+2 when 1-β^t is computed once per step."
       },
       "neural_metrics": {
         "optimizer": "adam",
-        "optimizer_nodes_per_param_per_step": 31,
+        "optimizer_nodes_per_param_per_step_strict": 37,
+        "optimizer_nodes_per_param_per_step_amortized": 31,
         "forward_nodes": 0,
         "backward_nodes": 0
       },
-      "tags": ["optimizer", "update_rule", "reaudit_v5_2"]
+      "tags": [
+        "optimizer",
+        "update_rule",
+        "reaudit_v5_2",
+        "cost_semantics_labelled"
+      ]
     },
     {
       "id": "norm.rmsnorm",
@@ -349,24 +520,26 @@
         "forward_nodes": 4097,
         "normalization": "RMS"
       },
-      "tags": ["normalization", "llama_style"]
+      "tags": [
+        "normalization",
+        "llama_style"
+      ]
     }
   ],
-
   "benchmarks": [
     {
       "id": "bench.superbest_table",
       "name": "SuperBEST Routing Table",
       "capability_ref": "routing.superbest_v5",
       "metric": "total_nodes_and_savings",
-      "value": 15,
+      "value": 14,
       "unit": "F16 nodes (positive domain)",
       "direction": "lower_is_better",
       "reproducibility": {
-        "command": "python -c \"from monogate.superbest import superbest_summary; print(superbest_summary())\"",
+        "command": "python -c \"from monogate.superbest import superbest_summary; print(superbest_summary(positive_domain=True))\"",
         "deterministic": true
       },
-      "notes": "Prints the full v5.2 table. Positive domain: 15n total, 79.5% savings vs 73n naive. General domain: reported alongside for reference."
+      "notes": "Prints the full v5.3 table. Positive domain: 14n total, 80.8% savings vs 73n naive (sqrt reconciled to 1n via UpperBounds.lean). General domain: reported alongside for reference."
     },
     {
       "id": "bench.cost_prediction",
@@ -411,7 +584,6 @@
       "notes": "Equality module, cost theory, F16 routing, interval arithmetic, and more. 9 skipped (platform-dependent)."
     }
   ],
-
   "proofs": [
     {
       "id": "lean.add_lower_bound",
@@ -422,7 +594,9 @@
       "lean_file": "MonogateEML/AddLowerBound.lean",
       "lean_theorem": "SB_add_ge_two",
       "sorries": 0,
-      "capability_refs": ["lower_bound.add"]
+      "capability_refs": [
+        "lower_bound.add"
+      ]
     },
     {
       "id": "lean.sub_lower_bound",
@@ -433,7 +607,9 @@
       "lean_file": "MonogateEML/SubLowerBound.lean",
       "lean_theorem": "SB_sub_ge_two",
       "sorries": 0,
-      "capability_refs": ["lower_bound.sub"]
+      "capability_refs": [
+        "lower_bound.sub"
+      ]
     },
     {
       "id": "lean.mul_lower_bound",
@@ -444,7 +620,9 @@
       "lean_file": "MonogateEML/MulLowerBound.lean",
       "lean_theorem": "SB_mul_ge_two",
       "sorries": 0,
-      "capability_refs": ["lower_bound.mul"]
+      "capability_refs": [
+        "lower_bound.mul"
+      ]
     },
     {
       "id": "lean.div_lower_bound",
@@ -455,7 +633,9 @@
       "lean_file": "MonogateEML/DivLowerBound.lean",
       "lean_theorem": "SB_div_ge_two",
       "sorries": 0,
-      "capability_refs": ["lower_bound.div"]
+      "capability_refs": [
+        "lower_bound.div"
+      ]
     },
     {
       "id": "lean.div_no_exp_outer",
@@ -466,7 +646,9 @@
       "lean_file": "MonogateEML/DivLowerBound3.lean",
       "lean_theorem": "no_exp_outer_2node_div / div_two_node_pos_domain",
       "sorries": 0,
-      "capability_refs": ["lower_bound.div"]
+      "capability_refs": [
+        "lower_bound.div"
+      ]
     },
     {
       "id": "lean.f16_upper_bounds",
@@ -477,18 +659,23 @@
       "lean_file": "MonogateEML/UpperBounds.lean",
       "lean_theorem": "superbest_positive_one_node_ops",
       "sorries": 0,
-      "capability_refs": ["upper_bound.f16_positive", "routing.superbest_v5"]
+      "capability_refs": [
+        "upper_bound.f16_positive",
+        "routing.superbest_v5"
+      ]
     },
     {
       "id": "lean.model_audit",
-      "name": "SuperBEST v5.1 → v5.2 Correction",
-      "statement": "sqrt = 1n (not 2n), mul = 1n positive domain (not 2n); the corrected v5.2 total is 15n vs 73n naive (79.5% savings).",
+      "name": "SuperBEST v5.1 → v5.3 Correction",
+      "statement": "sqrt = 1n (not 2n), mul = 1n positive domain (not 2n); the corrected v5.3 total is 14n vs 73n naive (80.8% savings).",
       "status": "proven_machine_verified",
       "proof_method": "Explicit 1-node constructions via F13 and F16fn applied to positive-domain closure.",
       "lean_file": "MonogateEML/ModelAudit.lean",
       "lean_theorem": "sqrt_is_one_node_positive / mul_is_one_node_positive / superbest_v51_total_overcounted",
       "sorries": 0,
-      "capability_refs": ["routing.superbest_v5"]
+      "capability_refs": [
+        "routing.superbest_v5"
+      ]
     },
     {
       "id": "lean.euler_depth",
@@ -499,7 +686,10 @@
       "lean_file": "MonogateEML/EMLDepth.lean",
       "lean_theorem": "euler_gateway / euler_identity / exp_not_constant",
       "sorries": 0,
-      "capability_refs": ["bridge.euler_gateway", "hierarchy.depth_strict"]
+      "capability_refs": [
+        "bridge.euler_gateway",
+        "hierarchy.depth_strict"
+      ]
     },
     {
       "id": "lean.exp_log_duality",
@@ -510,7 +700,9 @@
       "lean_file": "MonogateEML/EMLDuality.lean",
       "lean_theorem": "exp_log_multiplier_product_at_fixed_point",
       "sorries": 0,
-      "capability_refs": ["duality.exp_log_fixed_points"]
+      "capability_refs": [
+        "duality.exp_log_fixed_points"
+      ]
     },
     {
       "id": "lean.hyperbolic_preservation",
@@ -521,7 +713,9 @@
       "lean_file": "MonogateEML/HyperbolicPreservation.lean",
       "lean_theorem": "sinh_as_exp_arithmetic / cosh_as_exp_arithmetic / pythagorean_triple_at_log_two",
       "sorries": 0,
-      "capability_refs": ["preservation.hyperbolic"]
+      "capability_refs": [
+        "preservation.hyperbolic"
+      ]
     },
     {
       "id": "lean.infinite_zeros_partial",
@@ -533,14 +727,15 @@
       "lean_theorem": "sin_has_infinitely_many_zeros / analytic_finite_zeros_compact / eml_tree_analytic / eml_tree_analytic_depth_le_1",
       "sorries": 2,
       "sorries_description": "sin_not_in_eml and sin_not_in_real_EML_k pending a Khovanskii / Wilkie 1996 o-minimal-structure bound that is not yet formalized in Mathlib v4.14.0.",
-      "capability_refs": ["barrier.infinite_zeros"]
+      "capability_refs": [
+        "barrier.infinite_zeros"
+      ]
     }
   ],
-
   "verification": {
-    "test_count": 1828,
+    "test_count": 1839,
     "test_pass_rate": 1.0,
-    "last_verified": "2026-04-22T00:00:00Z",
+    "last_verified": "2026-04-24T00:18:18Z",
     "lean_clean_files": 11,
     "lean_partial_files": 1,
     "lean_sorries_total": 2,
@@ -550,15 +745,16 @@
       "notes": "Reflects 11 machine-verified Lean files (0 sorries each) + 1 partial (2 sorries on InfiniteZerosBarrier pending o-minimal Mathlib support), 4 independent benchmark categories with reproducible commands, zero-error prediction across the 315-equation public catalog, and a public catalog of 30 proved theorems at https://monogate.org/theorems."
     }
   },
-
   "integration": {
     "install": {
       "pip": "pip install monogate==2.3.0",
       "cargo": "cargo add monogate-core"
     },
-    "sdk_languages": ["python", "rust"]
+    "sdk_languages": [
+      "python",
+      "rust"
+    ]
   },
-
   "agent_queries": {
     "supports": [
       "elementary_functions",
@@ -575,10 +771,9 @@
       "min_savings_pct": 79.0
     }
   },
-
   "metadata": {
     "created": "2026-04-17T00:00:00Z",
-    "updated": "2026-04-22T00:00:00Z",
+    "updated": "2026-04-24T00:18:18Z",
     "schema_url": "https://monogate.org/schemas/capcard/v3.json"
   }
 }
