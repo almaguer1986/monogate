@@ -6,7 +6,7 @@
     "best_mse": 0.3503750851807627,
     "solved": false,
     "method": "mcts",
-    "elapsed_s": 0.015463923999988083
+    "elapsed_s": 0.015778597999997146
   },
   {
     "problem": "nguyen-1",
@@ -15,7 +15,7 @@
     "best_mse": 0.022639254716748686,
     "solved": false,
     "method": "beam",
-    "elapsed_s": 0.33544137200001956
+    "elapsed_s": 0.3428191019999929
   },
   {
     "problem": "nguyen-2",
@@ -24,7 +24,7 @@
     "best_mse": 0.2739266663197307,
     "solved": false,
     "method": "mcts",
-    "elapsed_s": 0.018334893999991664
+    "elapsed_s": 0.018768185999988418
   },
   {
     "problem": "nguyen-2",
@@ -33,7 +33,7 @@
     "best_mse": 0.014147400741369873,
     "solved": false,
     "method": "beam",
-    "elapsed_s": 0.3946545780000008
+    "elapsed_s": 0.41145486100000994
   },
   {
     "problem": "nguyen-3",
@@ -42,7 +42,7 @@
     "best_mse": 0.6812664373036494,
     "solved": false,
     "method": "mcts",
-    "elapsed_s": 0.018330380999998397
+    "elapsed_s": 0.01861238899999762
   },
   {
     "problem": "nguyen-3",
@@ -51,7 +51,7 @@
     "best_mse": 0.011081101438929358,
     "solved": false,
     "method": "beam",
-    "elapsed_s": 0.33018371099998944
+    "elapsed_s": 0.3429013190000205
   },
   {
     "problem": "nguyen-4",
@@ -60,7 +60,7 @@
     "best_mse": 0.1517760272821694,
     "solved": false,
     "method": "mcts",
-    "elapsed_s": 0.030825651000014886
+    "elapsed_s": 0.0315184079999824
   },
   {
     "problem": "nguyen-4",
@@ -69,7 +69,7 @@
     "best_mse": 0.07439555506585682,
     "solved": false,
     "method": "beam",
-    "elapsed_s": 0.33403135700001485
+    "elapsed_s": 0.34322410499999023
   },
   {
     "problem": "nguyen-5",
@@ -78,7 +78,7 @@
     "best_mse": 0.9635728074934811,
     "solved": false,
     "method": "mcts",
-    "elapsed_s": 0.024636450000002696
+    "elapsed_s": 0.024854158000010784
   },
   {
     "problem": "nguyen-5",
@@ -87,7 +87,7 @@
     "best_mse": 0.8685226524570074,
     "solved": false,
     "method": "beam",
-    "elapsed_s": 0.6197070899999915
+    "elapsed_s": 0.6329644649999864
   },
   {
     "problem": "nguyen-6",
@@ -96,7 +96,7 @@
     "best_mse": 0.2225998769672664,
     "solved": false,
     "method": "mcts",
-    "elapsed_s": 0.015112935000018979
+    "elapsed_s": 0.014927754999973786
   },
   {
     "problem": "nguyen-6",
@@ -105,7 +105,7 @@
     "best_mse": 0.03127949952458596,
     "solved": false,
     "method": "beam",
-    "elapsed_s": 0.3353797830000076
+    "elapsed_s": 0.33693551999999727
   },
   {
     "problem": "nguyen-7",
@@ -114,7 +114,7 @@
     "best_mse": 0.12109297013725659,
     "solved": false,
     "method": "mcts",
-    "elapsed_s": 0.014955711999988353
+    "elapsed_s": 0.015342640999989499
   },
   {
     "problem": "nguyen-7",
@@ -123,7 +123,7 @@
     "best_mse": 0.12109297013725659,
     "solved": false,
     "method": "beam",
-    "elapsed_s": 0.6424181209999915
+    "elapsed_s": 0.6619187930000123
   },
   {
     "problem": "nguyen-8",
@@ -132,7 +132,7 @@
     "best_mse": 0.30036227473288246,
     "solved": false,
     "method": "mcts",
-    "elapsed_s": 0.016917315999990024
+    "elapsed_s": 0.0174857420000194
   },
   {
     "problem": "nguyen-8",
@@ -141,7 +141,7 @@
     "best_mse": 0.15541212491986078,
     "solved": false,
     "method": "beam",
-    "elapsed_s": 0.5993276210000147
+    "elapsed_s": 0.6091665990000195
   },
   {
     "problem": "keijzer-6",
@@ -150,7 +150,7 @@
     "best_mse": 0.3309766244366579,
     "solved": false,
     "method": "mcts",
-    "elapsed_s": 0.0489465990000042
+    "elapsed_s": 0.05025893999999198
   },
   {
     "problem": "keijzer-6",
@@ -159,7 +159,7 @@
     "best_mse": 0.33095025074471074,
     "solved": false,
     "method": "beam",
-    "elapsed_s": 0.39478955799998516
+    "elapsed_s": 0.4057238499999869
   },
   {
     "problem": "keijzer-11",
@@ -168,7 +168,7 @@
     "best_mse": 29.55429912218883,
     "solved": false,
     "method": "mcts",
-    "elapsed_s": 0.03570172799999227
+    "elapsed_s": 0.036400913999983686
   },
   {
     "problem": "keijzer-11",
@@ -177,6 +177,6 @@
     "best_mse": 5.152805673860796,
     "solved": false,
     "method": "beam",
-    "elapsed_s": 0.5217733000000067
+    "elapsed_s": 0.534493523000009
   }
 ]
