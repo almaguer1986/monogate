@@ -66,6 +66,42 @@ LEAN_UNIVERSALITY_URL = (
 )
 
 
+# Allow-list of EML-elementary SymPy Function classes. Any
+# Function call outside this set fails the strict check used
+# below to gate `verified_in_lean=True` — closes a coverage gap
+# where the cost detector silently treats erf / gamma / polylog
+# / zeta / elliptic as depth-0 atoms even though they are
+# non-elementary. Discovered via S/R-134 deep research; see
+# `monogate-research/exploration/deep-research-2026-04-25-
+# overnight/sr134_findings.md` for the full write-up.
+_EML_ELEMENTARY_FUNCS: frozenset[type[sp.Function]] = frozenset({
+    sp.exp, sp.log,
+    sp.sin, sp.cos, sp.tan,
+    sp.sinh, sp.cosh, sp.tanh,
+    sp.asin, sp.acos, sp.atan,
+    sp.asinh, sp.acosh, sp.atanh,
+})
+
+
+def _is_in_eml_class_strict(expr: sp.Basic) -> bool:
+    """Recursively verify every Function call in ``expr`` is one of
+    the EML-elementary primitives. Atoms (Symbol, Number,
+    NumberSymbol like pi/E/I) are accepted; Add / Mul / Pow with
+    elementary args propagate via recursion.
+    """
+    if isinstance(expr, sp.Function):
+        if type(expr) not in _EML_ELEMENTARY_FUNCS:
+            return False
+        return all(_is_in_eml_class_strict(arg) for arg in expr.args)
+    if expr.is_Atom:
+        return True
+    return all(
+        _is_in_eml_class_strict(a)
+        for a in expr.args
+        if isinstance(a, sp.Basic)
+    )
+
+
 @dataclass(frozen=True)
 class WitnessProfile:
     """Pfaffian profile slice of the witness.
@@ -224,8 +260,16 @@ def universality_witness(
                     savings = steps[0].cost - steps[-1].cost
 
     # Lean coverage: theorem covers EML-elementary functions only.
-    # Bessel / Airy / Lambert W are Pfaffian-but-not-EML and stay False.
-    is_within_eml_class = not profile.is_pfaffian_not_eml
+    # Two-step gate — (a) the cost detector must NOT flag the
+    # expression as Pfaffian-but-not-EML (catches Bessel, Airy,
+    # LambertW, hypergeometric); (b) the strict allow-list check
+    # must pass (catches erf, gamma, polylog, zeta, elliptic, ...
+    # which the detector silently treats as depth-0 atoms — the
+    # 0.2.1 / 2.4.3 hotfix).
+    is_within_eml_class = (
+        (not profile.is_pfaffian_not_eml)
+        and _is_in_eml_class_strict(parsed)
+    )
 
     return UniversalityWitness(
         input_expr_str=str(parsed),

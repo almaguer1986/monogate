@@ -4,6 +4,55 @@ All notable changes to `monogate` are documented here.
 
 ---
 
+## [2.4.3] — 2026-04-25 — Hotfix: strict EML-class check for `verified_in_lean`
+
+### Fixed (correctness — surfaced by S/R-134 deep research)
+
+- **`monogate.universality_witness(sp.erf(x)).verified_in_lean`
+  was wrongly returning `True`** (and similarly for `gamma`,
+  `polylog`, `zeta`, `elliptic_k`, exponential integrals — any
+  non-elementary SymPy Function the cost detector silently treats
+  as a depth-0 atom).
+
+  The Lean theorem `eml_universality` covers EML-elementary
+  functions only — `is_pfaffian_not_eml=False` is necessary but
+  not sufficient. 2.4.0/2.4.1/2.4.2's flag flip was an
+  over-approximation: it relied entirely on the detector's
+  PFAFFIAN_NOT_EML_R registry (12 primitives), which doesn't
+  cover the long tail of named non-elementary functions.
+
+  Fix: `verified_in_lean` now requires BOTH
+  `is_pfaffian_not_eml=False` AND a strict allow-list check —
+  every `sp.Function` call in the expression must be one of
+  exp / log / sin / cos / tan / sinh / cosh / tanh / asin / acos
+  / atan / asinh / acosh / atanh. Anything else returns False.
+
+  Added private helper `monogate.witness._is_in_eml_class_strict`.
+  Add / Mul / Pow / atoms (Symbol, Number, pi, E, I) all propagate
+  correctly via recursion.
+
+### Compatibility
+
+  - **Inputs that were correctly True before remain True** —
+    sigmoid, tanh, exp(sin(x)), polynomials, etc. all in the
+    allow-list.
+  - **Inputs that were correctly False before remain False** —
+    Bessel, Airy, Lambert W, hypergeometric still flagged.
+  - **Inputs that were INCORRECTLY True before are now False** —
+    erf(x), Γ(x), polylog(2, x), ζ(3), elliptic_k(x), Ei(x), etc.
+    Intentional behaviour change.
+
+### Tests
+
+- 6 new regression cases in `tests/test_witness.py` (erf, gamma,
+  polylog, elliptic, compound exp+erf, pi/E atoms). All 17
+  monogate.witness tests pass; mypy strict clean.
+
+### Dependency bump
+
+- `[witness]` extra now pins `eml-witness>=0.2.1` (the matching
+  upstream hotfix).
+
 ## [2.4.2] — 2026-04-25 — Hotfix: numpy promoted to hard dep
 
 ### Fixed

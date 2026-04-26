@@ -67,6 +67,47 @@ def test_witness_pfaffian_not_eml_for_bessel():
     assert w.lean_url is None
 
 
+# ---- 2.4.3 hotfix regression tests ---------------------------------
+# Non-elementary functions the cost detector silently treats as
+# depth-0 atoms (is_pfaffian_not_eml=False). Pre-2.4.3,
+# verified_in_lean was wrongly True for them. The strict allow-list
+# check fixes this.
+
+def test_witness_erf_is_not_verified():
+    w = universality_witness(sp.erf(x))
+    assert w.verified_in_lean is False
+    assert w.lean_url is None
+
+
+def test_witness_gamma_is_not_verified():
+    w = universality_witness(sp.gamma(x))
+    assert w.verified_in_lean is False
+
+
+def test_witness_polylog_is_not_verified():
+    w = universality_witness(sp.polylog(2, x))
+    assert w.verified_in_lean is False
+
+
+def test_witness_elliptic_is_not_verified():
+    w = universality_witness(sp.elliptic_k(x))
+    assert w.verified_in_lean is False
+
+
+def test_witness_compound_with_erf_is_not_verified():
+    """Larger expression containing erf as a subterm fails the
+    strict check (recursion case)."""
+    w = universality_witness(sp.exp(x) + sp.erf(x))
+    assert w.verified_in_lean is False
+
+
+def test_witness_pi_and_e_atoms_are_in_class():
+    """pi and E are atoms (NumberSymbol), not Functions — accepted."""
+    w = universality_witness(sp.pi * x + sp.E)
+    assert w.verified_in_lean is True
+    assert w.lean_url is not None
+
+
 def test_witness_to_dict_roundtrips_through_json():
     w = universality_witness("exp(sin(x))")
     d = witness_to_dict(w)

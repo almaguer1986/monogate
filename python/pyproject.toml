@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "monogate"
-version = "2.4.2"
+version = "2.4.3"
 description = "EML arithmetic — all elementary functions from eml(x,y) = exp(x) − ln(y) — with universality witness, CLI, and Jupyter integration"
 readme = "README.md"
 license = { text = "MIT" }
@@ -34,6 +34,9 @@ witness = [
     "eml-cost>=0.2.0",
     "eml-rewrite>=0.4.0",
     "eml-discover>=0.2.0",
+    # Pin matching upstream hotfix so the strict EML-class check
+    # for verified_in_lean is consistent across import paths.
+    "eml-witness>=0.2.1",
 ]
 cli = [
     "monogate[witness]",
