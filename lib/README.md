@@ -79,6 +79,48 @@ The **depth** ranking of elementary functions by EML tree depth is new to mathem
 
 An array of `{ name, emlForm, nodes, depth, status }` records — useful for building explorers or documentation.
 
+## `monogate/cost` — Pfaffian cost analysis
+
+Sub-path import (added in 1.2.0). Analyzes a symbolic expression and
+returns its Pfaffian profile: chain order, EML routing depth, structural
+overhead, oscillation/composite/fusion corrections, and a canonical
+cost-class fingerprint string.
+
+```js
+import { analyze, parse, distance } from 'monogate/cost';
+
+analyze('exp(sin(x))');
+// { pfaffian_r: 3, max_path_r: 3, eml_depth: 4,
+//   structural_overhead: 0,
+//   corrections: { c_osc: 1, c_composite: 0, delta_fused: 0 },
+//   predicted_depth: 4, is_pfaffian_not_eml: false,
+//   cost_class: 'p3-d4-w3-c1' }
+
+analyze('1/(1+exp(-x))').cost_class;   // 'p1-d2-w1-c0' — sigmoid, fused
+analyze('log(1+exp(x))').cost_class;   // 'p2-d1-w2-c-1' — softplus, fused
+analyze('x*(1+erf(x/sqrt(2)))/2');     // GELU exact, is_pfaffian_not_eml=true
+```
+
+The cost-class string follows the Python `eml-cost` convention:
+`p<pfaffian_r>-d<eml_depth>-w<max_path_r>-c<correction_sum>` where
+`correction_sum = c_osc + c_composite − delta_fused`. All 32
+cross-checked test cases produce byte-identical fingerprints to the
+Python `eml-cost` package.
+
+Distance metric for clustering / equivalence-class lookup:
+
+```js
+import { analyze, distance, compare } from 'monogate/cost';
+
+const a = analyze('1/(1+exp(-x))');                // sigmoid
+const b = analyze('exp(x)/(1+exp(x))');            // also sigmoid
+distance(a, b);                                    // weighted L2
+compare(a, b);                                     // per-axis deltas
+```
+
+Reference: [arXiv:2603.21852](https://arxiv.org/abs/2603.21852) +
+Khovanskii (1991) Pfaffian fewnomials.
+
 ## Open challenges
 
 These functions have no known EML construction:

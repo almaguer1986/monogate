@@ -1,12 +1,15 @@
 {
   "name": "monogate",
-  "version": "1.1.0",
-  "description": "A single binary operator eml(x,y) = exp(x) − ln(y) that generates all elementary functions. Implementation of arXiv:2603.21852 (Odrzywołek, 2026).",
+  "version": "1.2.0",
+  "description": "A single binary operator eml(x,y) = exp(x) − ln(y) that generates all elementary functions. Implementation of arXiv:2603.21852 (Odrzywołek, 2026). Includes Pfaffian cost analysis for symbolic expression trees.",
   "type": "module",
   "main": "./src/index.js",
   "exports": {
     ".": {
       "import": "./src/index.js"
+    },
+    "./cost": {
+      "import": "./src/cost.js"
     }
   },
   "files": [
@@ -19,7 +22,10 @@
     "elementary-functions",
     "algebra",
     "monogate",
-    "exp-minus-log"
+    "exp-minus-log",
+    "pfaffian",
+    "symbolic-computation",
+    "cost-analysis"
   ],
   "license": "MIT",
   "repository": {
