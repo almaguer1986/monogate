@@ -4,6 +4,33 @@ All notable changes to `monogate` are documented here.
 
 ---
 
+## [2.4.2] — 2026-04-25 — Hotfix: numpy promoted to hard dep
+
+### Fixed
+- `pip install monogate` was still failing after 2.4.1 because
+  `monogate.leaderboard` is also eagerly imported from `__init__.py`
+  and pulls numpy. Adding `numpy>=1.24` to hard dependencies aligns
+  metadata with reality (numpy has been a de-facto requirement for
+  many monogate releases). Install footprint +~30 MB.
+- The 2.4.1 lazy-loader for `complex_search` is retained — it still
+  defers the transitive scipy import.
+
+## [2.4.1] — 2026-04-25 — Hotfix: lazy-load complex_search (no eager numpy import)
+
+### Fixed
+- `pip install monogate` (bare, no extras) now imports cleanly. The
+  2.4.0 release inherited a pre-existing eager import of
+  `monogate.complex_search` from the package `__init__.py` that
+  pulled numpy in transitively. Users without numpy installed got
+  `ModuleNotFoundError` on `import monogate`.
+- Fix: route `complex_mcts_search`, `complex_beam_search`,
+  `ComplexMCTSResult`, `ComplexBeamResult` through the same
+  `__getattr__` lazy-loader used for the `[witness]` extra. Names
+  remain available; the numpy / scipy import only fires when the
+  attribute is actually accessed.
+
+No API changes; same bundling as 2.4.0.
+
 ## [2.4.0] — 2026-04-25 — Universality witness + CLI + Jupyter folded in
 
 ### E-129 consolidation

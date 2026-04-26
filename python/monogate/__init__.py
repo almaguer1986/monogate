@@ -61,13 +61,14 @@ from .core import (
     compare_op,
 )
 
-__version__ = "2.4.0"
+__version__ = "2.4.1"
 
 
-# Optional surface — universality_witness is gated on the [witness]
-# extra (sympy + eml-cost + eml-rewrite + eml-discover). Lazy import
-# so the bare `monogate` install stays dependency-free.
+# Lazy attribute access — keeps the bare `import monogate` lightweight
+# by deferring imports of submodules with heavy transitive deps
+# (numpy / scipy via complex_search; sympy + eml-* via witness).
 def __getattr__(name: str):  # type: ignore[no-untyped-def]
+    # Witness API ([witness] extra)
     if name == "universality_witness":
         from .witness import universality_witness as _uw
         return _uw
@@ -77,6 +78,11 @@ def __getattr__(name: str):  # type: ignore[no-untyped-def]
     if name == "UniversalityWitness":
         from .witness import UniversalityWitness as _UW
         return _UW
+    # Complex search (requires numpy, transitively scipy)
+    if name in ("complex_mcts_search", "complex_beam_search",
+                "ComplexMCTSResult", "ComplexBeamResult"):
+        from . import complex_search as _cs
+        return getattr(_cs, name)
     raise AttributeError(f"module 'monogate' has no attribute {name!r}")
 
 __all__ = [
@@ -261,12 +267,12 @@ __all__ += [
     "ERF_NODE_COUNT",
 ]
 
-from .complex_search import (  # noqa: F401
-    complex_mcts_search,
-    complex_beam_search,
-    ComplexMCTSResult,
-    ComplexBeamResult,
-)
+# NOTE: complex_search / search submodules pull in numpy + scipy
+# transitively. Keep the bare `import monogate` lightweight by
+# loading them lazily through __getattr__ below — users who never
+# call complex_mcts_search etc. don't pay the numpy install cost.
+# (Pre-2.4.1 the eager import here broke `pip install monogate`
+# without the [dev] extra.)
 
 __all__ += [
     "complex_mcts_search",

@@ -4,13 +4,19 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "monogate"
-version = "2.4.0"
+version = "2.4.2"
 description = "EML arithmetic — all elementary functions from eml(x,y) = exp(x) − ln(y) — with universality witness, CLI, and Jupyter integration"
 readme = "README.md"
 license = { text = "MIT" }
 authors = [{ name = "Monogate Research" }]
 requires-python = ">=3.10"
-dependencies = []
+# numpy is required by leaderboard / search / complex_search submodules
+# imported eagerly from monogate/__init__.py. Promoted from the [dev]
+# extra to a hard dep in 2.4.2 — installs without it were silently
+# broken ("ModuleNotFoundError: numpy" on `import monogate`).
+dependencies = [
+    "numpy>=1.24",
+]
 
 [project.optional-dependencies]
 torch     = ["torch>=2.0"]
