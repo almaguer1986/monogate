@@ -653,7 +653,7 @@ theorem gamma_nat_eq_factorial (n : ℕ) : Gamma (n + 1) = n.factorial :=
       {
         name: 'deriv_gamma_at_nat',
         line: 86,
-        hook: 'Mathlib analogue of the textbook chain identity Γ\\'(s) = Γ(s)·ψ(s); at integer points ψ(n+1) = -γ + harmonic n. Closest available Lean-4 expression of the digamma relation pending a named digamma function.',
+        hook: "Mathlib analogue of the textbook chain identity Γ'(s) = Γ(s)·ψ(s); at integer points ψ(n+1) = -γ + harmonic n. Closest available Lean-4 expression of the digamma relation pending a named digamma function.",
         source: `/-- **Derivative at positive integers** (Mathlib's deriv_Gamma_nat):
     Γ'(n+1) = n! · (-γ + harmonic n), where γ is the Euler-Mascheroni
     constant and harmonic n = 1 + 1/2 + ... + 1/n.

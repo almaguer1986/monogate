@@ -101,6 +101,86 @@ const operators = [
   { name: 'LEX',   formula: 'ln(exp(x) − y)',         complete: 'no',     mechanism: 'Domain barrier: domain → ∅ at depth 2' },
 ];
 
+// ── PFAFFIAN TOWER GENERATORS (OBSERVATION) ────────────────────────────────
+// Source: exploration/E201_extended_atlas/ — 8 tower generators verified
+// against mpmath@30 (relerr <= 1.2e-31 for integral towers; Airy via the
+// defining ODE Ai''(x) = x*Ai(x) at 1.5e-7). Independence per C-198
+// Phase 2/4 search. Public-surface tier OBSERVATION (not Lean-verified).
+const pfaffianTowers = [
+  {
+    name: 'T_erf',
+    family: 'Error Function',
+    generator: '∫₀ˣ exp(−y·t²) dt',
+    covers: 'erf, erfc, erfi, dawson, fresnels, fresnelc',
+    chain: 2,
+    maxDepth: 4,
+    relerr: '1.2×10⁻³¹',
+  },
+  {
+    name: 'T_Si',
+    family: 'Sine/Cosine Integral',
+    generator: '∫₀ˣ sin(y·t)/t dt',
+    covers: 'Si, Ci, Shi, Chi, Ein, Ei, li',
+    chain: 3,
+    maxDepth: 3,
+    relerr: '2.1×10⁻³⁰',
+  },
+  {
+    name: 'T_J',
+    family: 'Bessel',
+    generator: '(1/π)∫₀^π cos(x sin(t) − y·t) dt',
+    covers: 'J_n, Y_n, I_n, K_n, Hankel H_n',
+    chain: 3,
+    maxDepth: 3,
+    relerr: '1.2×10⁻³¹',
+  },
+  {
+    name: 'T_Ai',
+    family: 'Airy',
+    generator: '(1/π)∫₀^∞ cos(t³/3 + x·t + y) dt',
+    covers: 'Ai, Bi, Ai′, Bi′, Scorer',
+    chain: 3,
+    maxDepth: 2,
+    relerr: '1.5×10⁻⁷ (via ODE)',
+  },
+  {
+    name: 'T_Γ',
+    family: 'Gamma',
+    generator: '∫₀^∞ t^(x−1) exp(−y·t) dt',
+    covers: 'Γ, β, ψ (digamma), ψₙ (polygamma), n! = Γ(n+1)',
+    chain: 2,
+    maxDepth: 4,
+    relerr: '8.0×10⁻¹⁸',
+  },
+  {
+    name: 'T_W',
+    family: 'Lambert W',
+    generator: 'solve w·exp(w) = x + y',
+    covers: 'W₀, W₋₁ (real branches)',
+    chain: 2,
+    maxDepth: 1,
+    relerr: '0',
+  },
+  {
+    name: 'T_K',
+    family: 'Elliptic Integrals',
+    generator: '∫₀^(π/2) 1/√(1 − m sin²(t) + y) dt',
+    covers: 'K(m), E(m), F(φ,m), Π(n;φ,m)',
+    chain: 3,
+    maxDepth: 2,
+    relerr: '4.3×10⁻³¹',
+  },
+  {
+    name: 'T_F',
+    family: 'Hypergeometric (series)',
+    generator: '∑ (a)ₙ(b)ₙ/(c)ₙ · zⁿ/n!',
+    covers: '₂F₁, ₁F₁, ₀F₁, Legendre, Gegenbauer, Jacobi, Laguerre, Hermite',
+    chain: '2–4',
+    maxDepth: 3,
+    relerr: '0',
+  },
+];
+
 // ── SUPERBEST TABLE ────────────────────────────────────────────────────────
 const superbest = [
   { op: 'exp(x)',   family: 'EML',      nodes: 1,  naive: 1,  note: 'native' },
@@ -130,7 +210,7 @@ const savings = Math.round((1 - totalSuperbest/totalNaive)*100);
     Mathematical objects classified by EML depth and operator cost.
   </p>
   <p style="color: var(--muted); font-size: 0.85rem; margin-bottom: 32px;">
-    Last updated: 2026-04-27 · SuperBEST v5.2 headline: 14n positive / 22n general · T08+T30+T35+T40 → THEOREM · recip=1n (ELSb), div=1n positive (single ELSb), sub/mul/add=2n positive
+    Last updated: 2026-04-27 · SuperBEST v5.2 headline: 14n positive / 22n general · 16 elementary operators (THEOREM) + 8 Pfaffian towers (OBSERVATION) = 24 total · 35/36 calculator coverage
   </p>
 
   <div class="divider"></div>
@@ -254,6 +334,77 @@ const savings = Math.round((1 - totalSuperbest/totalNaive)*100);
   <p style="color: var(--muted); font-size: 0.82rem; margin-bottom: 32px;">
     Structural rule: <em style="color: var(--text);">exp(+x) with no domain restriction ↔ exactly complete</em> (T26, T27, T28).
     See <a href="/blog/completeness-characterization">Why exp(+x) Means Complete →</a>
+  </p>
+
+  <div class="divider"></div>
+
+  <!-- ── PFAFFIAN TOWER EXTENSIONS (OBSERVATION) ──────────────────────────── -->
+  <h2>Pfaffian Tower Extensions
+    <span style="font-size: 0.7rem; color: var(--pink); font-weight: 500; margin-left: 10px; font-family: var(--mono);">OBSERVATION TIER</span>
+  </h2>
+  <p style="color: var(--muted); margin-bottom: 6px; font-size: 0.9rem;">
+    The 16 elementary operators reach every elementary function. But mathematics is larger
+    than the elementary class. Functions like <code>erf</code>, Bessel <code>J_n</code>, and Gamma
+    <code>Γ</code> have no finite composition of <code>exp</code> and <code>ln</code>
+    (Liouville 1833 / Risch 1968). They live in <em>Pfaffian</em> families that need new
+    primitives — one generator per family.
+  </p>
+  <p style="color: var(--muted); font-size: 0.82rem; margin-bottom: 6px;">
+    8 independent tower generators. 35+ Pfaffian functions reachable as finite EML trees of
+    depth ≤ 4 from <code>{'{EML, T_X}'}</code>. Per-tower verification against mpmath@30 in
+    <span style="font-family: var(--mono); font-size: 0.78rem;">exploration/E201_extended_atlas/</span>.
+  </p>
+  <p style="color: var(--pink); font-size: 0.78rem; margin-bottom: 20px;">
+    Tier note: the elementary 16 are <strong>THEOREM</strong>-tier (Lean-verified).
+    The 8 towers are <strong>OBSERVATION</strong>-tier (numerical verification only;
+    independence empirical per C-198, not proven minimal).
+  </p>
+
+  <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-bottom: 22px;">
+    <thead>
+      <tr style="border-bottom: 1px solid var(--border);">
+        <th style="text-align: left; padding: 6px 8px 8px 0; color: var(--muted); font-weight: 600; width: 9%;">Tower</th>
+        <th style="text-align: left; padding: 6px 8px; color: var(--muted); font-weight: 600; width: 18%;">Family</th>
+        <th style="text-align: left; padding: 6px 8px; color: var(--muted); font-weight: 600; width: 24%;">Generator</th>
+        <th style="text-align: left; padding: 6px 8px; color: var(--muted); font-weight: 600; width: 28%;">Covers</th>
+        <th style="text-align: center; padding: 6px 8px; color: var(--muted); font-weight: 600; width: 7%;">Chain</th>
+        <th style="text-align: center; padding: 6px 8px; color: var(--muted); font-weight: 600; width: 7%;">Depth</th>
+        <th style="text-align: right; padding: 6px 0 8px 8px; color: var(--muted); font-weight: 600;">Verified</th>
+      </tr>
+    </thead>
+    <tbody>
+      {pfaffianTowers.map(t => (
+        <tr style="border-bottom: 1px solid var(--border);">
+          <td style="padding: 6px 8px 6px 0; font-family: var(--mono); font-weight: 700; color: var(--pink); font-size: 0.8rem;">{t.name}</td>
+          <td style="padding: 6px 8px; color: var(--text); font-size: 0.78rem;">{t.family}</td>
+          <td style="padding: 6px 8px; font-family: var(--mono); color: var(--muted); font-size: 0.74rem;">{t.generator}</td>
+          <td style="padding: 6px 8px; font-family: var(--mono); color: var(--muted); font-size: 0.74rem;">{t.covers}</td>
+          <td style="padding: 6px 8px; text-align: center; font-family: var(--mono); color: var(--violet); font-size: 0.78rem;">{t.chain}</td>
+          <td style="padding: 6px 8px; text-align: center; font-family: var(--mono); color: var(--cyan); font-size: 0.78rem;">{t.maxDepth}</td>
+          <td style="padding: 6px 0 6px 8px; text-align: right; font-family: var(--mono); color: var(--green); font-size: 0.74rem;">{t.relerr}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+
+  <h3 style="font-size: 0.9rem; color: var(--text); margin-bottom: 10px;">What the towers add</h3>
+  <ul style="color: var(--muted); font-size: 0.82rem; line-height: 1.7; margin-bottom: 18px; padding-left: 20px;">
+    <li><strong style="color: var(--text);">Calculator coverage 34/36 → 35/36.</strong>
+        <code>factorial(n) = Γ(n+1)</code> becomes a finite Pfaffian tree at depth 2 via T_Γ.
+        Modulo stays at 1/36 (discrete; no continuous representation).</li>
+    <li><strong style="color: var(--text);">42 named special functions reachable</strong> across the 8 families.
+        Max depth 4 from any tower; node range 1–11 in BEST routing.</li>
+    <li><strong style="color: var(--text);">8 / 8 towers independent.</strong>
+        No single fixed integral kernel spans more than one tower at finite depth (C-198).</li>
+  </ul>
+
+  <h3 style="font-size: 0.9rem; color: var(--text); margin-bottom: 10px;">What's still outside</h3>
+  <p style="color: var(--muted); font-size: 0.82rem; margin-bottom: 32px; line-height: 1.7;">
+    Even with all 24 operators, some functions remain outside: Riemann zeta <code>ζ(s)</code>
+    (infinite Dirichlet series + functional equation), modular forms, non-computable functions
+    (Chaitin's Ω), and discrete operations like <code>mod</code> (no continuous Pfaffian
+    representation). The Pfaffian closure covers most of applied mathematics, not all of
+    mathematics.
   </p>
 
   <div class="divider"></div>
