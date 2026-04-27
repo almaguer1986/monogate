@@ -47,7 +47,7 @@
     },
     {
       "id": "routing.superbest_v5_3",
-      "name": "SuperBEST v5.3 routing table",
+      "name": "SuperBEST v5.2 routing table",
       "category": "construction",
       "description": "Routing table mapping 10 arithmetic operations to F16 expressions, achieving 14n / 80.8% savings on the positive-domain headline (vs the 73n naive baseline) and 22n / 69.9% savings in the general (signed-real) domain. Ten upper-bound constructions are formalized in Lean (UpperBounds.lean).",
       "status": "proven_machine_verified"
@@ -127,7 +127,7 @@
   "benchmarks": [
     {
       "id": "bench.superbest_table",
-      "name": "SuperBEST v5.3 routing table values",
+      "name": "SuperBEST v5.2 routing table values",
       "capability_ref": "routing.superbest_v5_3",
       "metric": "node_count_positive_domain",
       "value": 14,
@@ -137,7 +137,7 @@
         "command": "cat blog/src/data/superbest.json | python -c \"import json,sys; d=json.load(sys.stdin); print(d['totals']['positive_headline'])\"",
         "deterministic": true
       },
-      "notes": "Headline: 14n positive (80.8 percent vs 73n naive). General domain: 22n (69.9 percent). Source: blog/src/data/superbest.json v5.3."
+      "notes": "Headline: 14n positive (80.8 percent vs 73n naive). General domain: 22n (69.9 percent). Source: blog/src/data/superbest.json v5.2."
     },
     {
       "id": "bench.lean_zero_sorry_files",
