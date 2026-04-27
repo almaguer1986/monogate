@@ -59,7 +59,7 @@ import Base from '../layouts/Base.astro';
   <h2>Lean proofs</h2>
 
   <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px 24px; margin-bottom: 24px;">
-    <div style="font-size: 11px; color: var(--green); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px;">Machine-verified · Lean 4 · 0 sorries</div>
+    <div style="font-size: 11px; color: var(--green); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px;">Lean 4 · 13 of 14 files zero-sorry · 2 active sorries documented</div>
     <div style="font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 6px;">
       Formal Lean 4 Proofs
     </div>
@@ -67,10 +67,11 @@ import Base from '../layouts/Base.astro';
       almaguer1986/monogate-lean · Mathlib v4.14.0
     </div>
     <p style="font-size: 13px; color: var(--muted); margin-bottom: 16px;">
-      49 original EML theorems machine-verified (461 total Lean statements, 0 sorries across 11 files).
-      Covers the SuperBEST routing table lower bounds — SB(add) ≥ 2, SB(sub) ≥ 2, SB(mul) ≥ 2,
-      SB(div) ≥ 2, and extended division — plus upper-bound 1-node constructions and the depth-1 analyticity substrate.
-      Checked by Lean 4 and Mathlib.
+      50 original EML theorems verified in Lean 4 across 14 files (478 total Lean statements).
+      Zero sorries in 13 of 14 files; the 14th file (InfiniteZerosBarrier.lean) carries 2 documented
+      sorries on Part D pending o-minimal theory. Covers the SuperBEST routing table lower bounds —
+      SB(add) ≥ 2, SB(sub) ≥ 2, SB(mul) ≥ 2, SB(div) ≥ 2, and extended division — plus upper-bound
+      1-node constructions and the depth-1 analyticity substrate. Checked by Lean 4 and Mathlib.
     </p>
     <a href="https://github.com/almaguer1986/monogate-lean" target="_blank" rel="noopener noreferrer"
       style="font-size: 13px; font-weight: 700; color: var(--green);">
