@@ -621,6 +621,51 @@ theorem exp_exp_isEMLElementary :
   exact h`
       }
     ]
+  },
+  {
+    file: 'Gamma.lean',
+    thm: 'Mathlib gamma-function wrappers — non-elementary witnesses',
+    what: 'Six named theorems wrapping Real.Gamma identities into the MonogateEML namespace: functional equation (Γ(s+1) = s·Γ(s)), base case (Γ(1) = 1), factorial connection (Γ(n+1) = n!), strict positivity on (0, ∞), differentiability away from non-positive integers, and derivative at integer points (n! · (-γ + harmonic n)). All six are direct Mathlib aliases — gamma is non-elementary, so 0 contributes to the "EML-original" count. Verified by user in VS Code lean4 extension 2026-04-26.',
+    original: 0, total: 6, sorries: 0, ok: true,
+    flagships: [
+      {
+        name: 'gamma_functional_equation',
+        line: 45,
+        hook: 'The structural non-elementary witness — no elementary function satisfies Γ(s+1) = s·Γ(s). This is the standard textbook argument that gamma sits outside the elementary class (cf. Hardy, Boros-Moll).',
+        source: `/-- **Functional equation** Γ(s+1) = s · Γ(s) for s ≠ 0.
+
+    No elementary function satisfies this functional equation;
+    this is the standard "gamma is not elementary" witness used in
+    textbook treatments (cf. Hardy, Boros-Moll). -/
+theorem gamma_functional_equation {s : ℝ} (hs : s ≠ 0) :
+    Gamma (s + 1) = s * Gamma s :=
+  Real.Gamma_add_one hs`
+      },
+      {
+        name: 'gamma_nat_eq_factorial',
+        line: 56,
+        hook: 'Functional equation + base case fix Γ on positive integers as the factorial — the consistency check that the Mathlib Gamma matches the textbook definition.',
+        source: `/-- **Factorial connection** Γ(n+1) = n! for natural n. The two
+    properties (functional equation + base case) determine Γ on ℕ. -/
+theorem gamma_nat_eq_factorial (n : ℕ) : Gamma (n + 1) = n.factorial :=
+  Real.Gamma_nat_eq_factorial n`
+      },
+      {
+        name: 'deriv_gamma_at_nat',
+        line: 86,
+        hook: 'Mathlib analogue of the textbook chain identity Γ\\'(s) = Γ(s)·ψ(s); at integer points ψ(n+1) = -γ + harmonic n. Closest available Lean-4 expression of the digamma relation pending a named digamma function.',
+        source: `/-- **Derivative at positive integers** (Mathlib's deriv_Gamma_nat):
+    Γ'(n+1) = n! · (-γ + harmonic n), where γ is the Euler-Mascheroni
+    constant and harmonic n = 1 + 1/2 + ... + 1/n.
+
+    This is the closest Mathlib analogue of the textbook chain identity
+    Γ'(s) = Γ(s) · ψ(s); at integer points ψ(n+1) = -γ + harmonic n,
+    so the formula matches once digamma is named. -/
+theorem deriv_gamma_at_nat (n : ℕ) :
+    deriv Gamma (n + 1) = n.factorial * (-eulerMascheroniConstant + harmonic n) :=
+  Real.deriv_Gamma_nat n`
+      }
+    ]
   }
 ];
 
@@ -628,7 +673,7 @@ theorem exp_exp_isEMLElementary :
 export const aggregates = {
   verifiedOriginal: files.reduce((n, f) => n + f.original, 0),
   totalStatements: files.reduce((n, f) => n + f.total, 0),
-  mathlibWrappers: 173,
+  mathlibWrappers: 179,
   supportingLemmas: 237,
   cleanFiles: files.filter(f => f.sorries === 0).length,
   partialFiles: files.filter(f => f.sorries > 0).length,
