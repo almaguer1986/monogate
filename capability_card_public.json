@@ -36,49 +36,49 @@
       "name": "EML universality",
       "category": "scientific_claim",
       "description": "The single binary operator eml(x, y) = exp(x) - ln(y) generates every elementary function as a finite tree from the constant 1 alone. Lean-formalized as the IsEMLElementary predicate in Universality.lean.",
-      "status": "proven_machine_verified"
+      "status": "proven"
     },
     {
       "id": "barrier.infinite_zeros",
       "name": "Infinite Zeros Barrier (T01)",
       "category": "scientific_claim",
       "description": "Real EML trees have finitely many zeros on any closed bounded interval where they are real-analytic, while sin(x) has infinitely many. Therefore sin is not an element of EML(R). Parts A, B, C, C-prime are closed in Lean. Part D (sin_not_in_eml, sin_not_in_real_EML_k) carries 2 documented sorries pending o-minimal / Wilkie 1996 machinery not yet in Mathlib.",
-      "status": "proven_partial"
+      "status": "experimental"
     },
     {
       "id": "routing.superbest_v5_3",
       "name": "SuperBEST v5.2 routing table",
       "category": "construction",
       "description": "Routing table mapping 10 arithmetic operations to F16 expressions, achieving 14n / 80.8% savings on the positive-domain headline (vs the 73n naive baseline) and 22n / 69.9% savings in the general (signed-real) domain. Ten upper-bound constructions are formalized in Lean (UpperBounds.lean).",
-      "status": "proven_machine_verified"
+      "status": "proven"
     },
     {
       "id": "lower_bound.add",
       "name": "SB(add) >= 2",
       "category": "lower_bound",
       "description": "No single F16 operator equals (x, y) -> x + y for all real x, y. Exhaustive 16-witness refutation in AddLowerBound.lean.",
-      "status": "proven_machine_verified"
+      "status": "proven"
     },
     {
       "id": "lower_bound.sub",
       "name": "SB(sub) >= 2",
       "category": "lower_bound",
       "description": "No single F16 operator equals (x, y) -> x - y for all real x, y. SubLowerBound.lean, 16-case refutation.",
-      "status": "proven_machine_verified"
+      "status": "proven"
     },
     {
       "id": "lower_bound.mul",
       "name": "SB(mul) >= 2",
       "category": "lower_bound",
       "description": "No single F16 operator equals (x, y) -> x * y for all real x, y. MulLowerBound.lean, derivative obstruction route + witness refutation.",
-      "status": "proven_machine_verified"
+      "status": "proven"
     },
     {
       "id": "lower_bound.div",
       "name": "SB(div) >= 2",
       "category": "lower_bound",
       "description": "No single F16 operator equals (x, y) -> x / y for all real x, y. DivLowerBound.lean.",
-      "status": "proven_machine_verified"
+      "status": "proven"
     },
     {
       "id": "tool.estimate_time",
@@ -216,7 +216,7 @@
       "id": "lean.add_lower_bound",
       "name": "SB(add) >= 2",
       "statement": "No single F16 operator computes x + y for all real x and y.",
-      "status": "proven_machine_verified",
+      "status": "proven",
       "proof_method": "Witness-based case analysis over all 16 F16 operators; paired with a 2-node upper-bound construction.",
       "lean_file": "MonogateEML/AddLowerBound.lean",
       "lean_theorem": "SB_add_ge_two",
@@ -227,7 +227,7 @@
       "id": "lean.sub_lower_bound",
       "name": "SB(sub) >= 2",
       "statement": "No single F16 operator computes x - y for all real x and y.",
-      "status": "proven_machine_verified",
+      "status": "proven",
       "proof_method": "Exhaustive 16-case witness refutation.",
       "lean_file": "MonogateEML/SubLowerBound.lean",
       "lean_theorem": "SB_sub_ge_two",
@@ -238,7 +238,7 @@
       "id": "lean.mul_lower_bound",
       "name": "SB(mul) >= 2",
       "statement": "No single F16 operator computes x * y for all real x and y.",
-      "status": "proven_machine_verified",
+      "status": "proven",
       "proof_method": "Derivative obstruction plus witness refutation.",
       "lean_file": "MonogateEML/MulLowerBound.lean",
       "lean_theorem": "SB_mul_ge_two",
@@ -249,7 +249,7 @@
       "id": "lean.div_lower_bound",
       "name": "SB(div) >= 2",
       "statement": "No single F16 operator computes x / y for all real x and y.",
-      "status": "proven_machine_verified",
+      "status": "proven",
       "proof_method": "Witness (0, 1) refutes all 16 operators.",
       "lean_file": "MonogateEML/DivLowerBound.lean",
       "lean_theorem": "SB_div_ge_two",
@@ -260,7 +260,7 @@
       "id": "lean.eml_universality",
       "name": "EML universality witness",
       "statement": "Every EML-elementary function is realized by an EML routing tree.",
-      "status": "proven_machine_verified",
+      "status": "proven",
       "proof_method": "Existential extraction from IsEMLElementary.",
       "lean_file": "MonogateEML/Universality.lean",
       "lean_theorem": "eml_universality",
@@ -271,7 +271,7 @@
       "id": "lean.infinite_zeros_barrier_partial",
       "name": "Infinite Zeros Barrier (T01) — partial",
       "statement": "Real EML trees have finitely many zeros on any closed bounded interval where they are real-analytic. Parts A, B, C, C-prime fully closed; Part D (sin not in EML) carries 2 documented sorries.",
-      "status": "proven_partial",
+      "status": "experimental",
       "proof_method": "Bolzano-Weierstrass + AnalyticOnNhd identity theorem (Parts B and C); Part D requires o-minimal / Wilkie 1996 machinery not yet in Mathlib.",
       "lean_file": "MonogateEML/InfiniteZerosBarrier.lean",
       "lean_theorem_partial": "Parts A, B, C, C-prime",
