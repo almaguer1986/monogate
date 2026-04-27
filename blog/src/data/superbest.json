@@ -444,5 +444,130 @@
         "layer2": "~40%"
       }
     ]
+  },
+  "hero_stats": [
+    {
+      "value": "23",
+      "label": "elementary operators",
+      "tier": "PROVED",
+      "note": "16 base F16 + 7 extended; CONJ_NO_OP_24 closed"
+    },
+    {
+      "value": "8",
+      "label": "Pfaffian tower generators",
+      "tier": "OBSERVATION",
+      "note": "max depth ≤ 4 from any tower"
+    },
+    {
+      "value": "578",
+      "label": "expressions across 12 subdomains",
+      "tier": "BENCH",
+      "note": "master corpus post Color-Science merge"
+    },
+    {
+      "value": "35/36",
+      "label": "scientific calculator functions",
+      "tier": "LIVE",
+      "note": "factorial via Gamma tower (E-201); modulo outside"
+    },
+    {
+      "value": "ρ = 0.885",
+      "label": "dynamics counter (n=193, p=1.8e-65)",
+      "tier": "OBSERVATION",
+      "note": "Spearman ρ across elementary + PNE"
+    }
+  ],
+  "hero_tier_bridge": "23 elementary operators (PROVED closed via PGC+AIT filter) + 8 Pfaffian tower generators (OBSERVATION tier; empirically verified) = 31 operators mapping two tiers of mathematics.",
+  "pfaffian_towers": {
+    "tier": "OBSERVATION",
+    "tier_note": "Empirically verified at sample points, not Lean-proved. The 'no single operator spans two towers' theorem is open (CONJECTURE).",
+    "max_depth": 4,
+    "function_total": 33,
+    "verification": "7 towers verified to ~1e-31 (mpmath@30-digit precision). Airy verified via the defining ODE Ai″(x) = x·Ai(x) to 1.5e-7 (the cubic-phase improper integral resists direct mpmath.quadosc convergence).",
+    "rows": [
+      {
+        "tower": "T_erf",
+        "generator": "erf",
+        "n_functions": 6,
+        "examples": "erf, erfc, erfi, dawson, fresnel{s,c}",
+        "max_relerr": "~1e-31"
+      },
+      {
+        "tower": "T_Si",
+        "generator": "Si",
+        "n_functions": 6,
+        "examples": "Si, Ci, Shi, Chi, Ei, li",
+        "max_relerr": "~1e-31"
+      },
+      {
+        "tower": "T_J",
+        "generator": "J_0",
+        "n_functions": 6,
+        "examples": "J_0, J_1, Y_0, I_0, K_0, H_1",
+        "max_relerr": "~1e-31"
+      },
+      {
+        "tower": "T_Ai",
+        "generator": "Ai",
+        "n_functions": 4,
+        "examples": "Ai, Bi, Ai′, Bi′",
+        "max_relerr": "1.5e-7 (via ODE)"
+      },
+      {
+        "tower": "T_Γ",
+        "generator": "Γ",
+        "n_functions": 5,
+        "examples": "Γ, lnΓ, ψ, β, ψ_n",
+        "max_relerr": "~1e-31"
+      },
+      {
+        "tower": "T_W",
+        "generator": "W",
+        "n_functions": 2,
+        "examples": "W_0, W_{−1}",
+        "max_relerr": "~1e-31"
+      },
+      {
+        "tower": "T_K",
+        "generator": "K(m)",
+        "n_functions": 3,
+        "examples": "K, E, F",
+        "max_relerr": "~1e-31"
+      },
+      {
+        "tower": "T_F",
+        "generator": "_2F_1",
+        "n_functions": 1,
+        "examples": "_2F_1 (super-tower)",
+        "max_relerr": "~1e-31"
+      }
+    ],
+    "outside_note": "Functions still outside the 23-op + 8-tower closure: zeta-family beyond polylog, modular forms, modulo, set/Boolean ops, generic non-computable. See the atlas page for the full out-of-closure list."
+  },
+  "verify_terminal": {
+    "intro": "Reproduce the cost analysis on your own machine. `eml-cost 0.12.0` is live on PyPI; the 578-row corpus is bundled inside the wheel.",
+    "blocks": [
+      {
+        "title": "Install",
+        "lang": "bash",
+        "code": "pip install eml-cost"
+      },
+      {
+        "title": "Cost class for any expression",
+        "lang": "python",
+        "code": "from eml_cost import analyze\nfrom sympy import symbols, exp, sin\n\nx, t = symbols('x t')\na = analyze(exp(-x) * sin(t))\nprint(a.cost_class)        # 'p2-d5-w2-c1' — the headline cross-domain class\nprint(a.pfaffian_r, a.is_pne)   # 2  False"
+      },
+      {
+        "title": "Predict dynamics counter (E-196 slope-2 rule, ρ=0.885)",
+        "lang": "python",
+        "code": "from eml_cost import analyze_dynamics\nfrom sympy import symbols, exp, sin, cos\n\nx, t = symbols('x t')\nd = analyze_dynamics(exp(-x) * sin(t) * cos(2*t))\nprint(d.predicted_r)       # 5  (1 decay + 2 oscillation modes)\nprint(d.confidence)        # 'high'"
+      },
+      {
+        "title": "Find structural siblings across the 578-row corpus",
+        "lang": "python",
+        "code": "from eml_cost import find_siblings\nfrom sympy import symbols, sin, pi\n\nx = symbols('x')\nfor s in find_siblings(sin(pi*x)/(pi*x), max_distance=0)[:3]:\n    print(s.distance, s.expression, s.domain)"
+      }
+    ],
+    "footer": "Code matches the published 0.12.0 API. `analyze_dynamics` and `find_siblings` ship in 0.10.0+ (rolled up into 0.11.0 / 0.12.0)."
   }
 }
