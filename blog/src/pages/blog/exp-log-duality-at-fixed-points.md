@@ -80,7 +80,7 @@ $$
 \mathrm{ELC}(\mathbb{C}) \;\subseteq_?\; \mathrm{ELC}\text{-iter}(\mathbb{C})
 $$
 
-is open (see our [research note](https://github.com/almaguer1986/monogate-research)
+is open (see our [research note](https://github.com/agent-maestro/monogate-research)
 on the Schanuel–Lambert bridge). Every Lambert constant is a candidate
 witness for strictness.
 
@@ -104,7 +104,7 @@ The chain rule gives `exp'(z) = exp(z) = z` (since z is a fixed point) and
 `z · (1/z) = 1`. Non-vanishing of z is automatic: `exp(z) = z` combined with
 `exp z ≠ 0` forces `z ≠ 0`.
 
-Source: [EMLDuality.lean](https://github.com/almaguer1986/monogate-lean/blob/master/MonogateEML/EMLDuality.lean)
+Source: [EMLDuality.lean](https://github.com/agent-maestro/monogate-lean/blob/master/MonogateEML/EMLDuality.lean)
 (4 theorems total, including `exp_fixed_point_multiplier_equals_z` and
 `log_multiplier_at_exp_fixed_point` as corollaries).
 
@@ -113,7 +113,7 @@ Source: [EMLDuality.lean](https://github.com/almaguer1986/monogate-lean/blob/mas
 ## Reproduce
 
 ```bash
-git clone https://github.com/almaguer1986/monogate-lean
+git clone https://github.com/agent-maestro/monogate-lean
 cd monogate-lean
 lake build MonogateEML.EMLDuality
 ```

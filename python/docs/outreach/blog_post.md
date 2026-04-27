@@ -92,7 +92,7 @@ BEST.div(6.0, 2.0)        # 3.0 using 1 EDL node
 sin_via_euler(math.pi/6)  # 0.5 exactly
 ```
 
-The paper is at arXiv:2603.21852. The code is at github.com/almaguer1986/monogate.
+The paper is at arXiv:2603.21852. The code is at github.com/agent-maestro/monogate.
 
 ---
 

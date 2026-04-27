@@ -258,7 +258,7 @@ function SearchProgress({ apiAvailable }) {
 const ARXIV_ID  = "";   // ARXIV_ID_PLACEHOLDER — leave empty until submitted
 const ARXIV_URL = ARXIV_ID
   ? `https://arxiv.org/abs/${ARXIV_ID}`
-  : "https://github.com/almaguer1986/monogate/blob/master/python/paper/preprint.tex";
+  : "https://github.com/agent-maestro/monogate/blob/master/python/paper/preprint.tex";
 const ARXIV_LABEL = ARXIV_ID ? `arXiv:${ARXIV_ID}` : "preprint (pending)";
 
 const BIBTEX = `@misc{almaguer2026eml,

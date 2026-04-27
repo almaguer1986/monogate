@@ -98,7 +98,7 @@ is cheap, the oscillatory sector is complex-only.
 ## Reproduce
 
 ```bash
-git clone https://github.com/almaguer1986/monogate
+git clone https://github.com/agent-maestro/monogate
 cd monogate
 python exploration/blind-sessions/scripts/sE_em_costs.py
 ```

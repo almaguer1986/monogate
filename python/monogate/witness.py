@@ -61,7 +61,7 @@ __all__ = [
 # the VS Code lean4 extension same day per the project's Lean
 # writing protocol.
 LEAN_UNIVERSALITY_URL = (
-    "https://github.com/almaguer1986/monogate-lean/blob/master/"
+    "https://github.com/agent-maestro/monogate-lean/blob/master/"
     "MonogateEML/Universality.lean"
 )
 

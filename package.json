@@ -24,11 +24,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/almaguer1986/monogate.git"
+    "url": "https://github.com/agent-maestro/monogate.git"
   },
-  "homepage": "https://github.com/almaguer1986/monogate",
+  "homepage": "https://github.com/agent-maestro/monogate",
   "bugs": {
-    "url": "https://github.com/almaguer1986/monogate/issues"
+    "url": "https://github.com/agent-maestro/monogate/issues"
   },
   "engines": {
     "node": ">=16"

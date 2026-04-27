@@ -26,7 +26,7 @@ FROM python:${PYTHON_VERSION}-slim
 # Metadata
 LABEL org.opencontainers.image.title="monogate"
 LABEL org.opencontainers.image.description="EML operator reproducibility environment"
-LABEL org.opencontainers.image.source="https://github.com/almaguer1986/monogate"
+LABEL org.opencontainers.image.source="https://github.com/agent-maestro/monogate"
 LABEL org.opencontainers.image.version="0.10.0"
 
 # ── System dependencies ────────────────────────────────────────────────────────

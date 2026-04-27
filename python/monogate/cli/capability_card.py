@@ -28,8 +28,8 @@ from typing import Any, Callable
 import monogate
 
 
-REPO_SLUG = "almaguer1986/monogate"
-LEAN_REPO_SLUG = "almaguer1986/monogate-lean"
+REPO_SLUG = "agent-maestro/monogate"
+LEAN_REPO_SLUG = "agent-maestro/monogate-lean"
 SCHEMA_URL = "https://monogate.org/schemas/capcard/v3.json"
 CAPCARD_SCHEMA_VERSION = "3"  # major version the CLI targets
 

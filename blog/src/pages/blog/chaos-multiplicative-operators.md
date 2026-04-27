@@ -81,7 +81,7 @@ conjugacy and is where the multiplicative/additive split manifests.
 ## Reproduce
 
 ```bash
-git clone https://github.com/almaguer1986/monogate
+git clone https://github.com/agent-maestro/monogate
 cd monogate
 python exploration/blind-sessions/scripts/sB_bifurcation_chaos.py
 ```

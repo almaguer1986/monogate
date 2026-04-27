@@ -1541,7 +1541,7 @@ I_AB = quantum_mutual_info(rho_bell, 2, 2)  # = 2*ln(2)`}
         fontSize:9, color:C.muted, display:"flex", justifyContent:"space-between",
         flexWrap:"wrap", gap:6 }}>
         <span>Odrzywołek (2026) · arXiv:2603.21852 · CC BY 4.0</span>
-        <span>Research by Arturo R. Almaguer · github.com/almaguer1986/monogate</span>
+        <span>Research by Arturo R. Almaguer · github.com/agent-maestro/monogate</span>
       </div>
     </div>
   );

@@ -62,7 +62,7 @@ console.log(sinBEST(Math.PI));  // ≈ 0
 ## From source
 
 ```bash
-git clone https://github.com/almaguer1986/monogate
+git clone https://github.com/agent-maestro/monogate
 cd monogate/python
 pip install -e ".[dev]"
 pytest

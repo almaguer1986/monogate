@@ -7,8 +7,8 @@
   "version": "2.5.0",
   "license": "MIT",
   "homepage": "https://monogate.org",
-  "repository": "https://github.com/almaguer1986/monogate",
-  "lean_repo": "https://github.com/almaguer1986/monogate-lean",
+  "repository": "https://github.com/agent-maestro/monogate",
+  "lean_repo": "https://github.com/agent-maestro/monogate-lean",
 
   "related_sites": {
     "research": "https://monogate.org",
@@ -148,7 +148,7 @@
       "unit": "files of 14",
       "direction": "higher_is_better",
       "reproducibility": {
-        "command": "git clone https://github.com/almaguer1986/monogate-lean && cd monogate-lean && lake build",
+        "command": "git clone https://github.com/agent-maestro/monogate-lean && cd monogate-lean && lake build",
         "deterministic": true
       },
       "notes": "13 of 14 files in MonogateEML/ build with zero sorries. The 14th (InfiniteZerosBarrier.lean) carries 2 active sorries on Part D (lines 326 and 337), both documented as requiring o-minimal theory."
@@ -162,7 +162,7 @@
       "unit": "tests",
       "direction": "higher_is_better",
       "reproducibility": {
-        "command": "pip install eml-cost==0.7.1 && git clone https://github.com/almaguer1986/eml-cost && cd eml-cost && python -m pytest",
+        "command": "pip install eml-cost==0.7.1 && git clone https://github.com/agent-maestro/eml-cost && cd eml-cost && python -m pytest",
         "deterministic": true
       },
       "notes": "Includes 26 tests for predict_precision_loss and 16 tests for the CLI. mypy --strict clean across 11 source files."
@@ -176,7 +176,7 @@
       "unit": "tests",
       "direction": "higher_is_better",
       "reproducibility": {
-        "command": "pip install eml-cost-torch==0.5.0 && git clone https://github.com/almaguer1986/eml-cost-torch && cd eml-cost-torch && python -m pytest",
+        "command": "pip install eml-cost-torch==0.5.0 && git clone https://github.com/agent-maestro/eml-cost-torch && cd eml-cost-torch && python -m pytest",
         "deterministic": true
       },
       "notes": "Per-activation empirical lookup tests + diagnose() integration tests."
@@ -204,7 +204,7 @@
       "unit": "fold",
       "direction": "higher_is_better",
       "reproducibility": {
-        "command": "git clone https://github.com/almaguer1986/monogate-research-public-bench && cd bench-300-domain && python stats.py --n_null 5000",
+        "command": "git clone https://github.com/agent-maestro/monogate-research-public-bench && cd bench-300-domain && python stats.py --n_null 5000",
         "deterministic": true
       },
       "notes": "Across the 403-expression bench-300-domain corpus and N_null=5000. Benjamini-Hochberg FDR-corrected q < 1e-4 across 31 candidate classes. 18 distinct domains contribute. The publication of this benchmark expects the public bench repo to be available; until then the corpus and stats.py live in monogate-research/exploration/bench-300-domain/."

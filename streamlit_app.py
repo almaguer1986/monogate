@@ -65,7 +65,7 @@ st.title("monogate — EML Universal Operator")
 st.caption(
     "Every elementary function as a finite binary tree of **eml(x,y) = exp(x) − ln(y)** nodes. "
     "arXiv:2603.21852 · [PyPI](https://pypi.org/project/monogate/) · "
-    "[GitHub](https://github.com/almaguer1986/monogate)"
+    "[GitHub](https://github.com/agent-maestro/monogate)"
 )
 
 tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9, tab10 = st.tabs([

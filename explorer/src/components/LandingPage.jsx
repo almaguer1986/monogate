@@ -399,7 +399,7 @@ export default function LandingPage({ onEnter }) {
           {[
             { label: "Theorems", href: "https://challenge.monogate.dev/theorems" },
             { label: "Challenges", href: "https://monogate.dev" },
-            { label: "GitHub",  href: "https://github.com/almaguer1986/monogate" },
+            { label: "GitHub",  href: "https://github.com/agent-maestro/monogate" },
             { label: "npm",     href: "https://www.npmjs.com/package/monogate" },
             { label: "PyPI",    href: "https://pypi.org/project/monogate/" },
             { label: "arXiv",   href: "https://arxiv.org/abs/2603.21852" },
@@ -432,7 +432,7 @@ export default function LandingPage({ onEnter }) {
             Lab ↗
           </a>
           <span style={{ color: "#1e2030", marginLeft: 12 }}>
-            github.com/almaguer1986/monogate
+            github.com/agent-maestro/monogate
           </span>
         </div>
 

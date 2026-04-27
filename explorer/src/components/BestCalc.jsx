@@ -599,7 +599,7 @@ export default function BestCalc() {
             ▶ try sin(x) in EML
           </button>
           <a
-            href="https://github.com/almaguer1986/monogate/issues"
+            href="https://github.com/agent-maestro/monogate/issues"
             target="_blank" rel="noreferrer"
             style={{ ...btnBase, padding: "5px 12px", fontSize: 10,
               textDecoration: "none", display: "inline-flex", alignItems: "center" }}>

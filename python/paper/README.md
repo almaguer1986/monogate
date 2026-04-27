@@ -44,7 +44,7 @@ docker run --rm \
    - Title: `Practical Extensions to the EML Universal Operator: Hybrid Routing, Phantom Attractors, Performance Kernels, and the N=11 Sin Barrier`
    - Authors: `Monogate Research`
    - Abstract: copy from `arxiv_submission_notes.md` (≤ 250 words)
-   - Comments: `14 pages; source code at https://github.com/almaguer1986/monogate`
+   - Comments: `14 pages; source code at https://github.com/agent-maestro/monogate`
    - MSC Class: `68W30` (symbolic computation), `65D15` (algorithms for functional approximation)
 
 5. **After submission — update placeholders:**

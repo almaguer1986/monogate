@@ -261,7 +261,7 @@ if n_fail == 0:
     print()
     print("  Announce:")
     print("    PyPI  : https://pypi.org/project/monogate/1.1.0/")
-    print("    GitHub: https://github.com/almaguer1986/monogate/releases")
+    print("    GitHub: https://github.com/agent-maestro/monogate/releases")
 else:
     print(f"\n  {RED}{BOLD}NOT READY — fix the {n_fail} failing check(s) above.{RESET}")
 

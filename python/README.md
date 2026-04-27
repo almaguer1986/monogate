@@ -20,7 +20,7 @@ symbolic search engine.
 
 Based on [arXiv:2603.21852](https://arxiv.org/abs/2603.21852) (Odrzywołek, 2026).
 Live explorer: **[monogate.dev](https://monogate.dev)**
-Machine-verified proofs: **[monogate-lean (Lean 4)](https://github.com/almaguer1986/monogate-lean)**
+Machine-verified proofs: **[monogate-lean (Lean 4)](https://github.com/agent-maestro/monogate-lean)**
 
 ---
 

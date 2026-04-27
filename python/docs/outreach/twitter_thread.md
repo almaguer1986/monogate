@@ -136,7 +136,7 @@ BEST.div(6, 2)  # 3.0 using 1 EDL node
 ```
 
 Paper: arXiv:2603.21852
-Code: github.com/almaguer1986/monogate
+Code: github.com/agent-maestro/monogate
 
 ---
 

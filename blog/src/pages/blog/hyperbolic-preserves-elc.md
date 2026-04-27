@@ -148,7 +148,7 @@ The content of the theorem is the structural observation: because these
 expressions use only `exp` and arithmetic, composing with an ELC input
 keeps the result in ELC.
 
-Source: [HyperbolicPreservation.lean](https://github.com/almaguer1986/monogate-lean/blob/master/MonogateEML/HyperbolicPreservation.lean)
+Source: [HyperbolicPreservation.lean](https://github.com/agent-maestro/monogate-lean/blob/master/MonogateEML/HyperbolicPreservation.lean)
 (7 theorems total, including the numerical 3-4-5 witnesses).
 
 ---

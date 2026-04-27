@@ -139,7 +139,7 @@ different direction.
 ## Reproduce
 
 ```bash
-git clone https://github.com/almaguer1986/monogate-research       # private
+git clone https://github.com/agent-maestro/monogate-research       # private
 cd monogate-research/exploration/olympiad-sessions
 python scripts/verify_claims.py          # the 6 baseline identities
 python scripts/olympiad_eml.py           # the 10-problem node-cost table

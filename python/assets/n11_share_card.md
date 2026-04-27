@@ -124,7 +124,7 @@ cd explorer && npm install && npm run dev
 
 ---
 
-**GitHub:** https://github.com/almaguer1986/monogate
+**GitHub:** https://github.com/agent-maestro/monogate
 **PyPI:** `pip install monogate`
 **Explorer:** https://monogate.dev
 **Paper:** https://arxiv.org/abs/ARXIV_ID_PLACEHOLDER

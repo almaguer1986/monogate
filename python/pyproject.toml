@@ -71,7 +71,7 @@ eml-explore              = "monogate.cli.explore:main"
 
 [project.urls]
 Homepage   = "https://monogate.dev"
-Repository = "https://github.com/almaguer1986/monogate"
+Repository = "https://github.com/agent-maestro/monogate"
 Paper      = "https://arxiv.org/abs/2603.21852"
 
 [tool.setuptools.packages.find]

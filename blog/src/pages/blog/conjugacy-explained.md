@@ -124,14 +124,14 @@ theorem eml_edl_conjugacy (x : ℝ) (hx : 0 < x) (hx1 : x ≠ 1) :
 ```
 
 Source:
-[SelfMapConjugacy.lean](https://github.com/almaguer1986/monogate-lean/blob/master/MonogateEML/SelfMapConjugacy.lean).
+[SelfMapConjugacy.lean](https://github.com/agent-maestro/monogate-lean/blob/master/MonogateEML/SelfMapConjugacy.lean).
 
 ---
 
 ## Reproduce
 
 ```bash
-git clone https://github.com/almaguer1986/monogate
+git clone https://github.com/agent-maestro/monogate
 cd monogate
 python exploration/blind-sessions/scripts/sA_self_map_conjugacy.py
 ```

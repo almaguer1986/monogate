@@ -86,8 +86,8 @@ No API changes; same bundling as 2.4.0.
 
 Three previously-standalone packages are now folded into monogate as
 optional capabilities. The standalone GitHub repos
-(`almaguer1986/eml-witness`, `almaguer1986/eml-explore`,
-`almaguer1986/eml-jupyter`) are archived; install via the new
+(`agent-maestro/eml-witness`, `agent-maestro/eml-explore`,
+`agent-maestro/eml-jupyter`) are archived; install via the new
 extras instead.
 
 ```bash

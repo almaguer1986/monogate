@@ -2,7 +2,7 @@
 
 **Version:** v0.11.0 / Phase 12 (SuperBEST v5)  
 **Preprint:** arXiv:2603.21852 (Odrzywołek, 2026)  
-**Source:** https://github.com/almaguer1986/monogate  
+**Source:** https://github.com/agent-maestro/monogate  
 
 This document is the canonical theoretical reference for the monogate project.
 It collects formal definitions, established theorems, open conjectures, and a

@@ -264,7 +264,7 @@ export default function ChallengeBoard() {
           and a proof or numeric verification script.
         </div>
         <a
-          href="https://github.com/almaguer1986/monogate/issues/new?title=New+construction+for+[fn]&labels=construction"
+          href="https://github.com/agent-maestro/monogate/issues/new?title=New+construction+for+[fn]&labels=construction"
           target="_blank" rel="noreferrer"
           style={{
             ...btnBase,

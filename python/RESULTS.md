@@ -1,6 +1,6 @@
 # EML Neural Network Experiments — First Results
 
-The EML operator is `eml(x, y) = exp(x) − ln(y)`. The [monogate project](https://github.com/almaguer1986/monogate) explores whether this single operation can serve as the basis for interpretable machine learning — every node applies the same rule, leaves are the only free parameters. These experiments ask: can a gradient-trained EML tree recover known constants, and can it learn a nonlinear function from data?
+The EML operator is `eml(x, y) = exp(x) − ln(y)`. The [monogate project](https://github.com/agent-maestro/monogate) explores whether this single operation can serve as the basis for interpretable machine learning — every node applies the same rule, leaves are the only free parameters. These experiments ask: can a gradient-trained EML tree recover known constants, and can it learn a nonlinear function from data?
 
 ---
 

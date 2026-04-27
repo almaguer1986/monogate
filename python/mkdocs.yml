@@ -1,7 +1,7 @@
 site_name: monogate
 site_description: "EML arithmetic — all elementary functions from eml(x,y) = exp(x) - ln(y)"
 site_url: https://monogate.dev/docs
-repo_url: https://github.com/almaguer1986/monogate
+repo_url: https://github.com/agent-maestro/monogate
 repo_name: monogate
 docs_dir: docs
 site_dir: site
@@ -86,6 +86,6 @@ nav:
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/almaguer1986/monogate
+      link: https://github.com/agent-maestro/monogate
     - icon: fontawesome/solid/paper-plane
       link: https://arxiv.org/abs/2603.21852

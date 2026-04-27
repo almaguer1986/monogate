@@ -28,7 +28,7 @@ python/paper/arxiv_submission_notes.md
 # convenience. Must never be tracked inside this public monorepo.
 monogate-research/
 
-# Canonical monogate-dev lives at its own repo (github.com/almaguer1986/monogate-dev)
+# Canonical monogate-dev lives at its own repo (github.com/agent-maestro/monogate-dev)
 # and on disk at D:/monogate-dev/. Never nest it inside this monorepo — the
 # duplicate checkout drifted out of sync and was cleaned up.
 monogate-dev/

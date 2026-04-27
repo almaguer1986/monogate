@@ -21,7 +21,7 @@ export interface ProofFile {
   flagships: Flagship[];
 }
 
-export const leanRepo = 'https://github.com/almaguer1986/monogate-lean';
+export const leanRepo = 'https://github.com/agent-maestro/monogate-lean';
 export const leanBranch = 'master';
 
 export const ghFile = (file: string, line?: number): string =>
