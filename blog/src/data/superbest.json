@@ -474,16 +474,16 @@
       "value": "ρ = 0.885",
       "label": "dynamics counter (n=193, p=1.8e-65)",
       "tier": "OBSERVATION",
-      "note": "Spearman ρ across elementary + PNE"
+      "note": "Spearman ρ across elementary + PNE; r ≈ 2·n_oscillation + 1·n_decay + chain_order(generator). Tower-base = chain order, exact 17/18 rows."
     }
   ],
   "hero_tier_bridge": "23 elementary operators (PROVED closed via PGC+AIT filter) + 8 Pfaffian tower generators (OBSERVATION tier; empirically verified) = 31 operators mapping two tiers of mathematics.",
   "pfaffian_towers": {
     "tier": "OBSERVATION",
-    "tier_note": "Empirically verified at sample points, not Lean-proved. The 'no single operator spans two towers' theorem is open (CONJECTURE).",
+    "tier_note": "Empirically verified at sample points, not Lean-proved. The 'no single operator spans two towers' theorem is open (CONJECTURE). The 8 tower families form a 3-rooted hierarchy under DLMF closed-form identities (see hierarchy_note below).",
     "max_depth": 4,
     "function_total": 33,
-    "verification": "7 towers verified to ~1e-31 (mpmath@30-digit precision). Airy verified via the defining ODE Ai″(x) = x·Ai(x) to 1.5e-7 (the cubic-phase improper integral resists direct mpmath.quadosc convergence).",
+    "verification": "2 towers exact (W, F); 4 towers to ~1e-31 — erf, Si, J, K (mpmath@30-digit precision at sample points); Γ to ~1e-18 (one tricky sample, others 0.0); Airy via the defining ODE Ai″(x) = x·Ai(x) to 1.5e-7 (the cubic-phase improper integral resists direct mpmath.quadosc convergence).",
     "rows": [
       {
         "tower": "T_erf",
@@ -518,14 +518,14 @@
         "generator": "Γ",
         "n_functions": 5,
         "examples": "Γ, lnΓ, ψ, β, ψ_n",
-        "max_relerr": "~1e-31"
+        "max_relerr": "~1e-18 (one tricky sample)"
       },
       {
         "tower": "T_W",
         "generator": "W",
         "n_functions": 2,
         "examples": "W_0, W_{−1}",
-        "max_relerr": "~1e-31"
+        "max_relerr": "0 (exact, no integral)"
       },
       {
         "tower": "T_K",
@@ -539,10 +539,12 @@
         "generator": "_2F_1",
         "n_functions": 1,
         "examples": "_2F_1 (super-tower)",
-        "max_relerr": "~1e-31"
+        "max_relerr": "0 (exact, series)"
       }
     ],
-    "outside_note": "Functions still outside the 23-op + 8-tower closure: zeta-family beyond polylog, modular forms, modulo, set/Boolean ops, generic non-computable. See the atlas page for the full out-of-closure list."
+    "outside_note": "Functions still outside the 23-op + 8-tower closure: zeta-family beyond polylog, modular forms, modulo, set/Boolean ops, generic non-computable. See the atlas page for the full out-of-closure list.",
+    "hierarchy_note": "Pairwise pass over all 28 tower pairs (28-pair probe in exploration/tower-independence-2026-04-27/): 5 SUBSUMES — T_F (₂F₁) covers T_erf, T_Si, T_J, T_Ai, T_K via DLMF identities (7.18.5, 6.11.2, 10.16.5, 9.4, 19.5.1). 1 PARTIAL — T_Ai ⇆ T_J via fractional-order Bessel (DLMF 9.6.1). 22 INDEPENDENT pairs. The 8 families form a 3-rooted hierarchy: in the F16 grammar all 8 are operationally needed; in the abstract Pfaffian-closure sense the minimum generating set is {T_F, T_Γ, T_W} = 3.",
+    "hierarchy_min_set": 3
   },
   "verify_terminal": {
     "intro": "Reproduce the cost analysis on your own machine. `eml-cost 0.12.0` is live on PyPI; the 578-row corpus is bundled inside the wheel.",
