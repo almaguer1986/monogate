@@ -1,19 +1,21 @@
 ---
-// Reactions — 4-emoji per-post feedback widget.
+// Reactions — 4-emoji per-post feedback widget, Supabase-backed.
 //
-// LocalStorage-backed: each browser tracks its own reaction per post.
-// No server, no aggregate counts shown. The button lights up when
-// you've selected it; click again to clear, or click a different one
-// to switch. Honest UX — what you click is what you see.
+// Two positive (👍 useful, 🤯 mind blown) and two negative
+// (👎 not useful, 🚫 bad info). Each visitor gets a UUID stored
+// in localStorage; that UUID + post slug is the upsert key. Counts
+// are live: page load reads from `blog_reaction_counts`, every click
+// optimistically updates the UI then upserts to the DB.
 //
-// To upgrade to aggregated counts later, point the data-* attributes
-// at a small `/api/react` endpoint and read counts back; the markup
-// is structured so the JS is the only thing that has to change.
+// SQL migration: monogate-dev/supabase/blog_reactions_s116.sql
+// Env vars (Astro PUBLIC_ prefix is required for client-side access):
+//   PUBLIC_SUPABASE_URL
+//   PUBLIC_SUPABASE_ANON_KEY
 //
-// Usage in any post layout:
-//   import Reactions from '../components/Reactions.astro';
-//   ...
-//   <Reactions slug={Astro.url.pathname.split('/').pop() ?? ''} />
+// Toggle behavior:
+//   - Click an unselected reaction       → upsert; that one lights up
+//   - Click your currently selected one  → delete; nothing lit
+//   - Click a different reaction         → upsert; selection switches
 
 interface Props {
   slug: string;
@@ -23,17 +25,25 @@ const { slug } = Astro.props;
 
 <div class="reactions" data-post-slug={slug} aria-label="React to this post">
   <span class="reactions-label">React</span>
+
   <button type="button" class="reaction" data-react="up" aria-label="thumbs up — useful">
     <span class="emoji" aria-hidden="true">👍</span>
+    <span class="count" data-count="up">0</span>
   </button>
+
   <button type="button" class="reaction" data-react="mind" aria-label="mind blown">
     <span class="emoji" aria-hidden="true">🤯</span>
+    <span class="count" data-count="mind">0</span>
   </button>
+
   <button type="button" class="reaction" data-react="down" aria-label="thumbs down — not useful">
     <span class="emoji" aria-hidden="true">👎</span>
+    <span class="count" data-count="down">0</span>
   </button>
+
   <button type="button" class="reaction" data-react="nope" aria-label="bad info — flag a problem">
     <span class="emoji" aria-hidden="true">🚫</span>
+    <span class="count" data-count="nope">0</span>
   </button>
 </div>
 
@@ -59,69 +69,218 @@ const { slug } = Astro.props;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 999px;
-    width: 38px;
-    height: 38px;
-    padding: 0;
+    padding: 6px 12px 6px 10px;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
-    justify-content: center;
+    gap: 6px;
     transition: transform 0.12s ease, border-color 0.12s ease, background 0.12s ease;
     color: var(--text);
-    font-size: 18px;
     line-height: 1;
+    font-family: var(--mono);
+    font-size: 11px;
   }
-  .reaction:hover { transform: scale(1.08); border-color: var(--accent); }
-  .reaction:active { transform: scale(0.95); }
+  .reaction:hover { transform: scale(1.06); border-color: var(--accent); }
+  .reaction:active { transform: scale(0.96); }
   .reaction.selected {
     background: rgba(196,167,125,0.12);
     border-color: var(--accent);
     box-shadow: 0 0 0 1px var(--accent);
   }
+  .reaction[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
   .reaction .emoji {
+    font-size: 16px;
+    line-height: 1;
     filter: grayscale(0.5);
     transition: filter 0.12s ease, transform 0.12s ease;
   }
   .reaction:hover .emoji,
-  .reaction.selected .emoji {
-    filter: grayscale(0);
+  .reaction.selected .emoji { filter: grayscale(0); }
+  .reaction.selected .emoji { transform: scale(1.15); }
+  .reaction .count {
+    font-variant-numeric: tabular-nums;
+    color: var(--muted);
+    min-width: 1ch;
   }
-  .reaction.selected .emoji {
-    transform: scale(1.2);
-  }
+  .reaction.selected .count { color: var(--accent); }
 </style>
 
 <script>
-  // Per-post localStorage key — namespaced so we can revoke all
-  // reactions cleanly later if needed.
-  const KEY_PREFIX = 'monogate:reaction:';
+  import { createClient } from '@supabase/supabase-js';
+
+  const SUPABASE_URL = import.meta.env.PUBLIC_SUPABASE_URL as string | undefined;
+  const SUPABASE_KEY = import.meta.env.PUBLIC_SUPABASE_ANON_KEY as string | undefined;
+
+  // Per-visitor anonymous UUID; same key the upsert uses against the DB.
+  // localStorage persistence means the same browser keeps voting as the
+  // same "visitor" across sessions, until the user clears site data.
+  const VISITOR_KEY = 'monogate:visitor-id';
+  const SELECTED_KEY_PREFIX = 'monogate:reaction:';   // mirror selection
+                                                     // for instant render
+
+  type Reaction = 'up' | 'mind' | 'down' | 'nope';
+
+  function getVisitorId(): string {
+    let v = localStorage.getItem(VISITOR_KEY);
+    if (!v) {
+      v = (crypto.randomUUID?.() ?? fallbackUuid());
+      localStorage.setItem(VISITOR_KEY, v);
+    }
+    return v;
+  }
+
+  // Tiny RFC4122-ish UUID generator for browsers without
+  // crypto.randomUUID (very old). Not cryptographically strong, but
+  // these are anonymous IDs anyway.
+  function fallbackUuid(): string {
+    const r = () => Math.floor((1 + Math.random()) * 0x10000)
+      .toString(16).substring(1);
+    return `${r()}${r()}-${r()}-${r()}-${r()}-${r()}${r()}${r()}`;
+  }
 
   document.querySelectorAll<HTMLDivElement>('.reactions').forEach((root) => {
     const slug = root.dataset.postSlug ?? '';
     if (!slug) return;
-    const key = KEY_PREFIX + slug;
+    const localKey = SELECTED_KEY_PREFIX + slug;
 
-    // Restore prior selection on load.
-    const stored = localStorage.getItem(key);
-    if (stored) {
-      root.querySelector(`.reaction[data-react="${stored}"]`)?.classList.add('selected');
+    // Restore last-known selection from localStorage immediately so the UI
+    // doesn't flicker between page load and the first network round-trip.
+    const cachedChoice = localStorage.getItem(localKey) as Reaction | null;
+    if (cachedChoice) {
+      root.querySelector(`.reaction[data-react="${cachedChoice}"]`)
+          ?.classList.add('selected');
     }
 
+    if (!SUPABASE_URL || !SUPABASE_KEY) {
+      // No backend configured — fall back to localStorage-only behavior so
+      // the UI still works in dev.
+      wireLocalOnly(root, localKey);
+      return;
+    }
+
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
+      auth: { persistSession: false },
+    });
+
+    const visitor = getVisitorId();
+
+    function setCount(reaction: Reaction, n: number) {
+      const el = root.querySelector<HTMLSpanElement>(
+        `.count[data-count="${reaction}"]`);
+      if (el) el.textContent = String(n);
+    }
+
+    function setSelected(choice: Reaction | null) {
+      root.querySelectorAll<HTMLButtonElement>('.reaction').forEach(b => {
+        b.classList.toggle('selected', b.dataset.react === choice);
+      });
+      if (choice) localStorage.setItem(localKey, choice);
+      else        localStorage.removeItem(localKey);
+    }
+
+    // Initial load: aggregate counts + my own reaction.
+    Promise.all([
+      supabase.from('blog_reaction_counts')
+        .select('reaction, count').eq('post_slug', slug),
+      supabase.from('blog_reactions')
+        .select('reaction').eq('post_slug', slug).eq('visitor_id', visitor)
+        .maybeSingle(),
+    ]).then(([countsRes, mineRes]) => {
+      if (countsRes.data) {
+        for (const row of countsRes.data as { reaction: Reaction; count: number }[]) {
+          setCount(row.reaction, row.count);
+        }
+      }
+      if (mineRes.data?.reaction) {
+        setSelected(mineRes.data.reaction as Reaction);
+      } else if (cachedChoice) {
+        // The DB says I have no reaction but my cache thinks I do →
+        // cache was stale (DB row was deleted by me on another device,
+        // for instance). Clear the visual.
+        setSelected(null);
+      }
+    }).catch(() => { /* fail closed and keep the cached UI */ });
+
+    root.querySelectorAll<HTMLButtonElement>('.reaction').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const choice = btn.dataset.react as Reaction | undefined;
+        if (!choice) return;
+        const wasSelected = btn.classList.contains('selected');
+        const previousChoice = wasSelected
+          ? choice
+          : (root.querySelector<HTMLButtonElement>(
+              '.reaction.selected')?.dataset.react as Reaction | undefined);
+
+        // Disable while in-flight to prevent double-clicks racing the DB.
+        root.querySelectorAll<HTMLButtonElement>('.reaction').forEach(b => b.disabled = true);
+
+        // Optimistic UI update.
+        if (wasSelected) {
+          setSelected(null);
+          adjustCount(choice, -1);
+        } else {
+          setSelected(choice);
+          if (previousChoice && previousChoice !== choice) adjustCount(previousChoice, -1);
+          adjustCount(choice, +1);
+        }
+
+        try {
+          if (wasSelected) {
+            // Toggle off — delete the row.
+            await supabase.from('blog_reactions')
+              .delete()
+              .eq('post_slug', slug)
+              .eq('visitor_id', visitor);
+          } else {
+            // Insert or switch — upsert on the unique (post_slug, visitor_id) key.
+            await supabase.from('blog_reactions')
+              .upsert({
+                post_slug: slug,
+                visitor_id: visitor,
+                reaction: choice,
+                updated_at: new Date().toISOString(),
+              }, { onConflict: 'post_slug,visitor_id' });
+          }
+        } catch (err) {
+          console.warn('[reactions] DB sync failed:', err);
+          // Revert the optimistic change on failure.
+          if (wasSelected) {
+            setSelected(choice);
+            adjustCount(choice, +1);
+          } else {
+            setSelected(previousChoice ?? null);
+            if (previousChoice && previousChoice !== choice) adjustCount(previousChoice, +1);
+            adjustCount(choice, -1);
+          }
+        } finally {
+          root.querySelectorAll<HTMLButtonElement>('.reaction').forEach(b => b.disabled = false);
+        }
+      });
+    });
+
+    function adjustCount(reaction: Reaction, delta: number) {
+      const el = root.querySelector<HTMLSpanElement>(
+        `.count[data-count="${reaction}"]`);
+      if (!el) return;
+      const cur = parseInt(el.textContent ?? '0', 10) || 0;
+      el.textContent = String(Math.max(0, cur + delta));
+    }
+  });
+
+  // Fallback wiring for dev environments without Supabase env vars.
+  function wireLocalOnly(root: HTMLDivElement, localKey: string) {
     root.querySelectorAll<HTMLButtonElement>('.reaction').forEach((btn) => {
       btn.addEventListener('click', () => {
         const choice = btn.dataset.react;
         if (!choice) return;
         const wasSelected = btn.classList.contains('selected');
-        // Clear all selections.
         root.querySelectorAll('.reaction').forEach(b => b.classList.remove('selected'));
-        if (wasSelected) {
-          // Toggle off — clear storage.
-          localStorage.removeItem(key);
-        } else {
-          btn.classList.add('selected');
-          localStorage.setItem(key, choice);
-        }
+        if (wasSelected) localStorage.removeItem(localKey);
+        else { btn.classList.add('selected'); localStorage.setItem(localKey, choice); }
       });
     });
-  });
+  }
 </script>
