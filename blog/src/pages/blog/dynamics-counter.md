@@ -5,6 +5,7 @@ description: "Hand a damped-oscillator equation to a computer and it can tell yo
 date: "2026-04-27"
 author: "Monogate Research"
 tag: research
+featured: true
 ---
 
 # The Equation That Counts Physics

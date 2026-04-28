@@ -5,6 +5,7 @@ description: "578 expressions, 50 Lean theorems, 5 PyPI packages, an npm port, a
 date: "2026-04-27"
 author: "Monogate Research"
 tag: deep-dive
+featured: true
 ---
 
 # How Claude and I Built a Research Program in Two Weeks

@@ -1,147 +1,258 @@
 ---
 import Base from '../../layouts/Base.astro';
+import PostCardServer from '../../components/PostCardServer.astro';
+import {
+  getAllPosts, getFeaturedPosts, getRecentPosts, getRandomPosts,
+  getAllTags, tagMeta,
+} from '../../lib/posts';
 
-const posts = [
-  { href: '/blog/one-operator', title: 'One Operator, All of Applied Mathematics', tag: 'announcement', date: '2026-04-27', desc: 'The NAND gate of continuous math. A single binary operation eml(x, y) = exp(x) − ln(y) generates every elementary function — and the structural fingerprint of an expression turns out to predict where it came from. 578 expressions across 12 domains; the headline class p2-d5-w2-c1 unifies Faraday EMF, Hodgkin-Huxley, HSL color, and the Shannon sinc filter.' },
-  { href: '/blog/dynamics-counter', title: 'The Equation That Counts Physics', tag: 'research', date: '2026-04-27', desc: 'Hand a damped-oscillator equation to a computer and it can tell you, without knowing any physics, that there is one oscillation and one decay inside it. Across 193 expressions and 12 domains, this counter holds at ρ = +0.885 (p = 1.8e-65). 18/18 exact on Pfaffian primitives. The ceiling — FM synthesis at chain order 4 — is the only one of its kind in the corpus.' },
-  { href: '/blog/hear-the-math', title: 'Hear the Math: When Equations Become Sound', tag: 'deep-dive', date: '2026-04-27', desc: 'The best-selling synthesizer in history runs on a Bessel function. The Gibbs phenomenon\'s 9% overshoot is a theorem you can hear. Three interactive demos at 1op.io let you slide the modulation index through a Bessel zero, stack additive partials past a fixed overshoot, and see structural fingerprints as 2D phase portraits.' },
-  { href: '/blog/built-with-claude', title: 'How Claude and I Built a Research Program in Two Weeks', tag: 'deep-dive', date: '2026-04-27', desc: '578 expressions, 50 Lean theorems, 5 PyPI packages, an npm port, a HuggingFace dataset, three websites, four interactive demos. Two weeks. One human. The audit system, the structured memory, the six retractions, the phantom-attractor confabulation — the actual mechanics that made it ship at this pace.' },
-  { href: '/blog/two-boundaries', title: 'Two Boundaries of ELC', tag: 'observation', date: '2026-04-23', desc: 'The Elementary Logarithmic Closure is bounded by two structurally independent obstructions: T01 (oscillation / infinite zeros, analytic) and Abel-Ruffini (Galois unsolvability at polynomial degree ≥ 5, algebraic). Two centuries of classical mathematics constraining the same complexity class from independent directions.' },
-  { href: '/blog/which-way-does-the-transform-go', title: 'Which Way Does the Transform Go?', tag: 'observation', date: '2026-04-23', desc: 'Five classical integral transforms partition cleanly into three ELC-direction classes. Laplace goes inward (exp(-st) damps oscillations); Fourier and Z-transform stay neutral; Hilbert and Mellin go outward (produce special functions). Direction determined by kernel structure.' },
-  { href: '/blog/fma-staircase', title: 'FMA Is the Only Primitive That Matters', tag: 'observation', date: '2026-04-23', desc: 'Measured the node-cost decay across seven basis states on 222 parseable elementary-function equations. One primitive dominates: FMA contributes 7.1 pp on its own; the seven Layer-2 bivariate extensions combined add 0.9 pp. Staircase model AIC-preferred over exponential or polynomial decay.' },
-  { href: '/blog/oscillation-boundary', title: 'The Oscillation Boundary', tag: 'observation', date: '2026-04-23', desc: 'Across 315 tested equations (265 catalog + 50 stress-test), a clean dichotomy: oscillatory functions sit outside ELC with one exception — the Dirac delta, a non-elementary token. φ = 1.0 on 314 of 315.' },
-  { href: '/blog/what-we-got-wrong', title: 'What We Got Wrong', tag: 'observation', date: '2026-04-23', desc: 'Four things we retracted, corrected, or demoted during the 2026-04 foundation audit: ML-12 EML-beats-ReLU retracted (p=0.64), 144/265 catalog rows re-costed, MNIST training cost corrected 7.92e12 → 4.358e12, softplus 17× demoted to UNVERIFIED (~2× measured).' },
-  { href: '/blog/olympiad-meets-eml', title: 'When Olympiad Problems Produce EML Trees', tag: 'observation', date: '2026-04-23', desc: 'Ten classical functional-equation and inequality problems costed in SuperBEST v5.2 nodes. The Cauchy trio becomes 2n / 3n / 3n (with the gap = one exp node). Solutions are often cheaper than the equations that define them.' },
-  { href: '/blog/planck-elc-native', title: 'Planck Radiation Is ELC-Native (No Trig Needed)', tag: 'observation', date: '2026-04-23', desc: 'Six canonical EM formulas costed in F16 nodes. Planck\'s law is 14 nodes, entirely inside ELC. Wave equations cross to complex EML. A double-angle identity inflates Poynting cost from 10 to 14.' },
-  { href: '/blog/chaos-multiplicative-operators', title: 'Only the Multiplicative F16 Operators Are Chaotic', tag: 'observation', date: '2026-04-23', desc: 'A 600-point parameter sweep across all 16 F16 operators. Twelve collapse to period-2. The four multiplicative ones (EXL, DEXL, EXN, DEXN) reach period 16, contain period 3 (Sharkovskii/Li-Yorke chaos), and visit 11+ distinct cycle lengths.' },
-  { href: '/blog/conjugacy-explained', title: 'Why EAL and EXL Share the Multiplier 4.3164206…', tag: 'theorem', date: '2026-04-23', desc: 'The EAL and EXL self-maps have different fixed points yet identical multipliers to 13 decimals. The answer: they are topologically conjugate by exp. Lean-formalized (pending VS Code verification).' },
-  { href: '/blog/relu-softplus-exact-error', title: 'The ReLU–Softplus Error is Exactly ln(2)/β', tag: 'theorem', date: '2026-04-22', desc: 'The L∞ error from approximating ReLU by the smooth softplus activation is exactly ln(2)/β at every β, sharp at x=0. ReLU is outside ELC; softplus is in it at depth 2.' },
-  { href: '/blog/lambert-log-branch-attractors', title: 'Every Log Branch Has Its Own Attractor', tag: 'observation', date: '2026-04-22', desc: 'Principal log attracts any complex seed to z_0* ≈ 0.318 + 1.337i. Branch k attracts to z_k* = −W_k(−1). Infinitely many Lambert attractors, one per integer, all exp-repelling. Verified to 10⁻¹⁵.' },
-  { href: '/blog/exp-log-duality-at-fixed-points', title: 'The Exp-Log Duality at Fixed Points', tag: 'theorem', date: '2026-04-22', desc: 'Every fixed point of exp is repelling under exp-iteration and attracting under log-iteration on its matching branch. Multipliers multiply to exactly 1. Lean-verified.' },
-  { href: '/blog/hyperbolic-preserves-elc', title: 'Hyperbolic Functions Preserve ELC (And Why Trig Doesn\'t)', tag: 'theorem', date: '2026-04-22', desc: 'sinh, cosh, tanh map ELC inputs to ELC outputs. sin, cos, tan don\'t — the Infinite Zeros Barrier forbids it. With a 3-4-5 Pythagorean triple hiding at x=ln(2). Lean-verified.' },
-  { href: '/blog/add-gen-2n', title: 'General Addition in 2 Nodes: The Last Gap Closes', tag: 'theorem', date: '2026-04-20', desc: 'add(x,y) = lediv(x, deml(y,1)) costs exactly 2 nodes for all real x,y. General-domain addition drops from 11n to 2n. SuperBEST v5: 18n total, 75.3% savings. The two-tier add table is gone.' },
-  { href: '/blog/cost-of-everything', title: 'The SuperBEST Cost of Everything', tag: 'observation', date: '2026-04-20', desc: 'From Google\'s PageRank to your GPS to the NFL passer rating — every equation has a node count. ETA=2n (the cheapest), Haversine=28n (most-evaluated outdoor formula), RS syndrome=2037n (most expensive). 9 sessions, 57 new equations, 214 total.' },
-  { href: '/blog/recip-one-node', title: 'recip(x) Is 1 Node — ELSb Closes the Gap', tag: 'theorem', date: '2026-04-20', desc: 'ELSb(0, x) = exp(0 − ln(x)) = 1/x in one node. SuperBEST v4: 18 nodes total, 75.3% savings. The reciprocal was never a division problem.' },
-  { href: '/blog/completeness-characterization', title: 'Why exp(+x) Means Complete: The Structural Theorem', tag: 'theorem', date: '2026-04-20', desc: '16 operators, one rule: exp(+x) with no domain restriction implies exactly complete. 8 complete operators, 1 approximate, 7 incomplete. T26–T28 proved.' },
-  { href: '/blog/superbest-complete', title: 'The SuperBEST Table Is Complete (v1 → v4)', tag: 'theorem', date: '2026-04-20', desc: 'Every arithmetic operation has a proved-optimal node count. v1: 21 nodes, 71.2%. v4: 18 nodes, 75.3% (T10u+T33+R16-C1). All entries exhaustively verified.' },
-  { href: '/blog/eml-negation', title: 'Negation in Two Nodes — For All Real x', tag: 'theorem', date: '2026-04-20', desc: 'exl(0, deml(x,1)) computes −x in exactly 2 nodes for all x ∈ ℝ, no domain restriction. Proved optimal by exhaustive search.' },
-  { href: '/blog/geometry-costs', title: 'The SuperBEST Cost of Geometry', tag: 'theorem', date: '2026-04-20', desc: '12 classical geometric primitives — hyperbolic distance, Lie group maps, curvature, conformal maps — as EML trees. 125n vs 345n naive = 64% savings. All exact. R16-C1: recip = 1n.' },
-  { href: '/blog/calculus-costs', title: 'The SuperBEST Cost of Calculus', tag: 'observation', date: '2026-04-20', desc: 'Taylor series, ODEs, Fourier transforms, and autodiff measured in EML nodes. Taylor: 9N−3 nodes per N terms. Fourier kernel: 1 node.' },
-  { href: '/blog/quantum-costs', title: 'The SuperBEST Cost of Quantum Mechanics', tag: 'observation', date: '2026-04-20', desc: 'Partition functions, time evolution U(t)=exp(−iHt), density matrices measured in matrix EML nodes. U(t) = 1 matrix EML node.' },
-  { href: '/blog/sixteen-operators', title: '16 Operators: The Complete exp-ln Census', tag: 'observation', date: '2026-04-20', desc: 'Every binary combination of exp(±x) with ln(y) via arithmetic — completeness classification of all 16 operators by structural rule.' },
-  { href: '/blog/fourier-beats-taylor', title: 'Fourier Beats Taylor by 100x in EML Node Count', tag: 'theorem', date: '2026-04-19', desc: 'sin(x) costs 101 nodes as an 8-term Taylor series in BEST routing. The same function is 1 complex EML node via Fourier/Euler. Factor-100 gap.' },
-  { href: '/blog/eml-no-fixed-points', title: 'The EML Self-Map Has No Fixed Points', tag: 'theorem', date: '2026-04-19', desc: 'exp(x)−ln(x) > x for all x > 0, minimum gap 1.648629. The EML self-map diverges. Only EML and LEX have no real fixed points among 8 operators.' },
-  { href: '/blog/mul-gap-closed', title: 'We Found a Faster Multiplication: 3 Nodes Instead of 13', tag: 'theorem', date: '2026-04-19', desc: 'The EXL identity mul(x,y) = exl(ln(x), y) achieves 3-node multiplication. Exhaustive search confirms optimality.' },
-  { href: '/blog/completeness-trichotomy', title: 'The Completeness Trichotomy: EML, EMN, and Everyone Else', tag: 'theorem', date: '2026-04-19', desc: 'Three completeness classes for exp-ln gates: exactly complete (EML), approximately complete (EMN), incomplete (others). Updated by T26–T28.' },
-  { href: '/blog/eml-closure-density', title: 'Is the EML Closure Dense in ℂ?', tag: 'conjecture', date: '2026-04-19', desc: '20 random complex targets all approached within depth 6. π appears as an Im-part at depth 7. Strong evidence for density — not yet proved.' },
-  { href: '/blog/tight-zeros-bound', title: 'The Tight Zeros Bound', tag: 'theorem', date: '2026-04-19', desc: 'A depth-k EML tree has at most 2^k real zeros. Tight bound: explicit constructions achieve it. Quantifies the Infinite Zeros Barrier.' },
-  { href: '/blog/operator-zoo', title: 'The Operator Zoo: Which exp-ln Gates Are Complete?', tag: 'theorem', date: '2026-04-19', desc: '8 operators classified. EML exactly complete. EMN approximately complete: converges to any elementary function but cannot compute ln(x) exactly.' },
-  { href: '/blog/deml-is-incomplete', title: 'DEML Is Incomplete', tag: 'theorem', date: '2026-04-19', desc: 'deml(x,y) = exp(−x) − ln(y) cannot construct exp(+x) or neg(x). Structural proof + exhaustive search over 861,952 trees.' },
-  { href: '/blog/pumping-lemma', title: 'The Pumping Lemma for EML Trees', tag: 'conjecture', date: '2026-04-19', desc: 'Depth-k trees have at most 2^k zeros (proved). Observed maximum is O(k). The gap suggests a tighter bound — still open.' },
-  { href: '/blog/eml-sound', title: 'Timbre Is EML Node Count', tag: 'research', date: '2026-04-19', desc: 'Each Fourier harmonic = one complex EML node. Timbre measurements: Sine=1n, Clarinet=5n, Violin=12n. 245× fewer nodes than Taylor-based synthesis.' },
-  { href: '/blog/eml-fractals', title: 'EML Generates the Exponential Mandelbrot Set', tag: 'research', date: '2026-04-19', desc: "Iterating eml(z,c) is Devaney's exponential family. 8 operator fractal zoos computed. DEML/EMN generate bounded strange attractors with box dimension ≈ 1.128." },
-  { href: '/blog/eml-chaos', title: 'EML Chaos: Attractors, Bifurcation, and Lyapunov Exponents', tag: 'research', date: '2026-04-19', desc: 'DEML and EMN generate bounded 2D strange attractors. No classical period-doubling — the exponential family is a different universality class. Lyapunov landscape 92.9% correlated with Mandelbrot interior.' },
-  { href: '/blog/complexity-census', title: 'The EML Complexity Census', tag: 'observation', date: '2026-04-19', desc: '23 elementary functions classified by minimum EML approximation depth. What is proved, what is computational, what is open.' },
-  { href: '/blog/depth-6-phase-transition', title: 'The Depth-6 Phase Transition', tag: 'observation', date: '2026-04-19', desc: 'At depth 5, all complex EML values have Im = −π exactly. At depth 6, imaginary parts explode. A structural phase transition.' },
-  { href: '/blog/negative-exponent', title: 'exp(−x) and the Five-Operator Barrier', tag: 'observation', date: '2026-04-19', desc: 'exp(−x) is blocked for 1-node EML across five operator families. DEML breaks through: deml(x,1) = exp(−x) exactly.' },
-  { href: '/blog/weierstrass-theorem', title: 'The EML Weierstrass Theorem', tag: 'theorem', date: '2026-04-19', desc: 'EML trees are dense in C([a,b]). Any continuous function approximable to arbitrary precision — but not always exactly representable.' },
-  { href: '/blog/phantom-attractor', title: 'The Phantom Attractor Is Not Real', tag: 'observation', date: '2026-04-19', desc: 'EML gradient descent converges to ~3.17 on 40/40 seeds when targeting π. PSLQ found no relation. Vanishes at higher precision.' },
-  { href: '/blog/i-unconstructibility', title: "Why You Can't Build i from 1", tag: 'theorem', date: '2026-04-19', desc: 'Under strict principal-branch semantics, i is unreachable from {eml, 1}. Lean-verified. Depth-6 closest approach: 0.99999524.' },
-  { href: '/blog/infinite-zeros-barrier', title: 'The Infinite Zeros Barrier', tag: 'theorem', date: '2026-04-19', desc: 'Why sin(x) cannot be expressed as a finite real EML tree. Every real EML tree is real-analytic with finitely many zeros.' },
-  { href: '/blog/near-miss', title: '0.99999524: The Near-Miss', tag: 'research', date: '2026-04-19', desc: 'How close can an EML tree get to i? A gap of 4.76×10⁻⁶ and the transcendental obstruction via Lindemann–Weierstrass.' },
-  { href: '/blog/euler-formula-is-eml', title: "Euler's Formula Is the EML Operator", tag: 'exposition', date: '2026-04-19', desc: 'eml(ix, 1) = exp(ix). One node. The deepest identity in mathematics, as a single binary tree leaf.' },
-  { href: '/blog/what-best-routing-saves', title: 'What BEST Routing Saves', tag: 'engineering', date: '2026-04-19', desc: 'Node-count and wall-clock benchmarks across 8 elementary functions. BEST dispatch vs naive EML.' },
-  { href: '/blog/auditing-1200-sessions', title: 'Auditing 1200 Sessions', tag: 'meta', date: '2026-04-19', desc: 'From 957 claimed theorems to 18 honest ones. What the audit process revealed and why it matters.' },
-  { href: '/blog/depth-spectrum', title: 'The Exact Depth Spectrum of EML', tag: 'theorem', date: '2026-04-20', desc: 'The complete depth spectrum: 1, 2, 3, ∞ — and why depth-4 exists but contains no standard functions. Plus: multiplication drops to 2 nodes.' },
-  { href: '/blog/tan1-obstruction', title: 'Why tan(1) Controls Everything', tag: 'theorem', date: '2026-04-20', desc: 'A single transcendence fact about tan(1) is the root cause behind three separate EML results: the multiplication lower bound, the depth-3 ceiling, and the complex density behavior.' },
-  { href: '/blog/conditional-tan1', title: 'What If tan(1) Were Constructible?', tag: 'conjecture', date: '2026-04-20', desc: 'A thought experiment: if tan(1) could be built from EML trees, the conditional chain reaches i, π, and collapses the depth hierarchy. Connected to Schanuel\'s conjecture.' },
-  { href: '/blog/chembio-costs', title: 'SuperBEST Node Costs: Chemistry and Biology', tag: 'observation', date: '2026-04-20', desc: 'How many operator nodes does it take to compute 50 standard equations from chemistry and biology? A systematic analysis using the SuperBEST v3 routing table.' },
-  { href: '/blog/cost-theory-complete', title: 'Cost Theory: The Complete Paper', tag: 'theorem', date: '2026-04-20', desc: 'T34–T43 in one place: decomposition theorem, no-nesting penalty, linear cost law, domain folding, structural classes A/B/C/D, isomorphism families, scaling laws, complex extension. 30-equation blind test: 27/30 exact.' },
-  { href: '/blog/cost-theory', title: 'Predicting SuperBEST Cost from Equation Structure', tag: 'theorem', date: '2026-04-20', desc: 'Cost(E) = NaiveCost(E) − SharingDiscount(E) − PatternBonus(E). T38 decomposition theorem, four structural classes (A/B/C/D), and the Linear Ceiling Conjecture: no standard equation exceeds O(N).' },
-  { href: '/blog/157-equations', title: '295+ Equations: The SuperBEST Cost of Science', tag: 'observation', date: '2026-04-20', desc: '295+ standard equations across 12+ domains — from GPS navigation to quantum mechanics to sports analytics — measured in SuperBEST v4 nodes. Floor: 1n. Ceiling: 2037n (Reed-Solomon). Expanded from 157 (Monster Sprint) → 214 (COMP-ALL) → 295+ (domain-2 sessions).' },
-];
+const all       = getAllPosts();
+const featured  = getFeaturedPosts();
+const recent    = getRecentPosts(6);
+const random    = getRandomPosts(6, 6);
+const tagList   = getAllTags();
+const counts    = Object.fromEntries(tagList.map(t => [t, all.filter(p => p.tag === t).length]));
 
-const tagMeta: Record<string, { color: string; label: string }> = {
-  announcement:{ color: 'var(--pink)', label: 'announcement' },
-  theorem:     { color: 'var(--green)', label: 'theorem' },
-  conjecture:  { color: '#f87171', label: 'conjecture' },
-  observation: { color: 'var(--orange)', label: 'observation' },
-  research:    { color: 'var(--violet)', label: 'research' },
-  'deep-dive': { color: 'var(--cyan)', label: 'deep dive' },
-  exposition:  { color: 'var(--cyan)', label: 'exposition' },
-  engineering: { color: 'var(--orange)', label: 'engineering' },
-  meta:        { color: '#9ca3af', label: 'meta' },
-};
-
-const tagOrder = ['announcement', 'theorem', 'conjecture', 'observation', 'research', 'deep-dive', 'exposition', 'engineering', 'meta'];
-const counts = tagOrder.reduce((acc, t) => { acc[t] = posts.filter(p => p.tag === t).length; return acc; }, {} as Record<string, number>);
+// Search index for the client — only the fields the filter touches,
+// to keep the JSON payload small.
+const searchIndex = all.map(p => ({
+  href: p.href,
+  title: p.title,
+  desc: p.desc,
+  tag: p.tag,
+  date: p.date,
+}));
 ---
 
-<Base title="Blog — monogate.org" description="Research blog on the EML operator: theorems, proofs, near-misses, and open problems.">
+<Base
+  title="Blog — monogate.org"
+  description="Research blog on the EML operator: theorems, proofs, near-misses, and open problems."
+>
   <h1>Research Blog</h1>
   <p style="color: var(--muted); margin-bottom: 20px;">
-    {posts.length} posts · <a href="/">← monogate.org</a>
+    {all.length} posts · <a href="/">← monogate.org</a> · <a href="/rss.xml">RSS</a>
   </p>
 
+  <!-- ─── Search ─────────────────────────────────────────────────── -->
+  <input
+    id="blog-search"
+    type="search"
+    placeholder="Search posts…"
+    aria-label="Search posts"
+    autocomplete="off"
+    style="width: 100%; box-sizing: border-box; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; color: var(--text); font-family: var(--mono); font-size: 13px; margin-bottom: 16px;"
+  />
+
+  <!-- ─── Tag filter pills ───────────────────────────────────────── -->
   <div id="tag-filters" style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 28px;">
     <button
       data-tag="all"
       class="tag-btn active"
-      style={`font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text); background: #1a1a1a15; border: 1px solid #1a1a1a30; border-radius: 3px; padding: 4px 10px; cursor: pointer;`}
-    >all <span style="opacity:0.5">{posts.length}</span></button>
-    {tagOrder.map(tag => (
-      <button
+      style="font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text); background: #1a1a1a15; border: 1px solid #1a1a1a30; border-radius: 3px; padding: 4px 10px; cursor: pointer;"
+    >all <span style="opacity:0.5">{all.length}</span></button>
+    {tagList.map(tag => (
+      <a
+        href={`/blog/tag/${tag}`}
         data-tag={tag}
         class="tag-btn"
-        style={`font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: ${tagMeta[tag].color}; background: ${tagMeta[tag].color}15; border: 1px solid ${tagMeta[tag].color}30; border-radius: 3px; padding: 4px 10px; cursor: pointer;`}
-      >{tag} <span style="opacity:0.5">{counts[tag]}</span></button>
+        style={`font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: ${tagMeta[tag].color}; background: ${tagMeta[tag].color}15; border: 1px solid ${tagMeta[tag].color}30; border-radius: 3px; padding: 4px 10px; cursor: pointer; text-decoration: none;`}
+      >{tagMeta[tag].label} <span style="opacity:0.5">{counts[tag]}</span></a>
     ))}
   </div>
 
-  <div id="post-list" style="display: flex; flex-direction: column; gap: 12px;">
-    {posts.map(p => (
-      <a
-        href={p.href}
-        data-tag={p.tag}
-        class="post-card"
-        style="display: block; border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; text-decoration: none; color: inherit; background: var(--surface);"
-      >
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 6px;">
-          <div style="font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.4;">{p.title}</div>
-          <span style={`font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: ${tagMeta[p.tag].color}; background: ${tagMeta[p.tag].color}15; border: 1px solid ${tagMeta[p.tag].color}30; border-radius: 3px; padding: 2px 6px; white-space: nowrap; flex-shrink: 0;`}>{p.tag}</span>
+  <!-- ─── Search-result zone (hidden until typing) ───────────────── -->
+  <section id="search-results" hidden>
+    <h2 class="row-heading">Search results <span class="row-count" id="search-count"></span></h2>
+    <div id="search-list" class="card-grid"></div>
+  </section>
+
+  <!-- ─── Three default rows ─────────────────────────────────────── -->
+  <div id="default-view">
+    {featured.length > 0 && (
+      <section class="row">
+        <h2 class="row-heading">Featured</h2>
+        <div class="card-grid">
+          {featured.map(p => <PostCardServer post={p} />)}
         </div>
-        <div style="font-size: 12px; color: var(--muted); line-height: 1.6;">{p.desc}</div>
-        <div style="font-size: 10px; color: var(--muted); margin-top: 8px; font-family: monospace;">{p.date}</div>
-      </a>
-    ))}
+      </section>
+    )}
+
+    <section class="row">
+      <h2 class="row-heading">New</h2>
+      <div class="card-grid">
+        {recent.map(p => <PostCardServer post={p} />)}
+      </div>
+    </section>
+
+    {random.length > 0 && (
+      <section class="row">
+        <h2 class="row-heading">From the archive <span class="row-sub">(picked at random)</span></h2>
+        <div class="card-grid">
+          {random.map(p => <PostCardServer post={p} />)}
+        </div>
+      </section>
+    )}
   </div>
+
+  <!-- Search index payload, embedded as JSON for the client filter. -->
+  <script id="search-index" type="application/json" set:html={JSON.stringify(searchIndex)} />
+  <script id="tag-meta" type="application/json" set:html={JSON.stringify(
+    Object.fromEntries(Object.entries(tagMeta).map(([k, v]) => [k, { color: v.color, label: v.label }]))
+  )} />
 </Base>
 
+{/* server-rendered card fragment so the three default rows share markup */}
+<Fragment slot="afterMain">{/* unused; placeholder for future */}</Fragment>
+
 <style>
-  .tag-btn { transition: opacity 0.15s; }
-  .tag-btn:hover { opacity: 0.8; }
+  .row { margin-bottom: 36px; }
+  .row-heading {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+  .row-sub {
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    opacity: 0.7;
+    margin-left: 6px;
+  }
+  .row-count {
+    font-weight: 400;
+    opacity: 0.6;
+    margin-left: 8px;
+  }
+  .card-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  /* On wider screens, render 3 across — but only when there's enough room. */
+  @media (min-width: 720px) {
+    .card-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  .post-card {
+    display: block;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    text-decoration: none;
+    color: inherit;
+    background: var(--surface);
+    transition: border-color 0.15s, transform 0.15s;
+    height: 100%;
+  }
+  .post-card:hover { border-color: var(--accent); transform: translateY(-1px); text-decoration: none; }
+  .post-card .title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.35;
+    margin-bottom: 6px;
+  }
+  .post-card .desc {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .post-card .meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--muted);
+  }
+  .post-card .tag-pill {
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-radius: 3px;
+    padding: 2px 6px;
+    white-space: nowrap;
+  }
+  .tag-btn { transition: opacity 0.15s; display: inline-block; }
+  .tag-btn:hover { opacity: 0.85; text-decoration: none; }
   .tag-btn.active { box-shadow: 0 0 0 1px currentColor; }
-  .post-card { transition: border-color 0.15s; }
-  .post-card:hover { border-color: #2d3148; }
-  .post-card.hidden { display: none !important; }
+  #blog-search:focus { outline: none; border-color: var(--accent); }
 </style>
 
 <script>
-  const btns = document.querySelectorAll<HTMLButtonElement>('.tag-btn');
-  const cards = document.querySelectorAll<HTMLAnchorElement>('.post-card');
+  type IndexPost = {
+    href: string; title: string; desc: string; tag: string; date: string;
+  };
+  type TagMetaEntry = { color: string; label: string };
 
-  btns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const tag = btn.dataset.tag!;
-      btns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      cards.forEach(card => {
-        if (tag === 'all' || card.dataset.tag === tag) {
-          card.classList.remove('hidden');
-        } else {
-          card.classList.add('hidden');
-        }
-      });
-    });
+  const idx: IndexPost[] = JSON.parse(
+    document.getElementById('search-index')!.textContent!
+  );
+  const tagMeta: Record<string, TagMetaEntry> = JSON.parse(
+    document.getElementById('tag-meta')!.textContent!
+  );
+
+  const search = document.getElementById('blog-search') as HTMLInputElement;
+  const resultsZone = document.getElementById('search-results') as HTMLElement;
+  const resultsList = document.getElementById('search-list') as HTMLElement;
+  const resultsCount = document.getElementById('search-count') as HTMLElement;
+  const defaultView = document.getElementById('default-view') as HTMLElement;
+
+  function renderCard(p: IndexPost): string {
+    const t = tagMeta[p.tag] ?? { color: 'var(--muted)', label: p.tag };
+    const safeTitle = p.title.replace(/</g, '&lt;');
+    const safeDesc  = p.desc.replace(/</g, '&lt;');
+    return `
+      <a href="${p.href}" class="post-card" data-tag="${p.tag}">
+        <div class="title">${safeTitle}</div>
+        <div class="desc">${safeDesc}</div>
+        <div class="meta-row">
+          <span>${p.date}</span>
+          <span class="tag-pill" style="color:${t.color};background:${t.color}15;border:1px solid ${t.color}30;">${t.label}</span>
+        </div>
+      </a>
+    `;
+  }
+
+  function runSearch() {
+    const q = search.value.trim().toLowerCase();
+    if (!q) {
+      resultsZone.hidden = true;
+      defaultView.hidden = false;
+      return;
+    }
+    const matches = idx.filter(p =>
+      p.title.toLowerCase().includes(q) ||
+      p.desc.toLowerCase().includes(q) ||
+      p.tag.toLowerCase().includes(q)
+    );
+    resultsCount.textContent = `· ${matches.length} match${matches.length === 1 ? '' : 'es'}`;
+    resultsList.innerHTML = matches.length
+      ? matches.map(renderCard).join('')
+      : `<p style="color:var(--muted);font-size:12px;">No posts match “${q.replace(/</g, '&lt;')}”.</p>`;
+    resultsZone.hidden = false;
+    defaultView.hidden = true;
+  }
+
+  search.addEventListener('input', runSearch);
+  // Allow Esc to clear.
+  search.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      search.value = '';
+      runSearch();
+      search.blur();
+    }
   });
 </script>

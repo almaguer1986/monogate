@@ -1,0 +1,82 @@
+---
+import Base from '../../../layouts/Base.astro';
+import PostCardServer from '../../../components/PostCardServer.astro';
+import { getAllPosts, getAllTags, tagMeta } from '../../../lib/posts';
+import type { GetStaticPaths } from 'astro';
+
+export const getStaticPaths: GetStaticPaths = () => {
+  return getAllTags().map(tag => ({ params: { tag } }));
+};
+
+const { tag } = Astro.params;
+if (!tag || !(tag in tagMeta)) throw new Error(`Unknown tag: ${tag}`);
+
+const meta = tagMeta[tag];
+const posts = getAllPosts().filter(p => p.tag === tag);
+---
+
+<Base
+  title={`${meta.label} posts — Monogate Blog`}
+  description={`All ${posts.length} posts tagged ${meta.label} on the Monogate Research blog.`}
+>
+  <h1 style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+    <span style={`font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:${meta.color};background:${meta.color}15;border:1px solid ${meta.color}30;border-radius:3px;padding:6px 12px;`}>
+      {meta.label}
+    </span>
+    <span style="font-size:1.2rem;color:var(--muted);font-weight:400;">
+      {posts.length} {posts.length === 1 ? 'post' : 'posts'}
+    </span>
+  </h1>
+
+  <p style="color:var(--muted);margin-bottom:28px;">
+    <a href="/blog">← all posts</a>
+    · <a href="/">monogate.org</a>
+  </p>
+
+  <div class="card-grid">
+    {posts.map(p => <PostCardServer post={p} />)}
+  </div>
+</Base>
+
+<style>
+  .card-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  @media (min-width: 720px) {
+    .card-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  .post-card {
+    display: block;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    text-decoration: none;
+    color: inherit;
+    background: var(--surface);
+    transition: border-color 0.15s, transform 0.15s;
+  }
+  .post-card:hover { border-color: var(--accent); transform: translateY(-1px); text-decoration: none; }
+  .post-card .title { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.35; margin-bottom: 6px; }
+  .post-card .desc { font-size: 11px; color: var(--muted); line-height: 1.5; }
+  .post-card .meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--muted);
+  }
+  .post-card .tag-pill {
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-radius: 3px;
+    padding: 2px 6px;
+    white-space: nowrap;
+  }
+</style>

@@ -1,0 +1,127 @@
+---
+// Reactions — 4-emoji per-post feedback widget.
+//
+// LocalStorage-backed: each browser tracks its own reaction per post.
+// No server, no aggregate counts shown. The button lights up when
+// you've selected it; click again to clear, or click a different one
+// to switch. Honest UX — what you click is what you see.
+//
+// To upgrade to aggregated counts later, point the data-* attributes
+// at a small `/api/react` endpoint and read counts back; the markup
+// is structured so the JS is the only thing that has to change.
+//
+// Usage in any post layout:
+//   import Reactions from '../components/Reactions.astro';
+//   ...
+//   <Reactions slug={Astro.url.pathname.split('/').pop() ?? ''} />
+
+interface Props {
+  slug: string;
+}
+const { slug } = Astro.props;
+---
+
+<div class="reactions" data-post-slug={slug} aria-label="React to this post">
+  <span class="reactions-label">React</span>
+  <button type="button" class="reaction" data-react="up" aria-label="thumbs up — useful">
+    <span class="emoji" aria-hidden="true">👍</span>
+  </button>
+  <button type="button" class="reaction" data-react="mind" aria-label="mind blown">
+    <span class="emoji" aria-hidden="true">🤯</span>
+  </button>
+  <button type="button" class="reaction" data-react="down" aria-label="thumbs down — not useful">
+    <span class="emoji" aria-hidden="true">👎</span>
+  </button>
+  <button type="button" class="reaction" data-react="nope" aria-label="bad info — flag a problem">
+    <span class="emoji" aria-hidden="true">🚫</span>
+  </button>
+</div>
+
+<style>
+  .reactions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 40px 0 0;
+    padding: 16px 0;
+    border-top: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .reactions-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-right: 4px;
+  }
+  .reaction {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.12s ease, border-color 0.12s ease, background 0.12s ease;
+    color: var(--text);
+    font-size: 18px;
+    line-height: 1;
+  }
+  .reaction:hover { transform: scale(1.08); border-color: var(--accent); }
+  .reaction:active { transform: scale(0.95); }
+  .reaction.selected {
+    background: rgba(196,167,125,0.12);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent);
+  }
+  .reaction .emoji {
+    filter: grayscale(0.5);
+    transition: filter 0.12s ease, transform 0.12s ease;
+  }
+  .reaction:hover .emoji,
+  .reaction.selected .emoji {
+    filter: grayscale(0);
+  }
+  .reaction.selected .emoji {
+    transform: scale(1.2);
+  }
+</style>
+
+<script>
+  // Per-post localStorage key — namespaced so we can revoke all
+  // reactions cleanly later if needed.
+  const KEY_PREFIX = 'monogate:reaction:';
+
+  document.querySelectorAll<HTMLDivElement>('.reactions').forEach((root) => {
+    const slug = root.dataset.postSlug ?? '';
+    if (!slug) return;
+    const key = KEY_PREFIX + slug;
+
+    // Restore prior selection on load.
+    const stored = localStorage.getItem(key);
+    if (stored) {
+      root.querySelector(`.reaction[data-react="${stored}"]`)?.classList.add('selected');
+    }
+
+    root.querySelectorAll<HTMLButtonElement>('.reaction').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const choice = btn.dataset.react;
+        if (!choice) return;
+        const wasSelected = btn.classList.contains('selected');
+        // Clear all selections.
+        root.querySelectorAll('.reaction').forEach(b => b.classList.remove('selected'));
+        if (wasSelected) {
+          // Toggle off — clear storage.
+          localStorage.removeItem(key);
+        } else {
+          btn.classList.add('selected');
+          localStorage.setItem(key, choice);
+        }
+      });
+    });
+  });
+</script>

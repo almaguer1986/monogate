@@ -5,6 +5,7 @@ description: "The best-selling synthesizer in history runs on a Bessel function.
 date: "2026-04-27"
 author: "Monogate Research"
 tag: deep-dive
+featured: true
 ---
 
 # Hear the Math: When Equations Become Sound

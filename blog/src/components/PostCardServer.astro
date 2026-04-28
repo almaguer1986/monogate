@@ -1,0 +1,22 @@
+---
+import { tagMeta } from '../lib/posts';
+import type { Post } from '../lib/posts';
+
+interface Props {
+  post: Post;
+}
+const { post } = Astro.props;
+const t = tagMeta[post.tag] ?? { color: 'var(--muted)', label: post.tag };
+---
+
+<a href={post.href} class="post-card" data-tag={post.tag}>
+  <div class="title">{post.title}</div>
+  <div class="desc">{post.desc}</div>
+  <div class="meta-row">
+    <span>{post.date}</span>
+    <span
+      class="tag-pill"
+      style={`color:${t.color};background:${t.color}15;border:1px solid ${t.color}30;`}
+    >{t.label}</span>
+  </div>
+</a>

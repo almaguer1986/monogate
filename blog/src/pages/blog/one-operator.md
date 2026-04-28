@@ -5,6 +5,7 @@ description: "The NAND gate of continuous math. A single binary operation eml(x,
 date: "2026-04-27"
 author: "Monogate Research"
 tag: announcement
+featured: true
 ---
 
 # One Operator, All of Applied Mathematics
