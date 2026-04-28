@@ -6,7 +6,7 @@
     "best_mse": 0.3503750851807627,
     "solved": false,
     "method": "mcts",
-    "elapsed_s": 0.01878960500005178
+    "elapsed_s": 0.01820303499999909
   },
   {
     "problem": "nguyen-1",
@@ -15,7 +15,7 @@
     "best_mse": 0.022639254716748686,
     "solved": false,
     "method": "beam",
-    "elapsed_s": 0.3880038050000394
+    "elapsed_s": 0.4342657019999763
   },
   {
     "problem": "nguyen-2",
@@ -24,7 +24,7 @@
     "best_mse": 0.2739266663197307,
     "solved": false,
     "method": "mcts",
-    "elapsed_s": 0.02185692000000472
+    "elapsed_s": 0.020976918999991767
   },
   {
     "problem": "nguyen-2",
@@ -33,7 +33,7 @@
     "best_mse": 0.014147400741369873,
     "solved": false,
     "method": "beam",
-    "elapsed_s": 0.3868393419999734
+    "elapsed_s": 0.42999930900001004
   },
   {
     "problem": "nguyen-3",
@@ -42,7 +42,7 @@
     "best_mse": 0.6812664373036494,
     "solved": false,
     "method": "mcts",
-    "elapsed_s": 0.021336077999990266
+    "elapsed_s": 0.020793198000006896
   },
   {
     "problem": "nguyen-3",
@@ -51,7 +51,7 @@
     "best_mse": 0.011081101438929358,
     "solved": false,
     "method": "beam",
-    "elapsed_s": 0.4768400670000119
+    "elapsed_s": 0.5581026029999805
   },
   {
     "problem": "nguyen-4",
@@ -60,7 +60,7 @@
     "best_mse": 0.1517760272821694,
     "solved": false,
     "method": "mcts",
-    "elapsed_s": 0.035803006000037385
+    "elapsed_s": 0.03386075400001687
   },
   {
     "problem": "nguyen-4",
@@ -69,7 +69,7 @@
     "best_mse": 0.07439555506585682,
     "solved": false,
     "method": "beam",
-    "elapsed_s": 0.3989763810000113
+    "elapsed_s": 0.4402020859999993
   },
   {
     "problem": "nguyen-5",
@@ -78,7 +78,7 @@
     "best_mse": 0.9635728074934811,
     "solved": false,
     "method": "mcts",
-    "elapsed_s": 0.028563791000010497
+    "elapsed_s": 0.027582824000006667
   },
   {
     "problem": "nguyen-5",
@@ -87,7 +87,7 @@
     "best_mse": 0.8685226524570074,
     "solved": false,
     "method": "beam",
-    "elapsed_s": 0.7121708709999552
+    "elapsed_s": 0.7501874300000111
   },
   {
     "problem": "nguyen-6",
@@ -96,7 +96,7 @@
     "best_mse": 0.2225998769672664,
     "solved": false,
     "method": "mcts",
-    "elapsed_s": 0.01730438999999251
+    "elapsed_s": 0.0173288409999941
   },
   {
     "problem": "nguyen-6",
@@ -105,7 +105,7 @@
     "best_mse": 0.03127949952458596,
     "solved": false,
     "method": "beam",
-    "elapsed_s": 0.3821948859999793
+    "elapsed_s": 0.4408031400000141
   },
   {
     "problem": "nguyen-7",
@@ -114,7 +114,7 @@
     "best_mse": 0.12109297013725659,
     "solved": false,
     "method": "mcts",
-    "elapsed_s": 0.017723792000026606
+    "elapsed_s": 0.017542806000022892
   },
   {
     "problem": "nguyen-7",
@@ -123,7 +123,7 @@
     "best_mse": 0.12109297013725659,
     "solved": false,
     "method": "beam",
-    "elapsed_s": 0.6662087060000204
+    "elapsed_s": 0.703310891000001
   },
   {
     "problem": "nguyen-8",
@@ -132,7 +132,7 @@
     "best_mse": 0.30036227473288246,
     "solved": false,
     "method": "mcts",
-    "elapsed_s": 0.01938475899999048
+    "elapsed_s": 0.01901083800001402
   },
   {
     "problem": "nguyen-8",
@@ -141,7 +141,7 @@
     "best_mse": 0.15541212491986078,
     "solved": false,
     "method": "beam",
-    "elapsed_s": 0.772089316000006
+    "elapsed_s": 0.848926591999998
   },
   {
     "problem": "keijzer-6",
@@ -150,7 +150,7 @@
     "best_mse": 0.3309766244366579,
     "solved": false,
     "method": "mcts",
-    "elapsed_s": 0.05504216299999598
+    "elapsed_s": 0.05154817000001799
   },
   {
     "problem": "keijzer-6",
@@ -159,7 +159,7 @@
     "best_mse": 0.33095025074471074,
     "solved": false,
     "method": "beam",
-    "elapsed_s": 0.4515849680000201
+    "elapsed_s": 0.49596330200000693
   },
   {
     "problem": "keijzer-11",
@@ -168,7 +168,7 @@
     "best_mse": 29.55429912218883,
     "solved": false,
     "method": "mcts",
-    "elapsed_s": 0.04127250400000548
+    "elapsed_s": 0.03978368299999602
   },
   {
     "problem": "keijzer-11",
@@ -177,6 +177,6 @@
     "best_mse": 5.152805673860796,
     "solved": false,
     "method": "beam",
-    "elapsed_s": 0.6069843150000338
+    "elapsed_s": 0.6419258060000175
   }
 ]
