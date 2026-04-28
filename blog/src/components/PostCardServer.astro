@@ -9,14 +9,14 @@ const { post } = Astro.props;
 const t = tagMeta[post.tag] ?? { color: 'var(--muted)', label: post.tag };
 ---
 
-<a href={post.href} class="post-card" data-tag={post.tag}>
-  <div class="title">{post.title}</div>
-  <div class="desc">{post.desc}</div>
-  <div class="meta-row">
-    <span>{post.date}</span>
-    <span
-      class="tag-pill"
-      style={`color:${t.color};background:${t.color}15;border:1px solid ${t.color}30;`}
-    >{t.label}</span>
+<article class="post-card" data-tag={post.tag}>
+  <h3 class="title">
+    <a href={post.href}>{post.title}</a>
+  </h3>
+  <p class="desc">{post.desc}</p>
+  <div class="meta">
+    <time datetime={post.date}>{post.date}</time>
+    <span class="meta-sep" aria-hidden="true">·</span>
+    <span class="meta-tag">{t.label}</span>
   </div>
-</a>
+</article>

@@ -47,36 +47,61 @@ const posts = getAllPosts().filter(p => p.tag === tag);
   @media (min-width: 720px) {
     .card-grid { grid-template-columns: repeat(2, 1fr); }
   }
+  /* Mirror of the card styling on /blog. Keeps both surfaces
+     in lockstep — change one, change the other. */
   .post-card {
-    display: block;
-    border: 1px solid var(--border);
+    border: 1px solid #2a2a35;
     border-radius: 8px;
-    padding: 14px 16px;
-    text-decoration: none;
-    color: inherit;
-    background: var(--surface);
-    transition: border-color 0.15s, transform 0.15s;
-  }
-  .post-card:hover { border-color: var(--accent); transform: translateY(-1px); text-decoration: none; }
-  .post-card .title { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.35; margin-bottom: 6px; }
-  .post-card .desc { font-size: 11px; color: var(--muted); line-height: 1.5; }
-  .post-card .meta-row {
+    padding: 18px 20px;
+    background: #15151c;
+    height: 100%;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 8px;
-    margin-top: 8px;
-    font-family: var(--mono);
-    font-size: 9px;
-    color: var(--muted);
+    flex-direction: column;
   }
-  .post-card .tag-pill {
-    font-size: 8px;
+  .post-card .title {
+    font-size: 16px;
     font-weight: 700;
-    letter-spacing: 0.1em;
+    line-height: 1.3;
+    margin: 0 0 10px;
+    letter-spacing: -0.005em;
+  }
+  .post-card .title a {
+    color: #c8a832;
+    text-decoration: none;
+  }
+  .post-card .title a:hover,
+  .post-card .title a:focus-visible {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: #c8a832;
+  }
+  .post-card .desc {
+    font-size: 13px;
+    color: #b0b0b0;
+    line-height: 1.55;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    flex: 1;
+  }
+  .post-card .meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 14px;
+    padding-top: 10px;
+    border-top: 1px solid #232330;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: #666;
+  }
+  .post-card .meta-sep { color: #444; }
+  .post-card .meta-tag {
     text-transform: uppercase;
-    border-radius: 3px;
-    padding: 2px 6px;
-    white-space: nowrap;
+    letter-spacing: 0.08em;
+    font-weight: 600;
   }
 </style>
