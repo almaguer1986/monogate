@@ -453,13 +453,13 @@ def _assert_verification_lean_counts(card: dict[str, Any]) -> tuple[str, str]:
     partial = v.get("lean_partial_files")
     sorries = v.get("lean_sorries_total")
     if None in (clean, partial, sorries):
-        return "FAIL", "verification: lean_clean_files / lean_partial_files / lean_sorries_total required in v3"
-    if clean < 11:
-        return "FAIL", f"verification: lean_clean_files={clean} < 11"
+        return "FAIL", "verification missing one of the required v3 lean fields"
+    if clean < 14:
+        return "FAIL", f"verification: clean={clean} < 14 (data/lean.md canonical floor)"
     if partial > 2:
-        return "FAIL", f"verification: lean_partial_files={partial} > 2 — unexpected partial file"
+        return "FAIL", f"verification: partial={partial} > 2 — unexpected partial file"
     if sorries > 4:
-        return "FAIL", f"verification: lean_sorries_total={sorries} > 4 — regression vs last audit"
+        return "FAIL", f"verification: sorries={sorries} > 4 — regression vs last audit"
     return "PASS", f"verification: lean {clean} clean + {partial} partial ({sorries} sorries)"
 
 
