@@ -19,7 +19,7 @@ Solved: 0/20 (0%)
 | nguyen-6 | mcts | 0 | 2.226e-01 | ✗ | `x` | 0.0 |
 | nguyen-6 | beam | 3 | 3.128e-02 | ✗ | `eml(x, eml(1.0, eml(x, 1.0)))` | 0.4 |
 | nguyen-7 | mcts | 4 | 1.211e-01 | ✗ | `eml(1.0, eml(eml(1.0, eml(x, 1.0)), x))` | 0.0 |
-| nguyen-7 | beam | 4 | 1.211e-01 | ✗ | `eml(1.0, eml(eml(1.0, eml(x, 1.0)), x))` | 0.6 |
+| nguyen-7 | beam | 4 | 1.211e-01 | ✗ | `eml(1.0, eml(eml(1.0, eml(x, 1.0)), x))` | 0.7 |
 | nguyen-8 | mcts | 4 | 3.004e-01 | ✗ | `eml(eml(x, eml(eml(x, 1.0), x)), 1.0)` | 0.0 |
 | nguyen-8 | beam | 4 | 1.554e-01 | ✗ | `eml(1.0, eml(eml(1.0, eml(1.0, 1.0)), x)` | 0.8 |
 | keijzer-6 | mcts | 3 | 3.310e-01 | ✗ | `eml(1.0, eml(eml(1.0, x), 1.0))` | 0.1 |
