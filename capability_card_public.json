@@ -17,8 +17,10 @@
     "theorems": "https://monogate.org/theorems",
     "explorer": "https://monogate.dev/lab",
     "pypi": "https://pypi.org/project/monogate/",
+    "pypi_eml_stdlib": "https://pypi.org/project/eml-stdlib/",
     "npm": "https://www.npmjs.com/package/monogate",
-    "arxiv": "https://arxiv.org/abs/2603.21852"
+    "arxiv": "https://arxiv.org/abs/2603.21852",
+    "eml_stdlib_repo": "https://github.com/agent-maestro/eml-stdlib"
   },
   "authors": [
     {
@@ -211,6 +213,35 @@
       "status": "empirically_confirmed",
       "neural_metrics": {
         "forward_nodes": 4097
+      }
+    },
+    {
+      "id": "library.eml_stdlib",
+      "name": "eml-stdlib — verified standard library for game development",
+      "category": "construction",
+      "description": "v0.4.0 (2026-05-07) ships 178 EML modules / 521 functions / 466 verified across 22 categories: math, signal, control, physics, circuits, sensors, biology (incl. biology/abilities), carriers, quantum, ml, ballistics, plus the 60-module gaming/ family (noise, textures, shading, lighting, terrain, animation, particles, camera, audio, physics). Each module declares chain order and ~89% carry @verify(lean) contracts. Installable via pip; .eml source files ship inside the wheel for downstream Forge tooling. Mirrored as GDScript inside the four Godot prototypes.",
+      "status": "empirically_confirmed",
+      "constraints": {
+        "modules": 178,
+        "functions": 521,
+        "verified_functions": 466,
+        "verified_pct": 89,
+        "categories": 22
+      }
+    },
+    {
+      "id": "applications.godot_prototypes",
+      "name": "Godot game prototypes (eml-stdlib applied)",
+      "category": "construction",
+      "description": "Four Godot 4 prototypes — spellforge (1v1 rune-graph duel; spells are EML expression trees), longshot (2D sniper sim mirroring eml-stdlib::ballistics), apex-predator (asymmetric PvP; hunter has real ballistics, beast has real biology + 4-stage evolution; 25 species, 2v1 split-screen with per-viewport fragment-shader fog of war), monowave (deterministic music visualizer; same audio in → same visuals out, no randomness anywhere). All four ship a CLAUDE.md handoff doc plus a headless smoke-test suite (76 tests total). Private repos under agent-maestro/. The 10 ability kernels first written for apex-predator were promoted to eml-stdlib/biology/abilities/ in stdlib v0.4.",
+      "status": "empirically_confirmed",
+      "constraints": {
+        "games_count": 4,
+        "headless_test_count": 76,
+        "spellforge_tests": 13,
+        "longshot_tests": 15,
+        "apex_predator_tests": 22,
+        "monowave_tests": 26
       }
     }
   ],
@@ -469,6 +500,7 @@
       "pip_eml_cost": "pip install eml-cost==0.7.1",
       "pip_eml_rewrite": "pip install eml-rewrite==0.5.1",
       "pip_eml_cost_torch": "pip install eml-cost-torch==0.5.0",
+      "pip_eml_stdlib": "pip install eml-stdlib==0.4.0",
       "npm_monogate": "npm install monogate@1.3.0",
       "pip": "pip install monogate==2.5.0"
     },
@@ -496,7 +528,9 @@
       "numerical_precision_prediction",
       "activation_diagnostics",
       "lean4_verified",
-      "superbest_routing"
+      "superbest_routing",
+      "verified_game_kernels",
+      "godot_eml_prototypes"
     ],
     "honest_limitations": [
       "predict_precision_loss is NOT a form recommender; cost class does not reliably pick the more numerically stable form within an algebraic equivalence class (E-193 Phase 3 best-pick = 30 percent across 10 rewrite tests).",
@@ -508,8 +542,8 @@
   },
   "metadata": {
     "created": "2026-04-17T00:00:00Z",
-    "updated": "2026-04-29T00:00:00Z",
+    "updated": "2026-05-07T00:00:00Z",
     "schema_url": "https://monogate.org/schemas/capcard/v3.json",
-    "rewrite_note": "Rewritten 2026-04-27 to align with verified CONTEXT.md numbers, drop earlier boasting framing, and remove an unverified manual trust score. All quantitative claims are now traceable to a reproducible command or a Lean source file. Updated 2026-04-29 to reflect Runtime.lean addition (libmonogate runtime correspondence; user-verified `lake build` green; 1 documented sorry on mg_softplus_route_bound_high)."
+    "rewrite_note": "Rewritten 2026-04-27 to align with verified CONTEXT.md numbers, drop earlier boasting framing, and remove an unverified manual trust score. All quantitative claims are now traceable to a reproducible command or a Lean source file. Updated 2026-04-29 to reflect Runtime.lean addition (libmonogate runtime correspondence; user-verified `lake build` green; 1 documented sorry on mg_softplus_route_bound_high). Updated 2026-05-07 to add eml-stdlib v0.4.0 (178 modules / 521 fns / 466 verified) and the four Godot prototypes (spellforge, longshot, apex-predator, monowave) — empirically confirmed via 76 headless tests across the four repos."
   }
 }
